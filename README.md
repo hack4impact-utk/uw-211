@@ -1,45 +1,24 @@
-<!-- DELETE THIS SECTION AFTER USING TEMPLATE -->
+# United Way 211
 
-## About this repository
+## What is 211?
+[211](https://www.211.org/) is a social service run by [United Way](https://www.unitedway.org/) that offers information and referral services to health, human, and social service non-profits. Specifically, we're working with [United Way Greater Knoxville](https://uwgk.org/), who have served 13,000 calls in 2022.
 
-This is a template repository meant to act as a starting point for new NextJS projects. This template will help us to standardize our development process and make it easier to onboard new developers.
+## Repository Overview
+This repository offers the following key features:
+- [ ] An administrator panel, where 211 staff can easily review information of non-profits and receive notifications of out-of-date info.
+- [ ] A super easy way for 211 staff to send non-profits a form to update their info.
+- [ ] Revamped information forms that are easier and more engaging to use.
+- [ ] Completely redesigned database technology and schema that provides easier data entry and retrieval using [VisionLink](https://www.visionlink.org/211/).
+- [ ] A super easy way for 211 staff to enter info into the database once non-profits fill out the info forms.
 
-<!-- DELETE THIS SECTION AFTER USING TEMPLATE -->
 
-### What's Included
-
-- React/NextJS
-- MongoDB/Mongoose
-  - `utils/db-connect.ts` contains connection caching functionality for accessing MongoDB.
-- Material UI
-- Zod
-- Jest
-- ESLint
-- Prettier
-- VS Code
-  - Recommended extensions
-    - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-    - [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
-    - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-    - [Jest](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest)
-    - [Jest Runner](https://marketplace.visualstudio.com/items?itemName=firsttris.vscode-jest-runner)
-    - [Pretty TS Errors](https://marketplace.visualstudio.com/items?itemName=yoavbls.pretty-ts-errors)
-- GitHub
-  - [Pull Request template](https://github.com/hack4impact-utk/nextjs-template/blob/main/.github/pull_request_template.md)
-- Pre-commit linting hook
-
-# Project Title
-
-## Overview
-
-Put an overview of the non-profit you are working with and what you are doing for them here.
+Empty boxes denote work-in-progress features.
 
 ## Getting Started
 
 ### Prerequisites
 
-<!-- Ensure any other prerequisites your project needs are mentioned here. -->
-
+<!-- TODO: Add more prereqs as necessary -->
 - [Node.js (v18)](https://nodejs.org/en/)
 - [pnpm](https://pnpm.io/)
 - [Visual Studio Code](https://code.visualstudio.com/)
@@ -49,10 +28,10 @@ Put an overview of the non-profit you are working with and what you are doing fo
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/hack4impact-utk/[PROJECT NAME].git
+git clone https://github.com/hack4impact-utk/uw-211
 ```
 
-### 2. Open project in VS Code and accept recommended extensions
+### 2. Open `UW-211` in VS Code and accept recommended extensions
 
 ### 3. Install dependencies
 
@@ -102,7 +81,7 @@ pnpm test
 
 ## Code/PR Workflow
 
-<!-- Add any project specific workflows in here -->
+<!-- TODO: Add any project specific workflows in here -->
 
 - Create a new branch in the format `[GITHUB USERNAME]/[SHORT FEATURE DESCRIPTION]-[ISSUE NUMBER]`
   - For example: `hack4impact-utk/add-login-page-1`
@@ -121,3 +100,9 @@ pnpm test
 - `src/services`: Contains functionality for interacting with external data sources (e.g. APIs)
 - `src/types`: Contains TypeScript types and interfaces used across the project
 - `src/utils`: Contains utility functions used across the project
+
+## About Hack4Impact
+Hack4Impact is a student-led organization that builds software solutions for local non-profits (read more [here](https://utk.hack4impact.org/)).
+
+## License
+This repository is licensed under the "The Unlicense" license (read more [here](https://github.com/hack4impact-utk/uw-211/blob/main/LICENSE)).
