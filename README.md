@@ -87,7 +87,7 @@ pnpm test
   - For example: `hack4impact-utk/add-login-page-1`
 - Make changes on your branch, ensuring you adhere to our style guide and best practices (add links here when ready)
 - Commit your changes and push them to GitHub
-- Create a pull request from your branch to `main`
+- Create a pull request from your branch to `dev`
   - Ensure you diligently follow the pull request template
 
 ## Project Structure
