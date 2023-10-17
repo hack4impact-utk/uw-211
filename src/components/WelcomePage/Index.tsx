@@ -4,9 +4,9 @@ import uw211Logo from './images/unitedway211.png';
 function WelcomePage(props: { name: string }) {
   return (
     <div className="flex items-center justify-center w-screen h-screen">
-      <div className="flex items-center justify-center flex-wrap w-2/3 h-5/6">
-        <div className="flex-1 bg-slate-200 rounded-2xl h-3/6">
-          <div className="flex justify-center flex-col gap-5 p-8 w-full h-full">
+      <div className="flex items-center flex-col-reverse md:flex-row gap-8 w-screen sm:w-auto justify-center">
+        <div className="flex-1 bg-slate-200 rounded-2xl w-10/12 sm:w-auto p-5">
+          <div className="flex justify-center flex-col gap-5 p-8 break-words sm:break-normal w-full h-full">
             <div>
               <h2 className="text-[#df593e] text-xl font-semibold">
                 211 Knoxville
@@ -17,7 +17,7 @@ function WelcomePage(props: { name: string }) {
               </h1>
               <p className=""></p>
             </div>
-            <button className="bg-[#1e57a1] hover:bg-[#7b8fc3] border-none p-2 rounded-sm text-white w-48">
+            <button className="bg-[#1e57a1] hover:bg-[#7b8fc3] border-none p-2 rounded-sm text-white  w-36 sm:w-48">
               Get Started!
             </button>
           </div>
@@ -26,7 +26,7 @@ function WelcomePage(props: { name: string }) {
           <img
             src={uw211Logo.src}
             alt="United Way 211 Logo"
-            className="w-3/4"
+            className="w-60 sm:w-72"
           />
         </div>
       </div>
