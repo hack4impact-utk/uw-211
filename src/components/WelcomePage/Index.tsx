@@ -1,7 +1,7 @@
 import React from 'react';
-import uw211Logo from './images/unitedway211.png';
+import uw211Logo from '@/../public/img/unitedway211.png';
 
-function WelcomePage(props: { name: string }) {
+function WelcomePage(props: { id: string }) {
   return (
     <div className="flex items-center justify-center w-screen h-screen">
       <div className="flex items-center flex-col-reverse md:flex-row gap-8 w-screen sm:w-auto justify-center">
@@ -13,7 +13,7 @@ function WelcomePage(props: { name: string }) {
               </h2>
               <h1 className="text-3xl">
                 Welcome
-                <span className="font-bold"> {props.name}</span>!
+                <span className="font-bold"> {props.id}</span>!
               </h1>
               <p className=""></p>
             </div>
