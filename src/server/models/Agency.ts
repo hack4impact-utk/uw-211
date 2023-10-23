@@ -17,18 +17,7 @@ const AgencySchema = new mongoose.Schema<IAgency>(
       type: [String],
     },
     legalOrganizationalStatus: {
-      type: String,
-      enum: [
-        'Federal',
-        'State',
-        'County',
-        'City',
-        'Non-Profit',
-        '501(c)3',
-        'Faith-based',
-        'For Profit',
-        'Other',
-      ],
+      type: [String],
       required: true,
     },
     briefAgencyDescription: {

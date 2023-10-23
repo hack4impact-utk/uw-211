@@ -5,16 +5,7 @@ export interface IAgency extends Document {
   updatedAt: Date;
   legalAgencyName: string;
   alsoKnownAs?: string[];
-  legalOrganizationalStatus:
-    | 'Federal'
-    | 'State'
-    | 'County'
-    | 'City'
-    | 'Non-Profit'
-    | '501(c)3'
-    | 'Faith-based'
-    | 'For Profit'
-    | 'Other';
+  legalOrganizationalStatus: string[];
   briefAgencyDescription: string;
   directorNameOrTitle: string;
   serviceAreaCityState?: string;
