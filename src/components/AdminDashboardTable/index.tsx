@@ -33,6 +33,7 @@ export type Nonprofit = {
   email: string;
 };
 
+// Column definitions for table
 const columns: ColumnDef<Nonprofit>[] = [
   {
     accessorKey: 'name',
@@ -61,6 +62,7 @@ const columns: ColumnDef<Nonprofit>[] = [
   {
     accessorKey: 'email',
     header: 'Email',
+    // Overwrites every cell in column to be a <a/> link with the email, instead of just text.
     cell: ({ row }) => (
       <a href={`mailto:${row.original.email}`} className="hover:underline">
         {row.original.email}
@@ -93,6 +95,7 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
 
   return (
     <div>
+      {/* Search Bar for filtering by name */}
       <div className="flex items-center py-4">
         <Input
           placeholder="Search for a nonprofit..."
@@ -103,6 +106,8 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
           className="max-w-sm"
         />
       </div>
+
+      {/* Dynamic Table: doesn't need to be edited to add additional functionality.*/}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
