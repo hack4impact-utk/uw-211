@@ -1,5 +1,7 @@
-import { AdminDashboardTable } from '@/components/AdminDashboardTable';
-import { Nonprofit } from '@/components/AdminDashboardTable';
+import {
+  AdminDashboardTable,
+  Nonprofit,
+} from '@/components/AdminDashboardTable';
 
 const Data: Nonprofit[] = [
   {
