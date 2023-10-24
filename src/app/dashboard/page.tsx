@@ -4,22 +4,22 @@ import { Nonprofit } from '@/components/AdminDashboardTable';
 const Data: Nonprofit[] = [
   {
     name: 'test1',
-    status: 'close to deadline',
+    status: 'Close to deadline',
     email: 'ffff',
   },
   {
     name: 'test2',
-    status: 'email sent recently',
+    status: 'Email sent recently',
     email: 'jjjj',
   },
   {
     name: 'test3',
-    status: 'expired',
+    status: 'Expired',
     email: 'hhhh',
   },
   {
     name: 'test4',
-    status: 'up-to-date',
+    status: 'Up to date',
     email: 'gggg',
   },
 ];
