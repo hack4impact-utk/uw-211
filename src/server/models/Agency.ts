@@ -205,11 +205,18 @@ const AgencySchema = new mongoose.Schema<IAgency>(
       required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { getters: true },
+    toObject: { getters: true },
+  }
 );
 
 AgencySchema.virtual('currentStatus').get(function (this: IAgency) {
   const currentTime: Date = new Date();
+  if (!this.updatedAt) {
+    return CurrentStatus.Expired;
+  }
   const differenceInMilliseconds: number =
     currentTime.getTime() - this.updatedAt.getTime();
   const differenceInDays: number = Math.floor(
