@@ -47,4 +47,3 @@ export default function Footer() {
     </footer>
   );
 }
-//https://www.facebook.com/EastTN211/
