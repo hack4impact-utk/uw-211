@@ -26,10 +26,10 @@ import { Input } from '@/components/ui/input';
 export type Nonprofit = {
   name: string;
   status:
-    | 'Expired'
-    | 'Email sent recently'
     | 'Up to date'
-    | 'Close to deadline';
+    | 'Email sent recently'
+    | 'Close to deadline'
+    | 'Expired';
   email: string;
 };
 
@@ -95,7 +95,7 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Search for a nonprofit..."
+          placeholder="Search for a nonprofit or status..."
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
