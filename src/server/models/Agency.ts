@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import { Agency, agencyStatus } from '@/utils/types/';
+import { Agency } from '@/utils/types/';
+import { agencyStatus } from '@/utils/constants';
 
 const AgencySchema = new mongoose.Schema<Agency>(
   {
