@@ -73,7 +73,9 @@ export interface Agency extends Document {
   donationCoordinatorName?: string;
   donationCoordinatorPhoneNumber?: string;
   updateScheduleInDays: number;
+  emailSentTimestamp?: Date;
   currentStatus: 'Completed' | 'Needs Review' | 'Expired';
+  daysSinceEmailSent?: number;
 }
 
 export interface Service extends mongoose.Document {
