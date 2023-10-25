@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
-import { IService } from '@/types/IService';
-import { IDay } from '@/types/IDay';
+import { Service, Day } from '@/utils/types/';
 
-const DaySchema = new mongoose.Schema<IDay>({
+const DaySchema = new mongoose.Schema<Day>({
   day: {
     type: String,
     enum: [
@@ -26,7 +25,7 @@ const DaySchema = new mongoose.Schema<IDay>({
   },
 });
 
-const ServiceSchema = new mongoose.Schema<IService>({
+const ServiceSchema = new mongoose.Schema<Service>({
   fullDescription: {
     type: String,
     required: true,
@@ -95,4 +94,4 @@ const ServiceSchema = new mongoose.Schema<IService>({
 });
 
 export default mongoose.models.Service ||
-  mongoose.model<IService>('Service', ServiceSchema);
+  mongoose.model<Service>('Service', ServiceSchema);
