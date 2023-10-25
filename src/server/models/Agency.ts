@@ -1,13 +1,7 @@
 import mongoose from 'mongoose';
-import { IAgency } from '@/types/IAgency';
+import { Agency, agencyStatus } from '@/utils/types/';
 
-enum CurrentStatus {
-  Completed = 'Completed',
-  NeedsReview = 'NeedsReview',
-  Expired = 'Expired',
-}
-
-const AgencySchema = new mongoose.Schema<IAgency>(
+const AgencySchema = new mongoose.Schema<Agency>(
   {
     legalAgencyName: {
       type: String,
@@ -212,10 +206,10 @@ const AgencySchema = new mongoose.Schema<IAgency>(
   }
 );
 
-AgencySchema.virtual('currentStatus').get(function (this: IAgency) {
+AgencySchema.virtual('currentStatus').get(function (this: Agency) {
   const currentTime: Date = new Date();
   if (!this.updatedAt) {
-    return CurrentStatus.Expired;
+    return agencyStatus.Expired;
   }
   const differenceInMilliseconds: number =
     currentTime.getTime() - this.updatedAt.getTime();
@@ -223,13 +217,13 @@ AgencySchema.virtual('currentStatus').get(function (this: IAgency) {
     differenceInMilliseconds / (1000 * 3600 * 24)
   );
   if (differenceInDays < this.updateScheduleInDays - 14) {
-    return CurrentStatus.Completed;
+    return agencyStatus.Completed;
   } else if (differenceInDays < this.updateScheduleInDays) {
-    return CurrentStatus.NeedsReview;
+    return agencyStatus.NeedsReview;
   } else {
-    return CurrentStatus.Expired;
+    return agencyStatus.Expired;
   }
 });
 
 export default mongoose.models.Agency ||
-  mongoose.model<IAgency>('Agency', AgencySchema);
+  mongoose.model<Agency>('Agency', AgencySchema);
