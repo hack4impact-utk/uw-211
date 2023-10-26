@@ -9,7 +9,7 @@ export default function Navbar() {
             <Link className="px-10 text-[#393a3d]" href="/">
               Home
             </Link>
-            <Link className="px-10 text-[#393a3d]" href="/">
+            <Link className="px-10 text-[#393a3d]" href="/dashboard">
               Dashboard
             </Link>
             <Link className="px-10 text-[#393a3d]" href="/">
