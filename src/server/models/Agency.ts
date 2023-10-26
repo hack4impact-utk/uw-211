@@ -212,7 +212,6 @@ const AgencySchema = new mongoose.Schema<Agency>(
 );
 
 AgencySchema.virtual('currentStatus').get(function (this: Agency) {
-  console.log('here');
   const currentTime: Date = new Date();
   if (!this.updatedAt) {
     return agencyStatus.Expired;
