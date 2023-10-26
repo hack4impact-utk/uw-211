@@ -4,12 +4,18 @@ export default function Navbar() {
   return (
     <header className="antialiased">
       <nav>
-        <div className="flex text-black font-bold justify-between items-center h-15 border-b-[1px] border-b-[#ccc] px-5 ">
+        <div className="flex text-black font-bold justify-between items-center px-10 py-5">
           <div className="h-fill flex flex-row grow justify-left">
-            <Link className="p-5 hover:text-[#f57814]" href="/">
+            <Link className="px-10 text-[#393a3d]" href="/">
               Home
             </Link>
-            <Link className="p-5 hover:text-[#f57814]" href="/">
+            <Link className="px-10 text-[#393a3d]" href="/">
+              Dashboard
+            </Link>
+            <Link className="px-10 text-[#393a3d]" href="/">
+              Resources
+            </Link>
+            <Link className="px-10 text-[#393a3d]" href="/">
               About
             </Link>
           </div>
