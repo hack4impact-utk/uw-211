@@ -199,12 +199,23 @@ const AgencySchema = new mongoose.Schema<Agency>(
       type: Number,
       required: true,
     },
+    emailSentTimestamp: {
+      type: Date,
+      default: null,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { getters: true, virtuals: true },
+    toObject: { getters: true, virtuals: true },
+  }
 );
 
 AgencySchema.virtual('currentStatus').get(function (this: Agency) {
   const currentTime: Date = new Date();
+  if (!this.updatedAt) {
+    return agencyStatus.Expired;
+  }
   const differenceInMilliseconds: number =
     currentTime.getTime() - this.updatedAt.getTime();
   const differenceInDays: number = Math.floor(
@@ -214,7 +225,7 @@ AgencySchema.virtual('currentStatus').get(function (this: Agency) {
     return agencyStatus.Completed;
   } else if (differenceInDays < this.updateScheduleInDays) {
     return agencyStatus.NeedsReview;
-  } else {
+  } else if (differenceInDays >= this.updateScheduleInDays) {
     return agencyStatus.Expired;
   }
 });
