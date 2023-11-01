@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { Agency } from '@/utils/types/';
 import { agencyStatus } from '@/utils/constants';
+import ServiceSchema from '@/server/models/Service';
 
 const AgencySchema = new mongoose.Schema<Agency>(
   {
@@ -165,9 +166,10 @@ const AgencySchema = new mongoose.Schema<Agency>(
     contactForAnnualUpdateHidden: {
       type: Boolean,
     },
-    services: {
-      type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
-    },
+    //services: {
+    //  type: [{ type: Schema.Types.ObjectId, ref: 'Service' }],
+    //},
+    services: [ServiceSchema],
     volunteerOpportunities: {
       type: Boolean,
     },

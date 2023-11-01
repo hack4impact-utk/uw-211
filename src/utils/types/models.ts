@@ -1,9 +1,7 @@
-import { Document } from 'mongoose';
-import * as mongoose from 'mongoose';
-
-export interface Agency extends Document {
-  createdAt: Date;
-  updatedAt: Date;
+export interface Agency {
+  _id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
   legalAgencyName: string;
   alsoKnownAs?: string[];
   legalOrganizationalStatus: string[];
@@ -78,7 +76,8 @@ export interface Agency extends Document {
   daysSinceEmailSent?: number;
 }
 
-export interface Service extends mongoose.Document {
+export interface Service {
+  _id?: string;
   fullDescription: string;
   contactPersonName: string;
   daysOpen: Day[];

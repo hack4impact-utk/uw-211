@@ -77,7 +77,8 @@ export async function createService(service: Service): Promise<Service> {
   await dbConnect();
 
   const newService = await ServiceSchema.create(service).catch((error) => {
-    mongoErrorHandler(error.code);
+    console.log(error);
+    mongoErrorHandler(error);
   });
   return newService as Service;
 }
@@ -92,9 +93,59 @@ export async function createAgency(agency: Agency): Promise<Agency> {
   await dbConnect();
 
   const newAgency = await AgencySchema.create(agency).catch((error) => {
+    console.error(error);
     mongoErrorHandler(error);
   });
   return newAgency as Agency;
+}
+
+/**
+ * Updates an agency by ID
+ * @param id The ID of the agency to update
+ * @param updates The updates to apply to the agency (partial)
+ * @returns The updated agency
+ * @throws ApiError (404) if the agency is not found
+ */
+export async function updateAgency(
+  id: string,
+  updates: Partial<Agency>
+): Promise<Agency | null> {
+  await dbConnect();
+  const updatedAgency = await AgencySchema.updateOne(
+    { _id: id },
+    updates
+  ).catch((error) => {
+    mongoErrorHandler(error.code);
+  });
+  if (updatedAgency!.modifiedCount === 0) {
+    throw new ApiError(404, errors.notFound);
+  }
+  const agency = await AgencySchema.findById(id).populate('services').exec();
+  return agency as Agency;
+}
+
+/**
+ * Updates a service by ID
+ * @param id The ID of the service to update
+ * @param updates The updates to apply to the service (partial)
+ * @returns The updated service
+ */
+export async function updateService(
+  id: string,
+  updates: Partial<Service>
+): Promise<Service | null> {
+  await dbConnect();
+  const updatedService = await ServiceSchema.updateOne(
+    { _id: id },
+    updates
+  ).catch((error) => {
+    mongoErrorHandler(error.code);
+  });
+  if (updatedService!.modifiedCount === 0) {
+    throw new ApiError(404, errors.notFound);
+  }
+  const service = await ServiceSchema.findById(id).populate('agency').exec();
+  return service as Service;
 }
 
 /**
@@ -103,7 +154,6 @@ export async function createAgency(agency: Agency): Promise<Agency> {
  * @throws {ApiError} - An error object with a 400|500 status code and a message describing the error.
  */
 function mongoErrorHandler(error: number) {
-  console.error('Type of error is: ' + typeof error);
   switch (error) {
     case 11000:
       // Handle the duplicate key error
