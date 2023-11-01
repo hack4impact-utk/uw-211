@@ -230,5 +230,18 @@ AgencySchema.virtual('currentStatus').get(function (this: Agency) {
   }
 });
 
+AgencySchema.virtual('daysSinceEmailSent').get(function () {
+  if (!this.emailSentTimestamp) {
+    return null;
+  }
+
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  const currentTime = new Date();
+  const timeDiff = currentTime.getTime() - this.emailSentTimestamp.getTime();
+  const daysSinceEmailSent = Math.floor(timeDiff / millisecondsPerDay);
+
+  return daysSinceEmailSent;
+});
+
 export default mongoose.models.Agency ||
   mongoose.model<Agency>('Agency', AgencySchema);

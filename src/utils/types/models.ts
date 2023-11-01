@@ -81,7 +81,7 @@ export interface Agency extends Document {
 export interface Service extends mongoose.Document {
   fullDescription: string;
   contactPersonName: string;
-  daysOpen: Day[]; // Assuming you have a separate schema/interface for 'daySchema'
+  daysOpen: Day[];
   eligibilityRequirements: string;
   applicationProcess:
     | 'Walk-in'
