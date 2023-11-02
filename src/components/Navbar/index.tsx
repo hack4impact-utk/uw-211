@@ -1,11 +1,11 @@
 import Link from 'next/link';
 
-export default function Navbar() {
+export function Navbar() {
   return (
     <header className="antialiased">
       <nav>
-        <div className="flex text-black font-bold justify-between items-center px-10 py-5">
-          <div className="h-fill flex flex-row grow justify-left">
+        <div className="flex items-center justify-between px-10 py-5 font-bold text-black">
+          <div className="h-fill justify-left flex grow flex-row">
             <Link className="px-10 text-[#393a3d]" href="/">
               Home
             </Link>
