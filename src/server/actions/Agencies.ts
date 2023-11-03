@@ -1,6 +1,6 @@
 import AgencySchema from '@/server/models/Agency';
-import ServiceSchema from '@/server/models/Agency';
-import { Agency, Service } from '@/utils/types';
+import ServiceSchema from '@/server/models/Service';
+import { Agency, Service, MongoError } from '@/utils/types';
 import dbConnect from '@/utils/db-connect';
 import { ApiError } from '@/utils/types';
 import { errors } from '@/utils/constants';
@@ -15,6 +15,7 @@ export async function getAgencies(): Promise<Agency[]> {
     const agencies = await AgencySchema.find({}).populate('services').exec();
     return agencies as Agency[];
   } catch (error) {
+    mongoErrorHandler(error as MongoError);
     return [];
   }
 }
@@ -24,11 +25,18 @@ export async function getAgencies(): Promise<Agency[]> {
  * @param page Which page to get
  * @param pageSize Number of agencies per page
  * @returns A single page of agencies
+ * @throws ApiError if the page is less than 1
+ * @throws ApiError if the pageSize is less than 1
+ * @throws ApiError for bad mongoose request
  */
 export async function getPaginatedAgencies(
   page: number,
   pageSize: number
 ): Promise<Agency[]> {
+  if (page < 1 || pageSize < 1) {
+    throw new ApiError(400, errors.badRequest);
+  }
+
   await dbConnect();
   try {
     const agencies = await AgencySchema.find({})
@@ -38,6 +46,7 @@ export async function getPaginatedAgencies(
       .exec();
     return agencies as Agency[];
   } catch (error) {
+    mongoErrorHandler(error as MongoError);
     return [];
   }
 }
@@ -63,8 +72,29 @@ export async function getAgenciesByStatus(status: string): Promise<Agency[]> {
       .exec();
     return agencies as Agency[];
   } catch (error) {
+    mongoErrorHandler(error as MongoError);
     return [];
   }
+}
+
+/**
+ * Retrieves an agency by its ID
+ * @param id The ID of the agency to retrieve
+ * @returns The agency with the specified ID, or null if no agency is found
+ * @throws 404 if an agency with the specifiec id is not found
+ */
+export async function getAgencyById(id: string): Promise<Agency> {
+  await dbConnect();
+  try {
+    const agency = await AgencySchema.findById(id).populate('services').exec();
+    if (!agency) {
+      throw new ApiError(404, errors.notFound);
+    }
+    return agency;
+  } catch (error) {
+    mongoErrorHandler(error as MongoError);
+  }
+  return {} as Agency;
 }
 
 /**
@@ -75,10 +105,8 @@ export async function getAgenciesByStatus(status: string): Promise<Agency[]> {
  */
 export async function createService(service: Service): Promise<Service> {
   await dbConnect();
-
-  const newService = await ServiceSchema.create(service).catch((error) => {
-    console.log(error);
-    mongoErrorHandler(error);
+  const newService = await ServiceSchema.create(service).catch((err) => {
+    mongoErrorHandler(err);
   });
   return newService as Service;
 }
@@ -93,7 +121,6 @@ export async function createAgency(agency: Agency): Promise<Agency> {
   await dbConnect();
 
   const newAgency = await AgencySchema.create(agency).catch((error) => {
-    console.error(error);
     mongoErrorHandler(error);
   });
   return newAgency as Agency;
@@ -129,6 +156,7 @@ export async function updateAgency(
  * @param id The ID of the service to update
  * @param updates The updates to apply to the service (partial)
  * @returns The updated service
+ * @throws ApiError (404) if the service is not found
  */
 export async function updateService(
   id: string,
@@ -149,31 +177,81 @@ export async function updateService(
 }
 
 /**
+ * Deletes an agency by ID
+ * @param id The ID of the agency to delete
+ * @returns The deleted agency
+ * @throws 404 if no agency is found with the ID
+ */
+export async function deleteAgency(id: string): Promise<Agency | null> {
+  await dbConnect();
+  const deletedAgency = await AgencySchema.findByIdAndDelete(id).catch(
+    (error) => {
+      mongoErrorHandler(error);
+    }
+  );
+  if (!deletedAgency) {
+    throw new ApiError(404, errors.notFound);
+  }
+  return deletedAgency as Agency;
+}
+
+/**
+ * Deletes a service by ID
+ * @param id The ID of the service to delete
+ * @returns The deleted service
+ * @throws 404 if no service is found with the ID
+ */
+export async function deleteService(id: string): Promise<Service | null> {
+  await dbConnect();
+  const deletedService = await ServiceSchema.findByIdAndDelete(id).catch(
+    (error) => {
+      mongoErrorHandler(error);
+    }
+  );
+  if (!deletedService) {
+    throw new ApiError(404, errors.notFound);
+  }
+  return deletedService as Service;
+}
+
+/**
  * Handles common MongoDB insertion errors and throws an appropriate ApiError.
- * @param error - The error code returned by MongoDB.
+ * @param error - The error object returned by MongoDB.
  * @throws {ApiError} - An error object with a 400|500 status code and a message describing the error.
  */
-function mongoErrorHandler(error: number) {
-  switch (error) {
-    case 11000:
-      // Handle the duplicate key error
-      throw new ApiError(400, errors.duplicate);
+function mongoErrorHandler(error: MongoError) {
+  switch (error.name) {
+    case 'CastError':
+      // Handle the cast error
+      throw new ApiError(400, errors.castError);
       break;
-    case 121:
+    case 'ValidationError':
       // Handle the document validation error
-      throw new ApiError(400, errors.validationFailed);
+      // Grab out which field was wrong, and expected type
+      const errorsList = error.errors;
+      const validationErrors = Object.keys(errorsList).map((key) => ({
+        path: errorsList[key].path,
+        kind: errorsList[key].kind,
+      }));
+
+      throw new ApiError(
+        400,
+        errors.validationFailed +
+          validationErrors
+            .map((error) => `${error.path} (${error.kind})`)
+            .join(', ')
+      );
       break;
-    case 16545:
-      // Handle the unique constraint error
-      throw new ApiError(400, errors.duplicate);
+    case 'ObjectExpectedError':
+      throw new ApiError(400, errors.objectExpected);
       break;
-    case 2:
-    case 14:
-      // Handle the query error
-      throw new ApiError(400, errors.queryError);
+    case 'StrictModeError':
+      // Returns the path of the offending field
+      const path = error.path;
+      throw new ApiError(400, errors.strictMode + path);
       break;
     default:
-      // Handle other errors or rethrow the error for generic handling
+      // Catch non-mongoose errors
       throw new ApiError(500, errors.serverError);
       break;
   }

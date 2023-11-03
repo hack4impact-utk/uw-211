@@ -10,8 +10,10 @@ export const errors = {
   notFound: 'Entity does not exist',
   unauthorized: 'Unauthorized',
   duplicate: 'Name must be unique',
-  validationFailed: 'Document validation failed',
+  validationFailed: 'Document validation failed | FIELD(s): ',
   badRequest: 'Bad Request',
   serverError: 'Internal Server Error',
-  queryError: 'Query syntax error',
+  castError: 'Failed to cast value to appropriate type',
+  objectExpected: 'Nested schema path expected Object',
+  strictMode: 'Field not in schema and strict mode enabled | FIELD: ',
 };
