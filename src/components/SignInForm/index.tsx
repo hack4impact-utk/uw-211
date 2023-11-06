@@ -61,7 +61,7 @@ export default function SignInForm({ className, ...props }: SignInFormProps) {
         ) : (
           <Icons.microsoft className="mr-2 h-4 w-4" />
         )}{' '}
-        Microsoft SSO
+        Sign in with Microsoft
       </Button>
     </div>
   );
