@@ -10,6 +10,7 @@ function FormWrapper() {
   return (
     <div>
       FormWrapper
+      {formState.name}
       <Child handleChildCallback={handleChildCallback} />
     </div>
   );
