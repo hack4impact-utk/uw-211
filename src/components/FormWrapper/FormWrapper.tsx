@@ -10,7 +10,7 @@ function FormWrapper() {
   return (
     <div>
       FormWrapper
-      {formState.name}
+      <p>Parent state: {formState.name}</p>
       <Child handleChildCallback={handleChildCallback} />
     </div>
   );

@@ -1,11 +1,11 @@
 'use client';
 import { state } from '@/hooks/FormStateHook';
 
-interface HandleChildCallback {
+interface ChildProps {
   handleChildCallback: (data: state) => void;
 }
 
-function Child(Props: HandleChildCallback) {
+function Child(props: ChildProps) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -17,7 +17,7 @@ function Child(Props: HandleChildCallback) {
       name: formElements.name.value,
     };
 
-    Props.handleChildCallback(data);
+    props.handleChildCallback(data);
     console.log('test');
   };
 
@@ -27,7 +27,7 @@ function Child(Props: HandleChildCallback) {
         <input type="text" name="name" placeholder="Enter Name" />
         <br></br>
         <br></br>
-        <input type="submit" value="Submit" />
+        <button type="submit">Submit</button>
       </form>
     </div>
   );
