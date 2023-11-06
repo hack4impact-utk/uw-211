@@ -3,6 +3,7 @@
 import { HTMLAttributes, SyntheticEvent, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface SignInFormProps extends HTMLAttributes<HTMLDivElement> {}
 interface IconProps extends HTMLAttributes<SVGElement> {}
@@ -48,10 +49,19 @@ const Icons = {
 
 export default function SignInForm({ className, ...props }: SignInFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   async function onClick(event: SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
+
+    // Implement authentication here...
+    const auth = true; // isAuthenticated();
+    if (auth) {
+      setIsLoading(false);
+      router.push('/dashboard');
+    }
+    // else, redirect to 2FA
 
     setTimeout(() => {
       setIsLoading(false);
