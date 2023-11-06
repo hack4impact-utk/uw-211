@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import SignInForm from '@/components/SignInForm';
 
-export default function AuthenticationPage() {
+export default function SignIn() {
   return (
     <>
       <div className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+        {/* Left side of signin page. Only visible on >=lg responsive breakpoints. */}
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-sky-800" />
           <div className="relative z-20 flex items-center text-lg font-medium">
-            {/* Replace SVG with UW211 logo here... */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -36,6 +36,7 @@ export default function AuthenticationPage() {
             </blockquote>
           </div>
         </div>
+        {/* Right half of signin page. Visible at all times and contains signin form. */}
         <div className="p-8">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">

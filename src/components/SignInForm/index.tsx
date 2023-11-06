@@ -1,26 +1,31 @@
 'use client';
 
-import { SyntheticEvent, useState } from 'react';
+import { HTMLAttributes, SyntheticEvent, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-interface SignInFormProps extends React.HTMLAttributes<HTMLDivElement> {}
-interface IconProps extends React.HTMLAttributes<SVGElement> {}
+interface SignInFormProps extends HTMLAttributes<HTMLDivElement> {}
+interface IconProps extends HTMLAttributes<SVGElement> {}
 
 const Icons = {
   microsoft: (props: IconProps) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      height="24px"
-      width="24px"
-      {...props}
-    >
+    <svg viewBox="0 0 24 24" {...props}>
       <path
-        d="M0 0h2311v2310H0zm2564 0h2311v2310H2564zM0 2564h2311v2311H0zm2564 0h2311v2311H2564"
-        fill="currentColor"
-        width="24"
-      />
+        d="M 0 0 L 11.377 0 L 11.377 11.372 L 0 11.372 L 0 0 Z"
+        transform="matrix(1, 0, 0, 1, 0, 8.881784197001252e-16)"
+      ></path>
+      <path
+        d="M 12.623 12.623 L 24 12.623 L 24 24 L 12.623 24"
+        transform="matrix(1, 0, 0, 1, 0, 8.881784197001252e-16)"
+      ></path>
+      <path
+        d="M 0 12.623 L 11.377 12.623 L 11.377 24 L 0 24 L 0 12.623 Z"
+        transform="matrix(1, 0, 0, 1, 0, 8.881784197001252e-16)"
+      ></path>
+      <path
+        d="M 12.623 0 L 24 0 L 24 11.372 L 12.623 11.372 L 12.623 0 Z"
+        transform="matrix(1, 0, 0, 1, 0, 8.881784197001252e-16)"
+      ></path>
     </svg>
   ),
   spinner: (props: IconProps) => (
