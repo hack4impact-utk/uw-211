@@ -6,7 +6,7 @@ interface HandleChildCallback {
 }
 
 function Child(Props: HandleChildCallback) {
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
     const formElements = form.elements as typeof form.elements & {
@@ -18,7 +18,8 @@ function Child(Props: HandleChildCallback) {
     };
 
     Props.handleChildCallback(data);
-  }
+    console.log('test');
+  };
 
   return (
     <div>
