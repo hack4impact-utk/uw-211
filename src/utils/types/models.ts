@@ -72,7 +72,7 @@ export interface Agency {
   donationCoordinatorPhoneNumber?: string;
   updateScheduleInDays: number;
   emailSentTimestamp?: Date;
-  currentStatus: 'Completed' | 'Needs Review' | 'Expired';
+  currentStatus?: 'Completed' | 'Needs Review' | 'Expired';
   daysSinceEmailSent?: number;
 }
 

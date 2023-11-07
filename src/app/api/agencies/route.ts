@@ -4,7 +4,7 @@ import {
   createAgency,
 } from '@/server/actions/Agencies';
 import '@/server/models/Service';
-import { ApiError } from '@/utils/types';
+import { JSendResponse } from '@/utils/types';
 
 export async function GET() {
   try {
@@ -15,9 +15,16 @@ export async function GET() {
       currentStatus: agency.currentStatus,
       daysSinceEmailSent: agency.daysSinceEmailSent,
     }));
-    return Response.json(filteredAgencies);
+    return Response.json(
+      new JSendResponse({
+        status: 'success',
+        data: { agencies: filteredAgencies },
+      })
+    );
   } catch (error) {
-    return new Response('Internal Server Error', { status: 500 });
+    return Response.json(
+      new JSendResponse({ status: 'error', message: 'Internal Server Error' })
+    );
   }
 }
 
@@ -33,11 +40,13 @@ export async function POST(request: Request) {
     }
 
     await createAgency({ ...agency, services: serviceIds });
-    return new Response('Success', { status: 200 });
+    return Response.json(new JSendResponse({ status: 'success' }));
   } catch (error) {
-    if (error instanceof ApiError) {
-      return new Response(error.message, { status: error.statusCode });
+    if (error instanceof JSendResponse) {
+      return Response.json(error);
     }
-    return new Response('Internal Server Error', { status: 500 });
+    return Response.json(
+      new JSendResponse({ status: 'error', message: 'Internal Server Error' })
+    );
   }
 }

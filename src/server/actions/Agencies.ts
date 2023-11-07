@@ -2,7 +2,7 @@ import AgencySchema from '@/server/models/Agency';
 import ServiceSchema from '@/server/models/Service';
 import { Agency, Service, MongoError } from '@/utils/types';
 import dbConnect from '@/utils/db-connect';
-import { ApiError } from '@/utils/types';
+import { JSendResponse } from '@/utils/types';
 import { errors } from '@/utils/constants';
 
 /**
@@ -33,8 +33,16 @@ export async function getPaginatedAgencies(
   page: number,
   pageSize: number
 ): Promise<Agency[]> {
-  if (page < 1 || pageSize < 1) {
-    throw new ApiError(400, errors.badRequest);
+  if (page < 1) {
+    throw new JSendResponse({
+      status: 'fail',
+      data: { paginationError: 'Bad Page: ' + page },
+    });
+  } else if (pageSize < 1) {
+    throw new JSendResponse({
+      status: 'fail',
+      data: { paginationError: 'Bad Page Size: ' + pageSize },
+    });
   }
 
   await dbConnect();
@@ -43,32 +51,6 @@ export async function getPaginatedAgencies(
       .populate('services')
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .exec();
-    return agencies as Agency[];
-  } catch (error) {
-    mongoErrorHandler(error as MongoError);
-    return [];
-  }
-}
-
-/**
- *
- * @param status The status of the agencies to get (Completed, NeedsReview, Expired)
- * @returns All agencies matching a specific status
- * @throws ApiError if the status is not one of the three valid statuses
- */
-export async function getAgenciesByStatus(status: string): Promise<Agency[]> {
-  if (
-    status !== 'Completed' &&
-    status !== 'NeedsReview' &&
-    status !== 'Expired'
-  ) {
-    throw new ApiError(400, errors.badRequest);
-  }
-  await dbConnect();
-  try {
-    const agencies = await AgencySchema.find({ currentStatus: status })
-      .populate('services')
       .exec();
     return agencies as Agency[];
   } catch (error) {
@@ -88,7 +70,10 @@ export async function getAgencyById(id: string): Promise<Agency> {
   try {
     const agency = await AgencySchema.findById(id).populate('services').exec();
     if (!agency) {
-      throw new ApiError(404, errors.notFound);
+      throw new JSendResponse({
+        status: 'fail',
+        data: { message: 'Agency not found with id: ' + id },
+      });
     }
     return agency;
   } catch (error) {
@@ -145,7 +130,10 @@ export async function updateAgency(
     mongoErrorHandler(error.code);
   });
   if (updatedAgency!.modifiedCount === 0) {
-    throw new ApiError(404, errors.notFound);
+    throw new JSendResponse({
+      status: 'fail',
+      data: { message: 'Agency not found' },
+    });
   }
   const agency = await AgencySchema.findById(id).populate('services').exec();
   return agency as Agency;
@@ -170,7 +158,10 @@ export async function updateService(
     mongoErrorHandler(error.code);
   });
   if (updatedService!.modifiedCount === 0) {
-    throw new ApiError(404, errors.notFound);
+    throw new JSendResponse({
+      status: 'fail',
+      data: { message: 'Service not found' },
+    });
   }
   const service = await ServiceSchema.findById(id).populate('agency').exec();
   return service as Service;
@@ -190,7 +181,10 @@ export async function deleteAgency(id: string): Promise<Agency | null> {
     }
   );
   if (!deletedAgency) {
-    throw new ApiError(404, errors.notFound);
+    throw new JSendResponse({
+      status: 'fail',
+      data: { message: 'Agency not found' },
+    });
   }
   return deletedAgency as Agency;
 }
@@ -209,7 +203,10 @@ export async function deleteService(id: string): Promise<Service | null> {
     }
   );
   if (!deletedService) {
-    throw new ApiError(404, errors.notFound);
+    throw new JSendResponse({
+      status: 'fail',
+      data: { message: 'Service not found' },
+    });
   }
   return deletedService as Service;
 }
@@ -217,42 +214,52 @@ export async function deleteService(id: string): Promise<Service | null> {
 /**
  * Handles common MongoDB insertion errors and throws an appropriate ApiError.
  * @param error - The error object returned by MongoDB.
- * @throws {ApiError} - An error object with a 400|500 status code and a message describing the error.
+ * @throws {JSendResponse} - An error object with a 400|500 status code and a message describing the error.
  */
 function mongoErrorHandler(error: MongoError) {
   switch (error.name) {
     case 'CastError':
       // Handle the cast error
-      throw new ApiError(400, errors.castError);
+
+      throw new JSendResponse({
+        status: 'fail',
+        data: { castError: errors.castError },
+      });
       break;
     case 'ValidationError':
       // Handle the document validation error
       // Grab out which field was wrong, and expected type
       const errorsList = error.errors;
-      const validationErrors = Object.keys(errorsList).map((key) => ({
-        path: errorsList[key].path,
-        kind: errorsList[key].kind,
-      }));
-
-      throw new ApiError(
-        400,
-        errors.validationFailed +
-          validationErrors
-            .map((error) => `${error.path} (${error.kind})`)
-            .join(', ')
+      const validationErrors = Object.keys(errorsList).reduce(
+        (acc, key) => {
+          acc[errorsList[key].path] =
+            'Should be of type: ' + errorsList[key].kind;
+          return acc;
+        },
+        {} as Record<string, string>
       );
+
+      throw new JSendResponse({ status: 'fail', data: validationErrors });
       break;
     case 'ObjectExpectedError':
-      throw new ApiError(400, errors.objectExpected);
+      throw new JSendResponse({
+        status: 'fail',
+        data: { objectExpected: errors.objectExpected },
+      });
       break;
     case 'StrictModeError':
       // Returns the path of the offending field
       const path = error.path;
-      throw new ApiError(400, errors.strictMode + path);
+      console.log(path);
+      throw new JSendResponse({
+        status: 'fail',
+        data: { [path]: path + ' is not in schema' },
+      });
       break;
     default:
       // Catch non-mongoose errors
-      throw new ApiError(500, errors.serverError);
+      // throw new ApiError(500, errors.serverError);
+      throw new JSendResponse({ status: 'error', message: errors.serverError });
       break;
   }
 }
