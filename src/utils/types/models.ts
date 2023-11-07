@@ -1,9 +1,7 @@
-import { Document } from 'mongoose';
-import * as mongoose from 'mongoose';
-
-export interface Agency extends Document {
-  createdAt: Date;
-  updatedAt: Date;
+export interface Agency {
+  _id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
   legalAgencyName: string;
   alsoKnownAs?: string[];
   legalOrganizationalStatus: string[];
@@ -74,14 +72,15 @@ export interface Agency extends Document {
   donationCoordinatorPhoneNumber?: string;
   updateScheduleInDays: number;
   emailSentTimestamp?: Date;
-  currentStatus: 'Completed' | 'Needs Review' | 'Expired';
+  currentStatus?: 'Completed' | 'Needs Review' | 'Expired';
   daysSinceEmailSent?: number;
 }
 
-export interface Service extends mongoose.Document {
+export interface Service {
+  _id?: string;
   fullDescription: string;
   contactPersonName: string;
-  daysOpen: Day[]; // Assuming you have a separate schema/interface for 'daySchema'
+  daysOpen: Day[];
   eligibilityRequirements: string;
   applicationProcess:
     | 'Walk-in'

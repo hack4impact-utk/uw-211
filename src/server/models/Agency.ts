@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { Agency } from '@/utils/types/';
 import { agencyStatus } from '@/utils/constants';
 
@@ -166,7 +166,7 @@ const AgencySchema = new mongoose.Schema<Agency>(
       type: Boolean,
     },
     services: {
-      type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
+      type: [{ type: Schema.Types.ObjectId, ref: 'Service' }],
     },
     volunteerOpportunities: {
       type: Boolean,
@@ -208,6 +208,7 @@ const AgencySchema = new mongoose.Schema<Agency>(
     timestamps: true,
     toJSON: { getters: true, virtuals: true },
     toObject: { getters: true, virtuals: true },
+    strict: 'throw',
   }
 );
 
@@ -228,6 +229,19 @@ AgencySchema.virtual('currentStatus').get(function (this: Agency) {
   } else if (differenceInDays >= this.updateScheduleInDays) {
     return agencyStatus.Expired;
   }
+});
+
+AgencySchema.virtual('daysSinceEmailSent').get(function () {
+  if (!this.emailSentTimestamp) {
+    return null;
+  }
+
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  const currentTime = new Date();
+  const timeDiff = currentTime.getTime() - this.emailSentTimestamp.getTime();
+  const daysSinceEmailSent = Math.floor(timeDiff / millisecondsPerDay);
+
+  return daysSinceEmailSent;
 });
 
 export default mongoose.models.Agency ||
