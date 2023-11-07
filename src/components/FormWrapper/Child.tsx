@@ -1,12 +1,15 @@
 'use client';
 import { state } from '@/hooks/FormStateHook';
+import { SyntheticEvent } from 'react';
 
 interface ChildProps {
   handleChildCallback: (data: state) => void;
 }
 
 function Child(props: ChildProps) {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (
+    event: SyntheticEvent<HTMLFormElement, SubmitEvent>
+  ) => {
     event.preventDefault();
     const form = event.currentTarget;
     const formElements = form.elements as typeof form.elements & {
@@ -18,7 +21,6 @@ function Child(props: ChildProps) {
     };
 
     props.handleChildCallback(data);
-    console.log('test');
   };
 
   return (
