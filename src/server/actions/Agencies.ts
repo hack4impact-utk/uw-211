@@ -250,7 +250,6 @@ function mongoErrorHandler(error: MongoError) {
     case 'StrictModeError':
       // Returns the path of the offending field
       const path = error.path;
-      console.log(path);
       throw new JSendResponse({
         status: 'fail',
         data: { [path]: path + ' is not in schema' },
@@ -258,7 +257,6 @@ function mongoErrorHandler(error: MongoError) {
       break;
     default:
       // Catch non-mongoose errors
-      // throw new ApiError(500, errors.serverError);
       throw new JSendResponse({ status: 'error', message: errors.serverError });
       break;
   }
