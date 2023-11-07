@@ -19,11 +19,13 @@ export async function GET() {
       new JSendResponse({
         status: 'success',
         data: { agencies: filteredAgencies },
-      })
+      }),
+      { status: 200 }
     );
   } catch (error) {
     return Response.json(
-      new JSendResponse({ status: 'error', message: 'Internal Server Error' })
+      new JSendResponse({ status: 'error', message: 'Internal Server Error' }),
+      { status: 500 }
     );
   }
 }
@@ -40,13 +42,16 @@ export async function POST(request: Request) {
     }
 
     await createAgency({ ...agency, services: serviceIds });
-    return Response.json(new JSendResponse({ status: 'success' }));
+    return Response.json(new JSendResponse({ status: 'success' }), {
+      status: 201,
+    });
   } catch (error) {
     if (error instanceof JSendResponse) {
-      return Response.json(error);
+      return Response.json(error, { status: 400 });
     }
     return Response.json(
-      new JSendResponse({ status: 'error', message: 'Internal Server Error' })
+      new JSendResponse({ status: 'error', message: 'Internal Server Error' }),
+      { status: 500 }
     );
   }
 }
