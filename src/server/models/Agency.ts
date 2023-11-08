@@ -5,28 +5,22 @@ import { agencyStatus } from '@/utils/constants';
 const LocationSchema = new mongoose.Schema<Location>({
   confidential: {
     type: Boolean,
-    required: true,
   },
   physicalAddress: {
     type: String,
-    required: true,
   },
   mailingAddress: String,
   county: {
     type: String,
-    required: true,
   },
   city: {
     type: String,
-    required: true,
   },
   state: {
     type: String,
-    required: true,
   },
   zipCode: {
     type: String,
-    required: true,
   },
 });
 
@@ -45,6 +39,8 @@ const ServiceAreaSchema = new mongoose.Schema<ServiceArea>({
   },
 });
 
+// TODO: Since ContactInfoSchema does not require any fields, we will need to implement some custom validator for each of the contact info sections of the survey form.
+// e.g., Section "7. Contact Info" might require email and website, but Section "11. Person to contact for annual agency update" needs requires the person's name.
 const ContactInfoSchema = new mongoose.Schema<ContactInfo>({
   name: {
     type: String,
@@ -74,6 +70,8 @@ const ContactInfoSchema = new mongoose.Schema<ContactInfo>({
     type: String,
   },
 });
+
+// TODO: Some fields of the survey form allow more than one option (e.g. legal organizational status), so they are represented by a string array. For required fields, we need to add a validator that ensures that the array is not empty.
 
 const AgencySchema = new mongoose.Schema<Agency>(
   {
