@@ -3,32 +3,76 @@ import { Agency, ServiceArea, Location, ContactInfo } from '@/utils/types/';
 import { agencyStatus } from '@/utils/constants';
 
 const LocationSchema = new mongoose.Schema<Location>({
-  confidential: { type: Boolean, required: true },
-  physicalAddress: { type: String, required: true },
+  confidential: {
+    type: Boolean,
+    required: true,
+  },
+  physicalAddress: {
+    type: String,
+    required: true,
+  },
   mailingAddress: String,
-  county: { type: String, required: true },
-  city: { type: String, required: true },
-  state: { type: String, required: true },
-  zipCode: { type: String, required: true },
+  county: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  state: {
+    type: String,
+    required: true,
+  },
+  zipCode: {
+    type: String,
+    required: true,
+  },
 });
 
 const ServiceAreaSchema = new mongoose.Schema<ServiceArea>({
-  locations: { type: [LocationSchema] },
-  statewide: { type: Boolean },
-  nationwide: { type: Boolean },
-  other: { type: String },
+  locations: {
+    type: [LocationSchema],
+  },
+  statewide: {
+    type: Boolean,
+  },
+  nationwide: {
+    type: Boolean,
+  },
+  other: {
+    type: String,
+  },
 });
 
 const ContactInfoSchema = new mongoose.Schema<ContactInfo>({
-  name: String,
-  title: String,
-  phoneNumber: String,
-  faxNumber: String,
-  tollFreeNumber: String,
-  TDDTTYNumber: String,
-  additionalNumbers: [String],
-  email: String,
-  website: String,
+  name: {
+    type: String,
+  },
+  title: {
+    type: String,
+  },
+  phoneNumber: {
+    type: String,
+  },
+  faxNumber: {
+    type: String,
+  },
+  tollFreeNumber: {
+    type: String,
+  },
+  TDDTTYNumber: {
+    type: String,
+  },
+  additionalNumbers: {
+    type: [String],
+  },
+  email: {
+    type: String,
+  },
+  website: {
+    type: String,
+  },
 });
 
 const AgencySchema = new mongoose.Schema<Agency>(
@@ -104,7 +148,12 @@ const AgencySchema = new mongoose.Schema<Agency>(
       required: true,
     },
     services: {
-      type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Service',
+        },
+      ],
     },
     volunteerOpportunities: {
       type: Boolean,
