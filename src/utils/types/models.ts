@@ -1,19 +1,54 @@
+export interface Location {
+  confidential?: boolean;
+  physicalAddress?: string;
+  mailingAddress?: string;
+  county?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+}
+
+export interface ServiceArea {
+  locations?: Location[];
+  statewide?: boolean;
+  nationwide?: boolean;
+  other?: string;
+}
+
+export interface ContactInfo {
+  name?: string;
+  title?: string;
+  phoneNumber?: string;
+  faxNumber?: string;
+  tollFreeNumber?: string;
+  TDDTTYNumber?: string;
+  additionalNumbers?: string[];
+  email?: string;
+  website?: string;
+  hideFromWebsite?: boolean;
+}
+
 export interface Agency {
   _id?: string;
   createdAt?: Date;
   updatedAt?: Date;
   legalAgencyName: string;
   alsoKnownAs?: string[];
-  legalOrganizationalStatus: string[];
+  legalOrganizationalStatus: (
+    | 'Federal'
+    | 'State'
+    | 'County'
+    | 'City'
+    | 'Non-Profit'
+    | '501(c)3'
+    | 'Faith-based'
+    | 'For profit'
+    | string
+  )[]; //other
   briefAgencyDescription: string;
   directorNameOrTitle: string;
-  serviceAreaCityState?: string;
-  serviceAreaZipCodes?: string[];
-  serviceAreaCounties?: string[];
-  serviceAreaStatewide?: boolean;
-  serviceAreaNationwide?: boolean;
-  serviceAreaOther?: string;
-  fundingSources:
+  serviceArea: ServiceArea;
+  fundingSources: (
     | 'Federal'
     | 'State'
     | 'County'
@@ -22,27 +57,17 @@ export interface Agency {
     | 'Foundations/Private Org.'
     | 'Fees/Dues'
     | 'United Way'
-    | 'Other';
-  fundingSourcesOther?: string;
-  mailingAddress?: string;
-  physicalAddressConfidential: boolean;
-  physicalAddressStreet: string;
-  physicalAddressCounty: string;
-  physicalAddressCity: string;
-  physicalAddressState: string;
-  physicalAddressZipCode: string;
-  contactMainPhoneNumber: string;
-  contactFaxNumber?: string;
-  contactTollFreeNumber?: string;
-  contactTDDTTYNumber?: string;
-  contactAdditionalNumbers?: string[];
-  contactEmail: string;
-  websiteURL?: string;
-  languageASL?: boolean;
-  languageSpanish?: boolean;
+    | string
+  )[]; // other
+  location: Location;
+  contactInfo: ContactInfo;
+  // languageASL?: boolean;
+  // languageSpanish?: boolean;
+  // languageTeleInterpreterService?: boolean;
+  // languageOthers?: string[];
   languageTeleInterpreterService?: boolean;
-  languageOthers?: string[];
-  languageWithoutPriorNotice?: string[];
+  languages: ('ASL' | 'Spanish' | string)[]; // other
+  languagesWithoutPriorNotice?: string[];
   accessibilityADA?: boolean;
   regularHoursOpening?: string;
   regularHoursClosing?: string;
@@ -55,21 +80,15 @@ export interface Agency {
     | 'Saturday'
     | 'Sunday'
   )[];
-  contactForAnnualUpdateName: string;
-  contactForAnunualUpdateTitle: string;
-  contactForAnunualUpdatePhoneNumber: string;
-  contactForAnunualUpdateEmail: string;
-  contactForAnnualUpdateHidden?: boolean;
+  updaterContactInfo: ContactInfo;
   services?: Service[];
   volunteerOpportunities?: boolean;
   volunteerOpportunitiesEligibility?: string;
-  volunteerCoordinarorName?: string;
-  volunteerCoordinatorPhoneNumber?: string;
-  donationRequirements?: string;
-  donationPickup?: boolean;
-  donationPickupServiceArea?: string;
-  donationCoordinatorName?: string;
-  donationCoordinatorPhoneNumber?: string;
+  volunteerCoordinatorContactInfo?: ContactInfo;
+  donations?: string[];
+  donationPickUpLocation?: Location;
+  donationCoordinatorContactInfo?: ContactInfo;
+  recommendedAgencies?: string;
   updateScheduleInDays: number;
   emailSentTimestamp?: Date;
   currentStatus?: 'Completed' | 'Needs Review' | 'Expired';
@@ -82,12 +101,13 @@ export interface Service {
   contactPersonName: string;
   daysOpen: Day[];
   eligibilityRequirements: string;
-  applicationProcess:
+  applicationProcess: (
     | 'Walk-in'
     | 'Telephone'
     | 'Call to Schedule Appointment'
-    | 'Apply Online';
-  applicationProcessOther?: string;
+    | 'Apply Online'
+    | string
+  )[]; // other
   applicationProcessReferralRequiredByWhom?: string;
   feeCategory:
     | 'No Fee'
@@ -98,8 +118,7 @@ export interface Service {
     | 'Insurance: Medicare'
     | 'Insurance: Private';
   feeStraightFeeAmount?: string;
-  requiredDocuments:
-    | 'No Documents'
+  requiredDocuments: (
     | 'State Issued I.D.'
     | 'Social Security Card'
     | 'Proof of Residence'
@@ -112,8 +131,9 @@ export interface Service {
     | 'Utility Bill Cutoff Notice'
     | 'Proof of Citizenship'
     | 'Proof of Public Assistance'
-    | 'Drivers License';
-  requiredDocumentsOther?: string;
+    | 'Drivers License'
+    | string
+  )[]; // other
 }
 
 export interface Day {

@@ -1,6 +1,35 @@
-import mongoose, { Schema } from 'mongoose';
-import { Agency } from '@/utils/types/';
+import mongoose from 'mongoose';
+import { Agency, ServiceArea, Location, ContactInfo } from '@/utils/types/';
 import { agencyStatus } from '@/utils/constants';
+
+const LocationSchema = new mongoose.Schema<Location>({
+  confidential: { type: Boolean, required: true },
+  physicalAddress: { type: String, required: true },
+  mailingAddress: String,
+  county: { type: String, required: true },
+  city: { type: String, required: true },
+  state: { type: String, required: true },
+  zipCode: { type: String, required: true },
+});
+
+const ServiceAreaSchema = new mongoose.Schema<ServiceArea>({
+  locations: { type: [LocationSchema] },
+  statewide: { type: Boolean },
+  nationwide: { type: Boolean },
+  other: { type: String },
+});
+
+const ContactInfoSchema = new mongoose.Schema<ContactInfo>({
+  name: String,
+  title: String,
+  phoneNumber: String,
+  faxNumber: String,
+  tollFreeNumber: String,
+  TDDTTYNumber: String,
+  additionalNumbers: [String],
+  email: String,
+  website: String,
+});
 
 const AgencySchema = new mongoose.Schema<Agency>(
   {
@@ -23,105 +52,29 @@ const AgencySchema = new mongoose.Schema<Agency>(
       type: String,
       required: true,
     },
-    serviceAreaCityState: {
-      type: String,
-    },
-    serviceAreaZipCodes: {
-      type: [String],
-    },
-    serviceAreaCounties: {
-      type: [String],
-    },
-    serviceAreaStatewide: {
-      type: Boolean,
-    },
-    serviceAreaNationwide: {
-      type: Boolean,
-    },
-    serviceAreaOther: {
-      type: String,
+    serviceArea: {
+      type: ServiceAreaSchema,
     },
     fundingSources: {
-      type: String,
-      enum: [
-        'Federal',
-        'State',
-        'County',
-        'City',
-        'Donations',
-        'Foundations/Private Org.',
-        'Fees/Dues',
-        'United Way',
-        'Other',
-      ],
-      required: true,
-    },
-    fundingSourcesOther: {
-      type: String,
-    },
-    mailingAddress: {
-      type: String, // Only list if different from physical address
-    },
-    physicalAddressConfidential: {
-      type: Boolean,
-      required: true,
-    },
-    physicalAddressStreet: {
-      type: String,
-      required: true,
-    },
-    physicalAddressCounty: {
-      type: String,
-      required: true,
-    },
-    physicalAddressCity: {
-      type: String,
-      required: true,
-    },
-    physicalAddressState: {
-      type: String,
-      required: true,
-    },
-    physicalAddressZipCode: {
-      type: String,
-      required: true,
-    },
-    contactMainPhoneNumber: {
-      type: String,
-      required: true,
-    },
-    contactFaxNumber: {
-      type: String,
-    },
-    contactTollFreeNumber: {
-      type: String,
-    },
-    contactTDDTTYNumber: {
-      type: String,
-    },
-    contactAdditionalNumbers: {
       type: [String],
-    },
-    contactEmail: {
-      type: String,
       required: true,
     },
-    websiteURL: {
-      type: String,
+    location: {
+      type: LocationSchema,
+      required: true,
     },
-    languageASL: {
-      type: Boolean,
-    },
-    languageSpanish: {
-      type: Boolean,
+    contactInfo: {
+      type: ContactInfoSchema,
+      required: true,
     },
     languageTeleInterpreterService: {
       type: Boolean,
     },
-    languageOthers: {
+    languages: {
       type: [String],
+      required: true,
     },
-    languageWithoutPriorNotice: {
+    languagesWithoutPriorNotice: {
       type: [String],
     },
     accessibilityADA: {
@@ -146,27 +99,12 @@ const AgencySchema = new mongoose.Schema<Agency>(
       ],
       required: true,
     },
-    contactForAnnualUpdateName: {
-      type: String,
+    updaterContactInfo: {
+      type: ContactInfoSchema,
       required: true,
-    },
-    contactForAnunualUpdateTitle: {
-      type: String,
-      required: true,
-    },
-    contactForAnunualUpdatePhoneNumber: {
-      type: String,
-      required: true,
-    },
-    contactForAnunualUpdateEmail: {
-      type: String,
-      required: true,
-    },
-    contactForAnnualUpdateHidden: {
-      type: Boolean,
     },
     services: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'Service' }],
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
     },
     volunteerOpportunities: {
       type: Boolean,
@@ -174,25 +112,19 @@ const AgencySchema = new mongoose.Schema<Agency>(
     volunteerOpportunitiesEligibility: {
       type: String,
     },
-    volunteerCoordinarorName: {
-      type: String,
+    volunteerCoordinatorContactInfo: {
+      type: ContactInfoSchema,
     },
-    volunteerCoordinatorPhoneNumber: {
-      type: String,
+    donations: {
+      type: [String],
     },
-    donationRequirements: {
-      type: String,
+    donationPickUpLocation: {
+      type: LocationSchema,
     },
-    donationPickup: {
-      type: Boolean,
+    donationCoordinatorContactInfo: {
+      type: ContactInfoSchema,
     },
-    donationPickupServiceArea: {
-      type: String,
-    },
-    donationCoordinatorName: {
-      type: String,
-    },
-    donationCoordinatorPhoneNumber: {
+    recommendedAgencies: {
       type: String,
     },
     updateScheduleInDays: {
