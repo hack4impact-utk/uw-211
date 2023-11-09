@@ -41,7 +41,7 @@ export default function MobileFormStepper({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">Open</Button>
+        <Button variant="outline">Navigate Form</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="pb-2">
@@ -54,7 +54,9 @@ export default function MobileFormStepper({
                 href={step.link}
                 key={index}
                 className={`${
-                  index > currentPageIndex ? 'text-gray-400' : 'text-black'
+                  index > currentPageIndex
+                    ? 'pointer-events-none text-gray-400'
+                    : 'text-black'
                 }`}
               >
                 {step.title}
