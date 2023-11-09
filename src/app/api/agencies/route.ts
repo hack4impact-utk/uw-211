@@ -10,8 +10,8 @@ export async function GET() {
   try {
     const agencies = await getAgencies();
     const filteredAgencies = agencies.map((agency) => ({
-      legalName: agency.legalAgencyName,
-      contactInfo: agency.contactInfo,
+      name: agency.name,
+      info: agency.info,
       currentStatus: agency.currentStatus,
       daysSinceEmailSent: agency.daysSinceEmailSent,
     }));

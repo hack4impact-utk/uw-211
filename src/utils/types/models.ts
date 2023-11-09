@@ -28,7 +28,7 @@ export interface ContactInfo {
   hideFromWebsite?: boolean;
 }
 
-export interface Agency {
+export interface AgencyInfoForm {
   _id?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -89,10 +89,6 @@ export interface Agency {
   donationPickUpLocation?: Location;
   donationCoordinatorContactInfo?: ContactInfo;
   recommendedAgencies?: string;
-  updateScheduleInDays: number;
-  emailSentTimestamp?: Date;
-  currentStatus?: 'Completed' | 'Needs Review' | 'Expired';
-  daysSinceEmailSent?: number;
 }
 
 export interface Service {
@@ -134,6 +130,17 @@ export interface Service {
     | 'Drivers License'
     | string
   )[]; // other
+}
+
+export interface Agency {
+  createdAt?: Date;
+  updatedAt?: Date;
+  name: string;
+  info: AgencyInfoForm;
+  updateScheduleInDays: number;
+  emailSentTimestamp?: Date;
+  currentStatus?: 'Completed' | 'Needs Review' | 'Expired';
+  daysSinceEmailSent?: number;
 }
 
 export interface Day {
