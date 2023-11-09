@@ -2,6 +2,7 @@ import {
   AdminDashboardTable,
   Nonprofit,
 } from '@/components/AdminDashboardTable';
+import { Navbar } from '@/components/Navbar';
 
 const Data: Nonprofit[] = [
   {
@@ -29,6 +30,7 @@ const Data: Nonprofit[] = [
 export default function Dashboard() {
   return (
     <div className="p-2">
+      <Navbar />
       <AdminDashboardTable data={Data} />
     </div>
   );
