@@ -9,7 +9,8 @@ import { errors } from '@/utils/constants';
 // TODO: add query helpers to AgencySchema to avoid the same .populate({ path: 'info', populate: { path: 'services' }, })
 // TODO: move the `await dbConnect()` inside of the `try` block?
 
-// This console.log() ensures that mongoose.models.AgencyInfoForm exists before proceeding with any functions that rely on its existence.
+console.log(AgencyInfoFormModel);
+// The above console.log() ensures that mongoose.models.AgencyInfoForm exists before proceeding with any functions that rely on its existence (namely, populating the Agency's `info` field).
 // Apparently it's not enough to just import AgencyInfoFormModel and expect mongoose.models.AgencyInfoForm to exist; it must be explicitly mentioned in code or the import never even happens.
 // Without this console.log(), any attempt to populate the 'info' field of an Agency (like in getAgencies()) will result in the following error:
 //
@@ -17,7 +18,6 @@ import { errors } from '@/utils/constants';
 //    Use mongoose.model(name, schema)
 //
 // TODO: fix this!!!!!!! very unelegant solution
-console.log(AgencyInfoFormModel);
 
 /**
  * @brief Gets all agencies
