@@ -1,32 +1,25 @@
 'use client';
 import { state } from '@/hooks/FormStateHook';
-import { SyntheticEvent } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface ChildProps {
   handleChildCallback: (data: state) => void;
 }
 
 function Child(props: ChildProps) {
-  const handleSubmit = (
-    event: SyntheticEvent<HTMLFormElement, SubmitEvent>
-  ) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formElements = form.elements as typeof form.elements & {
-      name: HTMLInputElement;
-    };
-
-    const data = {
-      name: formElements.name.value,
-    };
-
-    props.handleChildCallback(data);
-  };
+  const { register, handleSubmit } = useForm();
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="Enter Name" />
+      <form
+        onSubmit={handleSubmit((data) => {
+          const d: state = {
+            name: data.name,
+          };
+          props.handleChildCallback(d);
+        })}
+      >
+        <input type="text" {...register('name')} placeholder="Enter Name" />
         <br></br>
         <br></br>
         <button type="submit">Submit</button>
