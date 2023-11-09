@@ -7,6 +7,7 @@ import { JSendResponse } from '@/utils/types';
 import { errors } from '@/utils/constants';
 
 // TODO: add query helpers to AgencySchema to avoid the same .populate({ path: 'info', populate: { path: 'services' }, })
+// TODO: move the `await dbConnect()` inside of the `try` block?
 
 // This console.log() ensures that mongoose.models.AgencyInfoForm exists before proceeding with any functions that rely on its existence.
 // Apparently it's not enough to just import AgencyInfoFormModel and expect mongoose.models.AgencyInfoForm to exist; it must be explicitly mentioned in code or the import never even happens.

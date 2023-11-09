@@ -30,6 +30,7 @@ export async function GET() {
   }
 }
 
+// TODO: fix POST method
 export async function POST(request: Request) {
   try {
     const body = await request.json();
