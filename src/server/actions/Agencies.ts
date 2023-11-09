@@ -6,6 +6,8 @@ import dbConnect from '@/utils/db-connect';
 import { JSendResponse } from '@/utils/types';
 import { errors } from '@/utils/constants';
 
+// TODO: add query helpers to AgencySchema to avoid the same .populate({ path: 'info', populate: { path: 'services' }, })
+
 // This console.log() ensures that mongoose.models.AgencyInfoForm exists before proceeding with any functions that rely on its existence.
 // Apparently it's not enough to just import AgencyInfoFormModel and expect mongoose.models.AgencyInfoForm to exist; it must be explicitly mentioned in code or the import never even happens.
 // Without this console.log(), any attempt to populate the 'info' field of an Agency (like in getAgencies()) will result in the following error:
@@ -65,7 +67,10 @@ export async function getPaginatedAgencies(
   await dbConnect();
   try {
     const agencies = await AgencyModel.find({})
-      .populate('services')
+      .populate({
+        path: 'info',
+        populate: { path: 'services' },
+      })
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .exec();
@@ -85,7 +90,12 @@ export async function getPaginatedAgencies(
 export async function getAgencyById(id: string): Promise<Agency> {
   await dbConnect();
   try {
-    const agency = await AgencyModel.findById(id).populate('services').exec();
+    const agency = await AgencyModel.findById(id)
+      .populate({
+        path: 'info',
+        populate: { path: 'services' },
+      })
+      .exec();
     if (!agency) {
       throw new JSendResponse({
         status: 'fail',
@@ -151,7 +161,12 @@ export async function updateAgency(
       data: { message: 'Agency not found' },
     });
   }
-  const agency = await AgencyModel.findById(id).populate('services').exec();
+  const agency = await AgencyModel.findById(id)
+    .populate({
+      path: 'info',
+      populate: { path: 'services' },
+    })
+    .exec();
   return agency as Agency;
 }
 
@@ -179,7 +194,12 @@ export async function updateService(
       data: { message: 'Service not found' },
     });
   }
-  const service = await ServiceModel.findById(id).populate('agency').exec();
+  const service = await ServiceModel.findById(id)
+    .populate({
+      path: 'info',
+      populate: { path: 'services' },
+    })
+    .exec();
   return service as Service;
 }
 

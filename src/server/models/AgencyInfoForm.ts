@@ -44,7 +44,7 @@ const ServiceAreaSchema = new mongoose.Schema<ServiceArea>({
 });
 
 // TODO: Since ContactInfoSchema does not require any fields, we will need to implement some custom validator for each of the contact info sections of the survey form.
-// e.g., Section "7. Contact Info" might require email and website, but Section "11. Person to contact for annual agency update" needs requires the person's name.
+// e.g., Section "7. Contact Info" might require email and website, but Section "11. Person to contact for annual agency update" needs requires the person's name. These need to be enforced somehow.
 const ContactInfoSchema = new mongoose.Schema<ContactInfo>({
   name: {
     type: String,
