@@ -10,8 +10,8 @@ export async function GET() {
   try {
     const agencies = await getAgencies();
     const filteredAgencies = agencies.map((agency) => ({
-      legalAgencyName: agency.legalAgencyName,
-      contactEmail: agency.contactEmail,
+      name: agency.name,
+      info: agency.info,
       currentStatus: agency.currentStatus,
       daysSinceEmailSent: agency.daysSinceEmailSent,
     }));
@@ -30,6 +30,7 @@ export async function GET() {
   }
 }
 
+// TODO: fix POST method
 export async function POST(request: Request) {
   try {
     const body = await request.json();

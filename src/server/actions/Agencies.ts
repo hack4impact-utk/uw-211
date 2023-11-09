@@ -1,20 +1,40 @@
-import AgencySchema from '@/server/models/Agency';
-import ServiceSchema from '@/server/models/Service';
-import { Agency, Service, MongoError } from '@/utils/types';
+import AgencyInfoFormModel from '@/server/models/AgencyInfoForm';
+import AgencyModel from '@/server/models/Agency';
+import ServiceModel from '@/server/models/Service';
+import { Service, Agency, MongoError } from '@/utils/types';
 import dbConnect from '@/utils/db-connect';
 import { JSendResponse } from '@/utils/types';
 import { errors } from '@/utils/constants';
 
+// TODO: add query helpers to AgencySchema to avoid the same .populate({ path: 'info', populate: { path: 'services' }, })
+// TODO: move the `await dbConnect()` inside of the `try` block?
+
+console.log(AgencyInfoFormModel);
+// The above console.log() ensures that mongoose.models.AgencyInfoForm exists before proceeding with any functions that rely on its existence (namely, populating the Agency's `info` field).
+// Apparently it's not enough to just import AgencyInfoFormModel and expect mongoose.models.AgencyInfoForm to exist; it must be explicitly mentioned in code or the import never even happens.
+// Without this console.log(), any attempt to populate the 'info' field of an Agency (like in getAgencies()) will result in the following error:
+//
+//    MissingSchemaError: Schema hasn't been registered for model "AgencyInfoForm".
+//    Use mongoose.model(name, schema)
+//
+// TODO: fix this!!!!!!! very unelegant solution
+
 /**
- * Finds all agencies, and their services
- * @returns All agencies and their services
+ * @brief Gets all agencies
+ * @returns An array of all agencies in the "agencies" collection with fields populated
  */
 export async function getAgencies(): Promise<Agency[]> {
   await dbConnect();
   try {
-    const agencies = await AgencySchema.find({}).populate('services').exec();
+    const agencies = await AgencyModel.find({})
+      .populate({
+        path: 'info',
+        populate: { path: 'services' },
+      })
+      .exec();
     return agencies as Agency[];
   } catch (error) {
+    console.log(error);
     mongoErrorHandler(error as MongoError);
     return [];
   }
@@ -47,8 +67,11 @@ export async function getPaginatedAgencies(
 
   await dbConnect();
   try {
-    const agencies = await AgencySchema.find({})
-      .populate('services')
+    const agencies = await AgencyModel.find({})
+      .populate({
+        path: 'info',
+        populate: { path: 'services' },
+      })
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .exec();
@@ -68,7 +91,12 @@ export async function getPaginatedAgencies(
 export async function getAgencyById(id: string): Promise<Agency> {
   await dbConnect();
   try {
-    const agency = await AgencySchema.findById(id).populate('services').exec();
+    const agency = await AgencyModel.findById(id)
+      .populate({
+        path: 'info',
+        populate: { path: 'services' },
+      })
+      .exec();
     if (!agency) {
       throw new JSendResponse({
         status: 'fail',
@@ -90,7 +118,7 @@ export async function getAgencyById(id: string): Promise<Agency> {
  */
 export async function createService(service: Service): Promise<Service> {
   await dbConnect();
-  const newService = await ServiceSchema.create(service).catch((err) => {
+  const newService = await ServiceModel.create(service).catch((err) => {
     mongoErrorHandler(err);
   });
   return newService as Service;
@@ -105,7 +133,7 @@ export async function createService(service: Service): Promise<Service> {
 export async function createAgency(agency: Agency): Promise<Agency> {
   await dbConnect();
 
-  const newAgency = await AgencySchema.create(agency).catch((error) => {
+  const newAgency = await AgencyModel.create(agency).catch((error) => {
     mongoErrorHandler(error);
   });
   return newAgency as Agency;
@@ -123,19 +151,23 @@ export async function updateAgency(
   updates: Partial<Agency>
 ): Promise<Agency | null> {
   await dbConnect();
-  const updatedAgency = await AgencySchema.updateOne(
-    { _id: id },
-    updates
-  ).catch((error) => {
-    mongoErrorHandler(error.code);
-  });
+  const updatedAgency = await AgencyModel.updateOne({ _id: id }, updates).catch(
+    (error) => {
+      mongoErrorHandler(error.code);
+    }
+  );
   if (updatedAgency!.modifiedCount === 0) {
     throw new JSendResponse({
       status: 'fail',
       data: { message: 'Agency not found' },
     });
   }
-  const agency = await AgencySchema.findById(id).populate('services').exec();
+  const agency = await AgencyModel.findById(id)
+    .populate({
+      path: 'info',
+      populate: { path: 'services' },
+    })
+    .exec();
   return agency as Agency;
 }
 
@@ -151,7 +183,7 @@ export async function updateService(
   updates: Partial<Service>
 ): Promise<Service | null> {
   await dbConnect();
-  const updatedService = await ServiceSchema.updateOne(
+  const updatedService = await ServiceModel.updateOne(
     { _id: id },
     updates
   ).catch((error) => {
@@ -163,7 +195,12 @@ export async function updateService(
       data: { message: 'Service not found' },
     });
   }
-  const service = await ServiceSchema.findById(id).populate('agency').exec();
+  const service = await ServiceModel.findById(id)
+    .populate({
+      path: 'info',
+      populate: { path: 'services' },
+    })
+    .exec();
   return service as Service;
 }
 
@@ -175,7 +212,7 @@ export async function updateService(
  */
 export async function deleteAgency(id: string): Promise<Agency | null> {
   await dbConnect();
-  const deletedAgency = await AgencySchema.findByIdAndDelete(id).catch(
+  const deletedAgency = await AgencyModel.findByIdAndDelete(id).catch(
     (error) => {
       mongoErrorHandler(error);
     }
@@ -197,7 +234,7 @@ export async function deleteAgency(id: string): Promise<Agency | null> {
  */
 export async function deleteService(id: string): Promise<Service | null> {
   await dbConnect();
-  const deletedService = await ServiceSchema.findByIdAndDelete(id).catch(
+  const deletedService = await ServiceModel.findByIdAndDelete(id).catch(
     (error) => {
       mongoErrorHandler(error);
     }
