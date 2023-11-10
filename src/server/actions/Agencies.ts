@@ -1,31 +1,23 @@
-import AgencyInfoFormModel from '@/server/models/AgencyInfoForm';
-import AgencyModel from '@/server/models/Agency';
-import ServiceModel from '@/server/models/Service';
-import { Service, Agency, MongoError } from '@/utils/types';
+// import AgencyInfoFormModel from '@/server/models/AgencyInfoForm';
+// import AgencyModel from '@/server/models/Agency';
+// import ServiceModel from '@/server/models/Service';
+import { Service, Agency, MongoError, AgencyInfoForm } from '@/utils/types';
 import dbConnect from '@/utils/db-connect';
 import { JSendResponse } from '@/utils/types';
 import { errors } from '@/utils/constants';
-
-// TODO: add query helpers to AgencySchema to avoid the same .populate({ path: 'info', populate: { path: 'services' }, })
-// TODO: move the `await dbConnect()` inside of the `try` block?
-
-console.log(AgencyInfoFormModel);
-// The above console.log() ensures that mongoose.models.AgencyInfoForm exists before proceeding with any functions that rely on its existence (namely, populating the Agency's `info` field).
-// Apparently it's not enough to just import AgencyInfoFormModel and expect mongoose.models.AgencyInfoForm to exist; it must be explicitly mentioned in code or the import never even happens.
-// Without this console.log(), any attempt to populate the 'info' field of an Agency (like in getAgencies()) will result in the following error:
-//
-//    MissingSchemaError: Schema hasn't been registered for model "AgencyInfoForm".
-//    Use mongoose.model(name, schema)
-//
-// TODO: fix this!!!!!!! very unelegant solution
+import {
+  AgencyInfoFormModel,
+  AgencyModel,
+  ServiceModel,
+} from '@/server/models';
 
 /**
  * @brief Gets all agencies
  * @returns An array of all agencies in the "agencies" collection with fields populated
  */
 export async function getAgencies(): Promise<Agency[]> {
-  await dbConnect();
   try {
+    await dbConnect();
     const agencies = await AgencyModel.find({})
       .populate({
         path: 'info',
@@ -34,7 +26,6 @@ export async function getAgencies(): Promise<Agency[]> {
       .exec();
     return agencies as Agency[];
   } catch (error) {
-    console.log(error);
     mongoErrorHandler(error as MongoError);
     return [];
   }
@@ -65,8 +56,8 @@ export async function getPaginatedAgencies(
     });
   }
 
-  await dbConnect();
   try {
+    await dbConnect();
     const agencies = await AgencyModel.find({})
       .populate({
         path: 'info',
@@ -89,8 +80,8 @@ export async function getPaginatedAgencies(
  * @throws 404 if an agency with the specifiec id is not found
  */
 export async function getAgencyById(id: string): Promise<Agency> {
-  await dbConnect();
   try {
+    await dbConnect();
     const agency = await AgencyModel.findById(id)
       .populate({
         path: 'info',
@@ -137,6 +128,25 @@ export async function createAgency(agency: Agency): Promise<Agency> {
     mongoErrorHandler(error);
   });
   return newAgency as Agency;
+}
+
+/**
+ *
+ * @param agencyInfo The agency form data to be created, with services array of _ids for each service
+ * @returns New AgencyInfoForm object with attached mongo _id
+ * @throws See mongoErrorHandler for common insertion errors
+ */
+export async function createAgencyInfo(
+  agencyInfo: AgencyInfoForm
+): Promise<AgencyInfoForm> {
+  await dbConnect();
+
+  const newAgencyInfo = await AgencyInfoFormModel.create(agencyInfo).catch(
+    (error) => {
+      mongoErrorHandler(error);
+    }
+  );
+  return newAgencyInfo as AgencyInfoForm;
 }
 
 /**

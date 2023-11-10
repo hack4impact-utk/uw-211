@@ -8,10 +8,12 @@ const AgencySchema = new mongoose.Schema<Agency>(
       type: String,
       required: true,
     },
-    info: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'AgencyInfoForm',
-    },
+    info: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'AgencyInfoForm',
+      },
+    ],
     updateScheduleInDays: {
       type: Number,
       required: true,

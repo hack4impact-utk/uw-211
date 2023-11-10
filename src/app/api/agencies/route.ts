@@ -2,9 +2,10 @@ import {
   getAgencies,
   createService,
   createAgency,
+  createAgencyInfo,
 } from '@/server/actions/Agencies';
 import '@/server/models/Service';
-import { JSendResponse } from '@/utils/types';
+import { AgencyInfoForm, JSendResponse } from '@/utils/types';
 
 export async function GET() {
   try {
@@ -30,19 +31,27 @@ export async function GET() {
   }
 }
 
-// TODO: fix POST method
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { services, ...agency } = body;
+    const { info, ...agencyWithoutInfo } = body;
+    const { services, ...infoWithoutServices } = info;
 
     const serviceIds = [];
     for (const service of services) {
-      const createdService = await createService(service);
-      serviceIds.push(createdService._id);
+      const newService = await createService(service);
+      serviceIds.push(newService._id);
     }
+    const updatedInfo = {
+      ...infoWithoutServices,
+      services: serviceIds,
+    } as AgencyInfoForm;
 
-    await createAgency({ ...agency, services: serviceIds });
+    const agencyInfo = await createAgencyInfo(updatedInfo);
+
+    const agency = { ...agencyWithoutInfo, info: agencyInfo._id };
+
+    await createAgency(agency);
     return Response.json(new JSendResponse({ status: 'success' }), {
       status: 201,
     });
