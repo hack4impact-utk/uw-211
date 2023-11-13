@@ -1,3 +1,4 @@
+import ClientSessionProvider from '@/components/ClientSessionProvider';
 import './globals.css';
 
 export const metadata = {
@@ -17,7 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ClientSessionProvider>{children}</ClientSessionProvider>
+      </body>
     </html>
   );
 }

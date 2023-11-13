@@ -4,6 +4,7 @@ import { HTMLAttributes, SyntheticEvent, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 interface SignInFormProps extends HTMLAttributes<HTMLDivElement> {}
 interface IconProps extends HTMLAttributes<SVGElement> {}
@@ -53,15 +54,11 @@ export default function SignInForm({ className, ...props }: SignInFormProps) {
 
   async function onClick(event: SyntheticEvent) {
     event.preventDefault();
-    setIsLoading(true);
 
-    // Implement authentication here...
-    const auth = true; // isAuthenticated();
-    if (auth) {
-      setIsLoading(false);
-      router.push('/dashboard');
-    }
-    // else, redirect to 2FA
+    setIsLoading(true);
+    signIn('azure-ad');
+    setIsLoading(false);
+    router.push('/dashboard');
 
     setTimeout(() => {
       setIsLoading(false);
