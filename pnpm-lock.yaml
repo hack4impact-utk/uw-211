@@ -35,9 +35,6 @@ dependencies:
   framer-motion:
     specifier: ^10.16.4
     version: 10.16.4(react-dom@18.2.0)(react@18.2.0)
-  little-state-machine:
-    specifier: ^4.8.0
-    version: 4.8.0(react@18.2.0)
   lucide-react:
     specifier: ^0.286.0
     version: 0.286.0(react@18.2.0)
@@ -4416,14 +4413,6 @@ packages:
       rfdc: 1.3.0
       wrap-ansi: 8.1.0
     dev: true
-
-  /little-state-machine@4.8.0(react@18.2.0):
-    resolution: {integrity: sha512-xfi5+iDxTLhu0hbnNubUs+qoQQqxhtEZeObP5ELjUlHnl74bbasY7mOonsGQrAouyrbag3ebNLSse5xX1T7buQ==}
-    peerDependencies:
-      react: ^16.8.0 || ^17 || ^18
-    dependencies:
-      react: 18.2.0
-    dev: false
 
   /locate-path@5.0.0:
     resolution: {integrity: sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==}
