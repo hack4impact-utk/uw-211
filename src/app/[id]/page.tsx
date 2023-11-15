@@ -26,7 +26,7 @@ const steps = [
   { id: 'Step 4', name: 'Submit', fields: [] },
 ];
 
-export default function Form() {
+export default function Form({ params }: { params: { id: string } }) {
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const delta = currentStep - previousStep;
@@ -42,6 +42,7 @@ export default function Form() {
   });
 
   const processForm: SubmitHandler<Inputs> = (data) => {
+    console.log('Form data for agency with id', params.id);
     console.log(data);
     reset();
   };
