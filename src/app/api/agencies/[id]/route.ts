@@ -19,16 +19,14 @@ export async function GET(
     );
   } catch (error) {
     if (error instanceof JSendResponse) {
-      if (error instanceof JSendResponse) {
-        return Response.json(error, { status: 400 });
-      }
-      return Response.json(
-        new JSendResponse({
-          status: 'error',
-          message: 'Internal Server Error',
-        }),
-        { status: 500 }
-      );
+      return Response.json(error, { status: 400 });
     }
+    return Response.json(
+      new JSendResponse({
+        status: 'error',
+        message: 'Internal Server Error',
+      }),
+      { status: 500 }
+    );
   }
 }
