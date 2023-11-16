@@ -1,14 +1,15 @@
 import React from 'react';
 import uw211Logo from '@/../public/img/unitedway211.png';
+import Image from 'next/image';
 
 function WelcomePage(props: { id: string }) {
   return (
-    <div className="flex items-center justify-center w-screen h-screen">
-      <div className="flex items-center flex-col-reverse md:flex-row gap-8 w-screen sm:w-auto justify-center">
-        <div className="flex-1 bg-slate-200 rounded-2xl w-10/12 sm:w-auto p-5">
-          <div className="flex justify-center flex-col gap-5 p-8 break-words sm:break-normal w-full h-full">
+    <div className="flex h-screen w-screen items-center justify-center">
+      <div className="flex w-screen flex-col-reverse items-center justify-center gap-8 sm:w-auto md:flex-row">
+        <div className="w-10/12 flex-1 rounded-2xl bg-slate-200 p-5 sm:w-auto">
+          <div className="flex h-full w-full flex-col justify-center gap-5 break-words p-8 sm:break-normal">
             <div>
-              <h2 className="text-[#df593e] text-xl font-semibold">
+              <h2 className="text-xl font-semibold text-[#df593e]">
                 211 Knoxville
               </h2>
               <h1 className="text-3xl">
@@ -17,16 +18,17 @@ function WelcomePage(props: { id: string }) {
               </h1>
               <p className=""></p>
             </div>
-            <button className="bg-[#1e57a1] hover:bg-[#7b8fc3] border-none p-2 rounded-sm text-white  w-36 sm:w-48">
+            <button className="w-36 rounded-sm border-none bg-[#1e57a1] p-2 text-white  hover:bg-[#7b8fc3] sm:w-48">
               Get Started!
             </button>
           </div>
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <img
+        <div className="flex flex-1 items-center justify-center">
+          <Image
             src={uw211Logo.src}
             alt="United Way 211 Logo"
-            className="w-60 sm:w-72"
+            width="300"
+            height="300"
           />
         </div>
       </div>

@@ -6,38 +6,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import Link from 'next/link';
 
 interface MobileFormStepperProps {
   currentPageIndex: number;
+  formSteps: Array<{ id: string; name: string; fields: Array<string> }>;
+  setCurrentStep: (step: number) => void;
 }
 
 export default function MobileFormStepper({
   currentPageIndex,
+  formSteps,
+  setCurrentStep,
 }: MobileFormStepperProps) {
-  const formSteps = [
-    {
-      title: 'Preliminaries',
-      link: '/',
-    },
-    {
-      title: 'Services',
-      link: '/',
-    },
-    {
-      title: 'Opportunities',
-      link: '/',
-    },
-    {
-      title: 'Four',
-      link: '/',
-    },
-    {
-      title: 'Five',
-      link: '/',
-    },
-  ];
-
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -50,17 +30,17 @@ export default function MobileFormStepper({
         <div className="flex flex-col justify-center gap-2">
           {formSteps.map((step, index) => {
             return (
-              <Link
-                href={step.link}
+              <Button
+                onClick={() => setCurrentStep(index)}
                 key={index}
-                className={`${
+                className={`bg-white hover:bg-gray-400 ${
                   index > currentPageIndex
                     ? 'pointer-events-none text-gray-400'
                     : 'text-black'
                 }`}
               >
-                {step.title}
-              </Link>
+                {step.name}
+              </Button>
             );
           })}
         </div>
