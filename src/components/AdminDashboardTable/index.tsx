@@ -1,5 +1,17 @@
 'use client';
-
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  DoubleArrowLeftIcon,
+  DoubleArrowRightIcon,
+} from '@radix-ui/react-icons';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -18,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -73,9 +85,15 @@ const columns: ColumnDef<Nonprofit>[] = [
 
 interface AdminDashboardTableProps {
   data: Nonprofit[];
+  pageSizeOptions?: number[];
+  updatePageSize: Dispatch<SetStateAction<number>>;
 }
 
-export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
+export function AdminDashboardTable({
+  data,
+  pageSizeOptions = [10, 25, 50],
+  updatePageSize,
+}: AdminDashboardTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -87,6 +105,7 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    manualPagination: true,
     state: {
       sorting,
       columnFilters,
@@ -105,6 +124,69 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
           }
           className="max-w-sm"
         />
+
+        {/* Dropdown for pagination */}
+        <p className="whitespace-nowrap text-sm font-medium">Rows per page</p>
+        <Select
+          value={`${table.getState().pagination.pageSize}`}
+          onValueChange={(value) => {
+            table.setPageSize(Number(value));
+            updatePageSize(Number(value));
+          }}
+        >
+          <SelectTrigger className="h-8 w-[70px]">
+            <SelectValue placeholder={table.getState().pagination.pageSize} />
+          </SelectTrigger>
+          <SelectContent side="top">
+            {pageSizeOptions.map((pageSize) => (
+              <SelectItem key={pageSize} value={`${pageSize}`}>
+                {pageSize}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+          Page {table.getState().pagination.pageIndex + 1} of{' '}
+          {table.getPageCount()}
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            aria-label="Go to first page"
+            variant="outline"
+            className="hidden h-8 w-8 p-0 lg:flex"
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <DoubleArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
+          </Button>
+          <Button
+            aria-label="Go to previous page"
+            variant="outline"
+            className="h-8 w-8 p-0"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+          </Button>
+          <Button
+            aria-label="Go to next page"
+            variant="outline"
+            className="h-8 w-8 p-0"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
+          </Button>
+          <Button
+            aria-label="Go to last page"
+            variant="outline"
+            className="hidden h-8 w-8 p-0 lg:flex"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            <DoubleArrowRightIcon className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </div>
       </div>
 
       {/* Dynamic Table: doesn't need to be edited to add additional functionality.*/}

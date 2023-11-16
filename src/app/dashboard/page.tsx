@@ -1,8 +1,10 @@
+'use client';
 import {
   AdminDashboardTable,
   Nonprofit,
 } from '@/components/AdminDashboardTable';
 import { Navbar } from '@/components/Navbar';
+import { useEffect, useState } from 'react';
 
 const Data: Nonprofit[] = [
   {
@@ -25,13 +27,69 @@ const Data: Nonprofit[] = [
     status: 'Up to date',
     email: 'gggg',
   },
+  {
+    name: 'test4',
+    status: 'Up to date',
+    email: 'gggg',
+  },
+  {
+    name: 'test4',
+    status: 'Up to date',
+    email: 'gggg',
+  },
+  {
+    name: 'test4',
+    status: 'Up to date',
+    email: 'gggg',
+  },
+  {
+    name: 'test4',
+    status: 'Up to date',
+    email: 'gggg',
+  },
+  {
+    name: 'test4',
+    status: 'Up to date',
+    email: 'gggg',
+  },
+  {
+    name: 'test4',
+    status: 'Up to date',
+    email: 'gggg',
+  },
+  {
+    name: 'test4',
+    status: 'Up to date',
+    email: 'gggg',
+  },
+  {
+    name: 'test4',
+    status: 'Up to date',
+    email: 'gggg',
+  },
+  {
+    name: 'test4',
+    status: 'Up to date',
+    email: 'gggg',
+  },
+  {
+    name: 'test4',
+    status: 'Up to date',
+    email: 'gggg',
+  },
 ];
 
 export default function Dashboard() {
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    console.log(pageSize);
+  }, [pageSize]);
+
   return (
     <div className="p-2">
       <Navbar />
-      <AdminDashboardTable data={Data} />
+      <AdminDashboardTable data={Data} updatePageSize={setPageSize} />
     </div>
   );
 }
