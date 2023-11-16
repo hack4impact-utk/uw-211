@@ -96,6 +96,10 @@ export async function getAgencyById(id: string): Promise<Agency> {
     }
     return agency;
   } catch (error) {
+    // rethrow custom error to be handled by calling function
+    if (error instanceof JSendResponse) {
+      throw error;
+    }
     mongoErrorHandler(error as MongoError);
   }
   return {} as Agency;
