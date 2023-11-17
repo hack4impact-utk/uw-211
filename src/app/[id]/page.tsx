@@ -15,7 +15,7 @@ const steps = [
   {
     id: 'Step 1',
     name: 'Preliminaries',
-    fields: ['firstName', 'lastName', 'email'],
+    fields: ['legalName', 'akas', 'legalStatus', 'agencyInfo', 'directorName'],
   },
   {
     id: 'Step 2',
@@ -81,7 +81,7 @@ export default function Form({ params }: { params: { id: string } }) {
       />
 
       {/* Form */}
-      <form className="mt-12 py-12" onSubmit={handleSubmit(processForm)}>
+      <form className="mt-4 py-6" onSubmit={handleSubmit(processForm)}>
         {/* Preliminaries */}
         {currentStep === 0 && (
           <motion.div
@@ -93,27 +93,83 @@ export default function Form({ params }: { params: { id: string } }) {
               Preliminaries
             </h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Let us get to know you.
+              Let&apos;s get to know your agency...
             </p>
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-3">
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6 sm:grid-rows-3">
+              <div className="h-2/3 sm:col-span-3">
                 <label
-                  htmlFor="firstName"
+                  htmlFor="legalName"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  First name
+                  Legal Agency Name
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    id="firstName"
-                    {...register('firstName')}
-                    autoComplete="given-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                    id="legalName"
+                    {...register('legalName')}
+                    autoComplete="legalName"
+                    className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
                   />
-                  {errors.firstName?.message && (
+                  {errors.legalName?.message && (
                     <p className="mt-2 text-sm text-red-400">
-                      {errors.firstName.message}
+                      {errors.legalName.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="h-2/3 sm:col-span-2">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Also known as
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    id="akas"
+                    {...register('akas')}
+                    autoComplete="akas"
+                    className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                  />
+                  {errors.akas?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.akas.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="h-2/3 sm:col-span-1">
+                <label
+                  htmlFor="legalStatus"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Legal Organizational Status
+                </label>
+                <div className="mt-2">
+                  <select
+                    id="legalStatus"
+                    v-model="legalStatus"
+                    {...register('legalStatus')}
+                    autoComplete="legalStatus"
+                    className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                  >
+                    <option value="">Please Select One</option>
+                    <option value="federal">Federal</option>
+                    <option value="state">State</option>
+                    <option value="county">County</option>
+                    <option value="city">City</option>
+                    <option value="non-profit">Non-profit</option>
+                    <option value="501(c)3">501(c)3</option>
+                    <option value="For profit">For profit</option>
+                    <option value="other">Other</option>
+                  </select>
+                  {errors.legalStatus?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.legalStatus.message}
                     </p>
                   )}
                 </div>
@@ -124,42 +180,65 @@ export default function Form({ params }: { params: { id: string } }) {
                   htmlFor="lastName"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Last name
+                  Director Name
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    id="lastName"
-                    {...register('lastName')}
-                    autoComplete="family-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                    id="directorName"
+                    {...register('directorName')}
+                    autoComplete="directorName"
+                    className="block h-10 w-2/3 rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
                   />
-                  {errors.lastName?.message && (
+                  {errors.directorName?.message && (
                     <p className="mt-2 text-sm text-red-400">
-                      {errors.lastName.message}
+                      {errors.directorName.message}
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3 sm:row-span-2">
                 <label
-                  htmlFor="email"
+                  htmlFor="legalStatus"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Email address
+                  Brief Agency Information
                 </label>
                 <div className="mt-2">
-                  <input
-                    id="email"
-                    type="email"
-                    {...register('email')}
-                    autoComplete="email"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                  <textarea
+                    id="agencyInfo"
+                    v-model="agencyInfo"
+                    {...register('agencyInfo')}
+                    autoComplete="agencyInfo"
+                    className="block h-24 w-full resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                   />
-                  {errors.email?.message && (
+                  {errors.agencyInfo?.message && (
                     <p className="mt-2 text-sm text-red-400">
-                      {errors.email.message}
+                      {errors.agencyInfo.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="legalStatus"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Brief Agency Information
+                </label>
+                <div className="mt-2">
+                  <textarea
+                    id="agencyInfo"
+                    v-model="agencyInfo"
+                    {...register('agencyInfo')}
+                    autoComplete="agencyInfo"
+                    className="block h-24 w-full resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                  />
+                  {errors.agencyInfo?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.agencyInfo.message}
                     </p>
                   )}
                 </div>
