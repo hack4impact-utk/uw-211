@@ -15,7 +15,16 @@ const steps = [
   {
     id: 'Step 1',
     name: 'Preliminaries',
-    fields: ['legalName', 'akas', 'legalStatus', 'agencyInfo', 'directorName'],
+    fields: [
+      'legalName',
+      'akas',
+      'legalStatus',
+      'agencyInfo',
+      'directorName',
+      'open',
+      'close',
+      'days',
+    ],
   },
   {
     id: 'Step 2',
@@ -71,6 +80,12 @@ export default function Form({ params }: { params: { id: string } }) {
     }
   };
 
+  const [isMondayChecked, setMondayChecked] = useState(false);
+  const [isTuesdayChecked, setTuesdayChecked] = useState(false);
+  const [isWednesdayChecked, setWednesdayChecked] = useState(false);
+  const [isThursdayChecked, setThursdayChecked] = useState(false);
+  const [isFridayChecked, setFridayChecked] = useState(false);
+
   return (
     <section className="absolute inset-0 flex flex-col justify-between p-24">
       {/* Stepper */}
@@ -96,7 +111,7 @@ export default function Form({ params }: { params: { id: string } }) {
               Let&apos;s get to know your agency...
             </p>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6 sm:grid-rows-3">
-              <div className="h-2/3 sm:col-span-3">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="legalName"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -119,7 +134,7 @@ export default function Form({ params }: { params: { id: string } }) {
                 </div>
               </div>
 
-              <div className="h-2/3 sm:col-span-2">
+              <div className="sm:col-span-2">
                 <label
                   htmlFor="lastName"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -142,7 +157,7 @@ export default function Form({ params }: { params: { id: string } }) {
                 </div>
               </div>
 
-              <div className="h-2/3 sm:col-span-1">
+              <div className="sm:col-span-1">
                 <label
                   htmlFor="legalStatus"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -180,7 +195,7 @@ export default function Form({ params }: { params: { id: string } }) {
                   htmlFor="lastName"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Director Name
+                  Director Name/Title
                 </label>
                 <div className="mt-2">
                   <input
@@ -203,21 +218,177 @@ export default function Form({ params }: { params: { id: string } }) {
                   htmlFor="legalStatus"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Brief Agency Information
+                  Hours of Operation
                 </label>
                 <div className="mt-2">
-                  <textarea
-                    id="agencyInfo"
-                    v-model="agencyInfo"
-                    {...register('agencyInfo')}
-                    autoComplete="agencyInfo"
-                    className="block h-24 w-full resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.agencyInfo?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.agencyInfo.message}
-                    </p>
-                  )}
+                  <fieldset className="mt-8">
+                    <label
+                      htmlFor="legalStatus"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Select day(s) of operation
+                    </label>
+                    <label>
+                      <input
+                        type="checkbox"
+                        id="monday"
+                        className="form-checkbox hidden"
+                        checked={isMondayChecked}
+                        {...register('days.monday')}
+                        onChange={() => {
+                          setMondayChecked(!isMondayChecked);
+                        }}
+                      />
+                      <span
+                        className={
+                          isMondayChecked
+                            ? 'w-18 ml-2 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                            : 'w-18 ml-2 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                        }
+                      >
+                        Monday
+                      </span>
+                    </label>
+
+                    <label>
+                      <input
+                        type="checkbox"
+                        id="tuesday"
+                        {...register('days.tuesday')}
+                        className="form-checkbox hidden"
+                        checked={isTuesdayChecked}
+                        onChange={() => {
+                          setTuesdayChecked(!isTuesdayChecked);
+                        }}
+                      />
+                      <span
+                        className={
+                          isTuesdayChecked
+                            ? 'w-18 ml-2 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                            : 'w-18 ml-2 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                        }
+                      >
+                        Tuesday
+                      </span>
+                    </label>
+
+                    <label>
+                      <input
+                        type="checkbox"
+                        id="wednesday"
+                        {...register('days.wednesday')}
+                        className="form-checkbox hidden"
+                        checked={isWednesdayChecked}
+                        onChange={() => {
+                          setWednesdayChecked(!isWednesdayChecked);
+                        }}
+                      />
+                      <span
+                        className={
+                          isWednesdayChecked
+                            ? 'w-18 ml-2 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                            : 'w-18 ml-2 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                        }
+                      >
+                        Wednesday
+                      </span>
+                    </label>
+
+                    <label>
+                      <input
+                        type="checkbox"
+                        id="thursday"
+                        className="form-checkbox hidden"
+                        checked={isThursdayChecked}
+                        {...register('days.thursday')}
+                        onChange={() => {
+                          setThursdayChecked(!isThursdayChecked);
+                        }}
+                      />
+                      <span
+                        className={
+                          isThursdayChecked
+                            ? 'w-18 ml-2 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                            : 'w-18 ml-2 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                        }
+                      >
+                        Thursday
+                      </span>
+                    </label>
+
+                    <label>
+                      <input
+                        type="checkbox"
+                        className="form-checkbox hidden"
+                        id="friday"
+                        checked={isFridayChecked}
+                        {...register('days.friday')}
+                        onChange={() => {
+                          setFridayChecked(!isFridayChecked);
+                        }}
+                      />
+                      <span
+                        className={
+                          isFridayChecked
+                            ? 'w-18 ml-2 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                            : 'w-18 ml-2 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                        }
+                      >
+                        Friday
+                      </span>
+                    </label>
+                    {errors.days?.message && (
+                      <p className="mt-2 text-sm text-red-400">
+                        {errors.days.message}
+                      </p>
+                    )}
+                  </fieldset>
+
+                  <div className="float-left mt-6 flex justify-center gap-x-4">
+                    <div className="mt-1">
+                      <label
+                        htmlFor="open"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Open
+                      </label>
+                      <input
+                        type="text"
+                        id="open"
+                        {...register('open')}
+                        autoComplete="open"
+                        className="block h-10 rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                      />
+                      {errors.open?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.open.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-end justify-center">
+                      <p>to</p>
+                    </div>
+                    <div className="mt-1">
+                      <label
+                        htmlFor="close"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Close
+                      </label>
+                      <input
+                        type="text"
+                        id="close"
+                        {...register('close')}
+                        autoComplete="close"
+                        className="block h-10 rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                      />
+                      {errors.close?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.close.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -234,7 +405,7 @@ export default function Form({ params }: { params: { id: string } }) {
                     v-model="agencyInfo"
                     {...register('agencyInfo')}
                     autoComplete="agencyInfo"
-                    className="block h-24 w-full resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                    className="block w-5/6 resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                   />
                   {errors.agencyInfo?.message && (
                     <p className="mt-2 text-sm text-red-400">
