@@ -234,10 +234,11 @@ export default function Form({ params }: { params: { id: string } }) {
                         id="monday"
                         className="form-checkbox hidden"
                         checked={isMondayChecked}
-                        {...register('days.monday')}
-                        onChange={() => {
-                          setMondayChecked(!isMondayChecked);
-                        }}
+                        {...register('days.monday', {
+                          onChange: () => {
+                            setMondayChecked(!isMondayChecked);
+                          },
+                        })}
                       />
                       <span
                         className={
@@ -254,12 +255,13 @@ export default function Form({ params }: { params: { id: string } }) {
                       <input
                         type="checkbox"
                         id="tuesday"
-                        {...register('days.tuesday')}
                         className="form-checkbox hidden"
                         checked={isTuesdayChecked}
-                        onChange={() => {
-                          setTuesdayChecked(!isTuesdayChecked);
-                        }}
+                        {...register('days.tuesday', {
+                          onChange: () => {
+                            setTuesdayChecked(!isTuesdayChecked);
+                          },
+                        })}
                       />
                       <span
                         className={
@@ -276,12 +278,13 @@ export default function Form({ params }: { params: { id: string } }) {
                       <input
                         type="checkbox"
                         id="wednesday"
-                        {...register('days.wednesday')}
                         className="form-checkbox hidden"
                         checked={isWednesdayChecked}
-                        onChange={() => {
-                          setWednesdayChecked(!isWednesdayChecked);
-                        }}
+                        {...register('days.wednesday', {
+                          onChange: () => {
+                            setWednesdayChecked(!isWednesdayChecked);
+                          },
+                        })}
                       />
                       <span
                         className={
@@ -300,10 +303,11 @@ export default function Form({ params }: { params: { id: string } }) {
                         id="thursday"
                         className="form-checkbox hidden"
                         checked={isThursdayChecked}
-                        {...register('days.thursday')}
-                        onChange={() => {
-                          setThursdayChecked(!isThursdayChecked);
-                        }}
+                        {...register('days.thursday', {
+                          onChange: () => {
+                            setThursdayChecked(!isThursdayChecked);
+                          },
+                        })}
                       />
                       <span
                         className={
@@ -322,10 +326,11 @@ export default function Form({ params }: { params: { id: string } }) {
                         className="form-checkbox hidden"
                         id="friday"
                         checked={isFridayChecked}
-                        {...register('days.friday')}
-                        onChange={() => {
-                          setFridayChecked(!isFridayChecked);
-                        }}
+                        {...register('days.friday', {
+                          onChange: () => {
+                            setFridayChecked(!isFridayChecked);
+                          },
+                        })}
                       />
                       <span
                         className={
