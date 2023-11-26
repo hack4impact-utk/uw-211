@@ -1,8 +1,15 @@
 import React from 'react';
 import uw211Logo from '@/../public/img/unitedway211.png';
 import Image from 'next/image';
+import { Agency } from '@/utils/types';
+import Link from 'next/link';
 
-function WelcomePage(props: { id: string }) {
+interface WelcomePageProps {
+  id?: string;
+  agency?: Agency;
+}
+
+function WelcomePage({ id, agency }: WelcomePageProps) {
   return (
     <div className="flex h-screen w-screen items-center justify-center">
       <div className="flex w-screen flex-col-reverse items-center justify-center gap-8 sm:w-auto md:flex-row">
@@ -14,13 +21,19 @@ function WelcomePage(props: { id: string }) {
               </h2>
               <h1 className="text-3xl">
                 Welcome
-                <span className="font-bold"> {props.id}</span>!
+                <span className="font-bold">
+                  {' '}
+                  {agency ? agency.name : 'Participant'}
+                </span>
+                !
               </h1>
               <p className=""></p>
             </div>
-            <button className="w-36 rounded-sm border-none bg-[#1e57a1] p-2 text-white  hover:bg-[#7b8fc3] sm:w-48">
-              Get Started!
-            </button>
+            <Link href={id && agency ? `/${id}` : '/'}>
+              <button className="w-36 rounded-sm border-none bg-[#1e57a1] p-2 text-white  hover:bg-[#7b8fc3] sm:w-48">
+                Get Started!
+              </button>
+            </Link>
           </div>
         </div>
         <div className="flex flex-1 items-center justify-center">
