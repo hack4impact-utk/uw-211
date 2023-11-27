@@ -24,6 +24,6 @@ export const FormDataSchema = z.object({
         data.wednesday ||
         data.thursday ||
         data.friday,
-      'At least one operational buisness day required'
+      'At least one operational business day required'
     ),
 });
