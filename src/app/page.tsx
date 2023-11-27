@@ -1,6 +1,6 @@
 'use client';
 
-import WelcomePage from '@/components/WelcomePage';
+import WelcomePage from '@/components/WelcomePage/Index';
 import { useSearchParams } from 'next/navigation';
 
 export default function Home() {
