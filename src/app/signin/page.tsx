@@ -1,7 +1,16 @@
 import Link from 'next/link';
 import SignInForm from '@/components/SignInForm';
+import { options } from '@/app/api/auth/[...nextauth]/options';
+import { getServerSession } from 'next-auth/next';
+import { redirect } from 'next/navigation';
 
-export default function SignIn() {
+export default async function SignIn() {
+  const session = await getServerSession(options);
+
+  if (session && session.user) {
+    redirect('/dashboard');
+  }
+
   return (
     <>
       <div className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
