@@ -149,14 +149,12 @@ const AgencyInfoFormSchema = new mongoose.Schema<AgencyInfoForm>(
       type: ContactInfoSchema,
       required: true,
     },
-    services: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Service',
-        },
-      ],
-    },
+    services: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service',
+      },
+    ],
     volunteerOpportunities: {
       type: Boolean,
     },
