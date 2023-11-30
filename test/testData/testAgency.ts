@@ -1,0 +1,106 @@
+import { Agency } from '@/utils/types';
+export const testAgency: Agency = {
+  name: 'This is another agency',
+  info: [
+    {
+      legalAgencyName: 'This is another agency',
+      alsoKnownAs: [],
+      legalOrganizationalStatus: ['Non-profit'],
+      briefAgencyDescription:
+        'Non-profit organization providing community services.',
+      directorNameOrTitle: 'bob',
+      serviceArea: {
+        locations: [
+          {
+            confidential: false,
+            physicalAddress: '123 Main St',
+            county: 'Knox',
+            city: 'Knoxville',
+            state: 'Tennessee',
+            zipCode: '37996',
+          },
+        ],
+        statewide: true,
+        nationwide: false,
+      },
+      fundingSources: ['Federal', 'Donations'],
+      location: {
+        confidential: false,
+        physicalAddress: '123 Main St',
+        county: 'Knox',
+        city: 'Knoxville',
+        state: 'Tennessee',
+        zipCode: '37996',
+      },
+      languageTeleInterpreterService: true,
+      languages: ['Spanish', 'ASL'],
+      languagesWithoutPriorNotice: ['French', 'Russian'],
+      accessibilityADA: true,
+      regularHoursOpening: '9:00 AM',
+      regularHoursClosing: '5:00 PM',
+      regularDaysOpen: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      updaterContactInfo: {
+        name: 'Billy',
+        title: 'Guy',
+        phoneNumber: '555-555-5555',
+        faxNumber: '555-555-5556',
+        email: 'info@coolservice.org',
+        hideFromWebsite: false,
+        additionalNumbers: [],
+      },
+      services: [
+        {
+          fullDescription: 'hi this a description.',
+          contactPersonName: 'Emma',
+          daysOpen: [
+            {
+              day: 'Monday',
+              openTime: '9:00 AM',
+              closeTime: '5:00 PM',
+            },
+            {
+              day: 'Wednesday',
+              openTime: '10:00 AM',
+              closeTime: '6:00 PM',
+            },
+            {
+              day: 'Friday',
+              openTime: '8:30 AM',
+              closeTime: '4:30 PM',
+            },
+          ],
+          eligibilityRequirements: 'Must have an annual income below $20,000.',
+          applicationProcess: ['Walk-in'],
+          applicationProcessReferralRequiredByWhom: 'No referral required',
+          feeCategory: 'No Fee',
+          requiredDocuments: ['State Issued I.D.'],
+        },
+      ],
+      volunteerOpportunities: false,
+      volunteerOpportunitiesEligibility: '18 years and older',
+      volunteerCoordinatorContactInfo: {
+        name: 'Billy',
+        title: 'Guy',
+        phoneNumber: '555-555-5555',
+        faxNumber: '555-555-5556',
+        email: 'info@coolservice.org',
+        hideFromWebsite: false,
+        additionalNumbers: [],
+      },
+      donations: [
+        'Non-perishable food items, warm clothing, and hygiene products',
+      ],
+      contactInfo: {
+        phoneNumber: '555-555-5555',
+        faxNumber: '555-555-5556',
+        tollFreeNumber: '1-800-123-4567',
+        TDDTTYNumber: '555-555-5557',
+        additionalNumbers: ['555-555-5558', '555-555-5559'],
+        email: 'info@coolservice.org',
+        website: 'https://www.coolservice.org',
+      },
+    },
+  ],
+  updateScheduleInDays: 36,
+  emailSentTimestamp: new Date(),
+};

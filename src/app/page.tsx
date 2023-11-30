@@ -1,4 +1,4 @@
-import WelcomePage from '@/components/WelcomePage';
+import WelcomePage from '@/components/WelcomePage/Index';
 import { Agency } from '@/utils/types';
 
 async function getAgency(id: string): Promise<Agency> {

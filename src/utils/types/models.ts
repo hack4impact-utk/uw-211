@@ -133,10 +133,11 @@ export interface Service {
 }
 
 export interface Agency {
+  _id?: string;
   createdAt?: Date;
   updatedAt?: Date;
   name: string;
-  info: AgencyInfoForm;
+  info: AgencyInfoForm[];
   updateScheduleInDays: number;
   emailSentTimestamp?: Date;
   currentStatus?: 'Completed' | 'Needs Review' | 'Expired';
