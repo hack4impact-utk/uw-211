@@ -20,10 +20,8 @@ export default async function Home({
     id = id[0];
   }
 
-  let agency;
-  if (id) {
-    agency = await getAgency(id);
-  }
+  // fetch agency if possible
+  const agency = id ? await getAgency(id) : undefined;
 
   return (
     <>
