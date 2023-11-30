@@ -209,12 +209,7 @@ export async function updateService(
       data: { message: 'Service not found' },
     });
   }
-  const service = await ServiceModel.findById(id)
-    .populate({
-      path: 'info',
-      populate: { path: 'services' },
-    })
-    .exec();
+  const service = await ServiceModel.findById(id).exec();
   return service as Service;
 }
 
