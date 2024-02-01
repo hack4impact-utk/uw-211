@@ -18,7 +18,7 @@ export default function DesktopFormStepper({
         <BreadcrumbItem key={index}>
           <Button
             onClick={() => setCurrentStep(index)}
-            className={`bg-white hover:bg-gray-400 ${
+            className={`bg-white hover:bg-slate-200 ${
               index > currentPageIndex
                 ? 'pointer-events-none text-gray-400'
                 : 'text-black'
