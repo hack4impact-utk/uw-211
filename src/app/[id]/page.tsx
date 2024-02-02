@@ -33,7 +33,7 @@ const steps = [
     fields: [],
   },
   { id: 'Step 3', name: 'Opportunities', fields: [] },
-  { id: 'Step 4', name: 'Submit', fields: [] },
+  { id: 'Step 4', name: 'Review', fields: [] },
 ];
 
 export default function Form({ params }: { params: { id: string } }) {
@@ -440,26 +440,34 @@ export default function Form({ params }: { params: { id: string } }) {
 
         {/* Opportunities */}
         {currentStep === 2 && (
-          <>
+          <motion.div
+            initial={{ x: delta >= 0 ? '50%' : '-50%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
             <h2 className="text-base font-semibold leading-7 text-gray-900">
               Insert Opportunities
             </h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Opportunities form
             </p>
-          </>
+          </motion.div>
         )}
 
-        {/* Submit */}
+        {/* Review */}
         {currentStep === 3 && (
-          <>
+          <motion.div
+            initial={{ x: delta >= 0 ? '50%' : '-50%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
             <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Complete
+              Review
             </h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Thank you for your submission.
+              Please review your selections and submit.
             </p>
-          </>
+          </motion.div>
         )}
       </form>
 
