@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 import DesktopFormStepper from '@/components/FormStepper/DesktopFormStepper';
+import Footer from '@/components/Footer';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 
@@ -32,7 +33,7 @@ const steps = [
     fields: [],
   },
   { id: 'Step 3', name: 'Opportunities', fields: [] },
-  { id: 'Step 4', name: 'Submit', fields: [] },
+  { id: 'Step 4', name: 'Review', fields: [] },
 ];
 
 export default function Form({ params }: { params: { id: string } }) {
@@ -87,7 +88,7 @@ export default function Form({ params }: { params: { id: string } }) {
   const [isFridayChecked, setFridayChecked] = useState(false);
 
   return (
-    <section className="absolute inset-0 flex flex-col justify-between p-24">
+    <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-24 pr-24 pt-24">
       {/* Stepper */}
       <DesktopFormStepper
         currentPageIndex={currentStep}
@@ -96,14 +97,10 @@ export default function Form({ params }: { params: { id: string } }) {
       />
 
       {/* Form */}
-      <form className="mt-4 py-6" onSubmit={handleSubmit(processForm)}>
+      <form className="py-6" onSubmit={handleSubmit(processForm)}>
         {/* Preliminaries */}
         {currentStep === 0 && (
-          <motion.div
-            initial={{ x: delta >= 0 ? '50%' : '-50%', opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-          >
+          <>
             <h2 className="text-base font-semibold leading-7 text-gray-900">
               Preliminaries
             </h2>
@@ -420,7 +417,7 @@ export default function Form({ params }: { params: { id: string } }) {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </>
         )}
 
         {/* Services */}
@@ -443,26 +440,34 @@ export default function Form({ params }: { params: { id: string } }) {
 
         {/* Opportunities */}
         {currentStep === 2 && (
-          <>
+          <motion.div
+            initial={{ x: delta >= 0 ? '50%' : '-50%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
             <h2 className="text-base font-semibold leading-7 text-gray-900">
               Insert Opportunities
             </h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Opportunities form
             </p>
-          </>
+          </motion.div>
         )}
 
-        {/* Submit */}
+        {/* Review */}
         {currentStep === 3 && (
-          <>
+          <motion.div
+            initial={{ x: delta >= 0 ? '50%' : '-50%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
             <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Complete
+              Review
             </h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Thank you for your submission.
+              Please review your selections and submit.
             </p>
-          </>
+          </motion.div>
         )}
       </form>
 
@@ -513,6 +518,7 @@ export default function Form({ params }: { params: { id: string } }) {
           </button>
         </div>
       </div>
+      <Footer />
     </section>
   );
 }

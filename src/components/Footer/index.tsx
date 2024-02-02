@@ -1,9 +1,9 @@
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 
-export default function Footer() {
+export default function Footer({ className }: { className?: string }) {
   return (
-    <footer className="w-full">
-      <ul className="flex items-center justify-center gap-2 text-xs">
+    <footer className={`w-full ${className}`}>
+      <ul className="flex items-center justify-center gap-4 text-xs">
         <li>
           <a
             href="https://uwgk.org/wpautoterms/terms-and-conditions/"
