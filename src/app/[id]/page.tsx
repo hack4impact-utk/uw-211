@@ -86,6 +86,7 @@ export default function Form({ params }: { params: { id: string } }) {
   const [isWednesdayChecked, setWednesdayChecked] = useState(false);
   const [isThursdayChecked, setThursdayChecked] = useState(false);
   const [isFridayChecked, setFridayChecked] = useState(false);
+  const [volunteerChecked, setVolunteerChecked] = useState('false');
 
   return (
     <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-24 pr-24 pt-24">
@@ -445,12 +446,114 @@ export default function Form({ params }: { params: { id: string } }) {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Insert Opportunities
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Opportunities form
-            </p>
+            <div className="flex flex-col gap-4">
+              {/* top container */}
+              <div className="flex h-full w-full flex-col gap-8 sm:flex-row">
+                {/* left section */}
+                <section className="flex h-2/3 w-1/2 flex-col gap-4 bg-blue-100">
+                  {/* radio button */}
+                  <div className="flex flex-col items-center gap-4 sm:flex-row">
+                    <h2 className="text-base font-semibold leading-7 text-gray-900">
+                      Does your organization accept volunteers?
+                    </h2>
+                    <div>
+                      <input
+                        checked={volunteerChecked === 'false'}
+                        id="default-radio-2"
+                        type="radio"
+                        value="false"
+                        name="volunteers"
+                        onChange={(e) => {
+                          setVolunteerChecked(e.target.value);
+                        }}
+                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                      />
+                      <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        No
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        checked={volunteerChecked === 'true'}
+                        id="default-radio-2"
+                        type="radio"
+                        value="true"
+                        name="volunteers"
+                        onChange={(e) => {
+                          setVolunteerChecked(e.target.value);
+                        }}
+                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                      />
+                      <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Yes
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* If volunteers == true */}
+                  {volunteerChecked === 'true' && (
+                    <section>
+                      <div>
+                        <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          Who is eligible to volunteer?
+                        </h2>
+                        <textarea
+                          name="vol_reqs"
+                          id="vol_reqs"
+                          cols={30}
+                          rows={10}
+                          placeholder="(List type of volunteer work, age, traning, background
+                      checks, other requirements for your volunteers)"
+                          className="mt-2 block h-60 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        ></textarea>
+                      </div>
+
+                      <div className="flex flex-row gap-6">
+                        <div>
+                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            Volunteer Coordinator:
+                          </h2>
+
+                          <input
+                            type="text"
+                            name="vol_coor"
+                            id="vol_coor"
+                            className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+
+                        <div>
+                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            Phone #:
+                          </h2>
+
+                          <input
+                            type="tel"
+                            name="vol_coor_tel"
+                            id="vol_coor_tel"
+                            className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+                      </div>
+                    </section>
+                  )}
+                </section>
+
+                {/* right section */}
+                <section className="h-2/3 w-1/2 bg-red-300">
+                  <h2 className="text-base font-semibold leading-7 text-gray-900">
+                    Does your organization accept donations?
+                  </h2>
+                </section>
+              </div>
+
+              {/* bottom container */}
+              <div className="flex h-full w-full flex-col sm:flex-row">
+                <section className="h-full w-full bg-green-300">
+                  bottom section
+                </section>
+              </div>
+            </div>
           </motion.div>
         )}
 
