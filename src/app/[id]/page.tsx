@@ -87,6 +87,9 @@ export default function Form({ params }: { params: { id: string } }) {
   const [isThursdayChecked, setThursdayChecked] = useState(false);
   const [isFridayChecked, setFridayChecked] = useState(false);
   const [volunteerChecked, setVolunteerChecked] = useState('false');
+  const [donationChecked, setDonationChecked] = useState('false');
+  const [pickupChecked, setPickupChecked] = useState('false');
+  const [recommendationChecked, setRecommendationChecked] = useState('false');
 
   return (
     <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-24 pr-24 pt-24">
@@ -446,11 +449,11 @@ export default function Form({ params }: { params: { id: string } }) {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-6">
               {/* top container */}
               <div className="flex h-full w-full flex-col gap-8 sm:flex-row">
                 {/* left section */}
-                <section className="flex h-2/3 w-1/2 flex-col gap-4 bg-blue-100">
+                <section className="flex h-2/3 w-1/2 flex-col gap-7">
                   {/* radio button */}
                   <div className="flex flex-col items-center gap-4 sm:flex-row">
                     <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -459,7 +462,7 @@ export default function Form({ params }: { params: { id: string } }) {
                     <div>
                       <input
                         checked={volunteerChecked === 'false'}
-                        id="default-radio-2"
+                        id="volunteers"
                         type="radio"
                         value="false"
                         name="volunteers"
@@ -475,7 +478,7 @@ export default function Form({ params }: { params: { id: string } }) {
                     <div>
                       <input
                         checked={volunteerChecked === 'true'}
-                        id="default-radio-2"
+                        id="volunteers"
                         type="radio"
                         value="true"
                         name="volunteers"
@@ -502,9 +505,9 @@ export default function Form({ params }: { params: { id: string } }) {
                           id="vol_reqs"
                           cols={30}
                           rows={10}
-                          placeholder="(List type of volunteer work, age, traning, background
-                      checks, other requirements for your volunteers)"
-                          className="mt-2 block h-60 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          placeholder="List type of volunteer work, age, traning, background
+                      checks, other requirements for your volunteers"
+                          className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         ></textarea>
                       </div>
 
@@ -540,17 +543,217 @@ export default function Form({ params }: { params: { id: string } }) {
                 </section>
 
                 {/* right section */}
-                <section className="h-2/3 w-1/2 bg-red-300">
-                  <h2 className="text-base font-semibold leading-7 text-gray-900">
-                    Does your organization accept donations?
-                  </h2>
+                <section className="h-2/3 w-1/2">
+                  {/* radio button */}
+                  <div className="flex flex-col items-center gap-4 sm:flex-row">
+                    <h2 className="text-base font-semibold leading-7 text-gray-900">
+                      Does your organization accept ongoing, non-monetary
+                      donations in support of programs or services?
+                    </h2>
+                    <div>
+                      <input
+                        checked={donationChecked === 'false'}
+                        id="donation"
+                        type="radio"
+                        value="false"
+                        name="donation"
+                        onChange={(e) => {
+                          setDonationChecked(e.target.value);
+                        }}
+                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                      />
+                      <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        No
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        checked={donationChecked === 'true'}
+                        id="donation"
+                        type="radio"
+                        value="true"
+                        name="donation"
+                        onChange={(e) => {
+                          setDonationChecked(e.target.value);
+                        }}
+                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                      />
+                      <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Yes
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* If donation == true */}
+                  {donationChecked === 'true' && (
+                    <section>
+                      <div className="mb-4 flex flex-row items-center gap-4">
+                        <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          Please list.
+                        </h2>
+                        <input
+                          type="text"
+                          name="don_ex"
+                          id="don_ex"
+                          placeholder="Example: pet food, clothing, appliances, furniture"
+                          className="mt-2 block h-8 w-2/3 resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        ></input>
+                      </div>
+
+                      <div className="flex flex-row gap-6">
+                        {/* radio button */}
+                        <div className="flex flex-col items-center gap-4 sm:flex-row">
+                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            Do you provide pick-up service?
+                          </h2>
+                          <div>
+                            <input
+                              checked={pickupChecked === 'false'}
+                              id="pickup"
+                              type="radio"
+                              value="false"
+                              name="pickup"
+                              onChange={(e) => {
+                                setPickupChecked(e.target.value);
+                              }}
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              No
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              checked={pickupChecked === 'true'}
+                              id="pickup"
+                              type="radio"
+                              value="true"
+                              name="pickup"
+                              onChange={(e) => {
+                                setPickupChecked(e.target.value);
+                              }}
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              Yes
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* If pickedup == true */}
+                      {pickupChecked === 'true' && (
+                        <section>
+                          <div className="flex flex-row items-center gap-4">
+                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                              Where?
+                            </h2>
+                            <input
+                              type="text"
+                              name="pickup_loc"
+                              id="pickup_loc"
+                              className="mt-2 block h-8 w-1/3 resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            ></input>
+                          </div>
+                        </section>
+                      )}
+
+                      <div className="flex flex-row gap-6">
+                        <div>
+                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            Donation Coordinator:
+                          </h2>
+
+                          <input
+                            type="text"
+                            name="don_coor"
+                            id="don_coor"
+                            className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+
+                        <div>
+                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            Phone #:
+                          </h2>
+
+                          <input
+                            type="tel"
+                            name="don_coor_tel"
+                            id="don_coor_tel"
+                            className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+                      </div>
+                    </section>
+                  )}
                 </section>
               </div>
 
               {/* bottom container */}
               <div className="flex h-full w-full flex-col sm:flex-row">
-                <section className="h-full w-full bg-green-300">
-                  bottom section
+                <section className="h-full w-full">
+                  {/* radio button */}
+                  <div className="flex flex-col items-center gap-4 sm:flex-row">
+                    <h2 className="text-base font-semibold leading-7 text-gray-900">
+                      Are there other agencies or services that have been
+                      helpful that you would recommend to be included in our
+                      resource database?
+                    </h2>
+                    <div>
+                      <input
+                        checked={recommendationChecked === 'false'}
+                        id="recommendation"
+                        type="radio"
+                        value="false"
+                        name="recommendation"
+                        onChange={(e) => {
+                          setRecommendationChecked(e.target.value);
+                        }}
+                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                      />
+                      <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        No
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        checked={recommendationChecked === 'true'}
+                        id="recommendation"
+                        type="radio"
+                        value="true"
+                        name="recommendation"
+                        onChange={(e) => {
+                          setRecommendationChecked(e.target.value);
+                        }}
+                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                      />
+                      <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Yes
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* If donation == true */}
+                  {recommendationChecked === 'true' && (
+                    <section>
+                      <div>
+                        <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          Please provide contact information for these
+                          agencies/services.
+                        </h2>
+                        <textarea
+                          name="recommendations_contact"
+                          id="recommendations_contact"
+                          cols={30}
+                          rows={10}
+                          placeholder="List type of volunteer work, age, traning, background
+                      checks, other requirements for your volunteers"
+                          className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        ></textarea>
+                      </div>
+                    </section>
+                  )}
                 </section>
               </div>
             </div>
