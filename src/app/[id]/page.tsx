@@ -32,7 +32,24 @@ const steps = [
     name: 'Services',
     fields: [],
   },
-  { id: 'Step 3', name: 'Opportunities', fields: [] },
+  {
+    id: 'Step 3',
+    name: 'Opportunities',
+    fields: [
+      'volunteers',
+      'vol_reqs',
+      'vol_coor',
+      'vol_coor_tel',
+      'donation',
+      'don_ex',
+      'pickup',
+      'pickup_loc',
+      'don_coor',
+      'don_coor_tel',
+      'recommendation',
+      'recommendations_contact',
+    ],
+  },
   { id: 'Step 4', name: 'Review', fields: [] },
 ];
 
@@ -60,6 +77,7 @@ export default function Form({ params }: { params: { id: string } }) {
   type FieldName = keyof Inputs;
 
   const next = async () => {
+    console.log(volunteerChecked);
     const fields = steps[currentStep].fields;
     const output = await trigger(fields as FieldName[], { shouldFocus: true });
 
@@ -461,14 +479,14 @@ export default function Form({ params }: { params: { id: string } }) {
                     </h2>
                     <div>
                       <input
-                        checked={volunteerChecked === 'false'}
                         id="volunteers"
                         type="radio"
                         value="false"
-                        name="volunteers"
+                        {...register('volunteers')}
                         onChange={(e) => {
                           setVolunteerChecked(e.target.value);
                         }}
+                        autoComplete="volunteers"
                         className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                       />
                       <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
@@ -477,20 +495,25 @@ export default function Form({ params }: { params: { id: string } }) {
                     </div>
                     <div>
                       <input
-                        checked={volunteerChecked === 'true'}
                         id="volunteers"
                         type="radio"
                         value="true"
-                        name="volunteers"
+                        {...register('volunteers')}
                         onChange={(e) => {
                           setVolunteerChecked(e.target.value);
                         }}
+                        autoComplete="volunteers"
                         className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                       />
                       <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
                         Yes
                       </label>
                     </div>
+                    {errors.volunteers?.message && (
+                      <p className="mt-2 text-sm text-red-400">
+                        {errors.volunteers.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* If volunteers == true */}
@@ -501,14 +524,20 @@ export default function Form({ params }: { params: { id: string } }) {
                           Who is eligible to volunteer?
                         </h2>
                         <textarea
-                          name="vol_reqs"
                           id="vol_reqs"
+                          {...register('vol_reqs')}
+                          autoComplete="vol_reqs"
                           cols={30}
                           rows={10}
                           placeholder="List type of volunteer work, age, traning, background
                       checks, other requirements for your volunteers"
                           className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         ></textarea>
+                        {errors.vol_reqs?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.vol_reqs.message}
+                          </p>
+                        )}
                       </div>
 
                       <div className="flex flex-row gap-6">
@@ -519,10 +548,16 @@ export default function Form({ params }: { params: { id: string } }) {
 
                           <input
                             type="text"
-                            name="vol_coor"
                             id="vol_coor"
+                            {...register('vol_coor')}
+                            autoComplete="vol_coor"
                             className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
+                          {errors.vol_coor?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.vol_coor.message}
+                            </p>
+                          )}
                         </div>
 
                         <div>
@@ -532,10 +567,17 @@ export default function Form({ params }: { params: { id: string } }) {
 
                           <input
                             type="tel"
-                            name="vol_coor_tel"
                             id="vol_coor_tel"
+                            {...register('vol_coor_tel')}
+                            autoComplete="vol_coor_tel"
                             className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
+
+                          {errors.vol_coor_tel?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.vol_coor_tel.message}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </section>
@@ -552,11 +594,10 @@ export default function Form({ params }: { params: { id: string } }) {
                     </h2>
                     <div>
                       <input
-                        checked={donationChecked === 'false'}
                         id="donation"
                         type="radio"
                         value="false"
-                        name="donation"
+                        {...register('donation')}
                         onChange={(e) => {
                           setDonationChecked(e.target.value);
                         }}
@@ -568,11 +609,10 @@ export default function Form({ params }: { params: { id: string } }) {
                     </div>
                     <div>
                       <input
-                        checked={donationChecked === 'true'}
                         id="donation"
                         type="radio"
                         value="true"
-                        name="donation"
+                        {...register('donation')}
                         onChange={(e) => {
                           setDonationChecked(e.target.value);
                         }}
@@ -582,22 +622,34 @@ export default function Form({ params }: { params: { id: string } }) {
                         Yes
                       </label>
                     </div>
+                    {errors.donation?.message && (
+                      <p className="mt-2 text-sm text-red-400">
+                        {errors.donation.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* If donation == true */}
                   {donationChecked === 'true' && (
                     <section>
-                      <div className="mb-4 flex flex-row items-center gap-4">
-                        <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Please list.
-                        </h2>
-                        <input
-                          type="text"
-                          name="don_ex"
-                          id="don_ex"
-                          placeholder="Example: pet food, clothing, appliances, furniture"
-                          className="mt-2 block h-8 w-2/3 resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        ></input>
+                      <div className="mb-2">
+                        <div className="flex flex-row items-center gap-4">
+                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            Please list.
+                          </h2>
+                          <input
+                            type="text"
+                            {...register('don_ex')}
+                            id="don_ex"
+                            placeholder="Example: pet food, clothing, appliances, furniture"
+                            className="mt-2 block h-8 w-2/3 resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          ></input>
+                        </div>
+                        {errors.don_ex?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.don_ex.message}
+                          </p>
+                        )}
                       </div>
 
                       <div className="flex flex-row gap-6">
@@ -612,7 +664,7 @@ export default function Form({ params }: { params: { id: string } }) {
                               id="pickup"
                               type="radio"
                               value="false"
-                              name="pickup"
+                              {...register('pickup')}
                               onChange={(e) => {
                                 setPickupChecked(e.target.value);
                               }}
@@ -624,11 +676,10 @@ export default function Form({ params }: { params: { id: string } }) {
                           </div>
                           <div>
                             <input
-                              checked={pickupChecked === 'true'}
                               id="pickup"
                               type="radio"
                               value="true"
-                              name="pickup"
+                              {...register('pickup')}
                               onChange={(e) => {
                                 setPickupChecked(e.target.value);
                               }}
@@ -638,6 +689,11 @@ export default function Form({ params }: { params: { id: string } }) {
                               Yes
                             </label>
                           </div>
+                          {errors.pickup?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.pickup.message}
+                            </p>
+                          )}
                         </div>
                       </div>
 
@@ -650,11 +706,16 @@ export default function Form({ params }: { params: { id: string } }) {
                             </h2>
                             <input
                               type="text"
-                              name="pickup_loc"
+                              {...register('pickup_loc')}
                               id="pickup_loc"
                               className="mt-2 block h-8 w-1/3 resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                             ></input>
                           </div>
+                          {errors.pickup_loc?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.pickup_loc.message}
+                            </p>
+                          )}
                         </section>
                       )}
 
@@ -666,10 +727,15 @@ export default function Form({ params }: { params: { id: string } }) {
 
                           <input
                             type="text"
-                            name="don_coor"
+                            {...register('don_coor')}
                             id="don_coor"
                             className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
+                          {errors.don_coor?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.don_coor.message}
+                            </p>
+                          )}
                         </div>
 
                         <div>
@@ -679,10 +745,15 @@ export default function Form({ params }: { params: { id: string } }) {
 
                           <input
                             type="tel"
-                            name="don_coor_tel"
+                            {...register('don_coor_tel')}
                             id="don_coor_tel"
                             className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
+                          {errors.don_coor_tel?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.don_coor_tel.message}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </section>
@@ -702,11 +773,10 @@ export default function Form({ params }: { params: { id: string } }) {
                     </h2>
                     <div>
                       <input
-                        checked={recommendationChecked === 'false'}
                         id="recommendation"
                         type="radio"
                         value="false"
-                        name="recommendation"
+                        {...register('recommendation')}
                         onChange={(e) => {
                           setRecommendationChecked(e.target.value);
                         }}
@@ -718,11 +788,10 @@ export default function Form({ params }: { params: { id: string } }) {
                     </div>
                     <div>
                       <input
-                        checked={recommendationChecked === 'true'}
                         id="recommendation"
                         type="radio"
                         value="true"
-                        name="recommendation"
+                        {...register('recommendation')}
                         onChange={(e) => {
                           setRecommendationChecked(e.target.value);
                         }}
@@ -733,6 +802,11 @@ export default function Form({ params }: { params: { id: string } }) {
                       </label>
                     </div>
                   </div>
+                  {errors.recommendation?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.recommendation.message}
+                    </p>
+                  )}
 
                   {/* If donation == true */}
                   {recommendationChecked === 'true' && (
@@ -743,7 +817,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           agencies/services.
                         </h2>
                         <textarea
-                          name="recommendations_contact"
+                          {...register('recommendations_contact')}
                           id="recommendations_contact"
                           cols={30}
                           rows={10}
@@ -751,6 +825,11 @@ export default function Form({ params }: { params: { id: string } }) {
                       checks, other requirements for your volunteers"
                           className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         ></textarea>
+                        {errors.recommendations_contact?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.recommendations_contact.message}
+                          </p>
+                        )}
                       </div>
                     </section>
                   )}
