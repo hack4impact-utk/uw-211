@@ -110,7 +110,7 @@ export default function Form({ params }: { params: { id: string } }) {
   const [recommendationChecked, setRecommendationChecked] = useState('false');
 
   return (
-    <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-24 pr-24 pt-24">
+    <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-4 pr-4 pt-24 sm:pl-12 sm:pr-12 md:pl-24 md:pr-24">
       {/* Stepper */}
       <DesktopFormStepper
         currentPageIndex={currentStep}
@@ -469,45 +469,47 @@ export default function Form({ params }: { params: { id: string } }) {
           >
             <div className="flex flex-col gap-6">
               {/* top container */}
-              <div className="flex h-full w-full flex-col gap-8 sm:flex-row">
+              <div className="flex h-full w-full flex-col gap-8 lg:flex-row">
                 {/* left section */}
-                <section className="flex h-2/3 w-1/2 flex-col gap-7">
-                  {/* radio button */}
-                  <div className="flex flex-col items-center gap-4 sm:flex-row">
+                <section className="h-2/3 w-full lg:w-1/2">
+                  <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
                     <h2 className="text-base font-semibold leading-7 text-gray-900">
                       Does your organization accept volunteers?
                     </h2>
-                    <div>
-                      <input
-                        id="volunteers"
-                        type="radio"
-                        value="false"
-                        {...register('volunteers')}
-                        onChange={(e) => {
-                          setVolunteerChecked(e.target.value);
-                        }}
-                        autoComplete="volunteers"
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                      />
-                      <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                        No
-                      </label>
-                    </div>
-                    <div>
-                      <input
-                        id="volunteers"
-                        type="radio"
-                        value="true"
-                        {...register('volunteers')}
-                        onChange={(e) => {
-                          setVolunteerChecked(e.target.value);
-                        }}
-                        autoComplete="volunteers"
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                      />
-                      <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                        Yes
-                      </label>
+                    {/* radio button */}
+                    <div className="flex flex-row gap-4 whitespace-nowrap">
+                      <div>
+                        <input
+                          id="volunteers"
+                          type="radio"
+                          value="false"
+                          {...register('volunteers')}
+                          onChange={(e) => {
+                            setVolunteerChecked(e.target.value);
+                          }}
+                          autoComplete="volunteers"
+                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                        />
+                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                          No
+                        </label>
+                      </div>
+                      <div>
+                        <input
+                          id="volunteers"
+                          type="radio"
+                          value="true"
+                          {...register('volunteers')}
+                          onChange={(e) => {
+                            setVolunteerChecked(e.target.value);
+                          }}
+                          autoComplete="volunteers"
+                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                        />
+                        <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                          Yes
+                        </label>
+                      </div>
                     </div>
                     {errors.volunteers?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -518,8 +520,8 @@ export default function Form({ params }: { params: { id: string } }) {
 
                   {/* If volunteers == true */}
                   {volunteerChecked === 'true' && (
-                    <section>
-                      <div>
+                    <section className="w-full">
+                      <div className="mb-4">
                         <h2 className="text-base font-semibold leading-7 text-gray-900">
                           Who is eligible to volunteer?
                         </h2>
@@ -529,8 +531,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           autoComplete="vol_reqs"
                           cols={30}
                           rows={10}
-                          placeholder="List type of volunteer work, age, traning, background
-                      checks, other requirements for your volunteers"
+                          placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
                           className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         ></textarea>
                         {errors.vol_reqs?.message && (
@@ -540,8 +541,8 @@ export default function Form({ params }: { params: { id: string } }) {
                         )}
                       </div>
 
-                      <div className="flex flex-row gap-6">
-                        <div>
+                      <div className="flex w-full flex-col gap-6 sm:flex-row">
+                        <div className="w-full sm:w-1/2">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
                             Volunteer Coordinator:
                           </h2>
@@ -551,7 +552,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             id="vol_coor"
                             {...register('vol_coor')}
                             autoComplete="vol_coor"
-                            className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           {errors.vol_coor?.message && (
                             <p className="mt-2 text-sm text-red-400">
@@ -560,7 +561,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           )}
                         </div>
 
-                        <div>
+                        <div className="w-full sm:w-1/2">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
                             Phone #:
                           </h2>
@@ -570,7 +571,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             id="vol_coor_tel"
                             {...register('vol_coor_tel')}
                             autoComplete="vol_coor_tel"
-                            className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
 
                           {errors.vol_coor_tel?.message && (
@@ -585,42 +586,44 @@ export default function Form({ params }: { params: { id: string } }) {
                 </section>
 
                 {/* right section */}
-                <section className="h-2/3 w-1/2">
-                  {/* radio button */}
-                  <div className="flex flex-col items-center gap-4 sm:flex-row">
+                <section className="h-2/3 w-full lg:w-1/2">
+                  <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:gap-12">
                     <h2 className="text-base font-semibold leading-7 text-gray-900">
                       Does your organization accept ongoing, non-monetary
                       donations in support of programs or services?
                     </h2>
-                    <div>
-                      <input
-                        id="donation"
-                        type="radio"
-                        value="false"
-                        {...register('donation')}
-                        onChange={(e) => {
-                          setDonationChecked(e.target.value);
-                        }}
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                      />
-                      <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                        No
-                      </label>
-                    </div>
-                    <div>
-                      <input
-                        id="donation"
-                        type="radio"
-                        value="true"
-                        {...register('donation')}
-                        onChange={(e) => {
-                          setDonationChecked(e.target.value);
-                        }}
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                      />
-                      <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                        Yes
-                      </label>
+                    {/* radio button */}
+                    <div className="flex flex-row gap-4 whitespace-nowrap">
+                      <div>
+                        <input
+                          id="donation"
+                          type="radio"
+                          value="false"
+                          {...register('donation')}
+                          onChange={(e) => {
+                            setDonationChecked(e.target.value);
+                          }}
+                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                        />
+                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                          No
+                        </label>
+                      </div>
+                      <div>
+                        <input
+                          id="donation"
+                          type="radio"
+                          value="true"
+                          {...register('donation')}
+                          onChange={(e) => {
+                            setDonationChecked(e.target.value);
+                          }}
+                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                        />
+                        <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                          Yes
+                        </label>
+                      </div>
                     </div>
                     {errors.donation?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -633,7 +636,7 @@ export default function Form({ params }: { params: { id: string } }) {
                   {donationChecked === 'true' && (
                     <section>
                       <div className="mb-2">
-                        <div className="flex flex-row items-center gap-4">
+                        <div className="flex flex-col items-start lg:flex-row lg:items-center lg:gap-8">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
                             Please list.
                           </h2>
@@ -642,7 +645,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             {...register('don_ex')}
                             id="don_ex"
                             placeholder="Example: pet food, clothing, appliances, furniture"
-                            className="mt-2 block h-8 w-2/3 resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 lg:w-2/3"
                           ></input>
                         </div>
                         {errors.don_ex?.message && (
@@ -654,40 +657,42 @@ export default function Form({ params }: { params: { id: string } }) {
 
                       <div className="flex flex-row gap-6">
                         {/* radio button */}
-                        <div className="flex flex-col items-center gap-4 sm:flex-row">
+                        <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:gap-12">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
                             Do you provide pick-up service?
                           </h2>
-                          <div>
-                            <input
-                              checked={pickupChecked === 'false'}
-                              id="pickup"
-                              type="radio"
-                              value="false"
-                              {...register('pickup')}
-                              onChange={(e) => {
-                                setPickupChecked(e.target.value);
-                              }}
-                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                            />
-                            <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                              No
-                            </label>
-                          </div>
-                          <div>
-                            <input
-                              id="pickup"
-                              type="radio"
-                              value="true"
-                              {...register('pickup')}
-                              onChange={(e) => {
-                                setPickupChecked(e.target.value);
-                              }}
-                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                            />
-                            <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                              Yes
-                            </label>
+                          <div className="flex flex-row gap-4 whitespace-nowrap">
+                            <div>
+                              <input
+                                checked={pickupChecked === 'false'}
+                                id="pickup"
+                                type="radio"
+                                value="false"
+                                {...register('pickup')}
+                                onChange={(e) => {
+                                  setPickupChecked(e.target.value);
+                                }}
+                                className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              />
+                              <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                No
+                              </label>
+                            </div>
+                            <div>
+                              <input
+                                id="pickup"
+                                type="radio"
+                                value="true"
+                                {...register('pickup')}
+                                onChange={(e) => {
+                                  setPickupChecked(e.target.value);
+                                }}
+                                className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              />
+                              <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Yes
+                              </label>
+                            </div>
                           </div>
                           {errors.pickup?.message && (
                             <p className="mt-2 text-sm text-red-400">
@@ -700,27 +705,29 @@ export default function Form({ params }: { params: { id: string } }) {
                       {/* If pickedup == true */}
                       {pickupChecked === 'true' && (
                         <section>
-                          <div className="flex flex-row items-center gap-4">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
-                              Where?
-                            </h2>
-                            <input
-                              type="text"
-                              {...register('pickup_loc')}
-                              id="pickup_loc"
-                              className="mt-2 block h-8 w-1/3 resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                            ></input>
+                          <div className="mb-2">
+                            <div className="flex flex-row items-center gap-4">
+                              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                                Where?
+                              </h2>
+                              <input
+                                type="text"
+                                {...register('pickup_loc')}
+                                id="pickup_loc"
+                                className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                              ></input>
+                            </div>
+                            {errors.pickup_loc?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.pickup_loc.message}
+                              </p>
+                            )}
                           </div>
-                          {errors.pickup_loc?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.pickup_loc.message}
-                            </p>
-                          )}
                         </section>
                       )}
 
-                      <div className="flex flex-row gap-6">
-                        <div>
+                      <div className="flex w-full flex-col gap-6 sm:flex-row">
+                        <div className="w-full sm:w-1/2">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
                             Donation Coordinator:
                           </h2>
@@ -729,7 +736,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             type="text"
                             {...register('don_coor')}
                             id="don_coor"
-                            className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           {errors.don_coor?.message && (
                             <p className="mt-2 text-sm text-red-400">
@@ -738,7 +745,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           )}
                         </div>
 
-                        <div>
+                        <div className="w-full sm:w-1/2">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
                             Phone #:
                           </h2>
@@ -747,7 +754,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             type="tel"
                             {...register('don_coor_tel')}
                             id="don_coor_tel"
-                            className="h-8 w-64 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           {errors.don_coor_tel?.message && (
                             <p className="mt-2 text-sm text-red-400">
@@ -762,44 +769,46 @@ export default function Form({ params }: { params: { id: string } }) {
               </div>
 
               {/* bottom container */}
-              <div className="flex h-full w-full flex-col sm:flex-row">
+              <div className="flex h-full w-full flex-col lg:flex-row">
                 <section className="h-full w-full">
-                  {/* radio button */}
-                  <div className="flex flex-col items-center gap-4 sm:flex-row">
+                  <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:gap-12">
                     <h2 className="text-base font-semibold leading-7 text-gray-900">
                       Are there other agencies or services that have been
                       helpful that you would recommend to be included in our
                       resource database?
                     </h2>
-                    <div>
-                      <input
-                        id="recommendation"
-                        type="radio"
-                        value="false"
-                        {...register('recommendation')}
-                        onChange={(e) => {
-                          setRecommendationChecked(e.target.value);
-                        }}
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                      />
-                      <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                        No
-                      </label>
-                    </div>
-                    <div>
-                      <input
-                        id="recommendation"
-                        type="radio"
-                        value="true"
-                        {...register('recommendation')}
-                        onChange={(e) => {
-                          setRecommendationChecked(e.target.value);
-                        }}
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                      />
-                      <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                        Yes
-                      </label>
+                    {/* radio button */}
+                    <div className="flex flex-row gap-4 whitespace-nowrap">
+                      <div>
+                        <input
+                          id="recommendation"
+                          type="radio"
+                          value="false"
+                          {...register('recommendation')}
+                          onChange={(e) => {
+                            setRecommendationChecked(e.target.value);
+                          }}
+                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                        />
+                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                          No
+                        </label>
+                      </div>
+                      <div>
+                        <input
+                          id="recommendation"
+                          type="radio"
+                          value="true"
+                          {...register('recommendation')}
+                          onChange={(e) => {
+                            setRecommendationChecked(e.target.value);
+                          }}
+                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                        />
+                        <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                          Yes
+                        </label>
+                      </div>
                     </div>
                   </div>
                   {errors.recommendation?.message && (
