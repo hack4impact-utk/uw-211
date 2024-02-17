@@ -9,6 +9,15 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 
 import DesktopFormStepper from '@/components/FormStepper/DesktopFormStepper';
 import Footer from '@/components/Footer';
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from '@/components/ui/resizable';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 
@@ -38,7 +47,7 @@ const steps = [
 
 export default function Form({ params }: { params: { id: string } }) {
   const [previousStep, setPreviousStep] = useState(0);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1);
   const delta = currentStep - previousStep;
 
   const {
@@ -86,6 +95,68 @@ export default function Form({ params }: { params: { id: string } }) {
   const [isWednesdayChecked, setWednesdayChecked] = useState(false);
   const [isThursdayChecked, setThursdayChecked] = useState(false);
   const [isFridayChecked, setFridayChecked] = useState(false);
+
+  interface Service {
+    id: number;
+    name: string;
+    description: string;
+    contact: string | null;
+    // hours
+    eligibility: string;
+    applicationProcess: {
+      walkIn: boolean;
+      phone: boolean;
+      appointment: boolean;
+      online: boolean;
+      other: string | null;
+      referral: {
+        required: boolean;
+        contact: string | null;
+      };
+    };
+    fees:
+      | 'none'
+      | {
+          straight: string | null;
+          slidingScale: boolean;
+          insurance: {
+            medicare_tenncare: boolean;
+            medicare: boolean;
+            private: boolean;
+          };
+        };
+    requiredDocuments:
+      | 'none'
+      | {
+          stateId: boolean;
+          ssn: boolean;
+          proofOfResidence: boolean;
+          proofOfIncome: boolean;
+          birthCertificate: boolean;
+          medicalRecords: boolean;
+          psychRecords: boolean;
+          proofOfNeed: boolean;
+          utilityBill: boolean;
+          utilityCutoffNotice: boolean;
+          proofOfCitizenship: boolean;
+          proofOfPublicAssistance: boolean;
+          driversLicense: boolean;
+          other: string | null;
+        };
+  }
+
+  let services: Service = [
+    {
+      id: 0,
+      name: 'Hi',
+    },
+    {
+      id: 1,
+      name: 'Bye',
+    },
+  ];
+
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   return (
     <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-24 pr-24 pt-24">
@@ -429,11 +500,110 @@ export default function Form({ params }: { params: { id: string } }) {
           >
             <>
               <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Insert Services
+                Services
               </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                Services form
-              </p>
+              {/* Whoever chose "resizable" over "resizeable" .. ;-; */}
+              <ResizablePanelGroup
+                direction="horizontal"
+                className="rounded-lg border"
+              >
+                <ResizablePanel defaultSize={20}>
+                  <div className="mt-2 flex flex-col px-4 py-2">
+                    {services.map((service: Service) => (
+                      <Button
+                        key={service.id}
+                        onClick={() => setSelectedService(service)}
+                        className="m-1"
+                      >
+                        {service.name}
+                      </Button>
+                    ))}
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel>
+                  <div className="mt-2 px-4 py-2">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Name
+                    </label>
+                    <Input
+                      id="name"
+                      className="mb-2"
+                      value={selectedService?.name}
+                    />
+
+                    <label
+                      htmlFor="description"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Description
+                    </label>
+                    <Textarea id="description" className="mb-2" />
+
+                    <label
+                      htmlFor="contact"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Contact
+                    </label>
+                    <Input id="contact" className="mb-2" />
+
+                    {/* hours here eventually */}
+
+                    <label
+                      htmlFor="eligibility"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Eligibility
+                    </label>
+                    <Textarea id="eligibility" className="mb-2" />
+
+                    <label
+                      htmlFor="applicationProcess"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Application Process
+                    </label>
+                    <div
+                      id="applicationProcess"
+                      className="flex flex-col ml-2"
+                    >
+                      <div className='space-x-2'>
+                        <Checkbox id="walkIn" />
+                        <label
+                          htmlFor="walkIn"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Walk-in
+                        </label>
+                      </div>
+
+                      <div className='space-x-2'>
+                        <Checkbox id="telephone" />
+                        <label
+                          htmlFor="telephone"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Telephone
+                        </label>
+                      </div>
+
+                      <div className='space-x-2'>
+                        <Checkbox id="appointment" />
+                        <label
+                          htmlFor="appointment"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Call to Schedule an Appointment
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
             </>
           </motion.div>
         )}
