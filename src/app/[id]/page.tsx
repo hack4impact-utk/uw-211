@@ -37,8 +37,23 @@ const steps = [
 ];
 
 export default function Form({ params }: { params: { id: string } }) {
+  const [previousStep, setPreviousStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0);
+  const delta = currentStep - previousStep;
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    trigger,
+    formState: { errors, isDirty },
+  } = useForm<Inputs>({
+    resolver: zodResolver(FormDataSchema),
+  });
+
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!isDirty) return;
       event.preventDefault();
       event.returnValue =
         'Your changes will not be saved if you leave the page.';
@@ -50,21 +65,7 @@ export default function Form({ params }: { params: { id: string } }) {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, []);
-
-  const [previousStep, setPreviousStep] = useState(0);
-  const [currentStep, setCurrentStep] = useState(0);
-  const delta = currentStep - previousStep;
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    trigger,
-    formState: { errors },
-  } = useForm<Inputs>({
-    resolver: zodResolver(FormDataSchema),
-  });
+  }, [isDirty]);
 
   const processForm: SubmitHandler<Inputs> = (data) => {
     console.log('Form data for agency with id', params.id);
