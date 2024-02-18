@@ -221,18 +221,21 @@ export async function updateService(
  */
 export async function deleteAgency(id: string): Promise<Agency | null> {
   await dbConnect();
-  const deletedAgency = await AgencyModel.findByIdAndDelete(id).catch(
+  // A mongoose update changed the return type of findByIdAndDelete
+  // https://github.com/Automattic/mongoose/issues/14233
+  // Should be fixed in the next 7.6.x release
+  const deletedAgency = (await AgencyModel.findByIdAndDelete(id).catch(
     (error) => {
       mongoErrorHandler(error);
     }
-  );
+  )) as unknown as Agency;
   if (!deletedAgency) {
     throw new JSendResponse({
       status: 'fail',
       data: { message: 'Agency not found' },
     });
   }
-  return deletedAgency as Agency;
+  return deletedAgency;
 }
 
 /**
@@ -243,18 +246,21 @@ export async function deleteAgency(id: string): Promise<Agency | null> {
  */
 export async function deleteService(id: string): Promise<Service | null> {
   await dbConnect();
-  const deletedService = await ServiceModel.findByIdAndDelete(id).catch(
+  // A mongoose update changed the return type of findByIdAndDelete
+  // https://github.com/Automattic/mongoose/issues/14233
+  // Should be fixed in the next 7.6.x release
+  const deletedService = (await ServiceModel.findByIdAndDelete(id).catch(
     (error) => {
       mongoErrorHandler(error);
     }
-  );
+  )) as unknown as Service;
   if (!deletedService) {
     throw new JSendResponse({
       status: 'fail',
       data: { message: 'Service not found' },
     });
   }
-  return deletedService as Service;
+  return deletedService;
 }
 
 /**
