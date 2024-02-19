@@ -107,7 +107,8 @@ export default function Form({ params }: { params: { id: string } }) {
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Let&apos;s get to know your agency...
             </p>
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6 sm:grid-rows-3">
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 md:grid-cols-6 md:grid-rows-3">
+              {/* Legal Agency Name */}
               <div className="sm:col-span-3">
                 <label
                   htmlFor="legalName"
@@ -131,7 +132,8 @@ export default function Form({ params }: { params: { id: string } }) {
                 </div>
               </div>
 
-              <div className="sm:col-span-2">
+              {/* Also known as */}
+              <div className="md:col-span-2">
                 <label
                   htmlFor="lastName"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -154,7 +156,8 @@ export default function Form({ params }: { params: { id: string } }) {
                 </div>
               </div>
 
-              <div className="sm:col-span-1">
+              {/* Legal organizational Status */}
+              <div className="md:col-span-1">
                 <label
                   htmlFor="legalStatus"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -187,6 +190,7 @@ export default function Form({ params }: { params: { id: string } }) {
                 </div>
               </div>
 
+              {/* Director Name/Title */}
               <div className="sm:col-span-3">
                 <label
                   htmlFor="lastName"
@@ -210,7 +214,8 @@ export default function Form({ params }: { params: { id: string } }) {
                 </div>
               </div>
 
-              <div className="sm:col-span-3 sm:row-span-2">
+              {/* Hours of Operation */}
+              <div className="md:col-span-3 md:row-span-2">
                 <label
                   htmlFor="legalStatus"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -394,7 +399,8 @@ export default function Form({ params }: { params: { id: string } }) {
                 </div>
               </div>
 
-              <div className="sm:col-span-3">
+              {/* Brief Agency Information */}
+              <div className="md:col-span-3">
                 <label
                   htmlFor="legalStatus"
                   className="block text-sm font-medium leading-6 text-gray-900"
