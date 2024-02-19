@@ -18,6 +18,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Plus } from 'lucide-react';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 
@@ -100,55 +103,112 @@ export default function Form({ params }: { params: { id: string } }) {
     id: number;
     name: string;
     description: string;
-    contact: string | null;
+    contact: string | '';
     // hours
     eligibility: string;
     applicationProcess: {
       walkIn: boolean;
-      phone: boolean;
+      telephone: boolean;
       appointment: boolean;
       online: boolean;
-      other: string | null;
+      other: {
+        selected: boolean;
+        content: string | '';
+      };
       referral: {
         required: boolean;
-        contact: string | null;
+        contact: string | '';
       };
     };
-    fees:
-      | 'none'
-      | {
-          straight: string | null;
-          slidingScale: boolean;
-          insurance: {
-            medicare_tenncare: boolean;
-            medicare: boolean;
-            private: boolean;
-          };
-        };
-    requiredDocuments:
-      | 'none'
-      | {
-          stateId: boolean;
-          ssn: boolean;
-          proofOfResidence: boolean;
-          proofOfIncome: boolean;
-          birthCertificate: boolean;
-          medicalRecords: boolean;
-          psychRecords: boolean;
-          proofOfNeed: boolean;
-          utilityBill: boolean;
-          utilityCutoffNotice: boolean;
-          proofOfCitizenship: boolean;
-          proofOfPublicAssistance: boolean;
-          driversLicense: boolean;
-          other: string | null;
-        };
+    fees: {
+      none: boolean;
+      straight: {
+        selected: boolean;
+        content: string | '';
+      };
+      slidingScale: boolean;
+      insurance: {
+        medicaid_tenncare: boolean;
+        medicare: boolean;
+        private: boolean;
+      };
+    };
+    requiredDocuments: {
+      none: boolean;
+      stateId: boolean;
+      ssn: boolean;
+      proofOfResidence: boolean;
+      proofOfIncome: boolean;
+      birthCertificate: boolean;
+      medicalRecords: boolean;
+      psychRecords: boolean;
+      proofOfNeed: boolean;
+      utilityBill: boolean;
+      utilityCutoffNotice: boolean;
+      proofOfCitizenship: boolean;
+      proofOfPublicAssistance: boolean;
+      driversLicense: boolean;
+      other: {
+        selected: boolean;
+        content: string | '';
+      };
+    };
   }
 
-  let services: Service = [
+  let services: Service[] = [
     {
       id: 0,
-      name: 'Hi',
+      name: 'Example Service',
+      contact: 'Ada Lovelace',
+      description: 'This is a description of the service.',
+      eligibility: 'Must be a UTK student.',
+      applicationProcess: {
+        walkIn: false,
+        telephone: true,
+        appointment: false,
+        online: true,
+        other: {
+          selected: false,
+          content: '',
+        },
+        referral: {
+          required: false,
+          contact: '',
+        },
+      },
+      fees: {
+        none: true,
+        straight: {
+          selected: false,
+          content: '',
+        },
+        slidingScale: false,
+        insurance: {
+          medicaid_tenncare: false,
+          medicare: false,
+          private: false,
+        },
+      },
+      requiredDocuments: {
+        none: false,
+        stateId: true,
+        ssn: false,
+        proofOfResidence: false,
+        proofOfIncome: false,
+        birthCertificate: false,
+        medicalRecords: true,
+        psychRecords: false,
+        proofOfNeed: true,
+        utilityBill: false,
+        utilityCutoffNotice: false,
+        proofOfCitizenship: false,
+        proofOfPublicAssistance: false,
+        driversLicense: true,
+        other: {
+          selected: false,
+          content: '',
+        },
+      },
     },
     {
       id: 1,
@@ -157,6 +217,68 @@ export default function Form({ params }: { params: { id: string } }) {
   ];
 
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+
+  const add_service = () => {
+    let new_service: Service = {
+      id: services.length,
+      name: '',
+      contact: '',
+      description: '',
+      eligibility: '',
+      applicationProcess: {
+        walkIn: false,
+        telephone: false,
+        appointment: false,
+        online: false,
+        other: {
+          selected: false,
+          content: '',
+        },
+        referral: {
+          required: false,
+          contact: '',
+        },
+      },
+      fees: {
+        none: false,
+        straight: {
+          selected: false,
+          content: '',
+        },
+        slidingScale: false,
+        insurance: {
+          medicaid_tenncare: false,
+          medicare: false,
+          private: false,
+        },
+      },
+      requiredDocuments: {
+        none: false,
+        stateId: false,
+        ssn: false,
+        proofOfResidence: false,
+        proofOfIncome: false,
+        birthCertificate: false,
+        medicalRecords: false,
+        psychRecords: false,
+        proofOfNeed: false,
+        utilityBill: false,
+        utilityCutoffNotice: false,
+        proofOfCitizenship: false,
+        proofOfPublicAssistance: false,
+        driversLicense: false,
+        other: {
+          selected: false,
+          content: '',
+        },
+      },
+    };
+
+    services.push(new_service);
+    setSelectedService(services[new_service.id]);
+
+    console.log(services.length);
+  };
 
   return (
     <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-24 pr-24 pt-24">
@@ -518,90 +640,523 @@ export default function Form({ params }: { params: { id: string } }) {
                         {service.name}
                       </Button>
                     ))}
+                    <Button
+                      className="m-1"
+                      variant="outline"
+                      onClick={add_service}
+                    >
+                      <Plus />
+                      Add Service
+                    </Button>
                   </div>
                 </ResizablePanel>
                 <ResizableHandle withHandle />
                 <ResizablePanel>
-                  <div className="mt-2 px-4 py-2">
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Name
-                    </label>
-                    <Input
-                      id="name"
-                      className="mb-2"
-                      value={selectedService?.name}
-                    />
-
-                    <label
-                      htmlFor="description"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Description
-                    </label>
-                    <Textarea id="description" className="mb-2" />
-
-                    <label
-                      htmlFor="contact"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Contact
-                    </label>
-                    <Input id="contact" className="mb-2" />
-
-                    {/* hours here eventually */}
-
-                    <label
-                      htmlFor="eligibility"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Eligibility
-                    </label>
-                    <Textarea id="eligibility" className="mb-2" />
-
-                    <label
-                      htmlFor="applicationProcess"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Application Process
-                    </label>
-                    <div
-                      id="applicationProcess"
-                      className="flex flex-col ml-2"
-                    >
-                      <div className='space-x-2'>
-                        <Checkbox id="walkIn" />
-                        <label
-                          htmlFor="walkIn"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Walk-in
-                        </label>
-                      </div>
-
-                      <div className='space-x-2'>
-                        <Checkbox id="telephone" />
-                        <label
-                          htmlFor="telephone"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Telephone
-                        </label>
-                      </div>
-
-                      <div className='space-x-2'>
-                        <Checkbox id="appointment" />
-                        <label
-                          htmlFor="appointment"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Call to Schedule an Appointment
-                        </label>
-                      </div>
+                  {selectedService === null ? (
+                    <div className='flex items-center justify-center h-full'>
+                      <p className="text-sm text-gray-600">
+                          Add a service to begin.
+                        </p>
                     </div>
-                  </div>
+                  ) : (
+                    /* Fix the height to be dynamic */
+                    <ScrollArea className="h-96">
+                      <div className="mt-2 px-4 py-2">
+                        <label
+                          htmlFor="name"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Name
+                        </label>
+                        <Input
+                          id="name"
+                          className="mb-2"
+                          value={selectedService?.name}
+                          onChange={(e) =>
+                            setSelectedService((prevService) => ({
+                              ...prevService,
+                              name: e.target.value,
+                            }))
+                          }
+                        />
+
+                        <label
+                          htmlFor="description"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Full Description
+                        </label>
+                        <Textarea
+                          id="description"
+                          className="mb-2"
+                          value={selectedService?.description}
+                        />
+
+                        <label
+                          htmlFor="contact"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Contact Person
+                        </label>
+                        <Input
+                          id="contact"
+                          className="mb-2"
+                          placeholder="Only add contact person if different from Director or if contact persons differ by service."
+                          value={selectedService?.contact}
+                        />
+
+                        {/* hours here eventually */}
+                        <label
+                          htmlFor="hours"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Hours
+                        </label>
+                        <div className="mb-2"></div>
+
+                        <label
+                          htmlFor="eligibility"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Eligibility Requirements
+                        </label>
+                        <Textarea
+                          id="eligibility"
+                          className="mb-2"
+                          placeholder="Who is eligible for this service? Who is the population the service is trying to serve?
+It is okay to restrict services to certain populations based on gender; family status, disability,
+age, personal situations, etc. (i.e. battered women with children, people with visual impairments,
+homeless men, etc.) This helps us to make appropriate referrals."
+                          value={selectedService?.eligibility}
+                        />
+
+                        <Separator className="my-4" />
+
+                        <label
+                          htmlFor="applicationProcess"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Application Process
+                        </label>
+                        <p className="text-sm leading-6 text-gray-600">
+                          How would someone apply for this service?
+                        </p>
+                        <div
+                          id="applicationProcess"
+                          className="mb-2 ml-2 flex flex-col"
+                        >
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="walkIn"
+                              checked={
+                                selectedService?.applicationProcess.walkIn
+                              }
+                            />
+                            <label
+                              htmlFor="walkIn"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Walk-in
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="telephone"
+                              checked={
+                                selectedService?.applicationProcess.telephone
+                              }
+                            />
+                            <label
+                              htmlFor="telephone"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Telephone
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="appointment"
+                              checked={
+                                selectedService?.applicationProcess.appointment
+                              }
+                            />
+                            <label
+                              htmlFor="appointment"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Call to Schedule an Appointment
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="online"
+                              checked={
+                                selectedService?.applicationProcess.online
+                              }
+                            />
+                            <label
+                              htmlFor="online"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Apply Online
+                            </label>
+                          </div>
+
+                          {/* Fix this checkbox, make input only appear if checked! */}
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="other"
+                              checked={
+                                selectedService?.applicationProcess.other
+                                  .selected
+                              }
+                            />
+                            <label
+                              htmlFor="other"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Other
+                            </label>
+                            <Input className="m-2" />
+                          </div>
+
+                          {/* Fix this checkbox, make input only appear if checked! */}
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="referral"
+                              checked={
+                                selectedService?.applicationProcess.referral
+                                  .required
+                              }
+                            />
+                            <label
+                              htmlFor="referral"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Referral Required
+                            </label>
+                            <Input
+                              className="m-2"
+                              placeholder="By whom?"
+                              value={
+                                selectedService?.applicationProcess.referral
+                                  .contact
+                              }
+                            />
+                          </div>
+                        </div>
+
+                        <Separator className="my-4" />
+
+                        <label
+                          htmlFor="fees"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Fees
+                        </label>
+                        <p className="text-sm leading-6 text-gray-600">
+                          Are individuals charged for your services? What is
+                          your fee structure?
+                        </p>
+                        <div id="fees" className="mb-2 ml-2 flex flex-col">
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="noFees"
+                              checked={selectedService?.fees.none}
+                            />
+                            <label
+                              htmlFor="noFees"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              No Fees
+                            </label>
+                          </div>
+
+                          {/* Fix this checkbox, make input only appear if checked! */}
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="straight"
+                              checked={selectedService?.fees.straight.selected}
+                            />
+                            <label
+                              htmlFor="straight"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Straight Fee
+                            </label>
+                            <Input
+                              className="m-2"
+                              placeholder="Please specify."
+                              value={selectedService?.fees.straight.content}
+                            />
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="sliding"
+                              checked={selectedService?.fees.slidingScale}
+                            />
+                            <label
+                              htmlFor="sliding"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Sliding Scale Fee
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="medicaid_tenncare"
+                              checked={
+                                selectedService?.fees.insurance
+                                  .medicaid_tenncare
+                              }
+                            />
+                            <label
+                              htmlFor="medicaid_tenncare"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Medicaid/TennCare
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="medicare"
+                              checked={selectedService?.fees.insurance.medicare}
+                            />
+                            <label
+                              htmlFor="medicare"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Medicare
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="private"
+                              checked={selectedService?.fees.insurance.private}
+                            />
+                            <label
+                              htmlFor="private"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Private Insurance
+                            </label>
+                          </div>
+                        </div>
+
+                        <Separator className="my-4" />
+
+                        <label
+                          htmlFor="requiredDocuments"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Required Documents
+                        </label>
+                        <p className="text-sm leading-6 text-gray-600">
+                          What would someone need to bring when applying?
+                        </p>
+                        <div
+                          id="requiredDocuments"
+                          className="mb-2 ml-2 grid grid-cols-3"
+                        >
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="noDocuments"
+                              checked={selectedService?.requiredDocuments.none}
+                            />
+                            <label
+                              htmlFor="noDocuments"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              No Documents
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="stateId"
+                              checked={
+                                selectedService?.requiredDocuments.stateId
+                              }
+                            />
+                            <label
+                              htmlFor="stateId"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              State Issued ID
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="ssn"
+                              checked={selectedService?.requiredDocuments.ssn}
+                            />
+                            <label
+                              htmlFor="ssn"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Social Security Card
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="proofOfResidence"
+                              checked={
+                                selectedService?.requiredDocuments
+                                  .proofOfResidence
+                              }
+                            />
+                            <label
+                              htmlFor="proofOfResidence"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Proof of Residence
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="proofOfIncome"
+                              checked={
+                                selectedService?.requiredDocuments.proofOfIncome
+                              }
+                            />
+                            <label
+                              htmlFor="proofOfIncome"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Proof of Income
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="birthCertificate"
+                              checked={
+                                selectedService?.requiredDocuments
+                                  .birthCertificate
+                              }
+                            />
+                            <label
+                              htmlFor="birthCertificate"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Birth Certificate
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox
+                              id="medicalRecords"
+                              checked={
+                                selectedService?.requiredDocuments
+                                  .medicalRecords
+                              }
+                            />
+                            <label
+                              htmlFor="medicalRecords"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Medical Records
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox id="psychRecords" />
+                            <label
+                              htmlFor="psychRecords"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Psych Records
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox id="proofOfNeed" />
+                            <label
+                              htmlFor="proofOfNeed"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Proof of Need
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox id="utilityBill" />
+                            <label
+                              htmlFor="utilityBill"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Utility Bill
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox id="utilityCutoffNotice" />
+                            <label
+                              htmlFor="utilityCutoffNotice"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Utility Cutoff Notice
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox id="proofOfCitizenship" />
+                            <label
+                              htmlFor="proofOfCitizenship"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Proof of Citizenship
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox id="proofOfPublicAssistance" />
+                            <label
+                              htmlFor="proofOfPublicAssistance"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Proof of Public Assistance
+                            </label>
+                          </div>
+
+                          <div className="space-x-2">
+                            <Checkbox id="driversLicense" />
+                            <label
+                              htmlFor="driversLicense"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Driver&apos;s License
+                            </label>
+                          </div>
+
+                          {/* Fix this checkbox, make input only appear if checked! */}
+                          <div className="space-x-2">
+                            <Checkbox id="other" />
+                            <label
+                              htmlFor="other"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Other
+                            </label>
+                            <Input
+                              className="m-2"
+                              placeholder="Please specify."
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </ScrollArea>
+                  )}
                 </ResizablePanel>
               </ResizablePanelGroup>
             </>
