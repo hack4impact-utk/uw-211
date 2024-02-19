@@ -77,7 +77,6 @@ export default function Form({ params }: { params: { id: string } }) {
   type FieldName = keyof Inputs;
 
   const next = async () => {
-    console.log(volunteerChecked);
     const fields = steps[currentStep].fields;
     const output = await trigger(fields as FieldName[], { shouldFocus: true });
 
@@ -472,43 +471,45 @@ export default function Form({ params }: { params: { id: string } }) {
               <div className="flex h-full w-full flex-col gap-8 lg:flex-row">
                 {/* left section */}
                 <section className="h-2/3 w-full lg:w-1/2">
-                  <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">
-                      Does your organization accept volunteers?
-                    </h2>
-                    {/* radio button */}
-                    <div className="flex flex-row gap-4 whitespace-nowrap">
-                      <div>
-                        <input
-                          id="volunteers"
-                          type="radio"
-                          value="false"
-                          {...register('volunteers')}
-                          onChange={(e) => {
-                            setVolunteerChecked(e.target.value);
-                          }}
-                          autoComplete="volunteers"
-                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          No
-                        </label>
-                      </div>
-                      <div>
-                        <input
-                          id="volunteers"
-                          type="radio"
-                          value="true"
-                          {...register('volunteers')}
-                          onChange={(e) => {
-                            setVolunteerChecked(e.target.value);
-                          }}
-                          autoComplete="volunteers"
-                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          Yes
-                        </label>
+                  <div className="flex flex-col">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
+                      <h2 className="text-base font-semibold leading-7 text-gray-900">
+                        Does your organization accept volunteers?
+                      </h2>
+                      {/* radio button */}
+                      <div className="flex flex-row gap-4 whitespace-nowrap">
+                        <div>
+                          <input
+                            id="volunteers"
+                            type="radio"
+                            value="false"
+                            {...register('volunteers')}
+                            onChange={(e) => {
+                              setVolunteerChecked(e.target.value);
+                            }}
+                            autoComplete="volunteers"
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          />
+                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            No
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            id="volunteers"
+                            type="radio"
+                            value="true"
+                            {...register('volunteers')}
+                            onChange={(e) => {
+                              setVolunteerChecked(e.target.value);
+                            }}
+                            autoComplete="volunteers"
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          />
+                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            Yes
+                          </label>
+                        </div>
                       </div>
                     </div>
                     {errors.volunteers?.message && (
@@ -587,42 +588,44 @@ export default function Form({ params }: { params: { id: string } }) {
 
                 {/* right section */}
                 <section className="h-2/3 w-full lg:w-1/2">
-                  <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:gap-12">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">
-                      Does your organization accept ongoing, non-monetary
-                      donations in support of programs or services?
-                    </h2>
-                    {/* radio button */}
-                    <div className="flex flex-row gap-4 whitespace-nowrap">
-                      <div>
-                        <input
-                          id="donation"
-                          type="radio"
-                          value="false"
-                          {...register('donation')}
-                          onChange={(e) => {
-                            setDonationChecked(e.target.value);
-                          }}
-                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          No
-                        </label>
-                      </div>
-                      <div>
-                        <input
-                          id="donation"
-                          type="radio"
-                          value="true"
-                          {...register('donation')}
-                          onChange={(e) => {
-                            setDonationChecked(e.target.value);
-                          }}
-                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          Yes
-                        </label>
+                  <div className="flex flex-col">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
+                      <h2 className="text-base font-semibold leading-7 text-gray-900">
+                        Does your organization accept ongoing, non-monetary
+                        donations in support of programs or services?
+                      </h2>
+                      {/* radio button */}
+                      <div className="flex flex-row gap-4 whitespace-nowrap">
+                        <div>
+                          <input
+                            id="donation"
+                            type="radio"
+                            value="false"
+                            {...register('donation')}
+                            onChange={(e) => {
+                              setDonationChecked(e.target.value);
+                            }}
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          />
+                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            No
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            id="donation"
+                            type="radio"
+                            value="true"
+                            {...register('donation')}
+                            onChange={(e) => {
+                              setDonationChecked(e.target.value);
+                            }}
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          />
+                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            Yes
+                          </label>
+                        </div>
                       </div>
                     </div>
                     {errors.donation?.message && (
@@ -830,8 +833,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           id="recommendations_contact"
                           cols={30}
                           rows={10}
-                          placeholder="List type of volunteer work, age, traning, background
-                      checks, other requirements for your volunteers"
+                          placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
                           className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         ></textarea>
                         {errors.recommendations_contact?.message && (
