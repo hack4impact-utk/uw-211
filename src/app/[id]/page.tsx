@@ -88,7 +88,7 @@ export default function Form({ params }: { params: { id: string } }) {
   const [isFridayChecked, setFridayChecked] = useState(false);
 
   return (
-    <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-24 pr-24 pt-24">
+    <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-4 pr-4 pt-24 sm:pl-12 sm:pr-12 md:pl-24 md:pr-24">
       {/* Stepper */}
       <DesktopFormStepper
         currentPageIndex={currentStep}
@@ -107,11 +107,11 @@ export default function Form({ params }: { params: { id: string } }) {
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Let&apos;s get to know your agency...
             </p>
-            <div className="mt-10 flex flex-row">
+            <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
               {/* right section */}
-              <section>
+              <section className="flex w-full flex-col gap-4 bg-green-200 lg:w-1/2">
                 {/* Legal Agency Name */}
-                <div className="sm:col-span-3">
+                <div>
                   <label
                     htmlFor="legalName"
                     className="block text-sm font-medium leading-6 text-gray-900"
@@ -124,7 +124,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       id="legalName"
                       {...register('legalName')}
                       autoComplete="legalName"
-                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:w-full  sm:text-sm sm:leading-6 md:w-2/3 lg:w-full"
                     />
                     {errors.legalName?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -135,7 +135,7 @@ export default function Form({ params }: { params: { id: string } }) {
                 </div>
 
                 {/* Director Name/Title */}
-                <div className="sm:col-span-3">
+                <div>
                   <label
                     htmlFor="lastName"
                     className="block text-sm font-medium leading-6 text-gray-900"
@@ -148,7 +148,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       id="directorName"
                       {...register('directorName')}
                       autoComplete="directorName"
-                      className="block h-10 w-2/3 rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm  sm:leading-6 md:w-2/3"
                     />
                     {errors.directorName?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -159,7 +159,7 @@ export default function Form({ params }: { params: { id: string } }) {
                 </div>
 
                 {/* Brief Agency Information */}
-                <div className="md:col-span-3">
+                <div>
                   <label
                     htmlFor="legalStatus"
                     className="block text-sm font-medium leading-6 text-gray-900"
@@ -172,7 +172,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       v-model="agencyInfo"
                       {...register('agencyInfo')}
                       autoComplete="agencyInfo"
-                      className="block w-5/6 resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 md:w-5/6"
                     />
                     {errors.agencyInfo?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -184,64 +184,66 @@ export default function Form({ params }: { params: { id: string } }) {
               </section>
 
               {/* left section */}
-              <section>
-                {/* Also known as */}
-                <div className="md:col-span-2">
-                  <label
-                    htmlFor="lastName"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Also known as
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      id="akas"
-                      {...register('akas')}
-                      autoComplete="akas"
-                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
-                    />
-                    {errors.akas?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.akas.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Legal organizational Status */}
-                <div className="md:col-span-1">
-                  <label
-                    htmlFor="legalStatus"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Legal Organizational Status
-                  </label>
-                  <div className="mt-2">
-                    <select
-                      id="legalStatus"
-                      v-model="legalStatus"
-                      {...register('legalStatus')}
-                      autoComplete="legalStatus"
-                      className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+              <section className="flex w-full flex-col gap-4 bg-cyan-100 lg:w-1/2">
+                <section className="flex flex-col gap-4 xl:flex-row">
+                  {/* Also known as */}
+                  <div className="w-full xl:w-2/3">
+                    <label
+                      htmlFor="lastName"
+                      className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      <option value="">Please Select One</option>
-                      <option value="federal">Federal</option>
-                      <option value="state">State</option>
-                      <option value="county">County</option>
-                      <option value="city">City</option>
-                      <option value="non-profit">Non-profit</option>
-                      <option value="501(c)3">501(c)3</option>
-                      <option value="For profit">For profit</option>
-                      <option value="other">Other</option>
-                    </select>
-                    {errors.legalStatus?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.legalStatus.message}
-                      </p>
-                    )}
+                      Also known as
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        type="text"
+                        id="akas"
+                        {...register('akas')}
+                        autoComplete="akas"
+                        className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                      />
+                      {errors.akas?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.akas.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
+
+                  {/* Legal organizational Status */}
+                  <div className="w-full xl:w-1/3">
+                    <label
+                      htmlFor="legalStatus"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Legal Organizational Status
+                    </label>
+                    <div className="mt-2">
+                      <select
+                        id="legalStatus"
+                        v-model="legalStatus"
+                        {...register('legalStatus')}
+                        autoComplete="legalStatus"
+                        className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      >
+                        <option value="">Please Select One</option>
+                        <option value="federal">Federal</option>
+                        <option value="state">State</option>
+                        <option value="county">County</option>
+                        <option value="city">City</option>
+                        <option value="non-profit">Non-profit</option>
+                        <option value="501(c)3">501(c)3</option>
+                        <option value="For profit">For profit</option>
+                        <option value="other">Other</option>
+                      </select>
+                      {errors.legalStatus?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.legalStatus.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </section>
 
                 {/* Hours of Operation */}
                 <div className="md:col-span-3 md:row-span-2">
