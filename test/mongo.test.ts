@@ -20,6 +20,11 @@ let createAgencyInfo: (info: AgencyInfoForm) => Promise<AgencyInfoForm>;
 let getPaginatedAgencies: (page: number, pageSize: number) => Promise<Agency[]>;
 let deleteService: (id: string) => Promise<Service | null>;
 let deleteAgency: (id: string) => Promise<Agency | null>;
+let approveAgency: (
+  id: string,
+  newInfo: AgencyInfoForm,
+  newApprovalStatus: 'Pending' | 'Approved'
+) => Promise<Agency | null>;
 
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
@@ -39,6 +44,7 @@ beforeAll(async () => {
   getPaginatedAgencies = agenciesModule.getPaginatedAgencies;
   deleteService = agenciesModule.deleteService;
   deleteAgency = agenciesModule.deleteAgency;
+  approveAgency = agenciesModule.approveAgency;
 });
 
 afterAll(async () => {
@@ -191,5 +197,19 @@ describe('Agency', () => {
     // Grab agencies again
     const shorterAgencies = await getAgencies();
     expect(shorterAgencies.length).toBe(originalSize - 1);
+  });
+
+  it('should `approve` an agency and add latest form info', async () => {
+    // Grab previously created agency
+    const agencies = await getAgencies();
+    const agency = agencies[0];
+
+    // Update the approvalStatus field
+    // Simply duplicates the previous `info` and sets the approval
+    // status to approved
+    await approveAgency(agency._id as string, testAgency.info[0], 'Approved');
+
+    const updatedAgency = await getAgencyById(agency._id as string);
+    expect(updatedAgency?.approvalStatus).toBe('Approved');
   });
 });
