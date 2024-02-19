@@ -109,7 +109,7 @@ export default function Form({ params }: { params: { id: string } }) {
             </p>
             <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
               {/* right section */}
-              <section className="flex w-full flex-col gap-4 bg-green-200 lg:w-1/2">
+              <section className="flex w-full flex-col gap-4 lg:w-1/2">
                 {/* Legal Agency Name */}
                 <div>
                   <label
@@ -184,7 +184,7 @@ export default function Form({ params }: { params: { id: string } }) {
               </section>
 
               {/* left section */}
-              <section className="flex w-full flex-col gap-4 bg-cyan-100 lg:w-1/2">
+              <section className="flex w-full flex-col gap-4 lg:w-1/2">
                 <section className="flex flex-col gap-4 xl:flex-row">
                   {/* Also known as */}
                   <div className="w-full xl:w-2/3">
@@ -397,8 +397,9 @@ export default function Form({ params }: { params: { id: string } }) {
                 </div>
 
                 {/* Open/Close */}
-                <div className="float-left mt-6 flex justify-center gap-x-4">
-                  <div className="mt-1">
+                <div className="flex w-full flex-row items-center gap-4 md:w-5/6">
+                  {/* Open */}
+                  <div>
                     <label
                       htmlFor="open"
                       className="block text-sm font-medium leading-6 text-gray-900"
@@ -410,7 +411,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       id="open"
                       {...register('open')}
                       autoComplete="open"
-                      className="block h-10 rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                     />
                     {errors.open?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -418,10 +419,9 @@ export default function Form({ params }: { params: { id: string } }) {
                       </p>
                     )}
                   </div>
-                  <div className="flex items-end justify-center">
-                    <p>to</p>
-                  </div>
-                  <div className="mt-1">
+                  <p className="mt-4">to</p>
+                  {/* Close */}
+                  <div>
                     <label
                       htmlFor="close"
                       className="block text-sm font-medium leading-6 text-gray-900"
@@ -433,7 +433,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       id="close"
                       {...register('close')}
                       autoComplete="close"
-                      className="block h-10 rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
                     />
                     {errors.close?.message && (
                       <p className="mt-2 text-sm text-red-400">
