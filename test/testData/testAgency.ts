@@ -102,5 +102,6 @@ export const testAgency: Agency = {
     },
   ],
   updateScheduleInDays: 36,
+  approvalStatus: 'Pending',
   emailSentTimestamp: new Date(),
 };
