@@ -23,8 +23,9 @@ import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
-export type Nonprofit = {
+export type Agency = {
   name: string;
+  lastUpdate?: Date;
   status:
     | 'Up to date'
     | 'Email sent recently'
@@ -33,8 +34,23 @@ export type Nonprofit = {
   email: string;
 };
 
+function statusColor(status: Agency['status']) {
+  switch (status) {
+    case 'Up to date':
+      return 'bg-green-100';
+    case 'Email sent recently':
+      return 'bg-blue-100';
+    case 'Close to deadline':
+      return 'bg-yellow-100';
+    case 'Expired':
+      return 'bg-red-100';
+    default:
+      return '';
+  }
+}
+
 // Column definitions for table
-const columns: ColumnDef<Nonprofit>[] = [
+const columns: ColumnDef<Agency>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => (
@@ -42,10 +58,32 @@ const columns: ColumnDef<Nonprofit>[] = [
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
-        Name
+        Agency
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
+  },
+  {
+    accessorKey: 'lastUpdate',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Last Update
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ getValue }) => {
+      const value = getValue() as Date;
+      return value
+        ? new Date(value).toLocaleDateString('en-US', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+          })
+        : 'Never';
+    },
   },
   {
     accessorKey: 'status',
@@ -72,7 +110,7 @@ const columns: ColumnDef<Nonprofit>[] = [
 ];
 
 interface AdminDashboardTableProps {
-  data: Nonprofit[];
+  data: Agency[];
 }
 
 export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
@@ -98,7 +136,7 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
       {/* Search Bar for filtering by name */}
       <div className="flex items-center py-4">
         <Input
-          placeholder="Search for a nonprofit..."
+          placeholder="Search for an agency..."
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
@@ -130,13 +168,21 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, rowIndex) => (
                 <TableRow
                   key={row.id}
+                  className={rowIndex % 2 === 1 ? 'bg-gray-100' : ''}
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className={
+                        cell.column.id === 'status'
+                          ? statusColor(cell.getValue() as Agency['status'])
+                          : ''
+                      }
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
