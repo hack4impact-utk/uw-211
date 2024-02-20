@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
 import { FormDataSchema } from '@/utils/constants/formDataSchema';
@@ -46,10 +46,26 @@ export default function Form({ params }: { params: { id: string } }) {
     handleSubmit,
     reset,
     trigger,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<Inputs>({
     resolver: zodResolver(FormDataSchema),
   });
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!isDirty) return;
+      event.preventDefault();
+      event.returnValue =
+        'Your changes will not be saved if you leave the page.';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isDirty]);
 
   const processForm: SubmitHandler<Inputs> = (data) => {
     console.log('Form data for agency with id', params.id);
