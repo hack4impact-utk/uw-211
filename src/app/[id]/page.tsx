@@ -6,9 +6,8 @@ import { z } from 'zod';
 import { FormDataSchema } from '@/utils/constants/formDataSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
-
-import DesktopFormStepper from '@/components/FormStepper/DesktopFormStepper';
 import Footer from '@/components/Footer';
+import FormStepper from '@/components/FormStepper';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 
@@ -127,7 +126,7 @@ export default function Form({ params }: { params: { id: string } }) {
   return (
     <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-4 pr-4 pt-24 sm:pl-12 sm:pr-12 md:pl-24 md:pr-24">
       {/* Stepper */}
-      <DesktopFormStepper
+      <FormStepper
         currentPageIndex={currentStep}
         formSteps={steps}
         setCurrentStep={setCurrentStep}

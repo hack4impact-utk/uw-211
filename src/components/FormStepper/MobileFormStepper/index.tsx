@@ -21,11 +21,15 @@ export default function MobileFormStepper({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">Navigate Form</Button>
+        <Button variant="outline" className="w-max p-4">
+          Navigate Form
+        </Button>
       </SheetTrigger>
-      <SheetContent>
-        <SheetHeader className="pb-2">
-          <SheetTitle>Navigate Form</SheetTitle>
+      <SheetContent className="z-50">
+        <SheetHeader className="pb-2 text-3xl">
+          <SheetTitle className="text-center text-2xl">
+            Navigate Form
+          </SheetTitle>
         </SheetHeader>
         <div className="flex flex-col justify-center gap-2">
           {formSteps.map((step, index) => {
@@ -33,7 +37,7 @@ export default function MobileFormStepper({
               <Button
                 onClick={() => setCurrentStep(index)}
                 key={index}
-                className={`bg-white hover:bg-gray-400 ${
+                className={`bg-white text-xl hover:bg-gray-400 ${
                   index > currentPageIndex
                     ? 'pointer-events-none text-gray-400'
                     : 'text-black'
