@@ -2,15 +2,15 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import uwLogo from '@/../public/img/UWGK_Logo.png';
+import uw211Logo from '@/../public/img/unitedway211.png';
 import React, { useState, useEffect } from 'react';
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(true);
-  const lgCutoff = 1024; // TailwindCSS 'lg' size
+  const mdBreakpoint = 768; // TailwindCSS 'md' breakpoint.
 
   const checkScreenSize = () => {
-    if (window.innerWidth >= lgCutoff) {
+    if (window.innerWidth >= mdBreakpoint) {
       setIsMenuOpen(true); // Always show the menu on large screens
     } else {
       setIsMenuOpen(false); // Otherwise, rely on the state (user's toggle)
@@ -26,17 +26,17 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className="antialiased">
+    <header className="border-b-2 border-black bg-orange-500 px-5 antialiased">
       <nav>
-        <div className="flex flex-wrap items-center justify-between py-5 font-bold text-black">
+        <div className="flex flex-wrap items-center justify-between py-3 font-bold text-black">
           <Image
             className="mr-8 flex-shrink-0"
-            src={uwLogo.src}
-            alt="United Way Logo"
-            width="200"
-            height="200"
+            src={uw211Logo.src}
+            alt="United Way 211 Logo"
+            width="100"
+            height="100"
           />
-          <div className="block lg:hidden">
+          <div className="block md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="border-black-400 flex items-center rounded border px-3 py-2"
@@ -52,28 +52,28 @@ export function Navbar() {
             </button>
           </div>
           {isMenuOpen && (
-            <div className="block w-full flex-grow lg:flex lg:w-auto lg:items-center">
-              <div className="lg:flex-grow">
+            <div className="block w-full flex-grow md:flex md:w-auto md:items-center">
+              <div className="md:flex-grow">
                 <Link
-                  className="mt-4 block text-[#393a3d] lg:mr-8 lg:mt-0 lg:inline-block"
+                  className="mt-4 block text-[#393a3d] md:mr-8 md:mt-0 md:inline-block"
                   href="/"
                 >
                   Home
                 </Link>
                 <Link
-                  className="mt-4 block text-[#393a3d] lg:mr-8 lg:mt-0 lg:inline-block"
+                  className="mt-4 block text-[#393a3d] md:mr-8 md:mt-0 md:inline-block"
                   href="/dashboard"
                 >
                   Dashboard
                 </Link>
                 <Link
-                  className="mt-4 block text-[#393a3d] lg:mr-8 lg:mt-0 lg:inline-block"
+                  className="mt-4 block text-[#393a3d] md:mr-8 md:mt-0 md:inline-block"
                   href="/"
                 >
                   Resources
                 </Link>
                 <Link
-                  className="mt-4 block text-[#393a3d] lg:mt-0 lg:inline-block"
+                  className="mt-4 block text-[#393a3d] md:mt-0 md:inline-block"
                   href="/"
                 >
                   About

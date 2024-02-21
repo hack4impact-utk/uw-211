@@ -132,7 +132,7 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
   });
 
   return (
-    <div>
+    <div className="px-5">
       {/* Search Bar for filtering by name */}
       <div className="flex items-center py-4">
         <Input
@@ -141,12 +141,12 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w"
         />
       </div>
 
       {/* Dynamic Table: doesn't need to be edited to add additional functionality.*/}
-      <div className="rounded-md border">
+      <div className="rounded-md border shadow">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
