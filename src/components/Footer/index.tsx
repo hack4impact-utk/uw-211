@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Linkedin } from 'lucide-react';
 
 export default function Footer({ className }: { className?: string }) {
   return (
@@ -46,7 +46,24 @@ export default function Footer({ className }: { className?: string }) {
             target="_blank"
             aria-label="United Way Twitter Page"
           >
-            <Twitter size={14} aria-label="Twitter Icon" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentcolor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-x-twitter"
+              aria-label="Twitter Icon"
+            >
+              {' '}
+              <path d="M8,2H3L16.7,22h5.1L8,2z" />{' '}
+              <line x1="2.3" y1="22.1" x2="10.2" y2="12.8" />{' '}
+              <line x1="19.8" y1="2" x2="13.3" y2="9.6" />{' '}
+            </svg>
           </a>
         </li>
         <li>

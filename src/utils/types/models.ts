@@ -141,6 +141,7 @@ export interface Agency {
   updateScheduleInDays: number;
   emailSentTimestamp?: Date;
   currentStatus?: 'Completed' | 'Needs Review' | 'Expired';
+  approvalStatus?: 'Pending' | 'Approved';
   daysSinceEmailSent?: number;
 }
 

@@ -18,6 +18,11 @@ const AgencySchema = new mongoose.Schema<Agency>(
       type: Number,
       required: true,
     },
+    approvalStatus: {
+      type: String,
+      required: false,
+      enum: ['Pending', 'Approved'],
+    },
     emailSentTimestamp: {
       type: Date,
       default: null,
