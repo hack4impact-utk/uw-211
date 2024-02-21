@@ -15,7 +15,6 @@ export default function FormStepper({
 }: FormStepperProps) {
   const { width: screenWidth } = useWindowSize();
 
-  console.log(screenWidth);
   if (screenWidth < 768) {
     return (
       <MobileFormStepper
