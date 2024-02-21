@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
 import { FormDataSchema } from '@/utils/constants/formDataSchema';
@@ -63,10 +63,26 @@ export default function Form({ params }: { params: { id: string } }) {
     handleSubmit,
     reset,
     trigger,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<Inputs>({
     resolver: zodResolver(FormDataSchema),
   });
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!isDirty) return;
+      event.preventDefault();
+      event.returnValue =
+        'Your changes will not be saved if you leave the page.';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isDirty]);
 
   const processForm: SubmitHandler<Inputs> = (data) => {
     console.log('Form data for agency with id', params.id);
@@ -77,7 +93,6 @@ export default function Form({ params }: { params: { id: string } }) {
   type FieldName = keyof Inputs;
 
   const next = async () => {
-    console.log(volunteerChecked);
     const fields = steps[currentStep].fields;
     const output = await trigger(fields as FieldName[], { shouldFocus: true });
 
@@ -129,315 +144,342 @@ export default function Form({ params }: { params: { id: string } }) {
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Let&apos;s get to know your agency...
             </p>
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6 sm:grid-rows-3">
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="legalName"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Legal Agency Name
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="legalName"
-                    {...register('legalName')}
-                    autoComplete="legalName"
-                    className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
-                  />
-                  {errors.legalName?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.legalName.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Also known as
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="akas"
-                    {...register('akas')}
-                    autoComplete="akas"
-                    className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
-                  />
-                  {errors.akas?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.akas.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="sm:col-span-1">
-                <label
-                  htmlFor="legalStatus"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Legal Organizational Status
-                </label>
-                <div className="mt-2">
-                  <select
-                    id="legalStatus"
-                    v-model="legalStatus"
-                    {...register('legalStatus')}
-                    autoComplete="legalStatus"
-                    className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+            <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
+              {/* right section */}
+              <section className="flex w-full flex-col gap-4 lg:w-1/2">
+                {/* Legal Agency Name */}
+                <div>
+                  <label
+                    htmlFor="legalName"
+                    className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    <option value="">Please Select One</option>
-                    <option value="federal">Federal</option>
-                    <option value="state">State</option>
-                    <option value="county">County</option>
-                    <option value="city">City</option>
-                    <option value="non-profit">Non-profit</option>
-                    <option value="501(c)3">501(c)3</option>
-                    <option value="For profit">For profit</option>
-                    <option value="other">Other</option>
-                  </select>
-                  {errors.legalStatus?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.legalStatus.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Director Name/Title
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="directorName"
-                    {...register('directorName')}
-                    autoComplete="directorName"
-                    className="block h-10 w-2/3 rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
-                  />
-                  {errors.directorName?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.directorName.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="sm:col-span-3 sm:row-span-2">
-                <label
-                  htmlFor="legalStatus"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Hours of Operation
-                </label>
-                <div className="mt-2">
-                  <fieldset className="mt-8">
-                    <label
-                      htmlFor="legalStatus"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Select day(s) of operation
-                    </label>
-                    <label>
-                      <input
-                        type="checkbox"
-                        id="monday"
-                        className="form-checkbox hidden"
-                        checked={isMondayChecked}
-                        {...register('days.monday', {
-                          onChange: () => {
-                            setMondayChecked(!isMondayChecked);
-                          },
-                        })}
-                      />
-                      <span
-                        className={
-                          isMondayChecked
-                            ? 'w-18 ml-2 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                            : 'w-18 ml-2 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                        }
-                      >
-                        Monday
-                      </span>
-                    </label>
-
-                    <label>
-                      <input
-                        type="checkbox"
-                        id="tuesday"
-                        className="form-checkbox hidden"
-                        checked={isTuesdayChecked}
-                        {...register('days.tuesday', {
-                          onChange: () => {
-                            setTuesdayChecked(!isTuesdayChecked);
-                          },
-                        })}
-                      />
-                      <span
-                        className={
-                          isTuesdayChecked
-                            ? 'w-18 ml-2 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                            : 'w-18 ml-2 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                        }
-                      >
-                        Tuesday
-                      </span>
-                    </label>
-
-                    <label>
-                      <input
-                        type="checkbox"
-                        id="wednesday"
-                        className="form-checkbox hidden"
-                        checked={isWednesdayChecked}
-                        {...register('days.wednesday', {
-                          onChange: () => {
-                            setWednesdayChecked(!isWednesdayChecked);
-                          },
-                        })}
-                      />
-                      <span
-                        className={
-                          isWednesdayChecked
-                            ? 'w-18 ml-2 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                            : 'w-18 ml-2 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                        }
-                      >
-                        Wednesday
-                      </span>
-                    </label>
-
-                    <label>
-                      <input
-                        type="checkbox"
-                        id="thursday"
-                        className="form-checkbox hidden"
-                        checked={isThursdayChecked}
-                        {...register('days.thursday', {
-                          onChange: () => {
-                            setThursdayChecked(!isThursdayChecked);
-                          },
-                        })}
-                      />
-                      <span
-                        className={
-                          isThursdayChecked
-                            ? 'w-18 ml-2 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                            : 'w-18 ml-2 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                        }
-                      >
-                        Thursday
-                      </span>
-                    </label>
-
-                    <label>
-                      <input
-                        type="checkbox"
-                        className="form-checkbox hidden"
-                        id="friday"
-                        checked={isFridayChecked}
-                        {...register('days.friday', {
-                          onChange: () => {
-                            setFridayChecked(!isFridayChecked);
-                          },
-                        })}
-                      />
-                      <span
-                        className={
-                          isFridayChecked
-                            ? 'w-18 ml-2 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                            : 'w-18 ml-2 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                        }
-                      >
-                        Friday
-                      </span>
-                    </label>
-                    {errors.days?.message && (
+                    Legal Agency Name
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="legalName"
+                      {...register('legalName')}
+                      autoComplete="legalName"
+                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:w-full  sm:text-sm sm:leading-6 md:w-2/3 lg:w-full"
+                    />
+                    {errors.legalName?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.days.message}
+                        {errors.legalName.message}
                       </p>
                     )}
-                  </fieldset>
+                  </div>
+                </div>
 
-                  <div className="float-left mt-6 flex justify-center gap-x-4">
-                    <div className="mt-1">
-                      <label
-                        htmlFor="open"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Open
-                      </label>
+                {/* Director Name/Title */}
+                <div>
+                  <label
+                    htmlFor="lastName"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Director Name/Title
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="directorName"
+                      {...register('directorName')}
+                      autoComplete="directorName"
+                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm  sm:leading-6 md:w-2/3"
+                    />
+                    {errors.directorName?.message && (
+                      <p className="mt-2 text-sm text-red-400">
+                        {errors.directorName.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Brief Agency Information */}
+                <div>
+                  <label
+                    htmlFor="legalStatus"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Brief Agency Information
+                  </label>
+                  <div className="mt-2">
+                    <textarea
+                      id="agencyInfo"
+                      v-model="agencyInfo"
+                      {...register('agencyInfo')}
+                      autoComplete="agencyInfo"
+                      className="block w-full resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 md:w-5/6"
+                    />
+                    {errors.agencyInfo?.message && (
+                      <p className="mt-2 text-sm text-red-400">
+                        {errors.agencyInfo.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </section>
+
+              {/* left section */}
+              <section className="flex w-full flex-col gap-4 lg:w-1/2">
+                <section className="flex flex-col gap-4 xl:flex-row">
+                  {/* Also known as */}
+                  <div className="w-full xl:w-2/3">
+                    <label
+                      htmlFor="lastName"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Also known as
+                    </label>
+                    <div className="mt-2">
                       <input
                         type="text"
-                        id="open"
-                        {...register('open')}
-                        autoComplete="open"
-                        className="block h-10 rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                        id="akas"
+                        {...register('akas')}
+                        autoComplete="akas"
+                        className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6  md:w-2/3 xl:w-full"
                       />
-                      {errors.open?.message && (
+                      {errors.akas?.message && (
                         <p className="mt-2 text-sm text-red-400">
-                          {errors.open.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-end justify-center">
-                      <p>to</p>
-                    </div>
-                    <div className="mt-1">
-                      <label
-                        htmlFor="close"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Close
-                      </label>
-                      <input
-                        type="text"
-                        id="close"
-                        {...register('close')}
-                        autoComplete="close"
-                        className="block h-10 rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
-                      />
-                      {errors.close?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.close.message}
+                          {errors.akas.message}
                         </p>
                       )}
                     </div>
                   </div>
-                </div>
-              </div>
 
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="legalStatus"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Brief Agency Information
-                </label>
-                <div className="mt-2">
-                  <textarea
-                    id="agencyInfo"
-                    v-model="agencyInfo"
-                    {...register('agencyInfo')}
-                    autoComplete="agencyInfo"
-                    className="block w-5/6 resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.agencyInfo?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.agencyInfo.message}
-                    </p>
-                  )}
+                  {/* Legal organizational Status */}
+                  <div className="w-full xl:w-1/3">
+                    <label
+                      htmlFor="legalStatus"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Legal Organizational Status
+                    </label>
+                    <div className="mt-2">
+                      <select
+                        id="legalStatus"
+                        v-model="legalStatus"
+                        {...register('legalStatus')}
+                        autoComplete="legalStatus"
+                        className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
+                      >
+                        <option value="">Please Select One</option>
+                        <option value="federal">Federal</option>
+                        <option value="state">State</option>
+                        <option value="county">County</option>
+                        <option value="city">City</option>
+                        <option value="non-profit">Non-profit</option>
+                        <option value="501(c)3">501(c)3</option>
+                        <option value="For profit">For profit</option>
+                        <option value="other">Other</option>
+                      </select>
+                      {errors.legalStatus?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.legalStatus.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </section>
+
+                {/* Hours of Operation */}
+                <div>
+                  <label
+                    htmlFor="legalStatus"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Hours of Operation
+                  </label>
+                  <div className="mt-2">
+                    <fieldset>
+                      <label
+                        htmlFor="legalStatus"
+                        className="mb-2 block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Select day(s) of operation
+                      </label>
+
+                      <div className="flex flex-col gap-4 sm:flex-row sm:gap-2">
+                        <div className="flex flex-row gap-2">
+                          {/* Monday */}
+                          <label>
+                            <input
+                              type="checkbox"
+                              id="monday"
+                              className="form-checkbox hidden"
+                              checked={isMondayChecked}
+                              {...register('days.monday', {
+                                onChange: () => {
+                                  setMondayChecked(!isMondayChecked);
+                                },
+                              })}
+                            />
+                            <span
+                              className={
+                                isMondayChecked
+                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                              }
+                            >
+                              Monday
+                            </span>
+                          </label>
+
+                          {/* Tuesday */}
+                          <label>
+                            <input
+                              type="checkbox"
+                              id="tuesday"
+                              className="form-checkbox hidden"
+                              checked={isTuesdayChecked}
+                              {...register('days.tuesday', {
+                                onChange: () => {
+                                  setTuesdayChecked(!isTuesdayChecked);
+                                },
+                              })}
+                            />
+                            <span
+                              className={
+                                isTuesdayChecked
+                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                              }
+                            >
+                              Tuesday
+                            </span>
+                          </label>
+
+                          {/* Wednesday */}
+                          <label>
+                            <input
+                              type="checkbox"
+                              id="wednesday"
+                              className="form-checkbox hidden"
+                              checked={isWednesdayChecked}
+                              {...register('days.wednesday', {
+                                onChange: () => {
+                                  setWednesdayChecked(!isWednesdayChecked);
+                                },
+                              })}
+                            />
+                            <span
+                              className={
+                                isWednesdayChecked
+                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                              }
+                            >
+                              Wednesday
+                            </span>
+                          </label>
+                        </div>
+
+                        <div className="flex flex-row gap-2">
+                          {/* Thursday */}
+                          <label>
+                            <input
+                              type="checkbox"
+                              id="thursday"
+                              className="form-checkbox hidden"
+                              checked={isThursdayChecked}
+                              {...register('days.thursday', {
+                                onChange: () => {
+                                  setThursdayChecked(!isThursdayChecked);
+                                },
+                              })}
+                            />
+                            <span
+                              className={
+                                isThursdayChecked
+                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                              }
+                            >
+                              Thursday
+                            </span>
+                          </label>
+
+                          {/* Friday */}
+                          <label>
+                            <input
+                              type="checkbox"
+                              className="form-checkbox hidden"
+                              id="friday"
+                              checked={isFridayChecked}
+                              {...register('days.friday', {
+                                onChange: () => {
+                                  setFridayChecked(!isFridayChecked);
+                                },
+                              })}
+                            />
+                            <span
+                              className={
+                                isFridayChecked
+                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                              }
+                            >
+                              Friday
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      {errors.days?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.days.message}
+                        </p>
+                      )}
+                    </fieldset>
+                  </div>
                 </div>
-              </div>
+
+                {/* Open/Close */}
+                <div className="flex w-full flex-row items-center gap-4 md:w-5/6">
+                  {/* Open */}
+                  <div>
+                    <label
+                      htmlFor="open"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Open
+                    </label>
+                    <input
+                      type="text"
+                      id="open"
+                      {...register('open')}
+                      autoComplete="open"
+                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                    />
+                    {errors.open?.message && (
+                      <p className="mt-2 text-sm text-red-400">
+                        {errors.open.message}
+                      </p>
+                    )}
+                  </div>
+                  <p className="mt-4">to</p>
+                  {/* Close */}
+                  <div>
+                    <label
+                      htmlFor="close"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Close
+                    </label>
+                    <input
+                      type="text"
+                      id="close"
+                      {...register('close')}
+                      autoComplete="close"
+                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                    />
+                    {errors.close?.message && (
+                      <p className="mt-2 text-sm text-red-400">
+                        {errors.close.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </section>
             </div>
           </>
         )}
@@ -472,43 +514,45 @@ export default function Form({ params }: { params: { id: string } }) {
               <div className="flex h-full w-full flex-col gap-8 lg:flex-row">
                 {/* left section */}
                 <section className="h-2/3 w-full lg:w-1/2">
-                  <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">
-                      Does your organization accept volunteers?
-                    </h2>
-                    {/* radio button */}
-                    <div className="flex flex-row gap-4 whitespace-nowrap">
-                      <div>
-                        <input
-                          id="volunteers"
-                          type="radio"
-                          value="false"
-                          {...register('volunteers')}
-                          onChange={(e) => {
-                            setVolunteerChecked(e.target.value);
-                          }}
-                          autoComplete="volunteers"
-                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          No
-                        </label>
-                      </div>
-                      <div>
-                        <input
-                          id="volunteers"
-                          type="radio"
-                          value="true"
-                          {...register('volunteers')}
-                          onChange={(e) => {
-                            setVolunteerChecked(e.target.value);
-                          }}
-                          autoComplete="volunteers"
-                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          Yes
-                        </label>
+                  <div className="flex flex-col">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
+                      <h2 className="text-base font-semibold leading-7 text-gray-900">
+                        Does your organization accept volunteers?
+                      </h2>
+                      {/* radio button */}
+                      <div className="flex flex-row gap-4 whitespace-nowrap">
+                        <div>
+                          <input
+                            id="volunteers"
+                            type="radio"
+                            value="false"
+                            {...register('volunteers')}
+                            onChange={(e) => {
+                              setVolunteerChecked(e.target.value);
+                            }}
+                            autoComplete="volunteers"
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          />
+                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            No
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            id="volunteers"
+                            type="radio"
+                            value="true"
+                            {...register('volunteers')}
+                            onChange={(e) => {
+                              setVolunteerChecked(e.target.value);
+                            }}
+                            autoComplete="volunteers"
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          />
+                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            Yes
+                          </label>
+                        </div>
                       </div>
                     </div>
                     {errors.volunteers?.message && (
@@ -587,42 +631,44 @@ export default function Form({ params }: { params: { id: string } }) {
 
                 {/* right section */}
                 <section className="h-2/3 w-full lg:w-1/2">
-                  <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:gap-12">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">
-                      Does your organization accept ongoing, non-monetary
-                      donations in support of programs or services?
-                    </h2>
-                    {/* radio button */}
-                    <div className="flex flex-row gap-4 whitespace-nowrap">
-                      <div>
-                        <input
-                          id="donation"
-                          type="radio"
-                          value="false"
-                          {...register('donation')}
-                          onChange={(e) => {
-                            setDonationChecked(e.target.value);
-                          }}
-                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          No
-                        </label>
-                      </div>
-                      <div>
-                        <input
-                          id="donation"
-                          type="radio"
-                          value="true"
-                          {...register('donation')}
-                          onChange={(e) => {
-                            setDonationChecked(e.target.value);
-                          }}
-                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          Yes
-                        </label>
+                  <div className="flex flex-col">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
+                      <h2 className="text-base font-semibold leading-7 text-gray-900">
+                        Does your organization accept ongoing, non-monetary
+                        donations in support of programs or services?
+                      </h2>
+                      {/* radio button */}
+                      <div className="flex flex-row gap-4 whitespace-nowrap">
+                        <div>
+                          <input
+                            id="donation"
+                            type="radio"
+                            value="false"
+                            {...register('donation')}
+                            onChange={(e) => {
+                              setDonationChecked(e.target.value);
+                            }}
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          />
+                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            No
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            id="donation"
+                            type="radio"
+                            value="true"
+                            {...register('donation')}
+                            onChange={(e) => {
+                              setDonationChecked(e.target.value);
+                            }}
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          />
+                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            Yes
+                          </label>
+                        </div>
                       </div>
                     </div>
                     {errors.donation?.message && (
@@ -830,8 +876,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           id="recommendations_contact"
                           cols={30}
                           rows={10}
-                          placeholder="List type of volunteer work, age, traning, background
-                      checks, other requirements for your volunteers"
+                          placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
                           className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         ></textarea>
                         {errors.recommendations_contact?.message && (
