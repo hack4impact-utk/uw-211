@@ -636,7 +636,7 @@ export default function Form({ params }: { params: { id: string } }) {
                         </div>
                       ))}
                     </ScrollArea>
-                    <Separator horizontal className="my-2" />
+                    <Separator horizontal={true} className="my-2" />
                     <Button
                       className="m-1"
                       variant="outline"
