@@ -1,5 +1,6 @@
 import ClientSessionProvider from '@/components/ClientSessionProvider';
 import './globals.css';
+import Head from 'next/head';
 
 export const metadata = {
   title: 'United Way 211',
@@ -22,7 +23,6 @@ export const metadata = {
       'max-snippet': -1,
     },
   },
-  themeColor: '#f97316',
 };
 
 export default function RootLayout({
@@ -32,6 +32,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <Head>
+        <meta name="theme-color" content="#f97316" />
+      </Head>
       <body>
         <ClientSessionProvider>{children}</ClientSessionProvider>
       </body>
