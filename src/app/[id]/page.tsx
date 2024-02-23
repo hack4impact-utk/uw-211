@@ -124,7 +124,7 @@ export default function Form({ params }: { params: { id: string } }) {
   const [recommendationChecked, setRecommendationChecked] = useState('false');
 
   return (
-    <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-4 pr-4 pt-24 sm:pl-12 sm:pr-12 md:pl-24 md:pr-24">
+    <section className="absolute inset-0 flex flex-col justify-between pl-4 pr-4 pt-24 sm:pl-12 sm:pr-12 md:pl-24 md:pr-24">
       {/* Stepper */}
       <FormStepper
         currentPageIndex={currentStep}
@@ -956,7 +956,7 @@ export default function Form({ params }: { params: { id: string } }) {
           </button>
         </div>
       </div>
-      <Footer />
+      <Footer className="pb-2 pt-6" />
     </section>
   );
 }
