@@ -24,8 +24,8 @@ export default async function Home({
   const agency = id ? await getAgency(id) : undefined;
 
   return (
-    <>
+    <div className="bg-orange-500">
       <WelcomePage id={id} agency={agency}></WelcomePage>
-    </>
+    </div>
   );
 }
