@@ -20,7 +20,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus } from 'lucide-react';
+import { Plus, Trash } from 'lucide-react';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 
@@ -155,68 +155,13 @@ export default function Form({ params }: { params: { id: string } }) {
     };
   }
 
-  const [services, setServices] = useState<Service[]>([
-    {
-      id: 0,
-      name: 'Example Service',
-      contact: 'Ada Lovelace',
-      description: 'This is a description of the service.',
-      eligibility: 'Must be a UTK student.',
-      applicationProcess: {
-        walkIn: false,
-        telephone: true,
-        appointment: false,
-        online: true,
-        other: {
-          selected: false,
-          content: '',
-        },
-        referral: {
-          required: false,
-          contact: '',
-        },
-      },
-      fees: {
-        none: true,
-        straight: {
-          selected: false,
-          content: '',
-        },
-        slidingScale: false,
-        insurance: {
-          medicaid_tenncare: false,
-          medicare: false,
-          private: false,
-        },
-      },
-      requiredDocuments: {
-        none: false,
-        stateId: true,
-        ssn: false,
-        proofOfResidence: false,
-        proofOfIncome: false,
-        birthCertificate: false,
-        medicalRecords: true,
-        psychRecords: false,
-        proofOfNeed: true,
-        utilityBill: false,
-        utilityCutoffNotice: false,
-        proofOfCitizenship: false,
-        proofOfPublicAssistance: false,
-        driversLicense: true,
-        other: {
-          selected: false,
-          content: '',
-        },
-      },
-    },
-  ]);
+  const [services, setServices] = useState<Service[]>([]);
 
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   const add_service = () => {
     const new_service: Service = {
-      id: services.length,
+      id: Date.now(),
       name: `New Service #${services.length + 1}`,
       contact: '',
       description: '',
@@ -273,8 +218,14 @@ export default function Form({ params }: { params: { id: string } }) {
     const new_services = [...services, new_service];
     setServices(new_services);
     setSelectedService(new_service);
+  };
 
-    console.log(services.length);
+  const delete_service = (deleteService: Service) => {
+    const updatedServices = services.filter(
+      (service) => service.id !== deleteService.id
+    );
+    setServices(updatedServices);
+    setSelectedService(null);
   };
 
   const handleServiceInputChange = (value: string | boolean, field: string) => {
@@ -655,15 +606,37 @@ export default function Form({ params }: { params: { id: string } }) {
               >
                 <ResizablePanel defaultSize={20}>
                   <div className="mt-2 flex flex-col px-4 py-2">
-                    {services.map((service: Service) => (
-                      <Button
-                        key={service.id}
-                        onClick={() => setSelectedService(service)}
-                        className="m-1"
-                      >
-                        {service.name}
-                      </Button>
-                    ))}
+                    {/* Fix the height to be dynamic */}
+                    <ScrollArea className="flex h-80 flex-col">
+                      {services.map((service: Service) => (
+                        <div key={service.id} className="flex flex-row">
+                          <Button
+                            onClick={() => setSelectedService(service)}
+                            className="m-1 flex-grow"
+                            variant={
+                              selectedService === service
+                                ? 'default'
+                                : 'outline'
+                            }
+                          >
+                            {service.name}
+                          </Button>
+                          <Button
+                            variant={
+                              selectedService === service
+                                ? 'default'
+                                : 'outline'
+                            }
+                            size="icon"
+                            className="m-1"
+                            onClick={() => delete_service(service)}
+                          >
+                            <Trash />
+                          </Button>
+                        </div>
+                      ))}
+                    </ScrollArea>
+                    <Separator horizontal className="my-2" />
                     <Button
                       className="m-1"
                       variant="outline"
@@ -679,7 +652,7 @@ export default function Form({ params }: { params: { id: string } }) {
                   {selectedService === null ? (
                     <div className="flex h-full items-center justify-center">
                       <p className="text-sm text-gray-600">
-                        Add a service to begin.
+                        Add or select a service to begin.
                       </p>
                     </div>
                   ) : (
@@ -743,9 +716,9 @@ export default function Form({ params }: { params: { id: string } }) {
                           Hours
                         </label>
                         <div className="mb-2">
-                        <p className="text-sm leading-6 text-gray-600">
-                          TBD...
-                        </p>
+                          <p className="text-sm leading-6 text-gray-600">
+                            TBD...
+                          </p>
                         </div>
 
                         <label
