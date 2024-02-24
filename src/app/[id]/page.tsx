@@ -42,7 +42,16 @@ const steps = [
   {
     id: 'Step 2',
     name: 'Services',
-    fields: [],
+    fields: [
+      'name',
+      'description',
+      'contact',
+      'hours',
+      'eligibility',
+      'applicationProcess',
+      'fees',
+      'requiredDocuments',
+    ],
   },
   { id: 'Step 3', name: 'Opportunities', fields: [] },
   { id: 'Step 4', name: 'Review', fields: [] },
@@ -156,7 +165,6 @@ export default function Form({ params }: { params: { id: string } }) {
   }
 
   const [services, setServices] = useState<Service[]>([]);
-
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   const add_service = () => {
@@ -672,7 +680,14 @@ export default function Form({ params }: { params: { id: string } }) {
                           onChange={(e) =>
                             handleServiceInputChange(e.target.value, 'name')
                           }
+                          onClick={(e) => e.target.select()}
+                          {...register('name')}
                         />
+                        {errors.name?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.name.message}
+                          </p>
+                        )}
 
                         <label
                           htmlFor="description"
@@ -690,7 +705,13 @@ export default function Form({ params }: { params: { id: string } }) {
                               'description'
                             )
                           }
+                          {...register('description')}
                         />
+                        {errors.description?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.description.message}
+                          </p>
+                        )}
 
                         <label
                           htmlFor="contact"
