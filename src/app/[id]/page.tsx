@@ -513,7 +513,7 @@ export default function Form({ params }: { params: { id: string } }) {
               <div className="flex h-full w-full flex-col gap-8 lg:flex-row">
                 {/* left section */}
                 <section className="h-2/3 w-full lg:w-1/2">
-                  <div className="flex flex-col">
+                  <div className="mb-2 flex flex-col">
                     <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
                         Does your organization accept volunteers?
@@ -561,76 +561,80 @@ export default function Form({ params }: { params: { id: string } }) {
                     )}
                   </div>
 
-                  {/* If volunteers == true */}
-                  {volunteerChecked === 'true' && (
-                    <section className="w-full">
-                      <div className="mb-4">
+                  <section
+                    className={`w-full, ${
+                      volunteerChecked === 'false' ? 'opacity-50' : ''
+                    }`}
+                  >
+                    <div className="mb-4">
+                      <h2 className="text-base font-semibold leading-7 text-gray-900">
+                        Who is eligible to volunteer?
+                      </h2>
+                      <textarea
+                        id="vol_reqs"
+                        {...register('vol_reqs')}
+                        autoComplete="vol_reqs"
+                        cols={30}
+                        rows={10}
+                        disabled={volunteerChecked === 'false'}
+                        placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
+                        className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      ></textarea>
+                      {errors.vol_reqs?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.vol_reqs.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex w-full flex-col gap-6 sm:flex-row">
+                      <div className="w-full sm:w-1/2">
                         <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Who is eligible to volunteer?
+                          Volunteer Coordinator:
                         </h2>
-                        <textarea
-                          id="vol_reqs"
-                          {...register('vol_reqs')}
-                          autoComplete="vol_reqs"
-                          cols={30}
-                          rows={10}
-                          placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
-                          className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        ></textarea>
-                        {errors.vol_reqs?.message && (
+
+                        <input
+                          type="text"
+                          id="vol_coor"
+                          {...register('vol_coor')}
+                          autoComplete="vol_coor"
+                          disabled={volunteerChecked === 'false'}
+                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        />
+                        {errors.vol_coor?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.vol_reqs.message}
+                            {errors.vol_coor.message}
                           </p>
                         )}
                       </div>
 
-                      <div className="flex w-full flex-col gap-6 sm:flex-row">
-                        <div className="w-full sm:w-1/2">
-                          <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Volunteer Coordinator:
-                          </h2>
+                      <div className="w-full sm:w-1/2">
+                        <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          Phone #:
+                        </h2>
 
-                          <input
-                            type="text"
-                            id="vol_coor"
-                            {...register('vol_coor')}
-                            autoComplete="vol_coor"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
-                          {errors.vol_coor?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.vol_coor.message}
-                            </p>
-                          )}
-                        </div>
+                        <input
+                          type="tel"
+                          id="vol_coor_tel"
+                          {...register('vol_coor_tel')}
+                          autoComplete="vol_coor_tel"
+                          disabled={volunteerChecked === 'false'}
+                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        />
 
-                        <div className="w-full sm:w-1/2">
-                          <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Phone #:
-                          </h2>
-
-                          <input
-                            type="tel"
-                            id="vol_coor_tel"
-                            {...register('vol_coor_tel')}
-                            autoComplete="vol_coor_tel"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
-
-                          {errors.vol_coor_tel?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.vol_coor_tel.message}
-                            </p>
-                          )}
-                        </div>
+                        {errors.vol_coor_tel?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.vol_coor_tel.message}
+                          </p>
+                        )}
                       </div>
-                    </section>
-                  )}
+                    </div>
+                  </section>
                 </section>
 
                 {/* right section */}
                 <section className="h-2/3 w-full lg:w-1/2">
-                  <div className="flex flex-col">
+                  <div className="mb-2 flex flex-col">
                     <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
                         Does your organization accept ongoing, non-monetary
@@ -677,215 +681,225 @@ export default function Form({ params }: { params: { id: string } }) {
                     )}
                   </div>
 
-                  {/* If donation == true */}
-                  {donationChecked === 'true' && (
-                    <section>
-                      <div className="mb-2">
-                        <div className="flex flex-col items-start lg:flex-row lg:items-center lg:gap-8">
+                  <section
+                    className={`${
+                      donationChecked === 'false' ? 'opacity-50' : ''
+                    }`}
+                  >
+                    <div className="mb-2">
+                      <div className="flex flex-col items-start lg:flex-row lg:items-center lg:gap-8">
+                        <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          Please list.
+                        </h2>
+                        <input
+                          type="text"
+                          {...register('don_ex')}
+                          id="don_ex"
+                          placeholder="Example: pet food, clothing, appliances, furniture"
+                          disabled={donationChecked === 'false'}
+                          className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 lg:w-2/3"
+                        ></input>
+                      </div>
+                      {errors.don_ex?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.don_ex.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mt-8 flex flex-row gap-6">
+                      {/* radio button */}
+                      <div className="mb-1 flex flex-col gap-4 sm:flex-row sm:gap-12">
+                        <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          Do you provide pick-up service?
+                        </h2>
+                        <div className="flex flex-row gap-4 whitespace-nowrap">
+                          <div>
+                            <input
+                              id="pickup"
+                              type="radio"
+                              value="false"
+                              disabled={donationChecked === 'false'}
+                              {...register('pickup')}
+                              onChange={(e) => {
+                                setPickupChecked(e.target.value);
+                              }}
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              No
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              id="pickup"
+                              type="radio"
+                              value="true"
+                              disabled={donationChecked === 'false'}
+                              {...register('pickup')}
+                              onChange={(e) => {
+                                setPickupChecked(e.target.value);
+                              }}
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              Yes
+                            </label>
+                          </div>
+                        </div>
+                        {errors.pickup?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.pickup.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* pick up service */}
+                    <section
+                      className={`${
+                        pickupChecked === 'false' ? 'opacity-50' : ''
+                      }`}
+                    >
+                      <div className="mb-6">
+                        <div className="flex flex-row items-center gap-4">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Please list.
+                            Where?
                           </h2>
                           <input
                             type="text"
-                            {...register('don_ex')}
-                            id="don_ex"
-                            placeholder="Example: pet food, clothing, appliances, furniture"
-                            className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 lg:w-2/3"
+                            {...register('pickup_loc')}
+                            id="pickup_loc"
+                            disabled={pickupChecked === 'false'}
+                            className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           ></input>
                         </div>
-                        {errors.don_ex?.message && (
+                        {errors.pickup_loc?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.don_ex.message}
+                            {errors.pickup_loc.message}
+                          </p>
+                        )}
+                      </div>
+                    </section>
+
+                    <div className="flex w-full flex-col gap-6 sm:flex-row">
+                      <div className="w-full sm:w-1/2">
+                        <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          Donation Coordinator:
+                        </h2>
+
+                        <input
+                          type="text"
+                          {...register('don_coor')}
+                          id="don_coor"
+                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        />
+                        {errors.don_coor?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.don_coor.message}
                           </p>
                         )}
                       </div>
 
-                      <div className="flex flex-row gap-6">
-                        {/* radio button */}
-                        <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:gap-12">
-                          <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Do you provide pick-up service?
-                          </h2>
-                          <div className="flex flex-row gap-4 whitespace-nowrap">
-                            <div>
-                              <input
-                                checked={pickupChecked === 'false'}
-                                id="pickup"
-                                type="radio"
-                                value="false"
-                                {...register('pickup')}
-                                onChange={(e) => {
-                                  setPickupChecked(e.target.value);
-                                }}
-                                className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                              />
-                              <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                No
-                              </label>
-                            </div>
-                            <div>
-                              <input
-                                id="pickup"
-                                type="radio"
-                                value="true"
-                                {...register('pickup')}
-                                onChange={(e) => {
-                                  setPickupChecked(e.target.value);
-                                }}
-                                className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                              />
-                              <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                Yes
-                              </label>
-                            </div>
-                          </div>
-                          {errors.pickup?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.pickup.message}
-                            </p>
-                          )}
-                        </div>
+                      <div className="w-full sm:w-1/2">
+                        <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          Phone #:
+                        </h2>
+
+                        <input
+                          type="tel"
+                          {...register('don_coor_tel')}
+                          id="don_coor_tel"
+                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        />
+                        {errors.don_coor_tel?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.don_coor_tel.message}
+                          </p>
+                        )}
                       </div>
-
-                      {/* If pickedup == true */}
-                      {pickupChecked === 'true' && (
-                        <section>
-                          <div className="mb-2">
-                            <div className="flex flex-row items-center gap-4">
-                              <h2 className="text-base font-semibold leading-7 text-gray-900">
-                                Where?
-                              </h2>
-                              <input
-                                type="text"
-                                {...register('pickup_loc')}
-                                id="pickup_loc"
-                                className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                              ></input>
-                            </div>
-                            {errors.pickup_loc?.message && (
-                              <p className="mt-2 text-sm text-red-400">
-                                {errors.pickup_loc.message}
-                              </p>
-                            )}
-                          </div>
-                        </section>
-                      )}
-
-                      <div className="flex w-full flex-col gap-6 sm:flex-row">
-                        <div className="w-full sm:w-1/2">
-                          <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Donation Coordinator:
-                          </h2>
-
-                          <input
-                            type="text"
-                            {...register('don_coor')}
-                            id="don_coor"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
-                          {errors.don_coor?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.don_coor.message}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="w-full sm:w-1/2">
-                          <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Phone #:
-                          </h2>
-
-                          <input
-                            type="tel"
-                            {...register('don_coor_tel')}
-                            id="don_coor_tel"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
-                          {errors.don_coor_tel?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.don_coor_tel.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </section>
-                  )}
+                    </div>
+                  </section>
                 </section>
               </div>
 
               {/* bottom container */}
               <div className="flex h-full w-full flex-col lg:flex-row">
                 <section className="h-full w-full">
-                  <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:gap-12">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">
-                      Are there other agencies or services that have been
-                      helpful that you would recommend to be included in our
-                      resource database?
-                    </h2>
-                    {/* radio button */}
-                    <div className="flex flex-row gap-4 whitespace-nowrap">
-                      <div>
-                        <input
-                          id="recommendation"
-                          type="radio"
-                          value="false"
-                          {...register('recommendation')}
-                          onChange={(e) => {
-                            setRecommendationChecked(e.target.value);
-                          }}
-                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          No
-                        </label>
-                      </div>
-                      <div>
-                        <input
-                          id="recommendation"
-                          type="radio"
-                          value="true"
-                          {...register('recommendation')}
-                          onChange={(e) => {
-                            setRecommendationChecked(e.target.value);
-                          }}
-                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          Yes
-                        </label>
+                  <div className="mb-4 flex flex-col">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
+                      <h2 className="text-base font-semibold leading-7 text-gray-900">
+                        Are there other agencies or services that have been
+                        helpful that you would recommend to be included in our
+                        resource database?
+                      </h2>
+                      {/* radio button */}
+                      <div className="flex flex-row gap-4 whitespace-nowrap">
+                        <div>
+                          <input
+                            id="recommendation"
+                            type="radio"
+                            value="false"
+                            {...register('recommendation')}
+                            onChange={(e) => {
+                              setRecommendationChecked(e.target.value);
+                            }}
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          />
+                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            No
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            id="recommendation"
+                            type="radio"
+                            value="true"
+                            {...register('recommendation')}
+                            onChange={(e) => {
+                              setRecommendationChecked(e.target.value);
+                            }}
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          />
+                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            Yes
+                          </label>
+                        </div>
                       </div>
                     </div>
+                    {errors.recommendation?.message && (
+                      <p className="mt-2 text-sm text-red-400">
+                        {errors.recommendation.message}
+                      </p>
+                    )}
                   </div>
-                  {errors.recommendation?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.recommendation.message}
-                    </p>
-                  )}
 
-                  {/* If donation == true */}
-                  {recommendationChecked === 'true' && (
-                    <section>
-                      <div>
-                        <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Please provide contact information for these
-                          agencies/services.
-                        </h2>
-                        <textarea
-                          {...register('recommendations_contact')}
-                          id="recommendations_contact"
-                          cols={30}
-                          rows={10}
-                          placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
-                          className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        ></textarea>
-                        {errors.recommendations_contact?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.recommendations_contact.message}
-                          </p>
-                        )}
-                      </div>
-                    </section>
-                  )}
+                  <section
+                    className={`${
+                      recommendationChecked === 'false' ? 'opacity-50' : ''
+                    }`}
+                  >
+                    <div>
+                      <h2 className="text-base font-semibold leading-7 text-gray-900">
+                        Please provide contact information for these
+                        agencies/services.
+                      </h2>
+                      <textarea
+                        {...register('recommendations_contact')}
+                        id="recommendations_contact"
+                        cols={30}
+                        rows={10}
+                        disabled={recommendationChecked === 'false'}
+                        placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
+                        className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      ></textarea>
+                      {errors.recommendations_contact?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.recommendations_contact.message}
+                        </p>
+                      )}
+                    </div>
+                  </section>
                 </section>
               </div>
             </div>
