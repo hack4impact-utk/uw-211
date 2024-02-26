@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Footer from '@/components/Footer';
 import FormStepper from '@/components/FormStepper';
+import HoursOfOperationPicker from '@/components/HoursOfOperationPicker';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 
@@ -54,7 +55,7 @@ const steps = [
 
 export default function Form({ params }: { params: { id: string } }) {
   const [previousStep, setPreviousStep] = useState(0);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1);
   const delta = currentStep - previousStep;
 
   const {
@@ -497,6 +498,8 @@ export default function Form({ params }: { params: { id: string } }) {
               <p className="mt-1 text-sm leading-6 text-gray-600">
                 Services form
               </p>
+
+              <HoursOfOperationPicker />
             </>
           </motion.div>
         )}
