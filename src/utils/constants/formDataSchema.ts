@@ -52,7 +52,7 @@ export const FormDataSchema = z
   })
   .superRefine(({ volunteers, vol_reqs, vol_coor, vol_coor_tel }, ctx) => {
     if (volunteers === 'true') {
-      if (vol_reqs === '') {
+      if (vol_reqs === '' || vol_reqs === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Volunteer eligbibilty is required.',
@@ -60,7 +60,7 @@ export const FormDataSchema = z
         });
       }
 
-      if (vol_coor === '') {
+      if (vol_coor === '' || vol_coor === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Volunteer coordinator is required.',
@@ -68,7 +68,7 @@ export const FormDataSchema = z
         });
       }
 
-      if (vol_coor_tel === '') {
+      if (vol_coor_tel === '' || vol_coor_tel === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Volunteer coordinator telephone number is required.',
@@ -79,9 +79,9 @@ export const FormDataSchema = z
       return false;
     }
   })
-  .superRefine(({ donation, don_ex, don_coor, don_coor_tel }, ctx) => {
+  .superRefine(({ donation, don_ex, don_coor, pickup, don_coor_tel }, ctx) => {
     if (donation === 'true') {
-      if (don_ex === '') {
+      if (don_ex === '' || don_ex === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Examples of donations is required.',
@@ -89,7 +89,15 @@ export const FormDataSchema = z
         });
       }
 
-      if (don_coor === '') {
+      if (pickup === '' || pickup === undefined) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Pickup status is required.',
+          path: ['pickup'],
+        });
+      }
+
+      if (don_coor === '' || don_coor === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Donation coordinator is required.',
@@ -97,7 +105,7 @@ export const FormDataSchema = z
         });
       }
 
-      if (don_coor_tel === '') {
+      if (don_coor_tel === '' || don_coor_tel === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Donation coordinator telephone number is required.',
@@ -110,7 +118,7 @@ export const FormDataSchema = z
   })
   .superRefine(({ pickup, pickup_loc }, ctx) => {
     if (pickup === 'true') {
-      if (pickup_loc == '') {
+      if (pickup_loc === '' || pickup_loc === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Pickup location is required.',
@@ -121,7 +129,10 @@ export const FormDataSchema = z
   })
   .superRefine(({ recommendation, recommendations_contact }, ctx) => {
     if (recommendation === 'true') {
-      if (recommendations_contact == '') {
+      if (
+        recommendations_contact === '' ||
+        recommendations_contact === undefined
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Recommendation contact information is required.',
