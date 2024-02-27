@@ -3,13 +3,13 @@ import { z } from 'zod';
 export const FormDataSchema = z
   .object({
     // preliminaries
-    legalName: z.string().min(1, 'Legal name is required'),
+    legalName: z.string().min(1, 'Required'),
     akas: z.string(),
-    legalStatus: z.string().min(1, 'Legal status is required'),
-    agencyInfo: z.string().min(1, 'Agency Information is required'),
-    directorName: z.string().min(1, 'Director name is required'),
-    open: z.string().min(1, 'Opening time required'),
-    close: z.string().min(1, 'Closing time required'),
+    legalStatus: z.string().min(1, 'Required'),
+    agencyInfo: z.string().min(1, 'Required'),
+    directorName: z.string().min(1, 'Required'),
+    open: z.string().min(1, 'Required'),
+    close: z.string().min(1, 'Required'),
     days: z
       .object({
         monday: z.boolean(),
@@ -26,27 +26,37 @@ export const FormDataSchema = z
           data.wednesday ||
           data.thursday ||
           data.friday,
-        'At least one operational business day required'
+        'Please select at least one operational business day'
       ),
 
     // OPPORTUNITIES
-    volunteers: z.string({ invalid_type_error: 'Accept volunteers required.' }),
+    volunteers: z.string({ invalid_type_error: 'Required' }),
     vol_reqs: z.string().optional(),
     vol_coor: z.string().optional(),
-    vol_coor_tel: z.string().optional(),
+    vol_coor_tel: z
+      .string()
+      .regex(/^[0-9]{10}$/, {
+        message: 'Must be a valid phone number.',
+      })
+      .optional(),
 
     // DONATIONS
-    donation: z.string({ invalid_type_error: 'Accept donations required.' }),
+    donation: z.string({ invalid_type_error: 'Required' }),
     don_ex: z.string().optional(),
     // pickup
     pickup: z.string().optional(),
     pickup_loc: z.string().optional(),
     don_coor: z.string().optional(),
-    don_coor_tel: z.string().optional(),
+    don_coor_tel: z
+      .string()
+      .regex(/^[0-9]{10}$/, {
+        message: 'Must be a valid phone number.',
+      })
+      .optional(),
 
     // RECOMMENDATION
     recommendation: z.string({
-      invalid_type_error: 'Recommendation field required.',
+      invalid_type_error: 'Required',
     }),
     recommendations_contact: z.string().optional(),
   })
@@ -55,7 +65,7 @@ export const FormDataSchema = z
       if (vol_reqs === '' || vol_reqs === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Volunteer eligbibilty is required.',
+          message: 'Required',
           path: ['vol_reqs'],
         });
       }
@@ -63,7 +73,7 @@ export const FormDataSchema = z
       if (vol_coor === '' || vol_coor === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Volunteer coordinator is required.',
+          message: 'Required',
           path: ['vol_coor'],
         });
       }
@@ -71,7 +81,7 @@ export const FormDataSchema = z
       if (vol_coor_tel === '' || vol_coor_tel === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Volunteer coordinator telephone number is required.',
+          message: 'Required',
           path: ['vol_coor_tel'],
         });
       }
@@ -84,7 +94,7 @@ export const FormDataSchema = z
       if (don_ex === '' || don_ex === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Examples of donations is required.',
+          message: 'Required',
           path: ['don_ex'],
         });
       }
@@ -92,7 +102,7 @@ export const FormDataSchema = z
       if (pickup === '' || pickup === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Pickup status is required.',
+          message: 'Required',
           path: ['pickup'],
         });
       }
@@ -100,7 +110,7 @@ export const FormDataSchema = z
       if (don_coor === '' || don_coor === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Donation coordinator is required.',
+          message: 'Required',
           path: ['don_coor'],
         });
       }
@@ -108,7 +118,7 @@ export const FormDataSchema = z
       if (don_coor_tel === '' || don_coor_tel === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Donation coordinator telephone number is required.',
+          message: 'Required',
           path: ['don_coor_tel'],
         });
       }
@@ -121,7 +131,7 @@ export const FormDataSchema = z
       if (pickup_loc === '' || pickup_loc === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Pickup location is required.',
+          message: 'Required',
           path: ['pickup_loc'],
         });
       }
@@ -135,7 +145,7 @@ export const FormDataSchema = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Recommendation contact information is required.',
+          message: 'Required',
           path: ['recommendations_contact'],
         });
       }

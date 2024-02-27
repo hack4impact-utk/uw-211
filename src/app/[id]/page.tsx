@@ -124,7 +124,7 @@ export default function Form({ params }: { params: { id: string } }) {
   const [recommendationChecked, setRecommendationChecked] = useState('false');
 
   return (
-    <section className="absolute inset-0 flex flex-col justify-between pl-4 pr-4 pt-24 sm:pl-12 sm:pr-12 md:pl-24 md:pr-24">
+    <section className="absolute inset-0 flex flex-col justify-between pl-4 pr-4 pt-24 sm:px-12 md:px-20">
       {/* Stepper */}
       <FormStepper
         currentPageIndex={currentStep}
@@ -153,6 +153,7 @@ export default function Form({ params }: { params: { id: string } }) {
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Legal Agency Name
+                    <span className="ml-1 text-sm text-red-400">*</span>
                   </label>
                   <div className="mt-2">
                     <input
@@ -177,6 +178,7 @@ export default function Form({ params }: { params: { id: string } }) {
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Director Name/Title
+                    <span className="ml-1 text-sm text-red-400">*</span>
                   </label>
                   <div className="mt-2">
                     <input
@@ -201,6 +203,7 @@ export default function Form({ params }: { params: { id: string } }) {
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Brief Agency Information
+                    <span className="ml-1 text-sm text-red-400">*</span>
                   </label>
                   <div className="mt-2">
                     <textarea
@@ -253,6 +256,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       Legal Organizational Status
+                      <span className="ml-1 text-sm text-red-400">*</span>
                     </label>
                     <div className="mt-2">
                       <select
@@ -296,6 +300,7 @@ export default function Form({ params }: { params: { id: string } }) {
                         className="mb-2 block text-sm font-medium leading-6 text-gray-900"
                       >
                         Select day(s) of operation
+                        <span className="ml-1 text-sm text-red-400">*</span>
                       </label>
 
                       <div className="flex flex-col gap-4 sm:flex-row sm:gap-2">
@@ -441,6 +446,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       Open
+                      <span className="ml-1 text-sm text-red-400">*</span>
                     </label>
                     <input
                       type="text"
@@ -463,6 +469,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       Close
+                      <span className="ml-1 text-sm text-red-400">*</span>
                     </label>
                     <input
                       type="text"
