@@ -727,6 +727,7 @@ export default function Form({ params }: { params: { id: string } }) {
                                 setPickupChecked(e.target.value);
                               }}
                               className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              defaultChecked
                             />
                             <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                               No
@@ -749,13 +750,13 @@ export default function Form({ params }: { params: { id: string } }) {
                             </label>
                           </div>
                         </div>
-                        {errors.pickup?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.pickup.message}
-                          </p>
-                        )}
                       </div>
                     </div>
+                    {errors.pickup?.message && (
+                      <p className="mt-2 text-sm text-red-400">
+                        {errors.pickup.message}
+                      </p>
+                    )}
 
                     {/* pick up service */}
                     <section
