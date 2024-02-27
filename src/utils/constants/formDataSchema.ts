@@ -51,8 +51,6 @@ export const FormDataSchema = z
     recommendations_contact: z.string().optional(),
   })
   .superRefine(({ volunteers, vol_reqs, vol_coor, vol_coor_tel }, ctx) => {
-    console.log(vol_reqs);
-    console.log(vol_coor);
     if (volunteers === 'true') {
       if (vol_reqs === '' || vol_reqs === undefined) {
         ctx.addIssue({
@@ -82,8 +80,6 @@ export const FormDataSchema = z
     }
   })
   .superRefine(({ donation, don_ex, don_coor, pickup, don_coor_tel }, ctx) => {
-    console.log(don_ex);
-    console.log(don_coor);
     if (donation === 'true') {
       if (don_ex === '' || don_ex === undefined) {
         ctx.addIssue({
