@@ -531,6 +531,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             }}
                             autoComplete="volunteers"
                             className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            defaultChecked
                           />
                           <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                             No
@@ -652,6 +653,7 @@ export default function Form({ params }: { params: { id: string } }) {
                               setDonationChecked(e.target.value);
                             }}
                             className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            defaultChecked
                           />
                           <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                             No
@@ -792,6 +794,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           type="text"
                           {...register('don_coor')}
                           id="don_coor"
+                          disabled={pickupChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
                         {errors.don_coor?.message && (
@@ -810,6 +813,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           type="tel"
                           {...register('don_coor_tel')}
                           id="don_coor_tel"
+                          disabled={pickupChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
                         {errors.don_coor_tel?.message && (
@@ -845,6 +849,7 @@ export default function Form({ params }: { params: { id: string } }) {
                               setRecommendationChecked(e.target.value);
                             }}
                             className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            defaultChecked
                           />
                           <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                             No
