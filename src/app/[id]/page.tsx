@@ -3,7 +3,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
-import { FormDataSchema } from '@/utils/constants/formDataSchema';
+import {
+  FormDataSchema,
+  ServiceSchema,
+} from '@/utils/constants/formDataSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
@@ -17,12 +20,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Plus, Trash } from 'lucide-react';
 
 type Inputs = z.infer<typeof FormDataSchema>;
+type Service = z.infer<typeof ServiceSchema>;
 
 const steps = [
   {
@@ -46,7 +49,6 @@ const steps = [
       'name',
       'description',
       'contact',
-      'hours',
       'eligibility',
       'applicationProcess',
       'fees',
@@ -65,11 +67,67 @@ export default function Form({ params }: { params: { id: string } }) {
   const {
     register,
     handleSubmit,
+    getValues,
     reset,
     trigger,
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(FormDataSchema),
+    defaultValues: {
+      services: [
+        {
+          name: `New Service #0`,
+          contact: '',
+          description: '',
+          eligibility: '',
+          applicationProcess: {
+            walkIn: false,
+            telephone: false,
+            appointment: false,
+            online: false,
+            other: {
+              selected: false,
+              content: '',
+            },
+            referral: {
+              required: false,
+              content: '',
+            },
+          },
+          fees: {
+            none: false,
+            straight: {
+              selected: false,
+              content: '',
+            },
+            slidingScale: false,
+            medicaid_tenncare: false,
+            medicare: false,
+            private: false,
+          },
+          requiredDocuments: {
+            none: false,
+            stateId: false,
+            ssn: false,
+            proofOfResidence: false,
+            proofOfIncome: false,
+            birthCertificate: false,
+            medicalRecords: false,
+            psychRecords: false,
+            proofOfNeed: false,
+            utilityBill: false,
+            utilityCutoffNotice: false,
+            proofOfCitizenship: false,
+            proofOfPublicAssistance: false,
+            driversLicense: false,
+            other: {
+              selected: false,
+              content: '',
+            },
+          },
+        },
+      ],
+    },
   });
 
   const processForm: SubmitHandler<Inputs> = (data) => {
@@ -108,69 +166,9 @@ export default function Form({ params }: { params: { id: string } }) {
   const [isThursdayChecked, setThursdayChecked] = useState(false);
   const [isFridayChecked, setFridayChecked] = useState(false);
 
-  interface Service {
-    id: number;
-    name: string;
-    description: string;
-    contact: string | '';
-    // hours
-    eligibility: string;
-    applicationProcess: {
-      walkIn: boolean;
-      telephone: boolean;
-      appointment: boolean;
-      online: boolean;
-      other: {
-        selected: boolean;
-        content: string | '';
-      };
-      referral: {
-        required: boolean;
-        contact: string | '';
-      };
-    };
-    fees: {
-      none: boolean;
-      straight: {
-        selected: boolean;
-        content: string | '';
-      };
-      slidingScale: boolean;
-      insurance: {
-        medicaid_tenncare: boolean;
-        medicare: boolean;
-        private: boolean;
-      };
-    };
-    requiredDocuments: {
-      none: boolean;
-      stateId: boolean;
-      ssn: boolean;
-      proofOfResidence: boolean;
-      proofOfIncome: boolean;
-      birthCertificate: boolean;
-      medicalRecords: boolean;
-      psychRecords: boolean;
-      proofOfNeed: boolean;
-      utilityBill: boolean;
-      utilityCutoffNotice: boolean;
-      proofOfCitizenship: boolean;
-      proofOfPublicAssistance: boolean;
-      driversLicense: boolean;
-      other: {
-        selected: boolean;
-        content: string | '';
-      };
-    };
-  }
-
-  const [services, setServices] = useState<Service[]>([]);
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
-
   const add_service = () => {
     const new_service: Service = {
-      id: Date.now(),
-      name: `New Service #${services.length + 1}`,
+      name: `New Service #${getValues('services').length}`,
       contact: '',
       description: '',
       eligibility: '',
@@ -185,7 +183,7 @@ export default function Form({ params }: { params: { id: string } }) {
         },
         referral: {
           required: false,
-          contact: '',
+          content: '',
         },
       },
       fees: {
@@ -195,11 +193,9 @@ export default function Form({ params }: { params: { id: string } }) {
           content: '',
         },
         slidingScale: false,
-        insurance: {
-          medicaid_tenncare: false,
-          medicare: false,
-          private: false,
-        },
+        medicaid_tenncare: false,
+        medicare: false,
+        private: false,
       },
       requiredDocuments: {
         none: false,
@@ -222,46 +218,10 @@ export default function Form({ params }: { params: { id: string } }) {
         },
       },
     };
-
-    const new_services = [...services, new_service];
-    setServices(new_services);
-    setSelectedService(new_service);
+    getValues('services').push(new_service);
   };
 
-  const delete_service = (deleteService: Service) => {
-    const updatedServices = services.filter(
-      (service) => service.id !== deleteService.id
-    );
-    setServices(updatedServices);
-    setSelectedService(null);
-  };
-
-  const handleServiceInputChange = (value: string | boolean, field: string) => {
-    const updateNestedState = (
-      obj: Service,
-      path: string,
-      value: string | boolean
-    ) => {
-      const keys = path.split('.');
-      const lastKey = keys.pop();
-      const lastObj = keys.reduce(
-        (obj, key) => (obj[key] = obj[key] || {}),
-        obj
-      );
-      lastObj[lastKey!] = value;
-    };
-
-    if (selectedService) {
-      const updatedService = { ...selectedService };
-      updateNestedState(updatedService, field, value);
-      const updatedServices = services.map((service) =>
-        service.id === selectedService.id ? updatedService : service
-      );
-
-      setServices(updatedServices);
-      setSelectedService(updatedService);
-    }
-  };
+  const [serviceIdx, setServiceIdx] = useState(0);
 
   return (
     <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-24 pr-24 pt-24">
@@ -616,13 +576,13 @@ export default function Form({ params }: { params: { id: string } }) {
                   <div className="mt-2 flex flex-col px-4 py-2">
                     {/* Fix the height to be dynamic */}
                     <ScrollArea className="flex h-80 flex-col">
-                      {services.map((service: Service) => (
-                        <div key={service.id} className="flex flex-row">
+                      {getValues('services').map((service: Service, idx) => (
+                        <div key={idx} className="flex flex-row">
                           <Button
-                            onClick={() => setSelectedService(service)}
+                            onClick={() => setServiceIdx(idx)}
                             className="m-1 flex-grow"
                             variant={
-                              selectedService === service
+                              getValues(`services.${idx}`) === service
                                 ? 'default'
                                 : 'outline'
                             }
@@ -631,20 +591,20 @@ export default function Form({ params }: { params: { id: string } }) {
                           </Button>
                           <Button
                             variant={
-                              selectedService === service
+                              getValues(`services.${idx}`) === service
                                 ? 'default'
                                 : 'outline'
                             }
                             size="icon"
                             className="m-1"
-                            onClick={() => delete_service(service)}
+                            onClick={() => getValues(`services`).splice(idx, 1)}
                           >
                             <Trash />
                           </Button>
                         </div>
                       ))}
                     </ScrollArea>
-                    <Separator horizontal={true} className="my-2" />
+                    <Separator className="my-2" />
                     <Button
                       className="m-1"
                       variant="outline"
@@ -656,8 +616,8 @@ export default function Form({ params }: { params: { id: string } }) {
                   </div>
                 </ResizablePanel>
                 <ResizableHandle withHandle />
-                <ResizablePanel>
-                  {selectedService === null ? (
+                <ResizablePanel defaultSize={70}>
+                  {getValues(`services.${serviceIdx}`) === null ? (
                     <div className="flex h-full items-center justify-center">
                       <p className="text-sm text-gray-600">
                         Add or select a service to begin.
@@ -676,16 +636,11 @@ export default function Form({ params }: { params: { id: string } }) {
                         <Input
                           id="name"
                           className="mb-2"
-                          value={selectedService?.name}
-                          onChange={(e) =>
-                            handleServiceInputChange(e.target.value, 'name')
-                          }
-                          onClick={(e) => e.target.select()}
-                          {...register('name')}
+                          {...register(`services.${serviceIdx}.name`)}
                         />
-                        {errors.name?.message && (
+                        {errors.services?.[serviceIdx]?.name?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.name.message}
+                            {errors.services[serviceIdx]?.name?.message}
                           </p>
                         )}
 
@@ -698,18 +653,12 @@ export default function Form({ params }: { params: { id: string } }) {
                         <Textarea
                           id="description"
                           className="mb-2"
-                          value={selectedService?.description}
-                          onChange={(e) =>
-                            handleServiceInputChange(
-                              e.target.value,
-                              'description'
-                            )
-                          }
-                          {...register('description')}
+                          {...register(`services.${serviceIdx}.description`)}
                         />
-                        {errors.description?.message && (
+                        {errors.services?.[serviceIdx]?.description
+                          ?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.description.message}
+                            {errors.services[serviceIdx]?.description?.message}
                           </p>
                         )}
 
@@ -723,10 +672,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           id="contact"
                           className="mb-2"
                           placeholder="Only add contact person if different from Director or if contact persons differ by service."
-                          value={selectedService?.contact}
-                          onChange={(e) =>
-                            handleServiceInputChange(e.target.value, 'contact')
-                          }
+                          {...register(`services.${serviceIdx}.contact`)}
                         />
 
                         {/* hours here eventually */}
@@ -755,13 +701,7 @@ export default function Form({ params }: { params: { id: string } }) {
 It is okay to restrict services to certain populations based on gender; family status, disability,
 age, personal situations, etc. (i.e. battered women with children, people with visual impairments,
 homeless men, etc.) This helps us to make appropriate referrals."
-                          value={selectedService?.eligibility}
-                          onChange={(e) =>
-                            handleServiceInputChange(
-                              e.target.value,
-                              'eligibility'
-                            )
-                          }
+                          {...register(`services.${serviceIdx}.eligibility`)}
                         />
 
                         <Separator className="my-4" />
@@ -780,17 +720,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           className="mb-2 ml-2 flex flex-col"
                         >
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="walkIn"
-                              checked={
-                                selectedService?.applicationProcess.walkIn
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'applicationProcess.walkIn'
-                                )
-                              }
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.applicationProcess.walkIn`
+                              )}
                             />
                             <label
                               htmlFor="walkIn"
@@ -801,17 +737,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="telephone"
-                              checked={
-                                selectedService?.applicationProcess.telephone
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'applicationProcess.telephone'
-                                )
-                              }
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.applicationProcess.telephone`
+                              )}
                             />
                             <label
                               htmlFor="telephone"
@@ -822,17 +754,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="appointment"
-                              checked={
-                                selectedService?.applicationProcess.appointment
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'applicationProcess.appointment'
-                                )
-                              }
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.applicationProcess.appointment`
+                              )}
                             />
                             <label
                               htmlFor="appointment"
@@ -843,17 +771,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="online"
-                              checked={
-                                selectedService?.applicationProcess.online
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'applicationProcess.online'
-                                )
-                              }
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.applicationProcess.online`
+                              )}
                             />
                             <label
                               htmlFor="online"
@@ -865,18 +789,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                           {/* Fix this checkbox, make input only appear if checked! */}
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="other"
-                              checked={
-                                selectedService?.applicationProcess.other
-                                  .selected
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'applicationProcess.other.selected'
-                                )
-                              }
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.applicationProcess.other.selected`
+                              )}
                             />
                             <label
                               htmlFor="other"
@@ -884,20 +803,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             >
                               Other
                             </label>
-                            {selectedService?.applicationProcess.other
-                              .selected ? (
+                            {getValues(
+                              `services.${serviceIdx}.applicationProcess.other.selected`
+                            ) ? (
                               <Input
                                 className="m-2"
-                                value={
-                                  selectedService?.applicationProcess.other
-                                    .content
-                                }
-                                onChange={(e) =>
-                                  handleServiceInputChange(
-                                    e.target.value,
-                                    'applicationProcess.other.content'
-                                  )
-                                }
+                                placeholder="Please specify."
+                                {...register(
+                                  `services.${serviceIdx}.applicationProcess.other.content`
+                                )}
                               />
                             ) : (
                               <></>
@@ -905,18 +819,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="referral"
-                              checked={
-                                selectedService?.applicationProcess.referral
-                                  .required
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'applicationProcess.referral.required'
-                                )
-                              }
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.applicationProcess.referral.required`
+                              )}
                             />
                             <label
                               htmlFor="referral"
@@ -924,21 +833,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             >
                               Referral Required
                             </label>
-                            {selectedService?.applicationProcess.referral
-                              .required ? (
+                            {getValues(
+                              `services.${serviceIdx}.applicationProcess.referral.required`
+                            ) ? (
                               <Input
                                 className="m-2"
                                 placeholder="By whom?"
-                                value={
-                                  selectedService?.applicationProcess.referral
-                                    .contact
-                                }
-                                onChange={(e) =>
-                                  handleServiceInputChange(
-                                    e.target.value,
-                                    'applicationProcess.referral.contact'
-                                  )
-                                }
+                                {...register(
+                                  `services.${serviceIdx}.applicationProcess.referral.content`
+                                )}
                               />
                             ) : (
                               <></>
@@ -960,12 +863,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </p>
                         <div id="fees" className="mb-2 ml-2 flex flex-col">
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="noFees"
-                              checked={selectedService?.fees.none}
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(checked, 'fees.none')
-                              }
+                              className="form-checkbox"
+                              {...register(`services.${serviceIdx}.fees.none`)}
                             />
                             <label
                               htmlFor="noFees"
@@ -976,16 +878,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="straight"
-                              checked={selectedService?.fees.straight.selected}
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'fees.straight.selected'
-                                )
-                              }
-                              disabled={selectedService?.fees.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.fees.straight.selected`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.fees.none`
+                              )}
                             />
                             <label
                               htmlFor="straight"
@@ -993,18 +895,18 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             >
                               Straight Fee
                             </label>
-                            {selectedService?.fees.straight.selected ? (
+                            {getValues(
+                              `services.${serviceIdx}.fees.straight.selected`
+                            ) ? (
                               <Input
                                 className="m-2"
                                 placeholder="Please specify."
-                                value={selectedService?.fees.straight.content}
-                                onChange={(e) =>
-                                  handleServiceInputChange(
-                                    e.target.value,
-                                    'fees.straight.content'
-                                  )
-                                }
-                                disabled={selectedService?.fees.none}
+                                {...register(
+                                  `services.${serviceIdx}.fees.straight.content`
+                                )}
+                                disabled={getValues(
+                                  `services.${serviceIdx}.fees.none`
+                                )}
                               />
                             ) : (
                               <></>
@@ -1012,16 +914,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="sliding"
-                              checked={selectedService?.fees.slidingScale}
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'fees.slidingScale'
-                                )
-                              }
-                              disabled={selectedService?.fees.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.fees.slidingScale`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.fees.none`
+                              )}
                             />
                             <label
                               htmlFor="sliding"
@@ -1032,19 +934,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="medicaid_tenncare"
-                              checked={
-                                selectedService?.fees.insurance
-                                  .medicaid_tenncare
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'fees.insurance.medicaid_tenncare'
-                                )
-                              }
-                              disabled={selectedService?.fees.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.fees.medicaid_tenncare`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.fees.none`
+                              )}
                             />
                             <label
                               htmlFor="medicaid_tenncare"
@@ -1055,16 +954,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="medicare"
-                              checked={selectedService?.fees.insurance.medicare}
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'fees.insurance.medicare'
-                                )
-                              }
-                              disabled={selectedService?.fees.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.fees.medicare`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.fees.none`
+                              )}
                             />
                             <label
                               htmlFor="medicare"
@@ -1075,16 +974,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="private"
-                              checked={selectedService?.fees.insurance.private}
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'fees.insurance.private'
-                                )
-                              }
-                              disabled={selectedService?.fees.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.fees.private`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.fees.none`
+                              )}
                             />
                             <label
                               htmlFor="private"
@@ -1111,15 +1010,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           className="mb-2 ml-2 grid grid-cols-3"
                         >
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="noDocuments"
-                              checked={selectedService?.requiredDocuments.none}
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.none'
-                                )
-                              }
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="noDocuments"
@@ -1130,18 +1027,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="stateId"
-                              checked={
-                                selectedService?.requiredDocuments.stateId
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.stateId'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.stateId`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="stateId"
@@ -1152,16 +1047,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="ssn"
-                              checked={selectedService?.requiredDocuments.ssn}
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.ssn'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.ssn`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="ssn"
@@ -1172,19 +1067,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="proofOfResidence"
-                              checked={
-                                selectedService?.requiredDocuments
-                                  .proofOfResidence
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.proofOfResidence'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.proofOfResidence`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="proofOfResidence"
@@ -1195,18 +1087,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="proofOfIncome"
-                              checked={
-                                selectedService?.requiredDocuments.proofOfIncome
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.proofOfIncome'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.proofOfIncome`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="proofOfIncome"
@@ -1217,19 +1107,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="birthCertificate"
-                              checked={
-                                selectedService?.requiredDocuments
-                                  .birthCertificate
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.birthCertificate'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.birthCertificate`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="birthCertificate"
@@ -1240,19 +1127,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="medicalRecords"
-                              checked={
-                                selectedService?.requiredDocuments
-                                  .medicalRecords
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.medicalRecords'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.medicalRecords`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="medicalRecords"
@@ -1263,18 +1147,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="psychRecords"
-                              checked={
-                                selectedService?.requiredDocuments.psychRecords
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.psychRecords'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.psychRecords`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="psychRecords"
@@ -1285,18 +1167,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="proofOfNeed"
-                              checked={
-                                selectedService?.requiredDocuments.proofOfNeed
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.proofOfNeed'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.proofOfNeed`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="proofOfNeed"
@@ -1307,18 +1187,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="utilityBill"
-                              checked={
-                                selectedService?.requiredDocuments.utilityBill
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.utilityBill'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.utilityBill`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="utilityBill"
@@ -1329,19 +1207,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="utilityCutoffNotice"
-                              checked={
-                                selectedService?.requiredDocuments
-                                  .utilityCutoffNotice
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.utilityCutoffNotice'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.utilityCutoffNotice`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="utilityCutoffNotice"
@@ -1352,19 +1227,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="proofOfCitizenship"
-                              checked={
-                                selectedService?.requiredDocuments
-                                  .proofOfCitizenship
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.proofOfCitizenship'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.proofOfCitizenship`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="proofOfCitizenship"
@@ -1375,19 +1247,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="proofOfPublicAssistance"
-                              checked={
-                                selectedService?.requiredDocuments
-                                  .proofOfPublicAssistance
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.proofOfPublicAssistance'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.proofOfPublicAssistance`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="proofOfPublicAssistance"
@@ -1398,19 +1267,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="driversLicense"
-                              checked={
-                                selectedService?.requiredDocuments
-                                  .driversLicense
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.driversLicense'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.driversLicense`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="driversLicense"
@@ -1421,19 +1287,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="space-x-2">
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id="other"
-                              checked={
-                                selectedService?.requiredDocuments.other
-                                  .selected
-                              }
-                              onCheckedChange={(checked: boolean) =>
-                                handleServiceInputChange(
-                                  checked,
-                                  'requiredDocuments.other.selected'
-                                )
-                              }
-                              disabled={selectedService?.requiredDocuments.none}
+                              className="form-checkbox"
+                              {...register(
+                                `services.${serviceIdx}.requiredDocuments.other.selected`
+                              )}
+                              disabled={getValues(
+                                `services.${serviceIdx}.requiredDocuments.none`
+                              )}
                             />
                             <label
                               htmlFor="other"
@@ -1441,24 +1304,18 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             >
                               Other
                             </label>
-                            {selectedService?.requiredDocuments.other
-                              .selected ? (
+                            {getValues(
+                              `services.${serviceIdx}.requiredDocuments.other.selected`
+                            ) ? (
                               <Input
                                 className="m-2"
                                 placeholder="Please specify."
-                                value={
-                                  selectedService?.requiredDocuments.other
-                                    .content
-                                }
-                                onChange={(e) =>
-                                  handleServiceInputChange(
-                                    e.target.value,
-                                    'requiredDocuments.other.content'
-                                  )
-                                }
-                                disabled={
-                                  selectedService?.requiredDocuments.none
-                                }
+                                {...register(
+                                  `services.${serviceIdx}.requiredDocuments.other.content`
+                                )}
+                                disabled={getValues(
+                                  `services.${serviceIdx}.requiredDocuments.none`
+                                )}
                               />
                             ) : (
                               <></>

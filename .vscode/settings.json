@@ -8,5 +8,6 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     "**/.keep": true
-  }
+  },
+  "jest.runMode": "on-demand"
 }
