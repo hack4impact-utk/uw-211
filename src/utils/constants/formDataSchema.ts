@@ -1,33 +1,6 @@
 import { z } from 'zod';
 
-export const FormDataSchema = z.object({
-  legalName: z.string().min(1, 'Legal name is required'),
-  akas: z.string(),
-  legalStatus: z.string().min(1, 'Legal status is required'),
-  agencyInfo: z.string().min(1, 'Agency Information is required'),
-  directorName: z.string().min(1, 'Director name is required'),
-  open: z.string().min(1, 'Opening time required'),
-  close: z.string().min(1, 'Closing time required'),
-  days: z
-    .object({
-      monday: z.boolean(),
-      tuesday: z.boolean(),
-      wednesday: z.boolean(),
-      thursday: z.boolean(),
-      friday: z.boolean(),
-    })
-    .partial()
-    .refine(
-      (data) =>
-        data.monday ||
-        data.tuesday ||
-        data.wednesday ||
-        data.thursday ||
-        data.friday,
-      'At least one operational business day required'
-    ),
-
-  // Services Form
+export const ServiceSchema = z.object({
   name: z.string().min(1, 'Service name is required.'),
   description: z.string().min(1, 'Service description is required.'),
   contact: z.string(),
@@ -63,7 +36,7 @@ export const FormDataSchema = z.object({
         data.telephone ||
         data.appointment ||
         data.online ||
-        data.other.selected,
+        (data.other?.selected ?? false),
       'An application process selection is required.'
     ),
   fees: z
@@ -86,7 +59,7 @@ export const FormDataSchema = z.object({
     .refine(
       (data) =>
         data.none ||
-        data.straight.selected ||
+        (data.straight?.selected ?? false) ||
         data.slidingScale ||
         data.medicaid_tenncare ||
         data.medicare ||
@@ -135,7 +108,38 @@ export const FormDataSchema = z.object({
         data.proofOfCitizenship ||
         data.proofOfPublicAssistance ||
         data.driversLicense ||
-        data.other.selected,
-        'A selection for required documents is required.'
+        (data.other?.selected ?? false),
+      'A selection for required documents is required.'
     ),
+});
+
+export const FormDataSchema = z.object({
+  legalName: z.string().min(1, 'Legal name is required'),
+  akas: z.string(),
+  legalStatus: z.string().min(1, 'Legal status is required'),
+  agencyInfo: z.string().min(1, 'Agency Information is required'),
+  directorName: z.string().min(1, 'Director name is required'),
+  open: z.string().min(1, 'Opening time required'),
+  close: z.string().min(1, 'Closing time required'),
+  days: z
+    .object({
+      monday: z.boolean(),
+      tuesday: z.boolean(),
+      wednesday: z.boolean(),
+      thursday: z.boolean(),
+      friday: z.boolean(),
+    })
+    .partial()
+    .refine(
+      (data) =>
+        data.monday ||
+        data.tuesday ||
+        data.wednesday ||
+        data.thursday ||
+        data.friday,
+      'At least one operational business day required'
+    ),
+
+  // Services Form
+  services: z.array(ServiceSchema),
 });
