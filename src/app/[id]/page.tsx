@@ -87,6 +87,7 @@ export default function Form({ params }: { params: { id: string } }) {
     setValue,
     reset,
     trigger,
+    watch,
     formState: { errors, isDirty },
   } = useForm<Inputs>({
     resolver: zodResolver(FormDataSchema),
@@ -154,6 +155,7 @@ export default function Form({ params }: { params: { id: string } }) {
   const [serviceIdx, setServiceIdx] = useState(-1);
   useEffect(() => {
     setValue(`services.${serviceIdx}`, getValues(`services.${serviceIdx}`));
+    console.log(getValues(`services`));
   }, [getValues, serviceIdx, setValue]);
 
   const add_service = () => {
@@ -850,19 +852,19 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <div className="space-x-2">
                             <input
                               type="checkbox"
-                              id="other"
+                              id="applicationProcessOther"
                               className="form-checkbox"
                               {...register(
                                 `services.${serviceIdx}.applicationProcess.other.selected`
                               )}
                             />
                             <label
-                              htmlFor="other"
+                              htmlFor="applicationProcessOther"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
                               Other
                             </label>
-                            {getValues(
+                            {watch(
                               `services.${serviceIdx}.applicationProcess.other.selected`
                             ) ? (
                               <>
@@ -903,7 +905,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             >
                               Referral Required
                             </label>
-                            {getValues(
+                            {watch(
                               `services.${serviceIdx}.applicationProcess.referral.required`
                             ) ? (
                               <>
@@ -975,7 +977,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.fees.straight.selected`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.fees.none`
                               )}
                             />
@@ -985,7 +987,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             >
                               Straight Fee
                             </label>
-                            {getValues(
+                            {watch(
                               `services.${serviceIdx}.fees.straight.selected`
                             ) ? (
                               <>
@@ -995,7 +997,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                   {...register(
                                     `services.${serviceIdx}.fees.straight.content`
                                   )}
-                                  disabled={getValues(
+                                  disabled={watch(
                                     `services.${serviceIdx}.fees.none`
                                   )}
                                 />
@@ -1022,7 +1024,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.fees.slidingScale`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.fees.none`
                               )}
                             />
@@ -1042,7 +1044,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.fees.medicaid_tenncare`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.fees.none`
                               )}
                             />
@@ -1062,7 +1064,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.fees.medicare`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.fees.none`
                               )}
                             />
@@ -1082,7 +1084,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.fees.private`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.fees.none`
                               )}
                             />
@@ -1140,7 +1142,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.stateId`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1160,7 +1162,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.ssn`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1180,7 +1182,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.proofOfResidence`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1200,7 +1202,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.proofOfIncome`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1220,7 +1222,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.birthCertificate`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1240,7 +1242,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.medicalRecords`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1260,7 +1262,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.psychRecords`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1280,7 +1282,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.proofOfNeed`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1300,7 +1302,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.utilityBill`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1320,7 +1322,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.utilityCutoffNotice`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1340,7 +1342,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.proofOfCitizenship`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1360,7 +1362,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.proofOfPublicAssistance`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1380,7 +1382,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.driversLicense`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
@@ -1395,22 +1397,22 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <div className="space-x-2">
                             <input
                               type="checkbox"
-                              id="other"
+                              id="requiredDocumentsOther"
                               className="form-checkbox"
                               {...register(
                                 `services.${serviceIdx}.requiredDocuments.other.selected`
                               )}
-                              disabled={getValues(
+                              disabled={watch(
                                 `services.${serviceIdx}.requiredDocuments.none`
                               )}
                             />
                             <label
-                              htmlFor="other"
+                              htmlFor="requiredDocumentsOther"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
                               Other
                             </label>
-                            {getValues(
+                            {watch(
                               `services.${serviceIdx}.requiredDocuments.other.selected`
                             ) ? (
                               <>
@@ -1420,7 +1422,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                   {...register(
                                     `services.${serviceIdx}.requiredDocuments.other.content`
                                   )}
-                                  disabled={getValues(
+                                  disabled={watch(
                                     `services.${serviceIdx}.requiredDocuments.none`
                                   )}
                                 />
