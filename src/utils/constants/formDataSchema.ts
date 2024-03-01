@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const ServiceSchema = z.object({
   name: z.string().min(1, 'Service name is required.'),
+  id: z.number(),
   description: z.string().min(1, 'Service description is required.'),
   contact: z.string(),
   // hours

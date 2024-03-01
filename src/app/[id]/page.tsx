@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
 import {
@@ -68,65 +68,14 @@ export default function Form({ params }: { params: { id: string } }) {
     register,
     handleSubmit,
     getValues,
+    setValue,
     reset,
     trigger,
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(FormDataSchema),
     defaultValues: {
-      services: [
-        {
-          name: `New Service #0`,
-          contact: '',
-          description: '',
-          eligibility: '',
-          applicationProcess: {
-            walkIn: false,
-            telephone: false,
-            appointment: false,
-            online: false,
-            other: {
-              selected: false,
-              content: '',
-            },
-            referral: {
-              required: false,
-              content: '',
-            },
-          },
-          fees: {
-            none: false,
-            straight: {
-              selected: false,
-              content: '',
-            },
-            slidingScale: false,
-            medicaid_tenncare: false,
-            medicare: false,
-            private: false,
-          },
-          requiredDocuments: {
-            none: false,
-            stateId: false,
-            ssn: false,
-            proofOfResidence: false,
-            proofOfIncome: false,
-            birthCertificate: false,
-            medicalRecords: false,
-            psychRecords: false,
-            proofOfNeed: false,
-            utilityBill: false,
-            utilityCutoffNotice: false,
-            proofOfCitizenship: false,
-            proofOfPublicAssistance: false,
-            driversLicense: false,
-            other: {
-              selected: false,
-              content: '',
-            },
-          },
-        },
-      ],
+      services: [],
     },
   });
 
@@ -166,9 +115,16 @@ export default function Form({ params }: { params: { id: string } }) {
   const [isThursdayChecked, setThursdayChecked] = useState(false);
   const [isFridayChecked, setFridayChecked] = useState(false);
 
+  const [serviceIdx, setServiceIdx] = useState(-1);
+  useEffect(() => {
+    setValue(`services.${serviceIdx}`, getValues(`services.${serviceIdx}`));
+  }, [getValues, serviceIdx, setValue]);
+
   const add_service = () => {
+    const idx = getValues('services').length;
     const new_service: Service = {
-      name: `New Service #${getValues('services').length}`,
+      name: `New Service #${getValues('services').length + 1}`,
+      id: Date.now(),
       contact: '',
       description: '',
       eligibility: '',
@@ -218,10 +174,35 @@ export default function Form({ params }: { params: { id: string } }) {
         },
       },
     };
+
     getValues('services').push(new_service);
+    setServiceIdx(idx);
   };
 
-  const [serviceIdx, setServiceIdx] = useState(0);
+  const delete_service = (id: number) => {
+    const deleteIdx = getValues('services').findIndex(
+      (service) => service.id === id
+    );
+    getValues('services').splice(deleteIdx, 1);
+
+    if (serviceIdx === deleteIdx) {
+      setServiceIdx(-1);
+    } else if (serviceIdx > deleteIdx) {
+      setServiceIdx(serviceIdx - 1);
+    }
+  };
+
+  // Prevents field validation for the services form as it switches to another service
+  // that has the error if you are working on a different service.
+  // Might remove.
+  const handleServicesKeyDown = (e: React.KeyboardEvent) => {
+    // Allow textarea as it is multiline.
+    if (e.target instanceof HTMLElement && e.target.tagName === 'TEXTAREA')
+      return;
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
+  };
 
   return (
     <section className="absolute inset-0 flex flex-col justify-between pb-4 pl-24 pr-24 pt-24">
@@ -567,7 +548,6 @@ export default function Form({ params }: { params: { id: string } }) {
               <h2 className="text-base font-semibold leading-7 text-gray-900">
                 Services
               </h2>
-              {/* Whoever chose "resizable" over "resizeable" .. ;-; */}
               <ResizablePanelGroup
                 direction="horizontal"
                 className="rounded-lg border"
@@ -579,10 +559,17 @@ export default function Form({ params }: { params: { id: string } }) {
                       {getValues('services').map((service: Service, idx) => (
                         <div key={idx} className="flex flex-row">
                           <Button
-                            onClick={() => setServiceIdx(idx)}
+                            onClick={() =>
+                              setServiceIdx(
+                                getValues('services').findIndex(
+                                  (i) => i.id === service.id
+                                )
+                              )
+                            }
                             className="m-1 flex-grow"
                             variant={
-                              getValues(`services.${idx}`) === service
+                              getValues(`services.${serviceIdx}.id`) ===
+                              service.id
                                 ? 'default'
                                 : 'outline'
                             }
@@ -591,13 +578,14 @@ export default function Form({ params }: { params: { id: string } }) {
                           </Button>
                           <Button
                             variant={
-                              getValues(`services.${idx}`) === service
+                              getValues(`services.${serviceIdx}.id`) ===
+                              service.id
                                 ? 'default'
                                 : 'outline'
                             }
                             size="icon"
                             className="m-1"
-                            onClick={() => getValues(`services`).splice(idx, 1)}
+                            onClick={() => delete_service(service.id)}
                           >
                             <Trash />
                           </Button>
@@ -617,7 +605,7 @@ export default function Form({ params }: { params: { id: string } }) {
                 </ResizablePanel>
                 <ResizableHandle withHandle />
                 <ResizablePanel defaultSize={70}>
-                  {getValues(`services.${serviceIdx}`) === null ? (
+                  {serviceIdx === -1 ? (
                     <div className="flex h-full items-center justify-center">
                       <p className="text-sm text-gray-600">
                         Add or select a service to begin.
@@ -626,7 +614,10 @@ export default function Form({ params }: { params: { id: string } }) {
                   ) : (
                     /* Fix the height to be dynamic */
                     <ScrollArea className="h-96">
-                      <div className="mt-2 px-4 py-2">
+                      <div
+                        className="mt-2 px-4 py-2"
+                        onKeyDown={handleServicesKeyDown}
+                      >
                         <label
                           htmlFor="name"
                           className="block text-sm font-medium leading-6 text-gray-900"
@@ -703,6 +694,12 @@ age, personal situations, etc. (i.e. battered women with children, people with v
 homeless men, etc.) This helps us to make appropriate referrals."
                           {...register(`services.${serviceIdx}.eligibility`)}
                         />
+                        {errors.services?.[serviceIdx]?.eligibility
+                          ?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.services[serviceIdx]?.eligibility?.message}
+                          </p>
+                        )}
 
                         <Separator className="my-4" />
 
@@ -787,7 +784,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             </label>
                           </div>
 
-                          {/* Fix this checkbox, make input only appear if checked! */}
                           <div className="space-x-2">
                             <input
                               type="checkbox"
@@ -806,13 +802,24 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             {getValues(
                               `services.${serviceIdx}.applicationProcess.other.selected`
                             ) ? (
-                              <Input
-                                className="m-2"
-                                placeholder="Please specify."
-                                {...register(
-                                  `services.${serviceIdx}.applicationProcess.other.content`
+                              <>
+                                <Input
+                                  className="m-2"
+                                  placeholder="Please specify."
+                                  {...register(
+                                    `services.${serviceIdx}.applicationProcess.other.content`
+                                  )}
+                                />
+                                {errors.services?.[serviceIdx]
+                                  ?.applicationProcess?.other?.message && (
+                                  <p className="mt-2 text-sm text-red-400">
+                                    {
+                                      errors.services[serviceIdx]
+                                        ?.applicationProcess?.other?.message
+                                    }
+                                  </p>
                                 )}
-                              />
+                              </>
                             ) : (
                               <></>
                             )}
@@ -836,18 +843,38 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             {getValues(
                               `services.${serviceIdx}.applicationProcess.referral.required`
                             ) ? (
-                              <Input
-                                className="m-2"
-                                placeholder="By whom?"
-                                {...register(
-                                  `services.${serviceIdx}.applicationProcess.referral.content`
+                              <>
+                                <Input
+                                  className="m-2"
+                                  placeholder="By whom?"
+                                  {...register(
+                                    `services.${serviceIdx}.applicationProcess.referral.content`
+                                  )}
+                                />
+                                {errors.services?.[serviceIdx]
+                                  ?.applicationProcess?.referral?.message && (
+                                  <p className="mt-2 text-sm text-red-400">
+                                    {
+                                      errors.services[serviceIdx]
+                                        ?.applicationProcess?.referral?.message
+                                    }
+                                  </p>
                                 )}
-                              />
+                              </>
                             ) : (
                               <></>
                             )}
                           </div>
                         </div>
+                        {errors.services?.[serviceIdx]?.applicationProcess
+                          ?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {
+                              errors.services[serviceIdx]?.applicationProcess
+                                ?.message
+                            }
+                          </p>
+                        )}
 
                         <Separator className="my-4" />
 
@@ -898,16 +925,27 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             {getValues(
                               `services.${serviceIdx}.fees.straight.selected`
                             ) ? (
-                              <Input
-                                className="m-2"
-                                placeholder="Please specify."
-                                {...register(
-                                  `services.${serviceIdx}.fees.straight.content`
+                              <>
+                                <Input
+                                  className="m-2"
+                                  placeholder="Please specify."
+                                  {...register(
+                                    `services.${serviceIdx}.fees.straight.content`
+                                  )}
+                                  disabled={getValues(
+                                    `services.${serviceIdx}.fees.none`
+                                  )}
+                                />
+                                {errors.services?.[serviceIdx]?.fees?.straight
+                                  ?.message && (
+                                  <p className="mt-2 text-sm text-red-400">
+                                    {
+                                      errors.services[serviceIdx]?.fees
+                                        ?.straight?.message
+                                    }
+                                  </p>
                                 )}
-                                disabled={getValues(
-                                  `services.${serviceIdx}.fees.none`
-                                )}
-                              />
+                              </>
                             ) : (
                               <></>
                             )}
@@ -993,6 +1031,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             </label>
                           </div>
                         </div>
+                        {errors.services?.[serviceIdx]?.fees?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.services[serviceIdx]?.fees?.message}
+                          </p>
+                        )}
 
                         <Separator className="my-4" />
 
@@ -1307,21 +1350,41 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             {getValues(
                               `services.${serviceIdx}.requiredDocuments.other.selected`
                             ) ? (
-                              <Input
-                                className="m-2"
-                                placeholder="Please specify."
-                                {...register(
-                                  `services.${serviceIdx}.requiredDocuments.other.content`
+                              <>
+                                <Input
+                                  className="m-2"
+                                  placeholder="Please specify."
+                                  {...register(
+                                    `services.${serviceIdx}.requiredDocuments.other.content`
+                                  )}
+                                  disabled={getValues(
+                                    `services.${serviceIdx}.requiredDocuments.none`
+                                  )}
+                                />
+                                {errors.services?.[serviceIdx]
+                                  ?.requiredDocuments?.other?.message && (
+                                  <p className="mt-2 text-sm text-red-400">
+                                    {
+                                      errors.services[serviceIdx]
+                                        ?.requiredDocuments?.other?.message
+                                    }
+                                  </p>
                                 )}
-                                disabled={getValues(
-                                  `services.${serviceIdx}.requiredDocuments.none`
-                                )}
-                              />
+                              </>
                             ) : (
                               <></>
                             )}
                           </div>
                         </div>
+                        {errors.services?.[serviceIdx]?.requiredDocuments
+                          ?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {
+                              errors.services[serviceIdx]?.requiredDocuments
+                                ?.message
+                            }
+                          </p>
+                        )}
                       </div>
                     </ScrollArea>
                   )}
