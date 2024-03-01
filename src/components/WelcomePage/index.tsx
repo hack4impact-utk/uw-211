@@ -44,7 +44,7 @@ function WelcomePage({ id, agency }: WelcomePageProps) {
                   connecting individuals with resources in the Greater Knoxville
                   area. To learn more about our services, please visit our{' '}
                   <a
-                    className="text-blue-600"
+                    className="text-blue-700 hover:underline"
                     href="https://www.211.org/about-us"
                   >
                     website
@@ -54,8 +54,11 @@ function WelcomePage({ id, agency }: WelcomePageProps) {
               </div>
               <div className="flex justify-center">
                 <Link href={id && agency ? `/${id}` : '/'}>
-                  <button className="w-36 rounded-sm border-none bg-[#1e57a1] p-2 text-white  hover:bg-[#7b8fc3] sm:w-48">
-                    Get Started!
+                  <button
+                    id="start-button"
+                    className="w-36 rounded-sm border-none bg-[#1e57a1] p-2 text-white  hover:bg-[#7b8fc3] sm:w-48"
+                  >
+                    <label htmlFor="start-button">Get Started!</label>
                   </button>
                 </Link>
               </div>

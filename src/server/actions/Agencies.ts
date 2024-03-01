@@ -258,6 +258,57 @@ export async function deleteService(id: string): Promise<Service | null> {
 }
 
 /**
+ *
+ * @param id The ID of the agency to approve
+ * @param newInfo A new `AgencyInfoForm` object to be created and attached to the agency
+ * @param newApprovalStatus `Approved` or `Pending`
+ * @returns The updated agency
+ * @throws 404 if no agency is found with the ID
+ */
+export async function approveAgency(
+  id: string,
+  newInfo: AgencyInfoForm,
+  newApprovalStatus: 'Pending' | 'Approved'
+): Promise<Agency | null> {
+  await dbConnect();
+
+  const { services, ...infoWithoutServices } = newInfo;
+
+  const serviceIds = [];
+  if (services !== undefined) {
+    for (const service of services) {
+      const newService = await createService(service);
+      serviceIds.push(newService._id);
+    }
+  }
+  const updatedInfo = {
+    ...infoWithoutServices,
+    services: serviceIds,
+  } as unknown as AgencyInfoForm;
+
+  const newAgencyInfo = await createAgencyInfo(updatedInfo);
+
+  const updatedAgency = await AgencyModel.updateOne(
+    { _id: id },
+    {
+      $push: { info: newAgencyInfo._id },
+      $set: { approvalStatus: newApprovalStatus },
+    }
+  ).catch((error) => {
+    mongoErrorHandler(error);
+  });
+
+  if (updatedAgency!.modifiedCount === 0) {
+    throw new JSendResponse({
+      status: 'fail',
+      data: { message: 'Agency not found' },
+    });
+  }
+
+  const agency = await AgencyModel.findById(id).exec();
+  return agency as Agency;
+}
+/**
  * Handles common MongoDB insertion errors and throws an appropriate ApiError.
  * @param error - The error object returned by MongoDB.
  * @throws {JSendResponse} - An error object with a 400|500 status code and a message describing the error.
