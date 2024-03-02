@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+const HoursOfOperationDataSchema = z.array(
+  z.object({
+    day: z.number(),
+    start: z.number(),
+    end: z.number(),
+  })
+);
+
 export const FormDataSchema = z
   .object({
     // preliminaries
@@ -8,26 +16,7 @@ export const FormDataSchema = z
     legalStatus: z.string().min(1, 'Legal status is required'),
     agencyInfo: z.string().min(1, 'Agency Information is required'),
     directorName: z.string().min(1, 'Director name is required'),
-    open: z.string().min(1, 'Opening time required'),
-    close: z.string().min(1, 'Closing time required'),
-    days: z
-      .object({
-        monday: z.boolean(),
-        tuesday: z.boolean(),
-        wednesday: z.boolean(),
-        thursday: z.boolean(),
-        friday: z.boolean(),
-      })
-      .partial()
-      .refine(
-        (data) =>
-          data.monday ||
-          data.tuesday ||
-          data.wednesday ||
-          data.thursday ||
-          data.friday,
-        'At least one operational business day required'
-      ),
+    hours: HoursOfOperationDataSchema,
 
     // OPPORTUNITIES
     volunteers: z.string({ invalid_type_error: 'Accept volunteers required.' }),

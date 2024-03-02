@@ -9,9 +9,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Trash } from 'lucide-react';
 
 export default function HoursOfOperationPicker() {
   interface Hours {
+    id: number;
     dayOfWeek: string;
     start: string;
     end: string;
@@ -25,10 +27,13 @@ export default function HoursOfOperationPicker() {
   const generateTimeOptions = () => {
     const times = [];
     for (let hour = 0; hour < 24; hour++) {
-      // Generate the string for each half-hour mark
-      times.push(`${hour.toString().padStart(2, '0')}:00`);
-      times.push(`${hour.toString().padStart(2, '0')}:30`);
+      const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+      const amPm = hour < 12 ? 'AM' : 'PM';
+
+      times.push(`${hour12.toString().padStart(2, '0')}:00 ${amPm}`);
+      times.push(`${hour12.toString().padStart(2, '0')}:30 ${amPm}`);
     }
+    times.push(`12:00 AM`);
     return times;
   };
 
@@ -42,8 +47,9 @@ export default function HoursOfOperationPicker() {
     'Saturday',
   ];
 
-  const handleSubmit = () => {
+  const add_hours = () => {
     const x: Hours = {
+      id: Date.now(),
       dayOfWeek: daysOfWeek[day],
       start: generateTimeOptions()[open],
       end: generateTimeOptions()[close],
@@ -51,6 +57,11 @@ export default function HoursOfOperationPicker() {
 
     const updatedHours = [...hours, x];
     setHours(updatedHours);
+  };
+
+  const delete_hours = (id: number) => {
+    const idx = hours.findIndex((h) => h.id === id);
+    hours.splice(idx, 1);
   };
 
   return (
@@ -106,15 +117,18 @@ export default function HoursOfOperationPicker() {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Button onClick={handleSubmit}>Add Hours</Button>
+        <Button onClick={add_hours}>Add Hours</Button>
       </div>
       <Separator className="m-2" />
       <div className="flex flex-col">
         {hours.map((h, index) => (
-          <div key={index} className="flex flex-row space-x-2">
+          <div key={index} className="grid grid-cols-4 space-y-2">
             <p>{h.dayOfWeek}</p>
             <p>{h.start}</p>
             <p>{h.end}</p>
+            <Button size="icon" onClick={() => delete_hours(h.id)}>
+              <Trash />
+            </Button>
           </div>
         ))}
       </div>

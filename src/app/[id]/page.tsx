@@ -22,9 +22,7 @@ const steps = [
       'legalStatus',
       'agencyInfo',
       'directorName',
-      'open',
-      'close',
-      'days',
+      'hours',
     ],
   },
   {
@@ -55,7 +53,7 @@ const steps = [
 
 export default function Form({ params }: { params: { id: string } }) {
   const [previousStep, setPreviousStep] = useState(0);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const delta = currentStep - previousStep;
 
   const {
@@ -114,11 +112,6 @@ export default function Form({ params }: { params: { id: string } }) {
     }
   };
 
-  const [isMondayChecked, setMondayChecked] = useState(false);
-  const [isTuesdayChecked, setTuesdayChecked] = useState(false);
-  const [isWednesdayChecked, setWednesdayChecked] = useState(false);
-  const [isThursdayChecked, setThursdayChecked] = useState(false);
-  const [isFridayChecked, setFridayChecked] = useState(false);
   const [volunteerChecked, setVolunteerChecked] = useState('false');
   const [donationChecked, setDonationChecked] = useState('false');
   const [pickupChecked, setPickupChecked] = useState('false');
@@ -290,194 +283,7 @@ export default function Form({ params }: { params: { id: string } }) {
                   >
                     Hours of Operation
                   </label>
-                  <div className="mt-2">
-                    <fieldset>
-                      <label
-                        htmlFor="legalStatus"
-                        className="mb-2 block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Select day(s) of operation
-                      </label>
-
-                      <div className="flex flex-col gap-4 sm:flex-row sm:gap-2">
-                        <div className="flex flex-row gap-2">
-                          {/* Monday */}
-                          <label>
-                            <input
-                              type="checkbox"
-                              id="monday"
-                              className="form-checkbox hidden"
-                              checked={isMondayChecked}
-                              {...register('days.monday', {
-                                onChange: () => {
-                                  setMondayChecked(!isMondayChecked);
-                                },
-                              })}
-                            />
-                            <span
-                              className={
-                                isMondayChecked
-                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                              }
-                            >
-                              Monday
-                            </span>
-                          </label>
-
-                          {/* Tuesday */}
-                          <label>
-                            <input
-                              type="checkbox"
-                              id="tuesday"
-                              className="form-checkbox hidden"
-                              checked={isTuesdayChecked}
-                              {...register('days.tuesday', {
-                                onChange: () => {
-                                  setTuesdayChecked(!isTuesdayChecked);
-                                },
-                              })}
-                            />
-                            <span
-                              className={
-                                isTuesdayChecked
-                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                              }
-                            >
-                              Tuesday
-                            </span>
-                          </label>
-
-                          {/* Wednesday */}
-                          <label>
-                            <input
-                              type="checkbox"
-                              id="wednesday"
-                              className="form-checkbox hidden"
-                              checked={isWednesdayChecked}
-                              {...register('days.wednesday', {
-                                onChange: () => {
-                                  setWednesdayChecked(!isWednesdayChecked);
-                                },
-                              })}
-                            />
-                            <span
-                              className={
-                                isWednesdayChecked
-                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                              }
-                            >
-                              Wednesday
-                            </span>
-                          </label>
-                        </div>
-
-                        <div className="flex flex-row gap-2">
-                          {/* Thursday */}
-                          <label>
-                            <input
-                              type="checkbox"
-                              id="thursday"
-                              className="form-checkbox hidden"
-                              checked={isThursdayChecked}
-                              {...register('days.thursday', {
-                                onChange: () => {
-                                  setThursdayChecked(!isThursdayChecked);
-                                },
-                              })}
-                            />
-                            <span
-                              className={
-                                isThursdayChecked
-                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                              }
-                            >
-                              Thursday
-                            </span>
-                          </label>
-
-                          {/* Friday */}
-                          <label>
-                            <input
-                              type="checkbox"
-                              className="form-checkbox hidden"
-                              id="friday"
-                              checked={isFridayChecked}
-                              {...register('days.friday', {
-                                onChange: () => {
-                                  setFridayChecked(!isFridayChecked);
-                                },
-                              })}
-                            />
-                            <span
-                              className={
-                                isFridayChecked
-                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                              }
-                            >
-                              Friday
-                            </span>
-                          </label>
-                        </div>
-                      </div>
-                      {errors.days?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.days.message}
-                        </p>
-                      )}
-                    </fieldset>
-                  </div>
-                </div>
-
-                {/* Open/Close */}
-                <div className="flex w-full flex-row items-center gap-4 md:w-5/6">
-                  {/* Open */}
-                  <div>
-                    <label
-                      htmlFor="open"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Open
-                    </label>
-                    <input
-                      type="text"
-                      id="open"
-                      {...register('open')}
-                      autoComplete="open"
-                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.open?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.open.message}
-                      </p>
-                    )}
-                  </div>
-                  <p className="mt-4">to</p>
-                  {/* Close */}
-                  <div>
-                    <label
-                      htmlFor="close"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Close
-                    </label>
-                    <input
-                      type="text"
-                      id="close"
-                      {...register('close')}
-                      autoComplete="close"
-                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
-                    />
-                    {errors.close?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.close.message}
-                      </p>
-                    )}
-                  </div>
+                  <HoursOfOperationPicker />
                 </div>
               </section>
             </div>
