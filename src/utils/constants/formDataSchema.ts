@@ -1,5 +1,50 @@
 import { z } from 'zod';
 
+const convertToMinutes = (hours: string, minutes: string) => {
+  return parseInt(hours) * 60 + parseInt(minutes);
+};
+
+const checkValidHours = (open: string, close: string) => {
+  const open_split = open.split(':');
+  const open_result = convertToMinutes(open_split[0], open_split[1]);
+
+  const close_split = close.split(':');
+  const close_result = convertToMinutes(close_split[0], close_split[1]);
+
+  if (open_result > close_result) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+export const AgencyHours = z
+  .object({
+    open: z
+      .string()
+      .min(1, 'Required')
+      .regex(/^[0-9]{2}:[0-9]{2}$/, {
+        message: 'Must be a valid time. (HH:MM)',
+      }),
+    close: z
+      .string()
+      .min(1, 'Required')
+      .regex(/^[0-9]{1,2}:[0-9]{2}$/, {
+        message: 'Must be a valid time. (HH:MM)',
+      }),
+  })
+  .superRefine(({ open, close }, ctx) => {
+    console.log(open);
+
+    if (!checkValidHours(open, close)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Opening time must be before closing time.',
+        path: ['open'],
+      });
+    }
+  });
+
 export const FormDataSchema = z
   .object({
     // preliminaries
@@ -8,8 +53,9 @@ export const FormDataSchema = z
     legalStatus: z.string().min(1, 'Required'),
     agencyInfo: z.string().min(1, 'Required'),
     directorName: z.string().min(1, 'Required'),
-    open: z.string().min(1, 'Required'),
-    close: z.string().min(1, 'Required'),
+
+    hours: AgencyHours,
+
     days: z
       .object({
         monday: z.boolean(),

@@ -21,8 +21,8 @@ const steps = [
       'legalStatus',
       'agencyInfo',
       'directorName',
-      'open',
-      'close',
+      'hours.open',
+      'hours.close',
       'days',
     ],
   },
@@ -451,13 +451,13 @@ export default function Form({ params }: { params: { id: string } }) {
                     <input
                       type="text"
                       id="open"
-                      {...register('open')}
+                      {...register('hours.open')}
                       autoComplete="open"
                       className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                     />
-                    {errors.open?.message && (
+                    {errors.hours?.open?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.open.message}
+                        {errors.hours.open.message}
                       </p>
                     )}
                   </div>
@@ -474,13 +474,13 @@ export default function Form({ params }: { params: { id: string } }) {
                     <input
                       type="text"
                       id="close"
-                      {...register('close')}
+                      {...register('hours.close')}
                       autoComplete="close"
                       className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
                     />
-                    {errors.close?.message && (
+                    {errors.hours?.close?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.close.message}
+                        {errors.hours.close.message}
                       </p>
                     )}
                   </div>
