@@ -45,8 +45,8 @@ const steps = [
       'donationFields.pickup_loc',
       'donationFields.don_coor',
       'donationFields.don_coor_tel',
-      'recommendation',
-      'recommendations_contact',
+      'recommendationFields.recommendation',
+      'recommendationFields.recommendations_contact',
     ],
   },
   { id: 'Step 4', name: 'Review', fields: [] },
@@ -852,7 +852,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             id="recommendation"
                             type="radio"
                             value="false"
-                            {...register('recommendation')}
+                            {...register('recommendationFields.recommendation')}
                             onChange={(e) => {
                               setRecommendationChecked(e.target.value);
                             }}
@@ -868,7 +868,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             id="recommendation"
                             type="radio"
                             value="true"
-                            {...register('recommendation')}
+                            {...register('recommendationFields.recommendation')}
                             onChange={(e) => {
                               setRecommendationChecked(e.target.value);
                             }}
@@ -880,9 +880,9 @@ export default function Form({ params }: { params: { id: string } }) {
                         </div>
                       </div>
                     </div>
-                    {errors.recommendation?.message && (
+                    {errors.recommendationFields?.recommendation?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.recommendation.message}
+                        {errors.recommendationFields.recommendation.message}
                       </p>
                     )}
                   </div>
@@ -898,7 +898,9 @@ export default function Form({ params }: { params: { id: string } }) {
                         agencies/services.
                       </h2>
                       <textarea
-                        {...register('recommendations_contact')}
+                        {...register(
+                          'recommendationFields.recommendations_contact'
+                        )}
                         id="recommendations_contact"
                         cols={30}
                         rows={10}
@@ -906,9 +908,13 @@ export default function Form({ params }: { params: { id: string } }) {
                         placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
                         className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                       ></textarea>
-                      {errors.recommendations_contact?.message && (
+                      {errors.recommendationFields?.recommendations_contact
+                        ?.message && (
                         <p className="mt-2 text-sm text-red-400">
-                          {errors.recommendations_contact.message}
+                          {
+                            errors.recommendationFields.recommendations_contact
+                              .message
+                          }
                         </p>
                       )}
                     </div>

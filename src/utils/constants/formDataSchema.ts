@@ -151,41 +151,8 @@ const DonationFields = z
     }
   });
 
-export const FormDataSchema = z
+const RecommendationFields = z
   .object({
-    // PRELIMINARIES
-    legalName: z.string().min(1, 'Required'),
-    akas: z.string(),
-    legalStatus: z.string().min(1, 'Required'),
-    agencyInfo: z.string().min(1, 'Required'),
-    directorName: z.string().min(1, 'Required'),
-
-    hours: AgencyHours,
-
-    days: z
-      .object({
-        monday: z.boolean(),
-        tuesday: z.boolean(),
-        wednesday: z.boolean(),
-        thursday: z.boolean(),
-        friday: z.boolean(),
-      })
-      .partial()
-      .refine(
-        (data) =>
-          data.monday ||
-          data.tuesday ||
-          data.wednesday ||
-          data.thursday ||
-          data.friday,
-        'Please select at least one operational business day'
-      ),
-
-    // OPPORTUNITIES
-    volunteerFields: VolunteerFields,
-    donationFields: DonationFields,
-
-    // RECOMMENDATION
     recommendation: z.string({
       invalid_type_error: 'Required',
     }),
@@ -205,3 +172,38 @@ export const FormDataSchema = z
       }
     }
   });
+
+export const FormDataSchema = z.object({
+  // PRELIMINARIES
+  legalName: z.string().min(1, 'Required'),
+  akas: z.string(),
+  legalStatus: z.string().min(1, 'Required'),
+  agencyInfo: z.string().min(1, 'Required'),
+  directorName: z.string().min(1, 'Required'),
+
+  hours: AgencyHours,
+
+  days: z
+    .object({
+      monday: z.boolean(),
+      tuesday: z.boolean(),
+      wednesday: z.boolean(),
+      thursday: z.boolean(),
+      friday: z.boolean(),
+    })
+    .partial()
+    .refine(
+      (data) =>
+        data.monday ||
+        data.tuesday ||
+        data.wednesday ||
+        data.thursday ||
+        data.friday,
+      'Please select at least one operational business day'
+    ),
+
+  // OPPORTUNITIES
+  volunteerFields: VolunteerFields,
+  donationFields: DonationFields,
+  recommendationFields: RecommendationFields,
+});
