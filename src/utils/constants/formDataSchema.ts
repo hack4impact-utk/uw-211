@@ -48,12 +48,7 @@ const VolunteerFields = z
     volunteers: z.string({ invalid_type_error: 'Required' }),
     vol_reqs: z.string().optional(),
     vol_coor: z.string().optional(),
-    vol_coor_tel: z
-      .string()
-      .regex(/^[0-9]{10}$/, {
-        message: 'Must be a valid phone number.',
-      })
-      .optional(),
+    vol_coor_tel: z.string().optional(),
   })
   .superRefine(({ volunteers, vol_reqs, vol_coor, vol_coor_tel }, ctx) => {
     if (volunteers === 'true') {
@@ -79,66 +74,27 @@ const VolunteerFields = z
           message: 'Required',
           path: ['vol_coor_tel'],
         });
+      } else if (!/^[0-9]{10}$/.test(vol_coor_tel)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Must be a valid phone number.',
+          path: ['vol_coor_tel'],
+        });
       }
     } else {
       return false;
     }
   });
 
-// const DonationFields = z.object({});
-
-export const FormDataSchema = z
+const DonationFields = z
   .object({
-    // preliminaries
-    legalName: z.string().min(1, 'Required'),
-    akas: z.string(),
-    legalStatus: z.string().min(1, 'Required'),
-    agencyInfo: z.string().min(1, 'Required'),
-    directorName: z.string().min(1, 'Required'),
-
-    hours: AgencyHours,
-
-    days: z
-      .object({
-        monday: z.boolean(),
-        tuesday: z.boolean(),
-        wednesday: z.boolean(),
-        thursday: z.boolean(),
-        friday: z.boolean(),
-      })
-      .partial()
-      .refine(
-        (data) =>
-          data.monday ||
-          data.tuesday ||
-          data.wednesday ||
-          data.thursday ||
-          data.friday,
-        'Please select at least one operational business day'
-      ),
-
-    // OPPORTUNITIES
-    volunteerFields: VolunteerFields,
-
-    // DONATIONS
     donation: z.string({ invalid_type_error: 'Required' }),
     don_ex: z.string().optional(),
     // pickup
     pickup: z.string().optional(),
     pickup_loc: z.string().optional(),
     don_coor: z.string().optional(),
-    don_coor_tel: z
-      .string()
-      .regex(/^[0-9]{10}$/, {
-        message: 'Must be a valid phone number.',
-      })
-      .optional(),
-
-    // RECOMMENDATION
-    recommendation: z.string({
-      invalid_type_error: 'Required',
-    }),
-    recommendations_contact: z.string().optional(),
+    don_coor_tel: z.string().optional(),
   })
   .superRefine(({ donation, don_ex, don_coor, pickup, don_coor_tel }, ctx) => {
     if (donation === 'true') {
@@ -172,6 +128,12 @@ export const FormDataSchema = z
           message: 'Required',
           path: ['don_coor_tel'],
         });
+      } else if (!/^[0-9]{10}$/.test(don_coor_tel)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Must be a valid phone number.',
+          path: ['don_coor_tel'],
+        });
       }
     } else {
       return false;
@@ -187,6 +149,47 @@ export const FormDataSchema = z
         });
       }
     }
+  });
+
+export const FormDataSchema = z
+  .object({
+    // PRELIMINARIES
+    legalName: z.string().min(1, 'Required'),
+    akas: z.string(),
+    legalStatus: z.string().min(1, 'Required'),
+    agencyInfo: z.string().min(1, 'Required'),
+    directorName: z.string().min(1, 'Required'),
+
+    hours: AgencyHours,
+
+    days: z
+      .object({
+        monday: z.boolean(),
+        tuesday: z.boolean(),
+        wednesday: z.boolean(),
+        thursday: z.boolean(),
+        friday: z.boolean(),
+      })
+      .partial()
+      .refine(
+        (data) =>
+          data.monday ||
+          data.tuesday ||
+          data.wednesday ||
+          data.thursday ||
+          data.friday,
+        'Please select at least one operational business day'
+      ),
+
+    // OPPORTUNITIES
+    volunteerFields: VolunteerFields,
+    donationFields: DonationFields,
+
+    // RECOMMENDATION
+    recommendation: z.string({
+      invalid_type_error: 'Required',
+    }),
+    recommendations_contact: z.string().optional(),
   })
   .superRefine(({ recommendation, recommendations_contact }, ctx) => {
     if (recommendation === 'true') {

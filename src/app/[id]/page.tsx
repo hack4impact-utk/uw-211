@@ -39,12 +39,12 @@ const steps = [
       'volunteerFields.vol_reqs',
       'volunteerFields.vol_coor',
       'volunteerFields.vol_coor_tel',
-      'donation',
-      'don_ex',
-      'pickup',
-      'pickup_loc',
-      'don_coor',
-      'don_coor_tel',
+      'donationFields.donation',
+      'donationFields.don_ex',
+      'donationFields.pickup',
+      'donationFields.pickup_loc',
+      'donationFields.don_coor',
+      'donationFields.don_coor_tel',
       'recommendation',
       'recommendations_contact',
     ],
@@ -585,7 +585,7 @@ export default function Form({ params }: { params: { id: string } }) {
                         cols={30}
                         rows={10}
                         disabled={volunteerChecked === 'false'}
-                        placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
+                        placeholder="List type of volunteer work, age, training, background checks, other requirements for your volunteers"
                         className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                       ></textarea>
                       {errors.volunteerFields?.vol_reqs?.message && (
@@ -655,7 +655,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             id="donation"
                             type="radio"
                             value="false"
-                            {...register('donation')}
+                            {...register('donationFields.donation')}
                             onChange={(e) => {
                               setDonationChecked(e.target.value);
                             }}
@@ -671,7 +671,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             id="donation"
                             type="radio"
                             value="true"
-                            {...register('donation')}
+                            {...register('donationFields.donation')}
                             onChange={(e) => {
                               setDonationChecked(e.target.value);
                             }}
@@ -683,9 +683,9 @@ export default function Form({ params }: { params: { id: string } }) {
                         </div>
                       </div>
                     </div>
-                    {errors.donation?.message && (
+                    {errors.donationFields?.donation?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.donation.message}
+                        {errors.donationFields.donation.message}
                       </p>
                     )}
                   </div>
@@ -702,16 +702,16 @@ export default function Form({ params }: { params: { id: string } }) {
                         </h2>
                         <input
                           type="text"
-                          {...register('don_ex')}
+                          {...register('donationFields.don_ex')}
                           id="don_ex"
                           placeholder="Example: pet food, clothing, appliances, furniture"
                           disabled={donationChecked === 'false'}
                           className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 lg:w-2/3"
                         ></input>
                       </div>
-                      {errors.don_ex?.message && (
+                      {errors.donationFields?.don_ex?.message && (
                         <p className="mt-2 text-sm text-red-400">
-                          {errors.don_ex.message}
+                          {errors.donationFields.don_ex.message}
                         </p>
                       )}
                     </div>
@@ -729,7 +729,7 @@ export default function Form({ params }: { params: { id: string } }) {
                               type="radio"
                               value="false"
                               disabled={donationChecked === 'false'}
-                              {...register('pickup')}
+                              {...register('donationFields.pickup')}
                               onChange={(e) => {
                                 setPickupChecked(e.target.value);
                               }}
@@ -746,7 +746,7 @@ export default function Form({ params }: { params: { id: string } }) {
                               type="radio"
                               value="true"
                               disabled={donationChecked === 'false'}
-                              {...register('pickup')}
+                              {...register('donationFields.pickup')}
                               onChange={(e) => {
                                 setPickupChecked(e.target.value);
                               }}
@@ -759,9 +759,9 @@ export default function Form({ params }: { params: { id: string } }) {
                         </div>
                       </div>
                     </div>
-                    {errors.pickup?.message && (
+                    {errors.donationFields?.pickup?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.pickup.message}
+                        {errors.donationFields.pickup.message}
                       </p>
                     )}
 
@@ -778,15 +778,15 @@ export default function Form({ params }: { params: { id: string } }) {
                           </h2>
                           <input
                             type="text"
-                            {...register('pickup_loc')}
+                            {...register('donationFields.pickup_loc')}
                             id="pickup_loc"
                             disabled={pickupChecked === 'false'}
                             className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           ></input>
                         </div>
-                        {errors.pickup_loc?.message && (
+                        {errors.donationFields?.pickup_loc?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.pickup_loc.message}
+                            {errors.donationFields?.pickup_loc.message}
                           </p>
                         )}
                       </div>
@@ -800,14 +800,14 @@ export default function Form({ params }: { params: { id: string } }) {
 
                         <input
                           type="text"
-                          {...register('don_coor')}
+                          {...register('donationFields.don_coor')}
                           id="don_coor"
                           disabled={donationChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.don_coor?.message && (
+                        {errors.donationFields?.don_coor?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.don_coor.message}
+                            {errors.donationFields.don_coor.message}
                           </p>
                         )}
                       </div>
@@ -819,14 +819,14 @@ export default function Form({ params }: { params: { id: string } }) {
 
                         <input
                           type="tel"
-                          {...register('don_coor_tel')}
+                          {...register('donationFields.don_coor_tel')}
                           id="don_coor_tel"
                           disabled={donationChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.don_coor_tel?.message && (
+                        {errors.donationFields?.don_coor_tel?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.don_coor_tel.message}
+                            {errors.donationFields.don_coor_tel.message}
                           </p>
                         )}
                       </div>
