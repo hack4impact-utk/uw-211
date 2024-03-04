@@ -40,7 +40,7 @@ const steps = formSteps;
 
 export default function Form({ params }: { params: { id: string } }) {
   const [previousStep, setPreviousStep] = useState(-1);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1);
   const delta = currentStep - previousStep;
 
   const {
@@ -378,6 +378,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
               <></>
             )}
           </div>
+
+          <Separator className="my-2 max-w-64" />
 
           <div className="space-x-2">
             <input
