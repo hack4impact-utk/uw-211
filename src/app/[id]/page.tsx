@@ -60,6 +60,7 @@ export default function Form({ params }: { params: { id: string } }) {
   });
 
   useBeforeUnload(isDirty);
+  const { width: screenWidth } = useWindowSize();
 
   const processForm: SubmitHandler<Inputs> = (data) => {
     console.log('Form data for agency with id', params.id);
@@ -865,8 +866,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
       </div>
     );
   };
-
-  const { width: screenWidth } = useWindowSize();
 
   return (
     <section className="absolute inset-0 flex flex-col justify-between pl-4 pr-4 pt-24 sm:pl-12 sm:pr-12 md:pl-24 md:pr-24">
