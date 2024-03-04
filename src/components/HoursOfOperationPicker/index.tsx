@@ -9,33 +9,43 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Trash } from 'lucide-react';
+// import { Trash } from 'lucide-react';
+import { z } from 'zod';
+import {
+  HoursOfOperationDataSchema,
+  HoursOfOperationOfADaySchema,
+} from '@/utils/constants/formDataSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+
+type Hours = z.infer<typeof HoursOfOperationOfADaySchema>;
+type HoursOfOperation = z.infer<typeof HoursOfOperationDataSchema>;
 
 export default function HoursOfOperationPicker() {
-  interface Hours {
-    id: number;
-    dayOfWeek: string;
-    start: string;
-    end: string;
-  }
+  const {
+    // register,
+    formState: { errors },
+  } = useForm<HoursOfOperation>({
+    resolver: zodResolver(HoursOfOperationDataSchema),
+  });
 
   const [hours, setHours] = useState<Hours[]>([]);
   const [day, setDay] = useState<number>(1);
   const [open, setOpen] = useState<number>(-1);
   const [close, setClose] = useState<number>(-1);
 
-  const generateTimeOptions = () => {
+  const times = (() => {
     const times = [];
     for (let hour = 0; hour < 24; hour++) {
       const hour12 = hour % 12 === 0 ? 12 : hour % 12;
       const amPm = hour < 12 ? 'AM' : 'PM';
 
-      times.push(`${hour12.toString().padStart(2, '0')}:00 ${amPm}`);
-      times.push(`${hour12.toString().padStart(2, '0')}:30 ${amPm}`);
+      times.push(`${hour12.toString()}:00 ${amPm}`);
+      times.push(`${hour12.toString()}:30 ${amPm}`);
     }
     times.push(`12:00 AM`);
     return times;
-  };
+  })();
 
   const daysOfWeek = [
     'Sunday',
@@ -47,12 +57,13 @@ export default function HoursOfOperationPicker() {
     'Saturday',
   ];
 
+  // Handler Functions
   const add_hours = () => {
     const x: Hours = {
       id: Date.now(),
-      dayOfWeek: daysOfWeek[day],
-      start: generateTimeOptions()[open],
-      end: generateTimeOptions()[close],
+      day: day,
+      start: open,
+      end: close,
     };
 
     const updatedHours = [...hours, x];
@@ -65,7 +76,7 @@ export default function HoursOfOperationPicker() {
   };
 
   return (
-    <div>
+    <>
       <div className="flex flex-row space-x-2">
         <Select onValueChange={(v) => setDay(+v)}>
           <SelectTrigger>
@@ -87,7 +98,7 @@ export default function HoursOfOperationPicker() {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {generateTimeOptions().map((time, index) => (
+              {times.map((time, index) => (
                 <SelectItem
                   key={index}
                   value={index.toString()}
@@ -105,7 +116,7 @@ export default function HoursOfOperationPicker() {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {generateTimeOptions().map((time, index) => (
+              {times.map((time, index) => (
                 <SelectItem
                   key={index}
                   value={index.toString()}
@@ -117,21 +128,30 @@ export default function HoursOfOperationPicker() {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Button onClick={add_hours}>Add Hours</Button>
+        <Button type="button" onClick={add_hours}>
+          Add Hours
+        </Button>
       </div>
       <Separator className="m-2" />
       <div className="flex flex-col">
         {hours.map((h, index) => (
-          <div key={index} className="grid grid-cols-4 space-y-2">
-            <p>{h.dayOfWeek}</p>
-            <p>{h.start}</p>
-            <p>{h.end}</p>
-            <Button size="icon" onClick={() => delete_hours(h.id)}>
-              <Trash />
+          <div key={index} className="grid grid-cols-4">
+            <p>{daysOfWeek[h.day]}</p>
+            <p>{times[h.start]}</p>
+            <p>{times[h.end]}</p>
+            <Button
+              className="mb-1"
+              variant="link"
+              onClick={() => delete_hours(h.id)}
+            >
+              Remove
             </Button>
           </div>
         ))}
       </div>
-    </div>
+      {errors[0]?.message && (
+        <p className="mt-2 text-sm text-red-400">{errors[0].message}</p>
+      )}
+    </>
   );
 }

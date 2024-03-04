@@ -1,12 +1,15 @@
 import { z } from 'zod';
 
-const HoursOfOperationDataSchema = z.array(
-  z.object({
-    day: z.number(),
-    start: z.number(),
-    end: z.number(),
-  })
-);
+export const HoursOfOperationOfADaySchema = z.object({
+  id: z.number(),
+  day: z.number(),
+  start: z.number(),
+  end: z.number(),
+});
+
+export const HoursOfOperationDataSchema = z
+  .array(HoursOfOperationOfADaySchema)
+  .refine((hours) => hours.length != 0, 'Hours of Operation cannot be empty.');
 
 export const FormDataSchema = z
   .object({
