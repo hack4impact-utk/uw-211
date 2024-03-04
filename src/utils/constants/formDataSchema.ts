@@ -18,12 +18,12 @@ const checkValidHours = (open: string, close: string) => {
   }
 };
 
-export const AgencyHours = z
+const AgencyHours = z
   .object({
     open: z
       .string()
       .min(1, 'Required')
-      .regex(/^[0-9]{2}:[0-9]{2}$/, {
+      .regex(/^[0-9]{1,2}:[0-9]{2}$/, {
         message: 'Must be a valid time. (HH:MM)',
       }),
     close: z
@@ -34,8 +34,6 @@ export const AgencyHours = z
       }),
   })
   .superRefine(({ open, close }, ctx) => {
-    console.log(open);
-
     if (!checkValidHours(open, close)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -44,6 +42,50 @@ export const AgencyHours = z
       });
     }
   });
+
+const VolunteerFields = z
+  .object({
+    volunteers: z.string({ invalid_type_error: 'Required' }),
+    vol_reqs: z.string().optional(),
+    vol_coor: z.string().optional(),
+    vol_coor_tel: z
+      .string()
+      .regex(/^[0-9]{10}$/, {
+        message: 'Must be a valid phone number.',
+      })
+      .optional(),
+  })
+  .superRefine(({ volunteers, vol_reqs, vol_coor, vol_coor_tel }, ctx) => {
+    if (volunteers === 'true') {
+      if (vol_reqs === '' || vol_reqs === undefined) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Required',
+          path: ['vol_reqs'],
+        });
+      }
+
+      if (vol_coor === '' || vol_coor === undefined) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Required',
+          path: ['vol_coor'],
+        });
+      }
+
+      if (vol_coor_tel === '' || vol_coor_tel === undefined) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Required',
+          path: ['vol_coor_tel'],
+        });
+      }
+    } else {
+      return false;
+    }
+  });
+
+// const DonationFields = z.object({});
 
 export const FormDataSchema = z
   .object({
@@ -76,15 +118,7 @@ export const FormDataSchema = z
       ),
 
     // OPPORTUNITIES
-    volunteers: z.string({ invalid_type_error: 'Required' }),
-    vol_reqs: z.string().optional(),
-    vol_coor: z.string().optional(),
-    vol_coor_tel: z
-      .string()
-      .regex(/^[0-9]{10}$/, {
-        message: 'Must be a valid phone number.',
-      })
-      .optional(),
+    volunteerFields: VolunteerFields,
 
     // DONATIONS
     donation: z.string({ invalid_type_error: 'Required' }),
@@ -105,35 +139,6 @@ export const FormDataSchema = z
       invalid_type_error: 'Required',
     }),
     recommendations_contact: z.string().optional(),
-  })
-  .superRefine(({ volunteers, vol_reqs, vol_coor, vol_coor_tel }, ctx) => {
-    if (volunteers === 'true') {
-      if (vol_reqs === '' || vol_reqs === undefined) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Required',
-          path: ['vol_reqs'],
-        });
-      }
-
-      if (vol_coor === '' || vol_coor === undefined) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Required',
-          path: ['vol_coor'],
-        });
-      }
-
-      if (vol_coor_tel === '' || vol_coor_tel === undefined) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Required',
-          path: ['vol_coor_tel'],
-        });
-      }
-    } else {
-      return false;
-    }
   })
   .superRefine(({ donation, don_ex, don_coor, pickup, don_coor_tel }, ctx) => {
     if (donation === 'true') {

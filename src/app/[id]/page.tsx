@@ -35,10 +35,10 @@ const steps = [
     id: 'Step 3',
     name: 'Opportunities',
     fields: [
-      'volunteers',
-      'vol_reqs',
-      'vol_coor',
-      'vol_coor_tel',
+      'volunteerFields.volunteers',
+      'volunteerFields.vol_reqs',
+      'volunteerFields.vol_coor',
+      'volunteerFields.vol_coor_tel',
       'donation',
       'don_ex',
       'pickup',
@@ -532,7 +532,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             id="volunteers"
                             type="radio"
                             value="false"
-                            {...register('volunteers')}
+                            {...register('volunteerFields.volunteers')}
                             onChange={(e) => {
                               setVolunteerChecked(e.target.value);
                             }}
@@ -549,7 +549,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             id="volunteers"
                             type="radio"
                             value="true"
-                            {...register('volunteers')}
+                            {...register('volunteerFields.volunteers')}
                             onChange={(e) => {
                               setVolunteerChecked(e.target.value);
                             }}
@@ -562,9 +562,9 @@ export default function Form({ params }: { params: { id: string } }) {
                         </div>
                       </div>
                     </div>
-                    {errors.volunteers?.message && (
+                    {errors.volunteerFields?.volunteers?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.volunteers.message}
+                        {errors.volunteerFields.volunteers.message}
                       </p>
                     )}
                   </div>
@@ -580,7 +580,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       </h2>
                       <textarea
                         id="vol_reqs"
-                        {...register('vol_reqs')}
+                        {...register('volunteerFields.vol_reqs')}
                         autoComplete="vol_reqs"
                         cols={30}
                         rows={10}
@@ -588,9 +588,9 @@ export default function Form({ params }: { params: { id: string } }) {
                         placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
                         className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                       ></textarea>
-                      {errors.vol_reqs?.message && (
+                      {errors.volunteerFields?.vol_reqs?.message && (
                         <p className="mt-2 text-sm text-red-400">
-                          {errors.vol_reqs.message}
+                          {errors.volunteerFields.vol_reqs.message}
                         </p>
                       )}
                     </div>
@@ -604,14 +604,14 @@ export default function Form({ params }: { params: { id: string } }) {
                         <input
                           type="text"
                           id="vol_coor"
-                          {...register('vol_coor')}
+                          {...register('volunteerFields.vol_coor')}
                           autoComplete="vol_coor"
                           disabled={volunteerChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.vol_coor?.message && (
+                        {errors.volunteerFields?.vol_coor?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.vol_coor.message}
+                            {errors.volunteerFields?.vol_coor.message}
                           </p>
                         )}
                       </div>
@@ -624,15 +624,15 @@ export default function Form({ params }: { params: { id: string } }) {
                         <input
                           type="tel"
                           id="vol_coor_tel"
-                          {...register('vol_coor_tel')}
+                          {...register('volunteerFields.vol_coor_tel')}
                           autoComplete="vol_coor_tel"
                           disabled={volunteerChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
 
-                        {errors.vol_coor_tel?.message && (
+                        {errors.volunteerFields?.vol_coor_tel?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.vol_coor_tel.message}
+                            {errors.volunteerFields.vol_coor_tel.message}
                           </p>
                         )}
                       </div>
