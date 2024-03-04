@@ -40,7 +40,7 @@ const steps = formSteps;
 
 export default function Form({ params }: { params: { id: string } }) {
   const [previousStep, setPreviousStep] = useState(-1);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const delta = currentStep - previousStep;
 
   const {
@@ -105,7 +105,6 @@ export default function Form({ params }: { params: { id: string } }) {
   const [serviceIdx, setServiceIdx] = useState(-1);
   useEffect(() => {
     setValue(`services.${serviceIdx}`, getValues(`services.${serviceIdx}`));
-    console.log(getValues(`services`));
   }, [getValues, serviceIdx, setValue]);
 
   const add_service = () => {
