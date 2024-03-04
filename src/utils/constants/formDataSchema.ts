@@ -91,26 +91,18 @@ const DonationFields = z
     donation: z.string({ invalid_type_error: 'Required' }),
     don_ex: z.string().optional(),
     // pickup
-    pickup: z.string().optional(),
+    pickup: z.string().default('false'),
     pickup_loc: z.string().optional(),
     don_coor: z.string().optional(),
     don_coor_tel: z.string().optional(),
   })
-  .superRefine(({ donation, don_ex, don_coor, pickup, don_coor_tel }, ctx) => {
+  .superRefine(({ donation, don_ex, don_coor, don_coor_tel }, ctx) => {
     if (donation === 'true') {
       if (don_ex === '' || don_ex === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Required',
           path: ['don_ex'],
-        });
-      }
-
-      if (pickup === '' || pickup === undefined) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Required',
-          path: ['pickup'],
         });
       }
 
