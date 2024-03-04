@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
 import {
@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus, Trash } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import FormStepper from '@/components/FormStepper';
 import { useWindowSize } from '@/utils/hooks/useWindowSize';
 import {
@@ -30,61 +30,16 @@ import {
   SheetTitle,
   SheetContent,
 } from '@/components/ui/sheet';
+import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
+import { formSteps } from '@/utils/constants/formSteps';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
 
-const steps = [
-  {
-    id: 'Step 1',
-    name: 'Preliminaries',
-    fields: [
-      'legalName',
-      'akas',
-      'legalStatus',
-      'agencyInfo',
-      'directorName',
-      'open',
-      'close',
-      'days',
-    ],
-  },
-  {
-    id: 'Step 2',
-    name: 'Services',
-    fields: [
-      'name',
-      'description',
-      'contact',
-      'eligibility',
-      'applicationProcess',
-      'fees',
-      'requiredDocuments',
-    ],
-  },
-  {
-    id: 'Step 3',
-    name: 'Opportunities',
-    fields: [
-      'volunteers',
-      'vol_reqs',
-      'vol_coor',
-      'vol_coor_tel',
-      'donation',
-      'don_ex',
-      'pickup',
-      'pickup_loc',
-      'don_coor',
-      'don_coor_tel',
-      'recommendation',
-      'recommendations_contact',
-    ],
-  },
-  { id: 'Step 4', name: 'Review', fields: [] },
-];
+const steps = formSteps;
 
 export default function Form({ params }: { params: { id: string } }) {
-  const [previousStep, setPreviousStep] = useState(0);
+  const [previousStep, setPreviousStep] = useState(-1);
   const [currentStep, setCurrentStep] = useState(0);
   const delta = currentStep - previousStep;
 
@@ -104,21 +59,7 @@ export default function Form({ params }: { params: { id: string } }) {
     },
   });
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (!isDirty) return;
-      event.preventDefault();
-      event.returnValue =
-        'Your changes will not be saved if you leave the page.';
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    // Clean up event listener on component unmount
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [isDirty]);
+  useBeforeUnload(isDirty);
 
   const processForm: SubmitHandler<Inputs> = (data) => {
     console.log('Form data for agency with id', params.id);
@@ -134,8 +75,8 @@ export default function Form({ params }: { params: { id: string } }) {
 
     if (!output) return;
 
-    if (currentStep < steps.length - 1) {
-      if (currentStep === steps.length - 2) {
+    if (currentStep < steps.length) {
+      if (currentStep === steps.length - 1) {
         await handleSubmit(processForm)();
       }
       setPreviousStep(currentStep);
@@ -227,7 +168,7 @@ export default function Form({ params }: { params: { id: string } }) {
 
   const delete_service = (id: number) => {
     const deleteIdx = getValues('services').findIndex(
-      (service) => service.id === id
+      (service: Service) => service.id === id
     );
     getValues('services').splice(deleteIdx, 1);
 
@@ -238,21 +179,9 @@ export default function Form({ params }: { params: { id: string } }) {
     }
   };
 
-  // Prevents field validation for the services form as it switches to another service
-  // that has the error if you are working on a different service.
-  // Might remove.
-  const handleServicesKeyDown = (e: React.KeyboardEvent) => {
-    // Allow textarea as it is multiline.
-    if (e.target instanceof HTMLElement && e.target.tagName === 'TEXTAREA')
-      return;
-    if (e.key === 'Enter') {
-      e.preventDefault();
-    }
-  };
-
   const ServicesForm = () => {
     return (
-      <div className="mt-2 px-4 py-2" onKeyDown={handleServicesKeyDown}>
+      <div className="mt-2 px-4 py-2">
         <label
           htmlFor="name"
           className="block text-sm font-medium leading-6 text-gray-900"
@@ -1319,8 +1248,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     <div className="mt-2 flex flex-col px-4 py-2">
                       {/* Fix the height to be dynamic */}
                       <ScrollArea className="flex h-80 flex-col">
-                        {getValues('services').map((service: Service, idx) => (
-                          <div key={idx} className="flex flex-row">
+                        {getValues('services').map((service: Service) => (
+                          <div key={service.id} className="flex flex-row">
                             <Button
                               onClick={() =>
                                 setServiceIdx(
@@ -1336,6 +1265,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                   ? 'default'
                                   : 'outline'
                               }
+                              type="button"
                             >
                               {service.name}
                             </Button>
@@ -1349,8 +1279,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               size="icon"
                               className="m-1"
                               onClick={() => delete_service(service.id)}
+                              type="button"
                             >
-                              <Trash />
+                              <Trash2 size={20} />
                             </Button>
                           </div>
                         ))}
@@ -1360,14 +1291,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         className="m-1"
                         variant="outline"
                         onClick={add_service}
+                        type="button"
                       >
-                        <Plus />
+                        <Plus size={16} className="mr-2" />
                         Add Service
                       </Button>
                     </div>
                   </ResizablePanel>
                   <ResizableHandle withHandle />
-                  <ResizablePanel defaultSize={70}>
+                  <ResizablePanel defaultSize={80}>
                     {serviceIdx === -1 ? (
                       <div className="flex h-full items-center justify-center">
                         <p className="text-sm text-gray-600">
@@ -1376,9 +1308,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </div>
                     ) : (
                       /* Fix the height to be dynamic */
-                      <ScrollArea className="h-96">
-                        <ServicesForm />
-                      </ScrollArea>
+                      <ScrollArea className="h-96">{ServicesForm()}</ScrollArea>
                     )}
                   </ResizablePanel>
                 </ResizablePanelGroup>
@@ -1386,7 +1316,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 <div className="flex flex-col">
                   <Sheet>
                     <SheetTrigger asChild>
-                      <Button variant="outline" className="mx-4">
+                      <Button variant="outline" className="mx-4" type="button">
                         Services List
                       </Button>
                     </SheetTrigger>
@@ -1401,46 +1331,45 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           className="m-1"
                           variant="outline"
                           onClick={add_service}
+                          type="button"
                         >
-                          <Plus />
+                          <Plus size={16} className="mr-2" />
                           Add Service
                         </Button>
                         <Separator className="my-2" />
-                        {getValues('services').map((service: Service, idx) => (
-                          <div key={idx} className="flex flex-row">
-                            <Button
-                              onClick={() =>
-                                setServiceIdx(
-                                  getValues('services').findIndex(
-                                    (i) => i.id === service.id
-                                  )
-                                )
-                              }
-                              className="m-1 flex-grow"
-                              variant={
-                                getValues(`services.${serviceIdx}.id`) ===
-                                service.id
-                                  ? 'default'
-                                  : 'outline'
-                              }
-                            >
-                              {service.name}
-                            </Button>
-                            <Button
-                              variant={
-                                getValues(`services.${serviceIdx}.id`) ===
-                                service.id
-                                  ? 'default'
-                                  : 'outline'
-                              }
-                              size="icon"
-                              className="m-1"
-                              onClick={() => delete_service(service.id)}
-                            >
-                              <Trash />
-                            </Button>
-                          </div>
-                        ))}
+                        {getValues('services').map(
+                          (service: Service, idx: number) => (
+                            <div key={service.id} className="flex flex-row">
+                              <Button
+                                onClick={() => setServiceIdx(idx)}
+                                className="m-1 flex-grow"
+                                variant={
+                                  getValues(`services.${serviceIdx}.id`) ===
+                                  service.id
+                                    ? 'default'
+                                    : 'outline'
+                                }
+                                type="button"
+                              >
+                                {service.name}
+                              </Button>
+                              <Button
+                                variant={
+                                  getValues(`services.${serviceIdx}.id`) ===
+                                  service.id
+                                    ? 'default'
+                                    : 'outline'
+                                }
+                                size="icon"
+                                className="m-1"
+                                onClick={() => delete_service(service.id)}
+                                type="button"
+                              >
+                                <Trash2 size={20} />
+                              </Button>
+                            </div>
+                          )
+                        )}
                       </div>
                     </SheetContent>
                   </Sheet>
@@ -1451,7 +1380,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </p>
                     </div>
                   ) : (
-                    <ServicesForm />
+                    ServicesForm()
                   )}
                 </div>
               )}
