@@ -390,6 +390,8 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
         medicare.setText('X');
         break;
       case 'Insurance: Private':
+        const _private = form.getTextField('Private');
+        _private.setText('X');
         break;
     }
 
@@ -449,6 +451,9 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
           );
           proofOfPublicAssistance.setText('X');
           break;
+        case 'Drivers License':
+          const driversLicense = form.getTextField('Drivers License_2');
+          driversLicense.setText('X');
         default:
           documents.push(document);
           break;
@@ -457,6 +462,722 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
 
     const otherDocuments = form.getTextField('Other Specify');
     otherDocuments.setText(documents.join(', '));
+  }
+
+  // Service 2
+  if (agency.info[0].services && agency.info[0].services[1]) {
+    const fullDescription = form.getTextField('Full Description 1_2');
+    fullDescription.setText(agency.info[0].services[1].fullDescription);
+
+    const contactPerson = form.getTextField(
+      'question 3 or if contacts differ by service'
+    );
+    contactPerson.setText(agency.info[0].services[1].contactPersonName);
+
+    const eligibilityRequirements = form.getTextField(
+      'Eligibility Requirements 1_2'
+    );
+    eligibilityRequirements.setText(
+      agency.info[0].services[1].eligibilityRequirements
+    );
+
+    if (agency.info[0].services[1].applicationProcess.includes('Walkin')) {
+      const walkin = form.getTextField('Walkin_2');
+      walkin.setText('X');
+    }
+
+    if (agency.info[0].services[1].applicationProcess.includes('Telephone')) {
+      const telephone = form.getTextField('Telephone_2');
+      telephone.setText('X');
+    }
+
+    if (
+      agency.info[0].services[1].applicationProcess.includes(
+        'Call to Schedule Appointment'
+      )
+    ) {
+      const call = form.getTextField('Call to Schedule Appointment_2');
+      call.setText('X');
+    }
+
+    if (
+      agency.info[0].services[1].applicationProcess.includes('Apply Online')
+    ) {
+      const online = form.getTextField('Apply Online_2');
+      online.setText('X');
+    }
+
+    const applicationOthers: string[] = [];
+    agency.info[0].services[1].applicationProcess.forEach((process) => {
+      if (
+        process === 'Walkin' ||
+        process === 'Telephone' ||
+        process === 'Call to Schedule Appointment' ||
+        process === 'Apply Online'
+      ) {
+        return;
+      }
+      applicationOthers.push(process);
+    });
+
+    const applicationOthersField = form.getTextField('Other_6');
+    applicationOthersField.setText(applicationOthers.join(', '));
+
+    if (agency.info[0].services[1].applicationProcessReferralRequiredByWhom) {
+      const referral = form.getTextField('Referral Required By Whom_2');
+      referral.setText(
+        agency.info[0].services[1].applicationProcessReferralRequiredByWhom
+      );
+    }
+
+    switch (agency.info[0].services[1].feeCategory) {
+      case 'No Fee':
+        const noFee = form.getTextField('No Fee_2');
+        noFee.setText('X');
+        break;
+      case 'Sliding Scale':
+        const sliding = form.getTextField('Sliding Scale Fee_2');
+        sliding.setText('X');
+        break;
+      case 'Income Based':
+        break;
+      case 'Fee':
+        const fee = form.getTextField('Straight Free please specify_2');
+        fee.setText(agency.info[0].services[1].feeStraightFeeAmount);
+        break;
+      case 'Insurance: Medicaid/TennCare':
+        const medicaid = form.getTextField('Insurance MedicaidTennCare_2');
+        medicaid.setText('X');
+        break;
+      case 'Insurance: Medicare':
+        const medicare = form.getTextField('Medicare_2');
+        medicare.setText('X');
+        break;
+      case 'Insurance: Private':
+        const _private = form.getTextField('Private_2');
+        _private.setText('X');
+        break;
+    }
+
+    const documents: string[] = [];
+
+    agency.info[0].services[1].requiredDocuments.forEach((document) => {
+      switch (document) {
+        case 'State Issued I.D.':
+          const stateId = form.getTextField('State Issued ID_2');
+          stateId.setText('X');
+          break;
+        case 'Social Security Card':
+          const socialSecurity = form.getTextField('Social Security Card_2');
+          socialSecurity.setText('X');
+          break;
+        case 'Proof of Residence':
+          const proofOfResidence = form.getTextField('Residence_2');
+          proofOfResidence.setText('X');
+          break;
+        case 'Proof of Income':
+          const proofOfIncome = form.getTextField('Proof of Income_2');
+          proofOfIncome.setText('X');
+          break;
+        case 'Birth Certificate':
+          const birthCertificate = form.getTextField('Birth Certificate_2');
+          birthCertificate.setText('X');
+          break;
+        case 'Medical Records':
+          const medicalRecords = form.getTextField('Medical Records_2');
+          medicalRecords.setText('X');
+          break;
+        case 'Psych Records':
+          const psychRecords = form.getTextField('Records_2');
+          psychRecords.setText('X');
+          break;
+        case 'Proof of Need':
+          const proofOfNeed = form.getTextField('Proof of Need_2');
+          proofOfNeed.setText('X');
+          break;
+        case 'Utility Bill':
+          const utilityBill = form.getTextField('Utility Bill_2');
+          utilityBill.setText('X');
+          break;
+        case 'Utility Bill Cutoff Notice':
+          const utilityBillCutoffNotice = form.getTextField(
+            'Utility Bill Cutoff Notice_2'
+          );
+          utilityBillCutoffNotice.setText('X');
+          break;
+        case 'Proof of Citizenship':
+          const proofOfCitizenship = form.getTextField(
+            'Proof of Citizenship_2'
+          );
+          proofOfCitizenship.setText('X');
+          break;
+        case 'Proof of Public Assistance':
+          const proofOfPublicAssistance = form.getTextField(
+            'Proof of Public Assistance_2'
+          );
+          proofOfPublicAssistance.setText('X');
+          break;
+        case 'Drivers License':
+          const driversLicense = form.getTextField('Drivers License_2');
+          driversLicense.setText('X');
+        default:
+          documents.push(document);
+          break;
+      }
+    });
+
+    const otherDocuments = form.getTextField('Other Specify_2');
+    otherDocuments.setText(documents.join(', '));
+  }
+
+  // Service 3
+  if (agency.info[0].services && agency.info[0].services[1]) {
+    const fullDescription = form.getTextField('Full Description 1_3');
+    fullDescription.setText(agency.info[0].services[1].fullDescription);
+
+    const contactPerson = form.getTextField(
+      'question 3 or if contacts differ by service_2'
+    );
+    contactPerson.setText(agency.info[0].services[1].contactPersonName);
+
+    const eligibilityRequirements = form.getTextField(
+      'Eligibility Requirements 1_3'
+    );
+    eligibilityRequirements.setText(
+      agency.info[0].services[1].eligibilityRequirements
+    );
+
+    if (agency.info[0].services[1].applicationProcess.includes('Walkin')) {
+      const walkin = form.getTextField('Walkin_3');
+      walkin.setText('X');
+    }
+
+    if (agency.info[0].services[1].applicationProcess.includes('Telephone')) {
+      const telephone = form.getTextField('Telephone_3');
+      telephone.setText('X');
+    }
+
+    if (
+      agency.info[0].services[1].applicationProcess.includes(
+        'Call to Schedule Appointment'
+      )
+    ) {
+      const call = form.getTextField('Call to Schedule Appointment_3');
+      call.setText('X');
+    }
+
+    if (
+      agency.info[0].services[1].applicationProcess.includes('Apply Online')
+    ) {
+      const online = form.getTextField('Apply Online_3');
+      online.setText('X');
+    }
+
+    const applicationOthers: string[] = [];
+    agency.info[0].services[1].applicationProcess.forEach((process) => {
+      if (
+        process === 'Walkin' ||
+        process === 'Telephone' ||
+        process === 'Call to Schedule Appointment' ||
+        process === 'Apply Online'
+      ) {
+        return;
+      }
+      applicationOthers.push(process);
+    });
+
+    const applicationOthersField = form.getTextField('Other_6');
+    applicationOthersField.setText(applicationOthers.join(', '));
+
+    if (agency.info[0].services[1].applicationProcessReferralRequiredByWhom) {
+      const referral = form.getTextField('Referral Required By Whom_3');
+      referral.setText(
+        agency.info[0].services[1].applicationProcessReferralRequiredByWhom
+      );
+    }
+
+    switch (agency.info[0].services[1].feeCategory) {
+      case 'No Fee':
+        const noFee = form.getTextField('No Fee_3');
+        noFee.setText('X');
+        break;
+      case 'Sliding Scale':
+        const sliding = form.getTextField('Sliding Scale Fee_3');
+        sliding.setText('X');
+        break;
+      case 'Income Based':
+        break;
+      case 'Fee':
+        const fee = form.getTextField('Straight Free please specify_3');
+        fee.setText(agency.info[0].services[1].feeStraightFeeAmount);
+        break;
+      case 'Insurance: Medicaid/TennCare':
+        const medicaid = form.getTextField('Insurance MedicaidTennCare_3');
+        medicaid.setText('X');
+        break;
+      case 'Insurance: Medicare':
+        const medicare = form.getTextField('Medicare_3');
+        medicare.setText('X');
+        break;
+      case 'Insurance: Private':
+        const _private = form.getTextField('Private_3');
+        _private.setText('X');
+        break;
+    }
+
+    const documents: string[] = [];
+
+    agency.info[0].services[1].requiredDocuments.forEach((document) => {
+      switch (document) {
+        case 'State Issued I.D.':
+          const stateId = form.getTextField('State Issued ID_3');
+          stateId.setText('X');
+          break;
+        case 'Social Security Card':
+          const socialSecurity = form.getTextField('Social Security Card_3');
+          socialSecurity.setText('X');
+          break;
+        case 'Proof of Residence':
+          const proofOfResidence = form.getTextField('Residence_3');
+          proofOfResidence.setText('X');
+          break;
+        case 'Proof of Income':
+          const proofOfIncome = form.getTextField('Proof of Income_3');
+          proofOfIncome.setText('X');
+          break;
+        case 'Birth Certificate':
+          const birthCertificate = form.getTextField('Birth Certificate_3');
+          birthCertificate.setText('X');
+          break;
+        case 'Medical Records':
+          const medicalRecords = form.getTextField('Medical Records_3');
+          medicalRecords.setText('X');
+          break;
+        case 'Psych Records':
+          const psychRecords = form.getTextField('Records_3');
+          psychRecords.setText('X');
+          break;
+        case 'Proof of Need':
+          const proofOfNeed = form.getTextField('Proof of Need_3');
+          proofOfNeed.setText('X');
+          break;
+        case 'Utility Bill':
+          const utilityBill = form.getTextField('Utility Bill_3');
+          utilityBill.setText('X');
+          break;
+        case 'Utility Bill Cutoff Notice':
+          const utilityBillCutoffNotice = form.getTextField(
+            'Utility Bill Cutoff Notice_3'
+          );
+          utilityBillCutoffNotice.setText('X');
+          break;
+        case 'Proof of Citizenship':
+          const proofOfCitizenship = form.getTextField(
+            'Proof of Citizenship_3'
+          );
+          proofOfCitizenship.setText('X');
+          break;
+        case 'Proof of Public Assistance':
+          const proofOfPublicAssistance = form.getTextField(
+            'Proof of Public Assistance_3'
+          );
+          proofOfPublicAssistance.setText('X');
+          break;
+        case 'Drivers License':
+          const driversLicense = form.getTextField('Drivers License_3');
+          driversLicense.setText('X');
+        default:
+          documents.push(document);
+          break;
+      }
+    });
+
+    const otherDocuments = form.getTextField('Other Specify_3');
+    otherDocuments.setText(documents.join(', '));
+  }
+
+  // Service 4
+  if (agency.info[0].services && agency.info[0].services[1]) {
+    const fullDescription = form.getTextField('Full Description 1_4');
+    fullDescription.setText(agency.info[0].services[1].fullDescription);
+
+    const contactPerson = form.getTextField(
+      'question 3 or if contacts differ by service_3'
+    );
+    contactPerson.setText(agency.info[0].services[1].contactPersonName);
+
+    const eligibilityRequirements = form.getTextField(
+      'Eligibility Requirements 1_4'
+    );
+    eligibilityRequirements.setText(
+      agency.info[0].services[1].eligibilityRequirements
+    );
+
+    if (agency.info[0].services[1].applicationProcess.includes('Walkin')) {
+      const walkin = form.getTextField('Walkin_4');
+      walkin.setText('X');
+    }
+
+    if (agency.info[0].services[1].applicationProcess.includes('Telephone')) {
+      const telephone = form.getTextField('Telephone_4');
+      telephone.setText('X');
+    }
+
+    if (
+      agency.info[0].services[1].applicationProcess.includes(
+        'Call to Schedule Appointment'
+      )
+    ) {
+      const call = form.getTextField('Call to Schedule Appointment_4');
+      call.setText('X');
+    }
+
+    if (
+      agency.info[0].services[1].applicationProcess.includes('Apply Online')
+    ) {
+      const online = form.getTextField('Apply Online_4');
+      online.setText('X');
+    }
+
+    const applicationOthers: string[] = [];
+    agency.info[0].services[1].applicationProcess.forEach((process) => {
+      if (
+        process === 'Walkin' ||
+        process === 'Telephone' ||
+        process === 'Call to Schedule Appointment' ||
+        process === 'Apply Online'
+      ) {
+        return;
+      }
+      applicationOthers.push(process);
+    });
+
+    const applicationOthersField = form.getTextField('Other_6');
+    applicationOthersField.setText(applicationOthers.join(', '));
+
+    if (agency.info[0].services[1].applicationProcessReferralRequiredByWhom) {
+      const referral = form.getTextField('Referral Required By Whom_4');
+      referral.setText(
+        agency.info[0].services[1].applicationProcessReferralRequiredByWhom
+      );
+    }
+
+    switch (agency.info[0].services[1].feeCategory) {
+      case 'No Fee':
+        const noFee = form.getTextField('No Fee_4');
+        noFee.setText('X');
+        break;
+      case 'Sliding Scale':
+        const sliding = form.getTextField('Sliding Scale Fee_4');
+        sliding.setText('X');
+        break;
+      case 'Income Based':
+        break;
+      case 'Fee':
+        const fee = form.getTextField('Straight Free please specify_4');
+        fee.setText(agency.info[0].services[1].feeStraightFeeAmount);
+        break;
+      case 'Insurance: Medicaid/TennCare':
+        const medicaid = form.getTextField('Insurance MedicaidTennCare_4');
+        medicaid.setText('X');
+        break;
+      case 'Insurance: Medicare':
+        const medicare = form.getTextField('Medicare_4');
+        medicare.setText('X');
+        break;
+      case 'Insurance: Private':
+        const _private = form.getTextField('Private_4');
+        _private.setText('X');
+        break;
+    }
+
+    const documents: string[] = [];
+
+    agency.info[0].services[1].requiredDocuments.forEach((document) => {
+      switch (document) {
+        case 'State Issued I.D.':
+          const stateId = form.getTextField('State Issued ID_4');
+          stateId.setText('X');
+          break;
+        case 'Social Security Card':
+          const socialSecurity = form.getTextField('Social Security Card_4');
+          socialSecurity.setText('X');
+          break;
+        case 'Proof of Residence':
+          const proofOfResidence = form.getTextField('Residence_4');
+          proofOfResidence.setText('X');
+          break;
+        case 'Proof of Income':
+          const proofOfIncome = form.getTextField('Proof of Income_4');
+          proofOfIncome.setText('X');
+          break;
+        case 'Birth Certificate':
+          const birthCertificate = form.getTextField('Birth Certificate_4');
+          birthCertificate.setText('X');
+          break;
+        case 'Medical Records':
+          const medicalRecords = form.getTextField('Medical Records_4');
+          medicalRecords.setText('X');
+          break;
+        case 'Psych Records':
+          const psychRecords = form.getTextField('Records_4');
+          psychRecords.setText('X');
+          break;
+        case 'Proof of Need':
+          const proofOfNeed = form.getTextField('Proof of Need_4');
+          proofOfNeed.setText('X');
+          break;
+        case 'Utility Bill':
+          const utilityBill = form.getTextField('Utility Bill_4');
+          utilityBill.setText('X');
+          break;
+        case 'Utility Bill Cutoff Notice':
+          const utilityBillCutoffNotice = form.getTextField(
+            'Utility Bill Cutoff Notice_4'
+          );
+          utilityBillCutoffNotice.setText('X');
+          break;
+        case 'Proof of Citizenship':
+          const proofOfCitizenship = form.getTextField(
+            'Proof of Citizenship_4'
+          );
+          proofOfCitizenship.setText('X');
+          break;
+        case 'Proof of Public Assistance':
+          const proofOfPublicAssistance = form.getTextField(
+            'Proof of Public Assistance_4'
+          );
+          proofOfPublicAssistance.setText('X');
+          break;
+        case 'Drivers License':
+          const driversLicense = form.getTextField('Drivers License_4');
+          driversLicense.setText('X');
+        default:
+          documents.push(document);
+          break;
+      }
+    });
+
+    const otherDocuments = form.getTextField('Other Specify_4');
+    otherDocuments.setText(documents.join(', '));
+  }
+
+  // Service 5
+  if (agency.info[0].services && agency.info[0].services[1]) {
+    const fullDescription = form.getTextField('Full Description 1_5');
+    fullDescription.setText(agency.info[0].services[1].fullDescription);
+
+    const contactPerson = form.getTextField(
+      'question 3 or if contacts differ by service_4'
+    );
+    contactPerson.setText(agency.info[0].services[1].contactPersonName);
+
+    const eligibilityRequirements = form.getTextField(
+      'Eligibility Requirements 1_5'
+    );
+    eligibilityRequirements.setText(
+      agency.info[0].services[1].eligibilityRequirements
+    );
+
+    if (agency.info[0].services[1].applicationProcess.includes('Walkin')) {
+      const walkin = form.getTextField('Walkin_5');
+      walkin.setText('X');
+    }
+
+    if (agency.info[0].services[1].applicationProcess.includes('Telephone')) {
+      const telephone = form.getTextField('Telephone_5');
+      telephone.setText('X');
+    }
+
+    if (
+      agency.info[0].services[1].applicationProcess.includes(
+        'Call to Schedule Appointment'
+      )
+    ) {
+      const call = form.getTextField('Call to Schedule Appointment_5');
+      call.setText('X');
+    }
+
+    if (
+      agency.info[0].services[1].applicationProcess.includes('Apply Online')
+    ) {
+      const online = form.getTextField('Apply Online_5');
+      online.setText('X');
+    }
+
+    const applicationOthers: string[] = [];
+    agency.info[0].services[1].applicationProcess.forEach((process) => {
+      if (
+        process === 'Walkin' ||
+        process === 'Telephone' ||
+        process === 'Call to Schedule Appointment' ||
+        process === 'Apply Online'
+      ) {
+        return;
+      }
+      applicationOthers.push(process);
+    });
+
+    const applicationOthersField = form.getTextField('Other_6');
+    applicationOthersField.setText(applicationOthers.join(', '));
+
+    if (agency.info[0].services[1].applicationProcessReferralRequiredByWhom) {
+      const referral = form.getTextField('Referral Required By Whom_5');
+      referral.setText(
+        agency.info[0].services[1].applicationProcessReferralRequiredByWhom
+      );
+    }
+
+    switch (agency.info[0].services[1].feeCategory) {
+      case 'No Fee':
+        const noFee = form.getTextField('No Fee_5');
+        noFee.setText('X');
+        break;
+      case 'Sliding Scale':
+        const sliding = form.getTextField('Sliding Scale Fee_5');
+        sliding.setText('X');
+        break;
+      case 'Income Based':
+        break;
+      case 'Fee':
+        const fee = form.getTextField('Straight Free please specify_5');
+        fee.setText(agency.info[0].services[1].feeStraightFeeAmount);
+        break;
+      case 'Insurance: Medicaid/TennCare':
+        const medicaid = form.getTextField('Insurance MedicaidTennCare_5');
+        medicaid.setText('X');
+        break;
+      case 'Insurance: Medicare':
+        const medicare = form.getTextField('Medicare_5');
+        medicare.setText('X');
+        break;
+      case 'Insurance: Private':
+        const _private = form.getTextField('Private_5');
+        _private.setText('X');
+        break;
+    }
+
+    const documents: string[] = [];
+
+    agency.info[0].services[1].requiredDocuments.forEach((document) => {
+      switch (document) {
+        case 'State Issued I.D.':
+          const stateId = form.getTextField('State Issued ID_5');
+          stateId.setText('X');
+          break;
+        case 'Social Security Card':
+          const socialSecurity = form.getTextField('Social Security Card_5');
+          socialSecurity.setText('X');
+          break;
+        case 'Proof of Residence':
+          const proofOfResidence = form.getTextField('Residence_5');
+          proofOfResidence.setText('X');
+          break;
+        case 'Proof of Income':
+          const proofOfIncome = form.getTextField('Proof of Income_5');
+          proofOfIncome.setText('X');
+          break;
+        case 'Birth Certificate':
+          const birthCertificate = form.getTextField('Birth Certificate_5');
+          birthCertificate.setText('X');
+          break;
+        case 'Medical Records':
+          const medicalRecords = form.getTextField('Medical Records_5');
+          medicalRecords.setText('X');
+          break;
+        case 'Psych Records':
+          const psychRecords = form.getTextField('Records_5');
+          psychRecords.setText('X');
+          break;
+        case 'Proof of Need':
+          const proofOfNeed = form.getTextField('Proof of Need_5');
+          proofOfNeed.setText('X');
+          break;
+        case 'Utility Bill':
+          const utilityBill = form.getTextField('Utility Bill_5');
+          utilityBill.setText('X');
+          break;
+        case 'Utility Bill Cutoff Notice':
+          const utilityBillCutoffNotice = form.getTextField(
+            'Utility Bill Cutoff Notice_5'
+          );
+          utilityBillCutoffNotice.setText('X');
+          break;
+        case 'Proof of Citizenship':
+          const proofOfCitizenship = form.getTextField(
+            'Proof of Citizenship_5'
+          );
+          proofOfCitizenship.setText('X');
+          break;
+        case 'Proof of Public Assistance':
+          const proofOfPublicAssistance = form.getTextField(
+            'Proof of Public Assistance_5'
+          );
+          proofOfPublicAssistance.setText('X');
+          break;
+        case 'Drivers License':
+          const driversLicense = form.getTextField('Drivers License_5');
+          driversLicense.setText('X');
+        default:
+          documents.push(document);
+          break;
+      }
+    });
+
+    const otherDocuments = form.getTextField('Other Specify_5');
+    otherDocuments.setText(documents.join(', '));
+  }
+
+  if (
+    agency.info[0].volunteerOpportunities &&
+    agency.info[0].volunteerOpportunities === true
+  ) {
+    const volunteers = form.getTextField(
+      'does your organiztion accept volunteers Yes'
+    );
+    volunteers.setText('X');
+  } else {
+    const volunteers = form.getTextField('No_4');
+    volunteers.setText('X');
+  }
+
+  if (agency.info[0].volunteerOpportunitiesEligibility) {
+    const eligibilityRequirements = form.getTextField(
+      'checks other requirements for your volunteers 1'
+    );
+    eligibilityRequirements.setText(
+      agency.info[0].volunteerOpportunitiesEligibility
+    );
+  }
+
+  if (agency.info[0].volunteerCoordinatorContactInfo) {
+    const contactName = form.getTextField('Volunteer Coordinator');
+    contactName.setText(agency.info[0].volunteerCoordinatorContactInfo.name);
+
+    const contactPhone = form.getTextField('Phone');
+    contactPhone.setText(
+      agency.info[0].volunteerCoordinatorContactInfo.phoneNumber
+    );
+  }
+
+  if (agency.info[0].donations) {
+    const donations = form.getTextField('If yes please list');
+    donations.setText(agency.info[0].donations.join(', '));
+  }
+
+  if (agency.info[0].donationCoordinatorContactInfo) {
+    const contactName = form.getTextField('Donation Coordinator');
+    contactName.setText(agency.info[0].donationCoordinatorContactInfo.name);
+
+    const contactPhone = form.getTextField('Phone_2');
+    contactPhone.setText(
+      agency.info[0].donationCoordinatorContactInfo.phoneNumber
+    );
+  }
+
+  if (agency.info[0].recommendedAgencies) {
+    const recommendedAgencies = form.getTextField('agneciesservices 1');
+    recommendedAgencies.setText(agency.info[0].recommendedAgencies);
   }
 
   return pdfDoc.save();

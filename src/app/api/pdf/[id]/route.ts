@@ -11,6 +11,11 @@ export async function GET(
     const pdf = await generatePdf(id);
 
     fs.writeFileSync('./public/211_form_filled.pdf', pdf);
+
+    // Send the PDF data as a buffer
+    return new Response(pdf, {
+      headers: { 'content-type': 'application/pdf' },
+    });
   } catch (error) {
     console.error(error);
     if (error instanceof JSendResponse) {
