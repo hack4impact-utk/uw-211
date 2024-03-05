@@ -1,12 +1,15 @@
 import { PDFDocument } from 'pdf-lib';
 import { getAgencyById } from './Agencies';
+import fs from 'fs';
+import path from 'path';
 
 export async function generatePdf(agencyId: string): Promise<Uint8Array> {
   const agency = await getAgencyById(agencyId);
-  const data = await fetch('http://localhost:3000/211_form.pdf');
-  const arrayBuffer = await data.arrayBuffer();
+  // https://vercel.com/guides/how-can-i-use-files-in-serverless-functions
+  const pdfPath = path.join(process.cwd(), 'public', 'base_form.pdf');
+  const data = fs.readFileSync(pdfPath);
 
-  const pdfDoc = await PDFDocument.load(arrayBuffer);
+  const pdfDoc = await PDFDocument.load(data);
   const form = pdfDoc.getForm();
 
   const legalAgencyName = form.getTextField('Legal Agency Name');

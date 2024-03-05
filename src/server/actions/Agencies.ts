@@ -314,6 +314,7 @@ export async function approveAgency(
  * @throws {JSendResponse} - An error object with a 400|500 status code and a message describing the error.
  */
 function mongoErrorHandler(error: MongoError) {
+  console.log('ERROR NAME: ' + error.name);
   switch (error.name) {
     case 'CastError':
       // Handle the cast error

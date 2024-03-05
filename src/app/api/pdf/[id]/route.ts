@@ -1,6 +1,5 @@
 import { generatePdf } from '@/server/actions/PdfGeneration';
 import { JSendResponse } from '@/utils/types';
-import fs from 'fs';
 
 export async function GET(
   request: Request,
@@ -10,14 +9,12 @@ export async function GET(
   try {
     const pdf = await generatePdf(id);
 
-    fs.writeFileSync('./public/211_form_filled.pdf', pdf);
-
     // Send the PDF data as a buffer
     return new Response(pdf, {
       headers: { 'content-type': 'application/pdf' },
     });
   } catch (error) {
-    console.error(error);
+    console.log(error);
     if (error instanceof JSendResponse) {
       return Response.json(error, { status: 400 });
     }
