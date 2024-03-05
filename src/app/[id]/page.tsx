@@ -869,7 +869,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
   };
 
   return (
-    <section className="absolute inset-0 flex flex-col justify-between pl-4 pr-4 pt-24 sm:pl-12 sm:pr-12 md:pl-24 md:pr-24">
+    <section className="absolute inset-0 flex flex-col justify-between pl-4 pr-4 pt-24 sm:px-12 md:px-20">
       {/* Stepper */}
       <FormStepper
         currentPageIndex={currentStep}
@@ -898,6 +898,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Legal Agency Name
+                    <span className="ml-1 text-sm text-red-400">*</span>
                   </label>
                   <div className="mt-2">
                     <input
@@ -922,6 +923,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Director Name/Title
+                    <span className="ml-1 text-sm text-red-400">*</span>
                   </label>
                   <div className="mt-2">
                     <input
@@ -946,6 +948,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Brief Agency Information
+                    <span className="ml-1 text-sm text-red-400">*</span>
                   </label>
                   <div className="mt-2">
                     <textarea
@@ -998,6 +1001,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       Legal Organizational Status
+                      <span className="ml-1 text-sm text-red-400">*</span>
                     </label>
                     <div className="mt-2">
                       <select
@@ -1041,6 +1045,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         className="mb-2 block text-sm font-medium leading-6 text-gray-900"
                       >
                         Select day(s) of operation
+                        <span className="ml-1 text-sm text-red-400">*</span>
                       </label>
 
                       <div className="flex flex-col gap-4 sm:flex-row sm:gap-2">
@@ -1186,17 +1191,18 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       Open
+                      <span className="ml-1 text-sm text-red-400">*</span>
                     </label>
                     <input
                       type="text"
                       id="open"
-                      {...register('open')}
+                      {...register('hours.open')}
                       autoComplete="open"
                       className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                     />
-                    {errors.open?.message && (
+                    {errors.hours?.open?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.open.message}
+                        {errors.hours.open.message}
                       </p>
                     )}
                   </div>
@@ -1208,17 +1214,18 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       Close
+                      <span className="ml-1 text-sm text-red-400">*</span>
                     </label>
                     <input
                       type="text"
                       id="close"
-                      {...register('close')}
+                      {...register('hours.close')}
                       autoComplete="close"
                       className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
                     />
-                    {errors.close?.message && (
+                    {errors.hours?.close?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.close.message}
+                        {errors.hours.close.message}
                       </p>
                     )}
                   </div>
@@ -1404,6 +1411,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
                         Does your organization accept volunteers?
+                        <span className="ml-1 text-sm text-red-400">*</span>
                       </h2>
                       {/* radio button */}
                       <div className="flex flex-row gap-4 whitespace-nowrap">
@@ -1412,7 +1420,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             id="volunteers"
                             type="radio"
                             value="false"
-                            {...register('volunteers')}
+                            {...register('volunteerFields.volunteers')}
                             onChange={(e) => {
                               setVolunteerChecked(e.target.value);
                             }}
@@ -1429,7 +1437,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             id="volunteers"
                             type="radio"
                             value="true"
-                            {...register('volunteers')}
+                            {...register('volunteerFields.volunteers')}
                             onChange={(e) => {
                               setVolunteerChecked(e.target.value);
                             }}
@@ -1442,9 +1450,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
                     </div>
-                    {errors.volunteers?.message && (
+                    {errors.volunteerFields?.volunteers?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.volunteers.message}
+                        {errors.volunteerFields.volunteers.message}
                       </p>
                     )}
                   </div>
@@ -1460,17 +1468,17 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </h2>
                       <textarea
                         id="vol_reqs"
-                        {...register('vol_reqs')}
+                        {...register('volunteerFields.vol_reqs')}
                         autoComplete="vol_reqs"
                         cols={30}
                         rows={10}
                         disabled={volunteerChecked === 'false'}
-                        placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
+                        placeholder="List type of volunteer work, age, training, background checks, other requirements for your volunteers"
                         className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                       ></textarea>
-                      {errors.vol_reqs?.message && (
+                      {errors.volunteerFields?.vol_reqs?.message && (
                         <p className="mt-2 text-sm text-red-400">
-                          {errors.vol_reqs.message}
+                          {errors.volunteerFields.vol_reqs.message}
                         </p>
                       )}
                     </div>
@@ -1484,14 +1492,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         <input
                           type="text"
                           id="vol_coor"
-                          {...register('vol_coor')}
+                          {...register('volunteerFields.vol_coor')}
                           autoComplete="vol_coor"
                           disabled={volunteerChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.vol_coor?.message && (
+                        {errors.volunteerFields?.vol_coor?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.vol_coor.message}
+                            {errors.volunteerFields?.vol_coor.message}
                           </p>
                         )}
                       </div>
@@ -1504,15 +1512,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         <input
                           type="tel"
                           id="vol_coor_tel"
-                          {...register('vol_coor_tel')}
+                          {...register('volunteerFields.vol_coor_tel')}
                           autoComplete="vol_coor_tel"
                           disabled={volunteerChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
 
-                        {errors.vol_coor_tel?.message && (
+                        {errors.volunteerFields?.vol_coor_tel?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.vol_coor_tel.message}
+                            {errors.volunteerFields.vol_coor_tel.message}
                           </p>
                         )}
                       </div>
@@ -1527,6 +1535,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
                         Does your organization accept ongoing, non-monetary
                         donations in support of programs or services?
+                        <span className="ml-1 text-sm text-red-400">*</span>
                       </h2>
                       {/* radio button */}
                       <div className="flex flex-row gap-4 whitespace-nowrap">
@@ -1535,7 +1544,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             id="donation"
                             type="radio"
                             value="false"
-                            {...register('donation')}
+                            {...register('donationFields.donation')}
                             onChange={(e) => {
                               setDonationChecked(e.target.value);
                             }}
@@ -1551,7 +1560,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             id="donation"
                             type="radio"
                             value="true"
-                            {...register('donation')}
+                            {...register('donationFields.donation')}
                             onChange={(e) => {
                               setDonationChecked(e.target.value);
                             }}
@@ -1563,9 +1572,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
                     </div>
-                    {errors.donation?.message && (
+                    {errors.donationFields?.donation?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.donation.message}
+                        {errors.donationFields.donation.message}
                       </p>
                     )}
                   </div>
@@ -1582,16 +1591,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </h2>
                         <input
                           type="text"
-                          {...register('don_ex')}
+                          {...register('donationFields.don_ex')}
                           id="don_ex"
                           placeholder="Example: pet food, clothing, appliances, furniture"
                           disabled={donationChecked === 'false'}
                           className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 lg:w-2/3"
                         ></input>
                       </div>
-                      {errors.don_ex?.message && (
+                      {errors.donationFields?.don_ex?.message && (
                         <p className="mt-2 text-sm text-red-400">
-                          {errors.don_ex.message}
+                          {errors.donationFields.don_ex.message}
                         </p>
                       )}
                     </div>
@@ -1609,7 +1618,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               type="radio"
                               value="false"
                               disabled={donationChecked === 'false'}
-                              {...register('pickup')}
+                              {...register('donationFields.pickup')}
                               onChange={(e) => {
                                 setPickupChecked(e.target.value);
                               }}
@@ -1626,7 +1635,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               type="radio"
                               value="true"
                               disabled={donationChecked === 'false'}
-                              {...register('pickup')}
+                              {...register('donationFields.pickup')}
                               onChange={(e) => {
                                 setPickupChecked(e.target.value);
                               }}
@@ -1639,9 +1648,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
                     </div>
-                    {errors.pickup?.message && (
+                    {errors.donationFields?.pickup?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.pickup.message}
+                        {errors.donationFields.pickup.message}
                       </p>
                     )}
 
@@ -1658,15 +1667,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </h2>
                           <input
                             type="text"
-                            {...register('pickup_loc')}
+                            {...register('donationFields.pickup_loc')}
                             id="pickup_loc"
                             disabled={pickupChecked === 'false'}
                             className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           ></input>
                         </div>
-                        {errors.pickup_loc?.message && (
+                        {errors.donationFields?.pickup_loc?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.pickup_loc.message}
+                            {errors.donationFields?.pickup_loc.message}
                           </p>
                         )}
                       </div>
@@ -1680,14 +1689,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                         <input
                           type="text"
-                          {...register('don_coor')}
+                          {...register('donationFields.don_coor')}
                           id="don_coor"
                           disabled={donationChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.don_coor?.message && (
+                        {errors.donationFields?.don_coor?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.don_coor.message}
+                            {errors.donationFields.don_coor.message}
                           </p>
                         )}
                       </div>
@@ -1699,14 +1708,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                         <input
                           type="tel"
-                          {...register('don_coor_tel')}
+                          {...register('donationFields.don_coor_tel')}
                           id="don_coor_tel"
                           disabled={donationChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.don_coor_tel?.message && (
+                        {errors.donationFields?.don_coor_tel?.message && (
                           <p className="mt-2 text-sm text-red-400">
-                            {errors.don_coor_tel.message}
+                            {errors.donationFields.don_coor_tel.message}
                           </p>
                         )}
                       </div>
@@ -1724,6 +1733,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         Are there other agencies or services that have been
                         helpful that you would recommend to be included in our
                         resource database?
+                        <span className="ml-1 text-sm text-red-400">*</span>
                       </h2>
                       {/* radio button */}
                       <div className="flex flex-row gap-4 whitespace-nowrap">
@@ -1732,7 +1742,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             id="recommendation"
                             type="radio"
                             value="false"
-                            {...register('recommendation')}
+                            {...register('recommendationFields.recommendation')}
                             onChange={(e) => {
                               setRecommendationChecked(e.target.value);
                             }}
@@ -1748,7 +1758,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             id="recommendation"
                             type="radio"
                             value="true"
-                            {...register('recommendation')}
+                            {...register('recommendationFields.recommendation')}
                             onChange={(e) => {
                               setRecommendationChecked(e.target.value);
                             }}
@@ -1760,9 +1770,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
                     </div>
-                    {errors.recommendation?.message && (
+                    {errors.recommendationFields?.recommendation?.message && (
                       <p className="mt-2 text-sm text-red-400">
-                        {errors.recommendation.message}
+                        {errors.recommendationFields.recommendation.message}
                       </p>
                     )}
                   </div>
@@ -1778,7 +1788,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         agencies/services.
                       </h2>
                       <textarea
-                        {...register('recommendations_contact')}
+                        {...register(
+                          'recommendationFields.recommendations_contact'
+                        )}
                         id="recommendations_contact"
                         cols={30}
                         rows={10}
@@ -1786,9 +1798,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
                         className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                       ></textarea>
-                      {errors.recommendations_contact?.message && (
+                      {errors.recommendationFields?.recommendations_contact
+                        ?.message && (
                         <p className="mt-2 text-sm text-red-400">
-                          {errors.recommendations_contact.message}
+                          {
+                            errors.recommendationFields.recommendations_contact
+                              .message
+                          }
                         </p>
                       )}
                     </div>
