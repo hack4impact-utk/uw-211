@@ -1,87 +1,66 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
-import { FormDataSchema } from '@/utils/constants/formDataSchema';
+import {
+  FormDataSchema,
+  ServiceSchema,
+} from '@/utils/constants/formDataSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Footer from '@/components/Footer';
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from '@/components/ui/resizable';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Plus, Trash2 } from 'lucide-react';
 import FormStepper from '@/components/FormStepper';
+import { useWindowSize } from '@/utils/hooks/useWindowSize';
+import {
+  Sheet,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+  SheetContent,
+} from '@/components/ui/sheet';
+import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
+import { formSteps } from '@/utils/constants/formSteps';
 
 type Inputs = z.infer<typeof FormDataSchema>;
+type Service = z.infer<typeof ServiceSchema>;
 
-const steps = [
-  {
-    id: 'Step 1',
-    name: 'Preliminaries',
-    fields: [
-      'legalName',
-      'akas',
-      'legalStatus',
-      'agencyInfo',
-      'directorName',
-      'hours.open',
-      'hours.close',
-      'days',
-    ],
-  },
-  {
-    id: 'Step 2',
-    name: 'Services',
-    fields: [],
-  },
-  {
-    id: 'Step 3',
-    name: 'Opportunities',
-    fields: [
-      'volunteerFields.volunteers',
-      'volunteerFields.vol_reqs',
-      'volunteerFields.vol_coor',
-      'volunteerFields.vol_coor_tel',
-      'donationFields.donation',
-      'donationFields.don_ex',
-      'donationFields.pickup',
-      'donationFields.pickup_loc',
-      'donationFields.don_coor',
-      'donationFields.don_coor_tel',
-      'recommendationFields.recommendation',
-      'recommendationFields.recommendations_contact',
-    ],
-  },
-  { id: 'Step 4', name: 'Review', fields: [] },
-];
+const steps = formSteps;
 
 export default function Form({ params }: { params: { id: string } }) {
-  const [previousStep, setPreviousStep] = useState(0);
+  const [previousStep, setPreviousStep] = useState(-1);
   const [currentStep, setCurrentStep] = useState(0);
   const delta = currentStep - previousStep;
 
   const {
     register,
     handleSubmit,
+    getValues,
+    setValue,
     reset,
     trigger,
+    watch,
     formState: { errors, isDirty },
   } = useForm<Inputs>({
     resolver: zodResolver(FormDataSchema),
+    defaultValues: {
+      services: [],
+    },
   });
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (!isDirty) return;
-      event.preventDefault();
-      event.returnValue =
-        'Your changes will not be saved if you leave the page.';
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    // Clean up event listener on component unmount
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [isDirty]);
+  useBeforeUnload(isDirty);
+  const { width: screenWidth } = useWindowSize();
 
   const processForm: SubmitHandler<Inputs> = (data) => {
     console.log('Form data for agency with id', params.id);
@@ -97,8 +76,8 @@ export default function Form({ params }: { params: { id: string } }) {
 
     if (!output) return;
 
-    if (currentStep < steps.length - 1) {
-      if (currentStep === steps.length - 2) {
+    if (currentStep < steps.length) {
+      if (currentStep === steps.length - 1) {
         await handleSubmit(processForm)();
       }
       setPreviousStep(currentStep);
@@ -122,6 +101,772 @@ export default function Form({ params }: { params: { id: string } }) {
   const [donationChecked, setDonationChecked] = useState('false');
   const [pickupChecked, setPickupChecked] = useState('false');
   const [recommendationChecked, setRecommendationChecked] = useState('false');
+
+  const [serviceIdx, setServiceIdx] = useState(-1);
+  useEffect(() => {
+    setValue(`services.${serviceIdx}`, getValues(`services.${serviceIdx}`));
+  }, [getValues, serviceIdx, setValue]);
+
+  const add_service = () => {
+    const idx = getValues('services').length;
+    const new_service: Service = {
+      name: `New Service #${getValues('services').length + 1}`,
+      id: Date.now(),
+      contact: '',
+      description: '',
+      eligibility: '',
+      applicationProcess: {
+        walkIn: false,
+        telephone: false,
+        appointment: false,
+        online: false,
+        other: {
+          selected: false,
+          content: '',
+        },
+        referral: {
+          required: false,
+          content: '',
+        },
+      },
+      fees: {
+        none: false,
+        straight: {
+          selected: false,
+          content: '',
+        },
+        slidingScale: false,
+        medicaid_tenncare: false,
+        medicare: false,
+        private: false,
+      },
+      requiredDocuments: {
+        none: false,
+        stateId: false,
+        ssn: false,
+        proofOfResidence: false,
+        proofOfIncome: false,
+        birthCertificate: false,
+        medicalRecords: false,
+        psychRecords: false,
+        proofOfNeed: false,
+        utilityBill: false,
+        utilityCutoffNotice: false,
+        proofOfCitizenship: false,
+        proofOfPublicAssistance: false,
+        driversLicense: false,
+        other: {
+          selected: false,
+          content: '',
+        },
+      },
+    };
+
+    getValues('services').push(new_service);
+    setServiceIdx(idx);
+  };
+
+  const delete_service = (id: number) => {
+    const deleteIdx = getValues('services').findIndex(
+      (service: Service) => service.id === id
+    );
+    getValues('services').splice(deleteIdx, 1);
+
+    if (serviceIdx === deleteIdx) {
+      setServiceIdx(-1);
+    } else if (serviceIdx > deleteIdx) {
+      setServiceIdx(serviceIdx - 1);
+    }
+  };
+
+  const ServicesForm = () => {
+    return (
+      <div className="mt-2 px-4 py-2">
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Name
+        </label>
+        <Input
+          id="name"
+          className="mb-2"
+          {...register(`services.${serviceIdx}.name`)}
+        />
+        {errors.services?.[serviceIdx]?.name?.message && (
+          <p className="mt-2 text-sm text-red-400">
+            {errors.services[serviceIdx]?.name?.message}
+          </p>
+        )}
+
+        <label
+          htmlFor="description"
+          className="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Full Description
+        </label>
+        <Textarea
+          id="description"
+          className="mb-2"
+          {...register(`services.${serviceIdx}.description`)}
+        />
+        {errors.services?.[serviceIdx]?.description?.message && (
+          <p className="mt-2 text-sm text-red-400">
+            {errors.services[serviceIdx]?.description?.message}
+          </p>
+        )}
+
+        <label
+          htmlFor="contact"
+          className="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Contact Person
+        </label>
+        <Input
+          id="contact"
+          className="mb-2"
+          placeholder="Only add contact person if different from Director or if contact persons differ by service."
+          {...register(`services.${serviceIdx}.contact`)}
+        />
+
+        {/* hours here eventually */}
+        <label
+          htmlFor="hours"
+          className="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Hours
+        </label>
+        <div className="mb-2">
+          <p className="text-sm leading-6 text-gray-600">TBD...</p>
+        </div>
+
+        <label
+          htmlFor="eligibility"
+          className="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Eligibility Requirements
+        </label>
+        <Textarea
+          id="eligibility"
+          className="mb-2"
+          placeholder="Who is eligible for this service? Who is the population the service is trying to serve?
+It is okay to restrict services to certain populations based on gender; family status, disability,
+age, personal situations, etc. (i.e. battered women with children, people with visual impairments,
+homeless men, etc.) This helps us to make appropriate referrals."
+          {...register(`services.${serviceIdx}.eligibility`)}
+        />
+        {errors.services?.[serviceIdx]?.eligibility?.message && (
+          <p className="mt-2 text-sm text-red-400">
+            {errors.services[serviceIdx]?.eligibility?.message}
+          </p>
+        )}
+
+        <Separator className="my-4" />
+
+        <label
+          htmlFor="applicationProcess"
+          className="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Application Process
+        </label>
+        <p className="text-sm leading-6 text-gray-600">
+          How would someone apply for this service?
+        </p>
+        <div id="applicationProcess" className="mb-2 ml-2 flex flex-col">
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="walkIn"
+              className="form-checkbox"
+              {...register(`services.${serviceIdx}.applicationProcess.walkIn`)}
+            />
+            <label
+              htmlFor="walkIn"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Walk-in
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="telephone"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.applicationProcess.telephone`
+              )}
+            />
+            <label
+              htmlFor="telephone"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Telephone
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="appointment"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.applicationProcess.appointment`
+              )}
+            />
+            <label
+              htmlFor="appointment"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Call to Schedule an Appointment
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="online"
+              className="form-checkbox"
+              {...register(`services.${serviceIdx}.applicationProcess.online`)}
+            />
+            <label
+              htmlFor="online"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Apply Online
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="applicationProcessOther"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.applicationProcess.other.selected`
+              )}
+            />
+            <label
+              htmlFor="applicationProcessOther"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Other
+            </label>
+            {watch(
+              `services.${serviceIdx}.applicationProcess.other.selected`
+            ) ? (
+              <>
+                <Input
+                  className="m-2"
+                  placeholder="Please specify."
+                  {...register(
+                    `services.${serviceIdx}.applicationProcess.other.content`
+                  )}
+                />
+                {errors.services?.[serviceIdx]?.applicationProcess?.other
+                  ?.message && (
+                  <p className="mt-2 text-sm text-red-400">
+                    {
+                      errors.services[serviceIdx]?.applicationProcess?.other
+                        ?.message
+                    }
+                  </p>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
+
+          <Separator className="my-2 max-w-64" />
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="referral"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.applicationProcess.referral.required`
+              )}
+            />
+            <label
+              htmlFor="referral"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Referral Required
+            </label>
+            {watch(
+              `services.${serviceIdx}.applicationProcess.referral.required`
+            ) ? (
+              <>
+                <Input
+                  className="m-2"
+                  placeholder="By whom?"
+                  {...register(
+                    `services.${serviceIdx}.applicationProcess.referral.content`
+                  )}
+                />
+                {errors.services?.[serviceIdx]?.applicationProcess?.referral
+                  ?.message && (
+                  <p className="mt-2 text-sm text-red-400">
+                    {
+                      errors.services[serviceIdx]?.applicationProcess?.referral
+                        ?.message
+                    }
+                  </p>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
+        {errors.services?.[serviceIdx]?.applicationProcess?.message && (
+          <p className="mt-2 text-sm text-red-400">
+            {errors.services[serviceIdx]?.applicationProcess?.message}
+          </p>
+        )}
+
+        <Separator className="my-4" />
+
+        <label
+          htmlFor="fees"
+          className="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Fees
+        </label>
+        <p className="text-sm leading-6 text-gray-600">
+          Are individuals charged for your services? What is your fee structure?
+        </p>
+        <div id="fees" className="mb-2 ml-2 flex flex-col">
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="noFees"
+              className="form-checkbox"
+              {...register(`services.${serviceIdx}.fees.none`)}
+            />
+            <label
+              htmlFor="noFees"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              No Fees
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="straight"
+              className="form-checkbox"
+              {...register(`services.${serviceIdx}.fees.straight.selected`)}
+              disabled={watch(`services.${serviceIdx}.fees.none`)}
+            />
+            <label
+              htmlFor="straight"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Straight Fee
+            </label>
+            {watch(`services.${serviceIdx}.fees.straight.selected`) ? (
+              <>
+                <Input
+                  className="m-2"
+                  placeholder="Please specify."
+                  {...register(`services.${serviceIdx}.fees.straight.content`)}
+                  disabled={watch(`services.${serviceIdx}.fees.none`)}
+                />
+                {errors.services?.[serviceIdx]?.fees?.straight?.message && (
+                  <p className="mt-2 text-sm text-red-400">
+                    {errors.services[serviceIdx]?.fees?.straight?.message}
+                  </p>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="sliding"
+              className="form-checkbox"
+              {...register(`services.${serviceIdx}.fees.slidingScale`)}
+              disabled={watch(`services.${serviceIdx}.fees.none`)}
+            />
+            <label
+              htmlFor="sliding"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Sliding Scale Fee
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="medicaid_tenncare"
+              className="form-checkbox"
+              {...register(`services.${serviceIdx}.fees.medicaid_tenncare`)}
+              disabled={watch(`services.${serviceIdx}.fees.none`)}
+            />
+            <label
+              htmlFor="medicaid_tenncare"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Medicaid/TennCare
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="medicare"
+              className="form-checkbox"
+              {...register(`services.${serviceIdx}.fees.medicare`)}
+              disabled={watch(`services.${serviceIdx}.fees.none`)}
+            />
+            <label
+              htmlFor="medicare"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Medicare
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="private"
+              className="form-checkbox"
+              {...register(`services.${serviceIdx}.fees.private`)}
+              disabled={watch(`services.${serviceIdx}.fees.none`)}
+            />
+            <label
+              htmlFor="private"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Private Insurance
+            </label>
+          </div>
+        </div>
+        {errors.services?.[serviceIdx]?.fees?.message && (
+          <p className="mt-2 text-sm text-red-400">
+            {errors.services[serviceIdx]?.fees?.message}
+          </p>
+        )}
+
+        <Separator className="my-4" />
+
+        <label
+          htmlFor="requiredDocuments"
+          className="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Required Documents
+        </label>
+        <p className="text-sm leading-6 text-gray-600">
+          What would someone need to bring when applying?
+        </p>
+        <div id="requiredDocuments" className="mb-2 ml-2 grid grid-cols-3">
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="noDocuments"
+              className="form-checkbox"
+              {...register(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="noDocuments"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              No Documents
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="stateId"
+              className="form-checkbox"
+              {...register(`services.${serviceIdx}.requiredDocuments.stateId`)}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="stateId"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              State Issued ID
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="ssn"
+              className="form-checkbox"
+              {...register(`services.${serviceIdx}.requiredDocuments.ssn`)}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="ssn"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Social Security Card
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="proofOfResidence"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.proofOfResidence`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="proofOfResidence"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Proof of Residence
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="proofOfIncome"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.proofOfIncome`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="proofOfIncome"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Proof of Income
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="birthCertificate"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.birthCertificate`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="birthCertificate"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Birth Certificate
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="medicalRecords"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.medicalRecords`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="medicalRecords"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Medical Records
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="psychRecords"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.psychRecords`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="psychRecords"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Psych Records
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="proofOfNeed"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.proofOfNeed`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="proofOfNeed"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Proof of Need
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="utilityBill"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.utilityBill`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="utilityBill"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Utility Bill
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="utilityCutoffNotice"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.utilityCutoffNotice`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="utilityCutoffNotice"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Utility Cutoff Notice
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="proofOfCitizenship"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.proofOfCitizenship`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="proofOfCitizenship"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Proof of Citizenship
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="proofOfPublicAssistance"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.proofOfPublicAssistance`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="proofOfPublicAssistance"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Proof of Public Assistance
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="driversLicense"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.driversLicense`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="driversLicense"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Driver&apos;s License
+            </label>
+          </div>
+
+          <div className="space-x-2">
+            <input
+              type="checkbox"
+              id="requiredDocumentsOther"
+              className="form-checkbox"
+              {...register(
+                `services.${serviceIdx}.requiredDocuments.other.selected`
+              )}
+              disabled={watch(`services.${serviceIdx}.requiredDocuments.none`)}
+            />
+            <label
+              htmlFor="requiredDocumentsOther"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Other
+            </label>
+            {watch(
+              `services.${serviceIdx}.requiredDocuments.other.selected`
+            ) ? (
+              <>
+                <Input
+                  className="m-2"
+                  placeholder="Please specify."
+                  {...register(
+                    `services.${serviceIdx}.requiredDocuments.other.content`
+                  )}
+                  disabled={watch(
+                    `services.${serviceIdx}.requiredDocuments.none`
+                  )}
+                />
+                {errors.services?.[serviceIdx]?.requiredDocuments?.other
+                  ?.message && (
+                  <p className="mt-2 text-sm text-red-400">
+                    {
+                      errors.services[serviceIdx]?.requiredDocuments?.other
+                        ?.message
+                    }
+                  </p>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
+        {errors.services?.[serviceIdx]?.requiredDocuments?.message && (
+          <p className="mt-2 text-sm text-red-400">
+            {errors.services[serviceIdx]?.requiredDocuments?.message}
+          </p>
+        )}
+      </div>
+    );
+  };
 
   return (
     <section className="absolute inset-0 flex flex-col justify-between pl-4 pr-4 pt-24 sm:px-12 md:px-20">
@@ -499,11 +1244,153 @@ export default function Form({ params }: { params: { id: string } }) {
           >
             <>
               <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Insert Services
+                Services
               </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                Services form
-              </p>
+              {screenWidth >= 1100 ? (
+                <ResizablePanelGroup
+                  direction="horizontal"
+                  className="rounded-lg border"
+                >
+                  <ResizablePanel defaultSize={20}>
+                    <div className="mt-2 flex flex-col px-4 py-2">
+                      {/* Fix the height to be dynamic */}
+                      <ScrollArea className="flex h-80 flex-col">
+                        {getValues('services').map((service: Service) => (
+                          <div key={service.id} className="flex flex-row">
+                            <Button
+                              onClick={() =>
+                                setServiceIdx(
+                                  getValues('services').findIndex(
+                                    (i) => i.id === service.id
+                                  )
+                                )
+                              }
+                              className="m-1 flex-grow"
+                              variant={
+                                getValues(`services.${serviceIdx}.id`) ===
+                                service.id
+                                  ? 'default'
+                                  : 'outline'
+                              }
+                              type="button"
+                            >
+                              {service.name}
+                            </Button>
+                            <Button
+                              variant={
+                                getValues(`services.${serviceIdx}.id`) ===
+                                service.id
+                                  ? 'default'
+                                  : 'outline'
+                              }
+                              size="icon"
+                              className="m-1"
+                              onClick={() => delete_service(service.id)}
+                              type="button"
+                            >
+                              <Trash2 size={20} />
+                            </Button>
+                          </div>
+                        ))}
+                      </ScrollArea>
+                      <Separator className="my-2" />
+                      <Button
+                        className="m-1"
+                        variant="outline"
+                        onClick={add_service}
+                        type="button"
+                      >
+                        <Plus size={16} className="mr-2" />
+                        Add Service
+                      </Button>
+                    </div>
+                  </ResizablePanel>
+                  <ResizableHandle withHandle />
+                  <ResizablePanel defaultSize={80}>
+                    {serviceIdx === -1 ? (
+                      <div className="flex h-full items-center justify-center">
+                        <p className="text-sm text-gray-600">
+                          Add or select a service to begin.
+                        </p>
+                      </div>
+                    ) : (
+                      /* Fix the height to be dynamic */
+                      <ScrollArea className="h-96">{ServicesForm()}</ScrollArea>
+                    )}
+                  </ResizablePanel>
+                </ResizablePanelGroup>
+              ) : (
+                <div className="flex flex-col">
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" className="mx-4" type="button">
+                        Services List
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent className="z-50">
+                      <SheetHeader className="pb-2 text-3xl">
+                        <SheetTitle className="text-center text-2xl">
+                          Services List
+                        </SheetTitle>
+                      </SheetHeader>
+                      <div className="flex flex-col justify-center gap-2">
+                        <Button
+                          className="m-1"
+                          variant="outline"
+                          onClick={add_service}
+                          type="button"
+                        >
+                          <Plus size={16} className="mr-2" />
+                          Add Service
+                        </Button>
+                        <Separator className="my-2" />
+                        {getValues('services').map(
+                          (service: Service, idx: number) => (
+                            <div key={service.id} className="flex flex-row">
+                              <Button
+                                onClick={() => setServiceIdx(idx)}
+                                className="m-1 flex-grow"
+                                variant={
+                                  getValues(`services.${serviceIdx}.id`) ===
+                                  service.id
+                                    ? 'default'
+                                    : 'outline'
+                                }
+                                type="button"
+                              >
+                                {service.name}
+                              </Button>
+                              <Button
+                                variant={
+                                  getValues(`services.${serviceIdx}.id`) ===
+                                  service.id
+                                    ? 'default'
+                                    : 'outline'
+                                }
+                                size="icon"
+                                className="m-1"
+                                onClick={() => delete_service(service.id)}
+                                type="button"
+                              >
+                                <Trash2 size={20} />
+                              </Button>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                  {serviceIdx === -1 ? (
+                    <div className="flex h-full items-center justify-center p-5">
+                      <p className="text-sm text-gray-600">
+                        Open the services list to begin.
+                      </p>
+                    </div>
+                  ) : (
+                    ServicesForm()
+                  )}
+                </div>
+              )}
             </>
           </motion.div>
         )}

@@ -1,0 +1,40 @@
+export const formSteps = [
+  {
+    id: 'Step 1',
+    name: 'Preliminaries',
+    fields: [
+      'legalName',
+      'akas',
+      'legalStatus',
+      'agencyInfo',
+      'directorName',
+      'hours.open',
+      'hours.close',
+      'days',
+    ],
+  },
+  {
+    id: 'Step 2',
+    name: 'Services',
+    fields: ['services'],
+  },
+  {
+    id: 'Step 3',
+    name: 'Opportunities',
+    fields: [
+      'volunteerFields.volunteers',
+      'volunteerFields.vol_reqs',
+      'volunteerFields.vol_coor',
+      'volunteerFields.vol_coor_tel',
+      'donationFields.donation',
+      'donationFields.don_ex',
+      'donationFields.pickup',
+      'donationFields.pickup_loc',
+      'donationFields.don_coor',
+      'donationFields.don_coor_tel',
+      'recommendationFields.recommendation',
+      'recommendationFields.recommendations_contact',
+    ],
+  },
+  { id: 'Step 4', name: 'Review', fields: [] },
+];
