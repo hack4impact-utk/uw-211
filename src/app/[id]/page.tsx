@@ -1411,6 +1411,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
                         Does your organization accept volunteers?
+                        <span className="ml-1 text-sm text-red-400">*</span>
                       </h2>
                       {/* radio button */}
                       <div className="flex flex-row gap-4 whitespace-nowrap">
@@ -1534,6 +1535,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
                         Does your organization accept ongoing, non-monetary
                         donations in support of programs or services?
+                        <span className="ml-1 text-sm text-red-400">*</span>
                       </h2>
                       {/* radio button */}
                       <div className="flex flex-row gap-4 whitespace-nowrap">
@@ -1731,6 +1733,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         Are there other agencies or services that have been
                         helpful that you would recommend to be included in our
                         resource database?
+                        <span className="ml-1 text-sm text-red-400">*</span>
                       </h2>
                       {/* radio button */}
                       <div className="flex flex-row gap-4 whitespace-nowrap">
