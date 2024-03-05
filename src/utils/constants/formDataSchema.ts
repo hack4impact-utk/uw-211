@@ -137,13 +137,13 @@ const AgencyHours = z
     open: z
       .string()
       .min(1, 'Required')
-      .regex(/^[0-9]{1,2}:[0-9]{2}$/, {
+      .regex(/^[0-2]{0,1}[0-9]{1}:[0-9]{2}$/, {
         message: 'Must be a valid time. (HH:MM)',
       }),
     close: z
       .string()
       .min(1, 'Required')
-      .regex(/^[0-9]{1,2}:[0-9]{2}$/, {
+      .regex(/^[0-2]{0,1}[0-9]{1}:[0-9]{2}$/, {
         message: 'Must be a valid time. (HH:MM)',
       }),
   })
