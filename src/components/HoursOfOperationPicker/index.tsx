@@ -75,6 +75,7 @@ export default function HoursOfOperationPicker({
       end: close,
     };
 
+    // Duplicate entries
     if (
       hours.find(
         (a) =>
@@ -88,7 +89,17 @@ export default function HoursOfOperationPicker({
         message: 'Cannot add duplicate hours.',
       });
       return;
-    } else if (error?.type == 'custom') {
+    }
+    // Invalid times ranges
+    else if (new_hours.start >= new_hours.end) {
+      control?.setError(name, {
+        type: 'custom',
+        message: 'Invalid time range.',
+      });
+      return;
+    }
+    // Reset errors
+    else if (error?.type == 'custom') {
       control?.setError(name, {
         type: 'clear',
         message: '',
@@ -97,7 +108,6 @@ export default function HoursOfOperationPicker({
 
     const updatedHours = [...hours, new_hours].sort((a, b) => a.day - b.day);
     setHours(updatedHours);
-    setDay((day + 1) % 7);
 
     field.onChange(updatedHours);
   };
@@ -132,11 +142,7 @@ export default function HoursOfOperationPicker({
           <SelectContent>
             <SelectGroup>
               {times.map((time, index) => (
-                <SelectItem
-                  key={index}
-                  value={index.toString()}
-                  disabled={close != -1 && index >= close}
-                >
+                <SelectItem key={index} value={index.toString()}>
                   {time}
                 </SelectItem>
               ))}
@@ -150,11 +156,7 @@ export default function HoursOfOperationPicker({
           <SelectContent>
             <SelectGroup>
               {times.map((time, index) => (
-                <SelectItem
-                  key={index}
-                  value={index.toString()}
-                  disabled={open != -1 && index <= open}
-                >
+                <SelectItem key={index} value={index.toString()}>
                   {time}
                 </SelectItem>
               ))}
