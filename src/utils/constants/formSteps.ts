@@ -8,9 +8,7 @@ export const formSteps = [
       'legalStatus',
       'agencyInfo',
       'directorName',
-      'open',
-      'close',
-      'days',
+      'hours',
     ],
   },
   {

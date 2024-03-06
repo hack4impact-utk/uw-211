@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import {
   Select,
@@ -9,27 +9,43 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-// import { Trash } from 'lucide-react';
 import { z } from 'zod';
 import {
   HoursOfOperationDataSchema,
   HoursOfOperationOfADaySchema,
 } from '@/utils/constants/formDataSchema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { UseControllerProps, useController } from 'react-hook-form';
 
 type Hours = z.infer<typeof HoursOfOperationOfADaySchema>;
 type HoursOfOperation = z.infer<typeof HoursOfOperationDataSchema>;
 
-export default function HoursOfOperationPicker() {
-  const {
-    // register,
-    formState: { errors },
-  } = useForm<HoursOfOperation>({
-    resolver: zodResolver(HoursOfOperationDataSchema),
-  });
+export default function HoursOfOperationPicker(
+  props: UseControllerProps<HoursOfOperation>
+) {
+  const { field, fieldState } = useController(props);
 
-  const [hours, setHours] = useState<Hours[]>([]);
+  // @ts-expect-error field.value has weird union type..., but it works
+  const [hours, setHours] = useState<HoursOfOperation>(field.value || []);
+
+  useEffect(() => {
+    // Ensure that field.value is an array and each item matches the expected structure
+    if (
+      Array.isArray(field.value) &&
+      field.value.every(
+        (item) =>
+          typeof item === 'object' &&
+          'id' in item &&
+          'day' in item &&
+          'start' in item &&
+          'end' in item
+      )
+    ) {
+      setHours(field.value);
+    } else {
+      setHours([]);
+    }
+  }, [field.value]);
+
   const [day, setDay] = useState<number>(1);
   const [open, setOpen] = useState<number>(-1);
   const [close, setClose] = useState<number>(-1);
@@ -68,11 +84,14 @@ export default function HoursOfOperationPicker() {
 
     const updatedHours = [...hours, x];
     setHours(updatedHours);
+
+    field.onChange(updatedHours);
   };
 
   const delete_hours = (id: number) => {
-    const idx = hours.findIndex((h) => h.id === id);
-    hours.splice(idx, 1);
+    const updatedHours = hours.filter((h) => h.id !== id);
+    setHours(updatedHours);
+    field.onChange(updatedHours);
   };
 
   return (
@@ -149,8 +168,10 @@ export default function HoursOfOperationPicker() {
           </div>
         ))}
       </div>
-      {errors[0]?.message && (
-        <p className="mt-2 text-sm text-red-400">{errors[0].message}</p>
+      {fieldState?.error?.message && (
+        <p className="mt-2 text-sm text-red-400">
+          {fieldState?.error?.message}
+        </p>
       )}
     </>
   );

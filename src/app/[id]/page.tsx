@@ -45,6 +45,7 @@ export default function Form({ params }: { params: { id: string } }) {
   const delta = currentStep - previousStep;
 
   const {
+    control,
     register,
     handleSubmit,
     getValues,
@@ -56,6 +57,7 @@ export default function Form({ params }: { params: { id: string } }) {
   } = useForm<Inputs>({
     resolver: zodResolver(FormDataSchema),
     defaultValues: {
+      hours: [],
       services: [],
     },
   });
@@ -111,6 +113,7 @@ export default function Form({ params }: { params: { id: string } }) {
       contact: '',
       description: '',
       eligibility: '',
+      hours: [],
       applicationProcess: {
         walkIn: false,
         telephone: false,
@@ -233,7 +236,11 @@ export default function Form({ params }: { params: { id: string } }) {
           Hours
         </label>
         <div className="mb-2">
-          <p className="text-sm leading-6 text-gray-600">TBD...</p>
+          {/* @ts-expect-error name and control have weird type errors, but it works */}
+          <HoursOfOperationPicker
+            name={`services.${serviceIdx}.hours`}
+            control={control}
+          />
         </div>
 
         <label
@@ -1030,7 +1037,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   >
                     Hours of Operation
                   </label>
-                  <HoursOfOperationPicker />
+                  {/* @ts-expect-error name and control have weird type errors, but it works */}
+                  <HoursOfOperationPicker name="hours" control={control} />
                 </div>
               </section>
             </div>
@@ -1193,8 +1201,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   )}
                 </div>
               )}
-
-              <HoursOfOperationPicker />
             </>
           </motion.div>
         )}
