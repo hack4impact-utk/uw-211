@@ -9,7 +9,7 @@ export const HoursOfOperationOfADaySchema = z.object({
 
 export const HoursOfOperationDataSchema = z
   .array(HoursOfOperationOfADaySchema)
-  .refine((hours) => hours.length != 0, 'Hours of operation cannot be empty.');
+  .refine((hours) => hours.length != 0, 'Hours of operation is required.');
 
 export const ServiceSchema = z.object({
   name: z.string().min(1, 'Service name is required.'),
