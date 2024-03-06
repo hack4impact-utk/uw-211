@@ -1,106 +1,243 @@
 import { z } from 'zod';
 
-export const FormDataSchema = z
-  .object({
-    // preliminaries
-    legalName: z.string().min(1, 'Legal name is required'),
-    akas: z.string(),
-    legalStatus: z.string().min(1, 'Legal status is required'),
-    agencyInfo: z.string().min(1, 'Agency Information is required'),
-    directorName: z.string().min(1, 'Director name is required'),
-    open: z.string().min(1, 'Opening time required'),
-    close: z.string().min(1, 'Closing time required'),
-    days: z
-      .object({
-        monday: z.boolean(),
-        tuesday: z.boolean(),
-        wednesday: z.boolean(),
-        thursday: z.boolean(),
-        friday: z.boolean(),
-      })
-      .partial()
-      .refine(
-        (data) =>
-          data.monday ||
-          data.tuesday ||
-          data.wednesday ||
-          data.thursday ||
-          data.friday,
-        'At least one operational business day required'
-      ),
+export const ServiceSchema = z.object({
+  name: z.string().min(1, 'Service name is required.'),
+  id: z.number(),
+  description: z.string().min(1, 'Service description is required.'),
+  contact: z.string(),
+  // hours
+  eligibility: z.string().min(1, 'Eligibility requirements is required.'),
+  applicationProcess: z
+    .object({
+      walkIn: z.boolean(),
+      telephone: z.boolean(),
+      appointment: z.boolean(),
+      online: z.boolean(),
+      other: z
+        .object({
+          selected: z.boolean(),
+          content: z.string().optional(),
+        })
+        .refine((data) => !data.selected || (data.selected && data.content), {
+          message: 'Please specify other.',
+        }),
+      referral: z
+        .object({
+          required: z.boolean(),
+          content: z.string().optional(),
+        })
+        .refine((data) => !data.required || (data.required && data.content), {
+          message: 'Please specify whom referral is required from.',
+        }),
+    })
+    .partial()
+    .refine(
+      (data) =>
+        data.walkIn ||
+        data.telephone ||
+        data.appointment ||
+        data.online ||
+        (data.other?.selected ?? false),
+      'An application process selection is required.'
+    ),
+  fees: z
+    .object({
+      none: z.boolean(),
+      straight: z
+        .object({
+          selected: z.boolean(),
+          content: z.string().optional(),
+        })
+        .refine((data) => !data.selected || (data.selected && data.content), {
+          message: 'Please specify straight fee.',
+        }),
+      slidingScale: z.boolean(),
+      medicaid_tenncare: z.boolean(),
+      medicare: z.boolean(),
+      private: z.boolean(),
+    })
+    .partial()
+    .refine(
+      (data) =>
+        data.none ||
+        (data.straight?.selected ?? false) ||
+        data.slidingScale ||
+        data.medicaid_tenncare ||
+        data.medicare ||
+        data.private,
+      'A fee selection is required.'
+    ),
+  requiredDocuments: z
+    .object({
+      none: z.boolean(),
+      stateId: z.boolean(),
+      ssn: z.boolean(),
+      proofOfResidence: z.boolean(),
+      proofOfIncome: z.boolean(),
+      birthCertificate: z.boolean(),
+      medicalRecords: z.boolean(),
+      psychRecords: z.boolean(),
+      proofOfNeed: z.boolean(),
+      utilityBill: z.boolean(),
+      utilityCutoffNotice: z.boolean(),
+      proofOfCitizenship: z.boolean(),
+      proofOfPublicAssistance: z.boolean(),
+      driversLicense: z.boolean(),
+      other: z
+        .object({
+          selected: z.boolean(),
+          content: z.string().optional(),
+        })
+        .refine((data) => !data.selected || (data.selected && data.content), {
+          message: 'Please specify other.',
+        }),
+    })
+    .partial()
+    .refine(
+      (data) =>
+        data.none ||
+        data.stateId ||
+        data.ssn ||
+        data.proofOfResidence ||
+        data.proofOfIncome ||
+        data.birthCertificate ||
+        data.medicalRecords ||
+        data.psychRecords ||
+        data.proofOfNeed ||
+        data.utilityBill ||
+        data.utilityCutoffNotice ||
+        data.proofOfCitizenship ||
+        data.proofOfPublicAssistance ||
+        data.driversLicense ||
+        (data.other?.selected ?? false),
+      'A selection for required documents is required.'
+    ),
+});
 
-    // OPPORTUNITIES
-    volunteers: z.string({ invalid_type_error: 'Accept volunteers required.' }),
+const convertToMinutes = (hours: string, minutes: string) => {
+  return parseInt(hours) * 60 + parseInt(minutes);
+};
+
+const checkValidHours = (open: string, close: string) => {
+  const open_split = open.split(':');
+  const open_result = convertToMinutes(open_split[0], open_split[1]);
+
+  const close_split = close.split(':');
+  const close_result = convertToMinutes(close_split[0], close_split[1]);
+
+  if (open_result > close_result) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+const AgencyHours = z
+  .object({
+    open: z
+      .string()
+      .min(1, 'Required')
+      .regex(/^[0-2]{0,1}[0-9]{1}:[0-9]{2}$/, {
+        message: 'Must be a valid time. (HH:MM)',
+      }),
+    close: z
+      .string()
+      .min(1, 'Required')
+      .regex(/^[0-2]{0,1}[0-9]{1}:[0-9]{2}$/, {
+        message: 'Must be a valid time. (HH:MM)',
+      }),
+  })
+  .superRefine(({ open, close }, ctx) => {
+    if (!checkValidHours(open, close)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Opening time must be before closing time.',
+        path: ['open'],
+      });
+    }
+  });
+
+const VolunteerFields = z
+  .object({
+    volunteers: z.string({ invalid_type_error: 'Required' }),
     vol_reqs: z.string().optional(),
     vol_coor: z.string().optional(),
     vol_coor_tel: z.string().optional(),
-
-    // DONATIONS
-    donation: z.string({ invalid_type_error: 'Accept donations required.' }),
-    don_ex: z.string().optional(),
-    // pickup
-    pickup: z.string().optional(),
-    pickup_loc: z.string().optional(),
-    don_coor: z.string().optional(),
-    don_coor_tel: z.string().optional(),
-
-    // RECOMMENDATION
-    recommendation: z.string({
-      invalid_type_error: 'Recommendation field required.',
-    }),
-    recommendations_contact: z.string().optional(),
   })
   .superRefine(({ volunteers, vol_reqs, vol_coor, vol_coor_tel }, ctx) => {
     if (volunteers === 'true') {
-      if (vol_reqs === '') {
+      if (vol_reqs === '' || vol_reqs === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Volunteer eligbibilty is required.',
+          message: 'Required',
           path: ['vol_reqs'],
         });
       }
 
-      if (vol_coor === '') {
+      if (vol_coor === '' || vol_coor === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Volunteer coordinator is required.',
+          message: 'Required',
           path: ['vol_coor'],
         });
       }
 
-      if (vol_coor_tel === '') {
+      if (vol_coor_tel === '' || vol_coor_tel === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Volunteer coordinator telephone number is required.',
+          message: 'Required',
+          path: ['vol_coor_tel'],
+        });
+      } else if (!/^[0-9]{10}$/.test(vol_coor_tel)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Must be a valid phone number.',
           path: ['vol_coor_tel'],
         });
       }
     } else {
       return false;
     }
+  });
+
+const DonationFields = z
+  .object({
+    donation: z.string({ invalid_type_error: 'Required' }),
+    don_ex: z.string().optional(),
+    // pickup
+    pickup: z.string().default('false'),
+    pickup_loc: z.string().optional(),
+    don_coor: z.string().optional(),
+    don_coor_tel: z.string().optional(),
   })
   .superRefine(({ donation, don_ex, don_coor, don_coor_tel }, ctx) => {
     if (donation === 'true') {
-      if (don_ex === '') {
+      if (don_ex === '' || don_ex === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Examples of donations is required.',
+          message: 'Required',
           path: ['don_ex'],
         });
       }
 
-      if (don_coor === '') {
+      if (don_coor === '' || don_coor === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Donation coordinator is required.',
+          message: 'Required',
           path: ['don_coor'],
         });
       }
 
-      if (don_coor_tel === '') {
+      if (don_coor_tel === '' || don_coor_tel === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Donation coordinator telephone number is required.',
+          message: 'Required',
+          path: ['don_coor_tel'],
+        });
+      } else if (!/^[0-9]{10}$/.test(don_coor_tel)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Must be a valid phone number.',
           path: ['don_coor_tel'],
         });
       }
@@ -110,23 +247,72 @@ export const FormDataSchema = z
   })
   .superRefine(({ pickup, pickup_loc }, ctx) => {
     if (pickup === 'true') {
-      if (pickup_loc == '') {
+      if (pickup_loc === '' || pickup_loc === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Pickup location is required.',
+          message: 'Required',
           path: ['pickup_loc'],
         });
       }
     }
+  });
+
+const RecommendationFields = z
+  .object({
+    recommendation: z.string({
+      invalid_type_error: 'Required',
+    }),
+    recommendations_contact: z.string().optional(),
   })
   .superRefine(({ recommendation, recommendations_contact }, ctx) => {
     if (recommendation === 'true') {
-      if (recommendations_contact == '') {
+      if (
+        recommendations_contact === '' ||
+        recommendations_contact === undefined
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Recommendation contact information is required.',
+          message: 'Required',
           path: ['recommendations_contact'],
         });
       }
     }
   });
+
+export const FormDataSchema = z.object({
+  // PRELIMINARIES
+  legalName: z.string().min(1, 'Required'),
+  akas: z.string(),
+  legalStatus: z.string().min(1, 'Required'),
+  agencyInfo: z.string().min(1, 'Required'),
+  directorName: z.string().min(1, 'Required'),
+
+  hours: AgencyHours,
+
+  days: z
+    .object({
+      monday: z.boolean(),
+      tuesday: z.boolean(),
+      wednesday: z.boolean(),
+      thursday: z.boolean(),
+      friday: z.boolean(),
+    })
+    .partial()
+    .refine(
+      (data) =>
+        data.monday ||
+        data.tuesday ||
+        data.wednesday ||
+        data.thursday ||
+        data.friday,
+      'Please select at least one operational business day'
+    ),
+
+  // SERVICES
+  services: z.array(ServiceSchema),
+
+  // OPPORTUNITIES
+  volunteerFields: VolunteerFields,
+  donationFields: DonationFields,
+  recommendationFields: RecommendationFields,
+});
