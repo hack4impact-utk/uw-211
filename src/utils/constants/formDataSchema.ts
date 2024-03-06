@@ -9,7 +9,7 @@ export const HoursOfOperationOfADaySchema = z.object({
 
 export const HoursOfOperationDataSchema = z
   .array(HoursOfOperationOfADaySchema)
-  .refine((hours) => hours.length != 0, 'Hours of operation is required.');
+  .refine((hours) => hours.length != 0, 'Required');
 
 export const ServiceSchema = z.object({
   name: z.string().min(1, 'Service name is required.'),
@@ -256,25 +256,6 @@ export const FormDataSchema = z.object({
   directorName: z.string().min(1, 'Required'),
 
   hours: HoursOfOperationDataSchema,
-
-  days: z
-    .object({
-      monday: z.boolean(),
-      tuesday: z.boolean(),
-      wednesday: z.boolean(),
-      thursday: z.boolean(),
-      friday: z.boolean(),
-    })
-    .partial()
-    .refine(
-      (data) =>
-        data.monday ||
-        data.tuesday ||
-        data.wednesday ||
-        data.thursday ||
-        data.friday,
-      'Please select at least one operational business day'
-    ),
 
   // SERVICES
   services: z.array(ServiceSchema),

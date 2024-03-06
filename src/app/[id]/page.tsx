@@ -1040,6 +1040,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Hours of Operation
+                    <span className="ml-1 text-sm text-red-400">*</span>
                   </label>
                   {/* @ts-expect-error name and control have weird type errors, but it works */}
                   <HoursOfOperationPicker name="hours" control={control} />
