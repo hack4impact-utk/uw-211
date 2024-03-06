@@ -29,6 +29,7 @@
     "mongoose": "7.4.5",
     "next": "13.4.19",
     "next-auth": "^4.24.6",
+    "pdf-lib": "^1.17.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.50.1",
