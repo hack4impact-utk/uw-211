@@ -19,36 +19,29 @@ import { UseControllerProps, useController } from 'react-hook-form';
 type Hours = z.infer<typeof HoursOfOperationOfADaySchema>;
 type HoursOfOperation = z.infer<typeof HoursOfOperationDataSchema>;
 
-export default function HoursOfOperationPicker(
-  props: UseControllerProps<HoursOfOperation>
-) {
-  const { field, fieldState } = useController(props);
+export default function HoursOfOperationPicker({
+  name,
+  control,
+}: UseControllerProps<HoursOfOperation>) {
+  const {
+    field,
+    fieldState: { error },
+  } = useController({
+    name,
+    control,
+  });
 
   // @ts-expect-error field.value has weird union type..., but it works
   const [hours, setHours] = useState<HoursOfOperation>(field.value || []);
 
-  useEffect(() => {
-    // Ensure that field.value is an array and each item matches the expected structure
-    if (
-      Array.isArray(field.value) &&
-      field.value.every(
-        (item) =>
-          typeof item === 'object' &&
-          'id' in item &&
-          'day' in item &&
-          'start' in item &&
-          'end' in item
-      )
-    ) {
-      setHours(field.value);
-    } else {
-      setHours([]);
-    }
-  }, [field.value]);
+  const [day, setDay] = useState<number>(0);
+  const [open, setOpen] = useState<number>(18); // Default 9:00 AM
+  const [close, setClose] = useState<number>(34); // Default 5:00 PM
 
-  const [day, setDay] = useState<number>(1);
-  const [open, setOpen] = useState<number>(-1);
-  const [close, setClose] = useState<number>(-1);
+  useEffect(() => {
+    // @ts-expect-error field.value has weird union type..., but it works
+    setHours(field.value || []);
+  }, [field.value]);
 
   const times = (() => {
     const times = [];
@@ -64,26 +57,47 @@ export default function HoursOfOperationPicker(
   })();
 
   const daysOfWeek = [
-    'Sunday',
     'Monday',
     'Tuesday',
     'Wednesday',
     'Thursday',
     'Friday',
     'Saturday',
+    'Sunday',
   ];
 
   // Handler Functions
   const add_hours = () => {
-    const x: Hours = {
+    const new_hours: Hours = {
       id: Date.now(),
       day: day,
       start: open,
       end: close,
     };
 
-    const updatedHours = [...hours, x];
+    if (
+      hours.find(
+        (a) =>
+          a.day == new_hours.day &&
+          a.start == new_hours.start &&
+          a.end == new_hours.end
+      )
+    ) {
+      control?.setError(name, {
+        type: 'custom',
+        message: 'Cannot add duplicate hours.',
+      });
+      return;
+    } else if (error?.type == 'custom') {
+      control?.setError(name, {
+        type: 'clear',
+        message: '',
+      });
+    }
+
+    const updatedHours = [...hours, new_hours].sort((a, b) => a.day - b.day);
     setHours(updatedHours);
+    setDay((day + 1) % 7);
 
     field.onChange(updatedHours);
   };
@@ -99,7 +113,7 @@ export default function HoursOfOperationPicker(
       <div className="flex flex-row space-x-2">
         <Select onValueChange={(v) => setDay(+v)}>
           <SelectTrigger>
-            <SelectValue placeholder="Day" />
+            <SelectValue placeholder="Day">{daysOfWeek[day]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -113,7 +127,7 @@ export default function HoursOfOperationPicker(
         </Select>
         <Select onValueChange={(v) => setOpen(+v)}>
           <SelectTrigger>
-            <SelectValue placeholder="Open" />
+            <SelectValue placeholder="Open">{times[open]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -131,7 +145,7 @@ export default function HoursOfOperationPicker(
         </Select>
         <Select onValueChange={(v) => setClose(+v)}>
           <SelectTrigger>
-            <SelectValue placeholder="Close" />
+            <SelectValue placeholder="Close">{times[close]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -159,6 +173,7 @@ export default function HoursOfOperationPicker(
             <p>{times[h.start]}</p>
             <p>{times[h.end]}</p>
             <Button
+              type="button"
               className="mb-1"
               variant="link"
               onClick={() => delete_hours(h.id)}
@@ -168,10 +183,8 @@ export default function HoursOfOperationPicker(
           </div>
         ))}
       </div>
-      {fieldState?.error?.message && (
-        <p className="mt-2 text-sm text-red-400">
-          {fieldState?.error?.message}
-        </p>
+      {error?.message && (
+        <p className="mt-2 text-sm text-red-400">{error?.message}</p>
       )}
     </>
   );
