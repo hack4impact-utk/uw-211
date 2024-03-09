@@ -138,6 +138,7 @@ export interface Agency {
   updatedAt?: Date;
   name: string;
   info: AgencyInfoForm[];
+  latestInfo?: AgencyInfoForm;
   updateScheduleInDays: number;
   emailSentTimestamp?: Date;
   currentStatus?: 'Completed' | 'Needs Review' | 'Expired';
