@@ -1,6 +1,3 @@
-// import AgencyInfoFormModel from '@/server/models/AgencyInfoForm';
-// import AgencyModel from '@/server/models/Agency';
-// import ServiceModel from '@/server/models/Service';
 import { Service, Agency, MongoError, AgencyInfoForm } from '@/utils/types';
 import dbConnect from '@/utils/db-connect';
 import { JSendResponse } from '@/utils/types';
@@ -151,6 +148,36 @@ export async function createAgencyInfo(
     }
   );
   return newAgencyInfo as AgencyInfoForm;
+}
+
+/**
+ * @param agencyInfo The agency form data to be created, with services array
+ * @returns New AgencyInfoForm object with attached mongo _id
+ * @throws See mongoErrorHandler for common insertion errors
+ */
+export async function createAgencyInfoWithServices(
+  agencyId: string,
+  agencyInfo: AgencyInfoForm
+): Promise<AgencyInfoForm> {
+  await dbConnect();
+  const serviceIds = [];
+  if (!agencyInfo.services) {
+    throw new JSendResponse({
+      status: 'fail',
+      data: { message: 'Services are required' },
+    });
+  }
+  for (const service of agencyInfo.services) {
+    const newService = await createService(service);
+    serviceIds.push(newService._id);
+  }
+  const updatedInfo = {
+    ...agencyInfo,
+    services: serviceIds,
+  } as unknown as AgencyInfoForm;
+
+  const newAgencyInfo = await createAgencyInfo(updatedInfo);
+  return newAgencyInfo;
 }
 
 /**

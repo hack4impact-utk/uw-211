@@ -32,9 +32,184 @@ import {
 } from '@/components/ui/sheet';
 import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
 import { formSteps } from '@/utils/constants/formSteps';
+import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
+import { AgencyInfoForm } from '@/utils/types';
+import { Service as ServiceModel } from '@/utils/types';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
+
+const dayMapping: {
+  [key: string]:
+    | 'Monday'
+    | 'Tuesday'
+    | 'Wednesday'
+    | 'Thursday'
+    | 'Friday'
+    | 'Saturday'
+    | 'Sunday';
+} = {
+  monday: 'Monday',
+  tuesday: 'Tuesday',
+  wednesday: 'Wednesday',
+  thursday: 'Thursday',
+  friday: 'Friday',
+  saturday: 'Saturday',
+  sunday: 'Sunday',
+};
+
+function zodApplicationToTs(
+  data: Service
+): (
+  | 'Walk-in'
+  | 'Telephone'
+  | 'Call to Schedule Appointment'
+  | 'Apply Online'
+  | string
+)[] {
+  const eligibility: (
+    | 'Walk-in'
+    | 'Telephone'
+    | 'Call to Schedule Appointment'
+    | 'Apply Online'
+    | string
+  )[] = [];
+  if (data.applicationProcess.walkIn) eligibility.push('Walk-in');
+  if (data.applicationProcess.telephone) eligibility.push('Telephone');
+  if (data.applicationProcess.appointment)
+    eligibility.push('Call to Schedule Appointment');
+  if (data.applicationProcess.online) eligibility.push('Apply Online');
+  if (
+    data.applicationProcess.other?.selected &&
+    data.applicationProcess.other.content
+  )
+    eligibility.push(data.applicationProcess.other.content);
+  return eligibility;
+}
+
+function zodFeeToTs(
+  data: Service
+):
+  | 'No Fee'
+  | 'Sliding Scale'
+  | 'Income Based'
+  | 'Fee'
+  | 'Insurance: Medicaid/TennCare'
+  | 'Insurance: Medicare'
+  | 'Insurance: Private' {
+  if (data.feeCategory.straight?.selected) return 'Fee';
+  if (data.feeCategory.slidingScale) return 'Sliding Scale';
+  if (data.feeCategory.medicaid_tenncare) return 'Insurance: Medicaid/TennCare';
+  if (data.feeCategory.medicare) return 'Insurance: Medicare';
+  if (data.feeCategory.private) return 'Insurance: Private';
+  return 'No Fee';
+}
+
+function zodDocumentsToTs(data: Service): ServiceModel['requiredDocuments'] {
+  const documents: ServiceModel['requiredDocuments'] = [];
+  if (data.requiredDocuments.none) {
+    documents.push('No Documents');
+    return documents;
+  }
+  if (data.requiredDocuments.stateId) documents.push('State Issued ID');
+  if (data.requiredDocuments.ssn) documents.push('Social Security Card');
+  if (data.requiredDocuments.proofOfResidence)
+    documents.push('Proof of Residence');
+  if (data.requiredDocuments.proofOfIncome) documents.push('Proof of Income');
+  if (data.requiredDocuments.birthCertificate)
+    documents.push('Birth Certificate');
+  if (data.requiredDocuments.medicalRecords) documents.push('Medical Records');
+  if (data.requiredDocuments.psychRecords) documents.push('Psych Records');
+  if (data.requiredDocuments.proofOfNeed) documents.push('Proof of Need');
+  if (data.requiredDocuments.utilityBill) documents.push('Utility Bill');
+  if (data.requiredDocuments.utilityCutoffNotice)
+    documents.push('Utility Cutoff Notice');
+  if (data.requiredDocuments.proofOfCitizenship)
+    documents.push('Proof of Citizenship');
+  if (data.requiredDocuments.proofOfPublicAssistance)
+    documents.push('Proof of Public Assistance');
+  if (data.requiredDocuments.driversLicense) documents.push('Drivers License');
+  if (
+    data.requiredDocuments.other?.selected &&
+    data.requiredDocuments.other.content
+  )
+    documents.push(data.requiredDocuments.other.content);
+  return documents;
+}
+
+function zodServiceToTs(data: Service): ServiceModel {
+  const service: ServiceModel = {
+    name: data.name,
+    fullDescription: data.fullDescription,
+    contactPersonName: data.contactPersonName,
+    daysOpen: data.daysOpen.map((day) => {
+      return {
+        day: day.day,
+        openTime: day.openTime,
+        closeTime: day.closeTime,
+      };
+    }),
+    eligibilityRequirements: data.eligibilityRequirements,
+    applicationProcess: zodApplicationToTs(data),
+    applicationProcessReferralRequiredByWhom: data.applicationProcess.referral
+      ?.required
+      ? data.applicationProcess.referral.content
+      : '',
+    feeCategory: zodFeeToTs(data),
+    feeStraightFeeAmount: data.feeCategory.straight?.content,
+    requiredDocuments: zodDocumentsToTs(data),
+  };
+  return service;
+}
+
+function zodVolCoordinatorToTs(
+  data: Inputs
+): AgencyInfoForm['volunteerCoordinatorContactInfo'] {
+  const contactInfo: AgencyInfoForm['volunteerCoordinatorContactInfo'] = {
+    name: data.volunteerFields.vol_coor,
+    phoneNumber: data.volunteerFields.vol_coor_tel,
+  };
+  return contactInfo;
+}
+
+function zodFormToTS(data: Inputs): AgencyInfoForm {
+  const agencyInfo: AgencyInfoForm = {
+    legalAgencyName: data.legalName,
+    alsoKnownAs: data.akas,
+    legalOrganizationalStatus: data.legalStatus,
+    briefAgencyDescription: data.agencyInfo,
+    directorNameOrTitle: data.directorName,
+    serviceArea: data.serviceArea,
+    fundingSources: data.fundingSources,
+    location: data.location,
+    contactInfo: data.contactInfo,
+    languageTeleInterpreterService: data.teleinterpreterLanguageService,
+    languages: data.supportedLanguages,
+    languagesWithoutPriorNotice: data.supportedLanguagesWithoutNotice,
+    accessibilityADA: data.accessibilityADA,
+    regularHoursOpening: data.hours.open,
+    regularHoursClosing: data.hours.close,
+    regularDaysOpen: Object.entries(data.days)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .filter(([_, value]) => value)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .map(([key, _]) => dayMapping[key]),
+    updaterContactInfo: data.updaterContactInfo,
+    services: data.services.map((service) => zodServiceToTs(service)),
+    volunteerOpportunities: data.volunteerFields.volunteers == 'true',
+    volunteerOpportunitiesEligibility: data.volunteerFields.vol_reqs,
+    volunteerCoordinatorContactInfo: zodVolCoordinatorToTs(data),
+    donations: data.donationFields.don_ex?.split(','), // split by comma
+    donationPickUpLocation: {
+      physicalAddress: 'The zod schema/front end need to collect an address',
+    },
+    donationCoordinatorContactInfo: {
+      name: data.donationFields.don_coor,
+      phoneNumber: data.donationFields.don_coor_tel,
+    },
+  };
+  return agencyInfo;
+}
 
 const steps = formSteps;
 
@@ -65,6 +240,8 @@ export default function Form({ params }: { params: { id: string } }) {
   const processForm: SubmitHandler<Inputs> = (data) => {
     console.log('Form data for agency with id', params.id);
     console.log(data);
+    const validatedInfo = zodFormToTS(data);
+    createAgencyInfoWithServices(params.id, validatedInfo);
     reset();
   };
 
@@ -112,9 +289,10 @@ export default function Form({ params }: { params: { id: string } }) {
     const new_service: Service = {
       name: `New Service #${getValues('services').length + 1}`,
       id: Date.now(),
-      contact: '',
-      description: '',
-      eligibility: '',
+      contactPersonName: '',
+      daysOpen: [],
+      fullDescription: '',
+      eligibilityRequirements: '',
       applicationProcess: {
         walkIn: false,
         telephone: false,
@@ -129,7 +307,7 @@ export default function Form({ params }: { params: { id: string } }) {
           content: '',
         },
       },
-      fees: {
+      feeCategory: {
         none: false,
         straight: {
           selected: false,
@@ -208,11 +386,11 @@ export default function Form({ params }: { params: { id: string } }) {
         <Textarea
           id="description"
           className="mb-2"
-          {...register(`services.${serviceIdx}.description`)}
+          {...register(`services.${serviceIdx}.fullDescription`)}
         />
-        {errors.services?.[serviceIdx]?.description?.message && (
+        {errors.services?.[serviceIdx]?.fullDescription?.message && (
           <p className="mt-2 text-sm text-red-400">
-            {errors.services[serviceIdx]?.description?.message}
+            {errors.services[serviceIdx]?.fullDescription?.message}
           </p>
         )}
 
@@ -226,7 +404,7 @@ export default function Form({ params }: { params: { id: string } }) {
           id="contact"
           className="mb-2"
           placeholder="Only add contact person if different from Director or if contact persons differ by service."
-          {...register(`services.${serviceIdx}.contact`)}
+          {...register(`services.${serviceIdx}.contactPersonName`)}
         />
 
         {/* hours here eventually */}
@@ -253,11 +431,11 @@ export default function Form({ params }: { params: { id: string } }) {
 It is okay to restrict services to certain populations based on gender; family status, disability,
 age, personal situations, etc. (i.e. battered women with children, people with visual impairments,
 homeless men, etc.) This helps us to make appropriate referrals."
-          {...register(`services.${serviceIdx}.eligibility`)}
+          {...register(`services.${serviceIdx}.eligibilityRequirements`)}
         />
-        {errors.services?.[serviceIdx]?.eligibility?.message && (
+        {errors.services?.[serviceIdx]?.eligibilityRequirements?.message && (
           <p className="mt-2 text-sm text-red-400">
-            {errors.services[serviceIdx]?.eligibility?.message}
+            {errors.services[serviceIdx]?.eligibilityRequirements?.message}
           </p>
         )}
 
@@ -444,7 +622,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="noFees"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.none`)}
+              {...register(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="noFees"
@@ -459,8 +637,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="straight"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.straight.selected`)}
-              disabled={watch(`services.${serviceIdx}.fees.none`)}
+              {...register(
+                `services.${serviceIdx}.feeCategory.straight.selected`
+              )}
+              disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="straight"
@@ -468,17 +648,23 @@ homeless men, etc.) This helps us to make appropriate referrals."
             >
               Straight Fee
             </label>
-            {watch(`services.${serviceIdx}.fees.straight.selected`) ? (
+            {watch(`services.${serviceIdx}.feeCategory.straight.selected`) ? (
               <>
                 <Input
                   className="m-2"
                   placeholder="Please specify."
-                  {...register(`services.${serviceIdx}.fees.straight.content`)}
-                  disabled={watch(`services.${serviceIdx}.fees.none`)}
+                  {...register(
+                    `services.${serviceIdx}.feeCategory.straight.content`
+                  )}
+                  disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
                 />
-                {errors.services?.[serviceIdx]?.fees?.straight?.message && (
+                {errors.services?.[serviceIdx]?.feeCategory?.straight
+                  ?.message && (
                   <p className="mt-2 text-sm text-red-400">
-                    {errors.services[serviceIdx]?.fees?.straight?.message}
+                    {
+                      errors.services[serviceIdx]?.feeCategory?.straight
+                        ?.message
+                    }
                   </p>
                 )}
               </>
@@ -492,8 +678,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="sliding"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.slidingScale`)}
-              disabled={watch(`services.${serviceIdx}.fees.none`)}
+              {...register(`services.${serviceIdx}.feeCategory.slidingScale`)}
+              disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="sliding"
@@ -508,8 +694,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="medicaid_tenncare"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.medicaid_tenncare`)}
-              disabled={watch(`services.${serviceIdx}.fees.none`)}
+              {...register(
+                `services.${serviceIdx}.feeCategory.medicaid_tenncare`
+              )}
+              disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="medicaid_tenncare"
@@ -524,8 +712,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="medicare"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.medicare`)}
-              disabled={watch(`services.${serviceIdx}.fees.none`)}
+              {...register(`services.${serviceIdx}.feeCategory.medicare`)}
+              disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="medicare"
@@ -540,8 +728,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="private"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.private`)}
-              disabled={watch(`services.${serviceIdx}.fees.none`)}
+              {...register(`services.${serviceIdx}.feeCategory.private`)}
+              disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="private"
@@ -551,9 +739,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
             </label>
           </div>
         </div>
-        {errors.services?.[serviceIdx]?.fees?.message && (
+        {errors.services?.[serviceIdx]?.feeCategory?.message && (
           <p className="mt-2 text-sm text-red-400">
-            {errors.services[serviceIdx]?.fees?.message}
+            {errors.services[serviceIdx]?.feeCategory?.message}
           </p>
         )}
 
