@@ -175,16 +175,20 @@ function zodVolCoordinatorToTs(
 function zodFormToTS(data: Inputs): AgencyInfoForm {
   const agencyInfo: AgencyInfoForm = {
     legalAgencyName: data.legalName,
-    alsoKnownAs: data.akas,
-    legalOrganizationalStatus: data.legalStatus,
+    alsoKnownAs: data.akas.split(' '),
+    legalOrganizationalStatus: data.legalStatus.split(' '),
     briefAgencyDescription: data.agencyInfo,
     directorNameOrTitle: data.directorName,
-    serviceArea: data.serviceArea,
-    fundingSources: data.fundingSources,
-    location: data.location,
-    contactInfo: data.contactInfo,
+    serviceArea: data.serviceArea || {},
+    fundingSources: data.fundingSources || [],
+    location: data.location || {
+      physicalAddress: 'The zod schema/front end need to collect an address',
+    },
+    contactInfo: data.contactInfo || {
+      phoneNumber: 'The zod schema/front end need to collect a phone number',
+    },
     languageTeleInterpreterService: data.teleinterpreterLanguageService,
-    languages: data.supportedLanguages,
+    languages: data.supportedLanguages || [],
     languagesWithoutPriorNotice: data.supportedLanguagesWithoutNotice,
     accessibilityADA: data.accessibilityADA,
     regularHoursOpening: data.hours.open,
@@ -194,7 +198,9 @@ function zodFormToTS(data: Inputs): AgencyInfoForm {
       .filter(([_, value]) => value)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .map(([key, _]) => dayMapping[key]),
-    updaterContactInfo: data.updaterContactInfo,
+    updaterContactInfo: data.updaterContactInfo || {
+      phoneNumber: 'The zod schema/front end need to collect a phone number',
+    },
     services: data.services.map((service) => zodServiceToTs(service)),
     volunteerOpportunities: data.volunteerFields.volunteers == 'true',
     volunteerOpportunitiesEligibility: data.volunteerFields.vol_reqs,
@@ -1172,7 +1178,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         id="akas"
                         {...register('akas')}
                         autoComplete="akas"
-                        className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6  md:w-2/3 xl:w-full"
+                        className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
                       />
                       {errors.akas?.message && (
                         <p className="mt-2 text-sm text-red-400">
@@ -2016,6 +2022,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Please review your selections and submit.
             </p>
+            <pre>{JSON.stringify(errors, null, 2)}</pre>
+            <button type="submit" className="rounded bg-blue-400 text-black">
+              Click to submit
+            </button>
           </motion.div>
         )}
       </form>

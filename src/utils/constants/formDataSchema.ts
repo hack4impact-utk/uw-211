@@ -343,21 +343,25 @@ const contactInfoSchema = z.object({
 export const FormDataSchema = z.object({
   // PRELIMINARIES
   legalName: z.string().min(1, 'Required'),
-  akas: z.array(z.string()),
-  legalStatus: z.array(z.string().min(1, 'Required')),
+  akas: z.string(),
+  legalStatus: z.string().min(1, 'Required'),
   agencyInfo: z.string().min(1, 'Required'),
   directorName: z.string().min(1, 'Required'),
-  serviceArea: serviceAreaSchema,
-  fundingSources: fundingSourcesSchema,
-  location: locationSchema,
-  contactInfo: contactInfoSchema,
-  teleinterpreterLanguageService: z.boolean(),
-  supportedLanguages: z.array(
-    z.union([z.literal('ASL'), z.literal('Spanish'), z.string()])
-  ),
-  supportedLanguagesWithoutNotice: z.array(z.string()),
-  accessibilityADA: z.boolean(),
-  updaterContactInfo: contactInfoSchema,
+
+  // the following must be required, currently not implement in the front end
+  // Fields with .optional will be required in the future
+  serviceArea: serviceAreaSchema.optional(),
+  fundingSources: fundingSourcesSchema.optional(),
+  location: locationSchema.optional(),
+  contactInfo: contactInfoSchema.optional(),
+  teleinterpreterLanguageService: z.boolean().optional(),
+  supportedLanguages: z
+    .array(z.union([z.literal('ASL'), z.literal('Spanish'), z.string()]))
+    .optional(),
+  supportedLanguagesWithoutNotice: z.array(z.string()).optional(),
+  accessibilityADA: z.boolean().optional(),
+  updaterContactInfo: contactInfoSchema.optional(),
+  // Up until here
 
   hours: AgencyHours,
 
