@@ -171,7 +171,6 @@ export async function createAgencyInfoWithServices(
       data: { message: 'Services are required' },
     });
   }
-  console.log(`Creating services`);
   for (const service of agencyInfo.services) {
     const newService = await createService(service);
     serviceIds.push(newService._id);
@@ -181,13 +180,19 @@ export async function createAgencyInfoWithServices(
     services: serviceIds,
   } as unknown as AgencyInfoForm;
 
-  console.log(`Creating agency info`);
   try {
     const newAgencyInfo = await createAgencyInfo(updatedInfo);
-    console.log(`Agency info created`);
-    return JSON.stringify(newAgencyInfo);
+    const updatedAgency = await AgencyModel.updateOne(
+      { _id: agencyId },
+      {
+        $push: { info: newAgencyInfo._id },
+      }
+    ).catch((error) => {
+      mongoErrorHandler(error);
+    });
+    return JSON.stringify(updatedAgency);
   } catch (error) {
-    console.log('Create info failed', error);
+    mongoErrorHandler(error as MongoError);
   }
   return '';
 }

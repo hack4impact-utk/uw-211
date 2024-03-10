@@ -244,8 +244,6 @@ export default function Form({ params }: { params: { id: string } }) {
   const { width: screenWidth } = useWindowSize();
 
   const processForm: SubmitHandler<Inputs> = (data) => {
-    console.log('Form data for agency with id', params.id);
-    console.log(data);
     const validatedInfo = zodFormToTS(data);
     createAgencyInfoWithServices(params.id, validatedInfo);
     reset();
@@ -2022,10 +2020,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Please review your selections and submit.
             </p>
-            <pre>{JSON.stringify(errors, null, 2)}</pre>
-            <button type="submit" className="rounded bg-blue-400 text-black">
+            {/* <button
+              type="submit"
+              className="rounded bg-blue-600 px-2 py-1 text-black"
+            >
               Click to submit
-            </button>
+            </button> */}
+            <Button type="submit">Click to Submit</Button>
           </motion.div>
         )}
       </form>
