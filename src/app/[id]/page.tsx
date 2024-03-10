@@ -193,11 +193,13 @@ export default function Form({ params }: { params: { id: string } }) {
           className="mb-2"
           {...register(`services.${serviceIdx}.name`)}
         />
-        {errors.services?.[serviceIdx]?.name?.message && (
-          <p className="mt-2 text-sm text-red-400">
-            {errors.services[serviceIdx]?.name?.message}
-          </p>
-        )}
+        <div className="mt-2 min-h-6 text-sm text-red-400">
+          {errors.services?.[serviceIdx]?.name?.message && (
+            <p className="mt-2 text-sm text-red-400">
+              {errors.services[serviceIdx]?.name?.message}
+            </p>
+          )}
+        </div>
 
         <label
           htmlFor="description"
@@ -210,11 +212,13 @@ export default function Form({ params }: { params: { id: string } }) {
           className="mb-2"
           {...register(`services.${serviceIdx}.description`)}
         />
-        {errors.services?.[serviceIdx]?.description?.message && (
-          <p className="mt-2 text-sm text-red-400">
-            {errors.services[serviceIdx]?.description?.message}
-          </p>
-        )}
+        <div className="mt-2 min-h-6 text-sm text-red-400">
+          {errors.services?.[serviceIdx]?.description?.message && (
+            <p className="mt-2 text-sm text-red-400">
+              {errors.services[serviceIdx]?.description?.message}
+            </p>
+          )}
+        </div>
 
         <label
           htmlFor="contact"
@@ -255,11 +259,13 @@ age, personal situations, etc. (i.e. battered women with children, people with v
 homeless men, etc.) This helps us to make appropriate referrals."
           {...register(`services.${serviceIdx}.eligibility`)}
         />
-        {errors.services?.[serviceIdx]?.eligibility?.message && (
-          <p className="mt-2 text-sm text-red-400">
-            {errors.services[serviceIdx]?.eligibility?.message}
-          </p>
-        )}
+        <div className="mt-2 min-h-6 text-sm text-red-400">
+          {errors.services?.[serviceIdx]?.eligibility?.message && (
+            <p className="mt-2 text-sm text-red-400">
+              {errors.services[serviceIdx]?.eligibility?.message}
+            </p>
+          )}
+        </div>
 
         <Separator className="my-4" />
 
@@ -363,15 +369,17 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     `services.${serviceIdx}.applicationProcess.other.content`
                   )}
                 />
-                {errors.services?.[serviceIdx]?.applicationProcess?.other
-                  ?.message && (
-                  <p className="mt-2 text-sm text-red-400">
-                    {
-                      errors.services[serviceIdx]?.applicationProcess?.other
-                        ?.message
-                    }
-                  </p>
-                )}
+                <div className="mt-2 min-h-6 text-sm text-red-400">
+                  {errors.services?.[serviceIdx]?.applicationProcess?.other
+                    ?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {
+                        errors.services[serviceIdx]?.applicationProcess?.other
+                          ?.message
+                      }
+                    </p>
+                  )}
+                </div>
               </>
             ) : (
               <></>
@@ -406,26 +414,30 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     `services.${serviceIdx}.applicationProcess.referral.content`
                   )}
                 />
-                {errors.services?.[serviceIdx]?.applicationProcess?.referral
-                  ?.message && (
-                  <p className="mt-2 text-sm text-red-400">
-                    {
-                      errors.services[serviceIdx]?.applicationProcess?.referral
-                        ?.message
-                    }
-                  </p>
-                )}
+                <div className="mt-2 min-h-6 text-sm text-red-400">
+                  {errors.services?.[serviceIdx]?.applicationProcess?.referral
+                    ?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {
+                        errors.services[serviceIdx]?.applicationProcess
+                          ?.referral?.message
+                      }
+                    </p>
+                  )}
+                </div>
               </>
             ) : (
               <></>
             )}
           </div>
         </div>
-        {errors.services?.[serviceIdx]?.applicationProcess?.message && (
-          <p className="mt-2 text-sm text-red-400">
-            {errors.services[serviceIdx]?.applicationProcess?.message}
-          </p>
-        )}
+        <div className="mt-2 min-h-6 text-sm text-red-400">
+          {errors.services?.[serviceIdx]?.applicationProcess?.message && (
+            <p className="mt-2 text-sm text-red-400">
+              {errors.services[serviceIdx]?.applicationProcess?.message}
+            </p>
+          )}
+        </div>
 
         <Separator className="my-4" />
 
@@ -476,11 +488,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   {...register(`services.${serviceIdx}.fees.straight.content`)}
                   disabled={watch(`services.${serviceIdx}.fees.none`)}
                 />
-                {errors.services?.[serviceIdx]?.fees?.straight?.message && (
-                  <p className="mt-2 text-sm text-red-400">
-                    {errors.services[serviceIdx]?.fees?.straight?.message}
-                  </p>
-                )}
+                <div className="mt-2 min-h-6 text-sm text-red-400">
+                  {errors.services?.[serviceIdx]?.fees?.straight?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.services[serviceIdx]?.fees?.straight?.message}
+                    </p>
+                  )}
+                </div>
               </>
             ) : (
               <></>
@@ -551,11 +565,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
             </label>
           </div>
         </div>
-        {errors.services?.[serviceIdx]?.fees?.message && (
-          <p className="mt-2 text-sm text-red-400">
-            {errors.services[serviceIdx]?.fees?.message}
-          </p>
-        )}
+        <div className="mt-2 min-h-6 text-sm text-red-400">
+          {errors.services?.[serviceIdx]?.fees?.message && (
+            <p className="mt-2 text-sm text-red-400">
+              {errors.services[serviceIdx]?.fees?.message}
+            </p>
+          )}
+        </div>
 
         <Separator className="my-4" />
 
@@ -844,26 +860,30 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     `services.${serviceIdx}.requiredDocuments.none`
                   )}
                 />
-                {errors.services?.[serviceIdx]?.requiredDocuments?.other
-                  ?.message && (
-                  <p className="mt-2 text-sm text-red-400">
-                    {
-                      errors.services[serviceIdx]?.requiredDocuments?.other
-                        ?.message
-                    }
-                  </p>
-                )}
+                <div className="mt-2 min-h-6 text-sm text-red-400">
+                  {errors.services?.[serviceIdx]?.requiredDocuments?.other
+                    ?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {
+                        errors.services[serviceIdx]?.requiredDocuments?.other
+                          ?.message
+                      }
+                    </p>
+                  )}
+                </div>
               </>
             ) : (
               <></>
             )}
           </div>
         </div>
-        {errors.services?.[serviceIdx]?.requiredDocuments?.message && (
-          <p className="mt-2 text-sm text-red-400">
-            {errors.services[serviceIdx]?.requiredDocuments?.message}
-          </p>
-        )}
+        <div className="mt-2 min-h-6 text-sm text-red-400">
+          {errors.services?.[serviceIdx]?.requiredDocuments?.message && (
+            <p className="mt-2 text-sm text-red-400">
+              {errors.services[serviceIdx]?.requiredDocuments?.message}
+            </p>
+          )}
+        </div>
       </div>
     );
   };
@@ -888,9 +908,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Let&apos;s get to know your agency...
             </p>
-            <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
+            <div className="mt-10 flex w-full flex-col lg:flex-row">
               {/* right section */}
-              <section className="flex w-full flex-col gap-4 lg:w-1/2">
+              <section className="flex w-full flex-col lg:w-1/2">
                 {/* Legal Agency Name */}
                 <div>
                   <label
@@ -908,11 +928,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       autoComplete="legalName"
                       className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:w-full  sm:text-sm sm:leading-6 md:w-2/3 lg:w-full"
                     />
-                    {errors.legalName?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.legalName.message}
-                      </p>
-                    )}
+                    <div className="mt-2 min-h-6 text-sm text-red-400">
+                      {errors.legalName?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.legalName.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -933,11 +955,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       autoComplete="directorName"
                       className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm  sm:leading-6 md:w-2/3"
                     />
-                    {errors.directorName?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.directorName.message}
-                      </p>
-                    )}
+                    <div className="mt-2 min-h-6 text-sm text-red-400">
+                      {errors.directorName?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.directorName.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -958,18 +982,20 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       autoComplete="agencyInfo"
                       className="block w-full resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 md:w-5/6"
                     />
-                    {errors.agencyInfo?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.agencyInfo.message}
-                      </p>
-                    )}
+                    <div className="mt-2 min-h-6 text-sm text-red-400">
+                      {errors.agencyInfo?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.agencyInfo.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </section>
 
               {/* left section */}
-              <section className="flex w-full flex-col gap-4 lg:w-1/2">
-                <section className="flex flex-col gap-4 xl:flex-row">
+              <section className="flex w-full flex-col lg:w-1/2">
+                <section className="flex flex-col xl:flex-row">
                   {/* Also known as */}
                   <div className="w-full xl:w-2/3">
                     <label
@@ -986,11 +1012,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         autoComplete="akas"
                         className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6  md:w-2/3 xl:w-full"
                       />
-                      {errors.akas?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.akas.message}
-                        </p>
-                      )}
+                      <div className="mt-2 min-h-6 text-sm text-red-400">
+                        {errors.akas?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.akas.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -1021,11 +1049,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         <option value="For profit">For profit</option>
                         <option value="other">Other</option>
                       </select>
-                      {errors.legalStatus?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.legalStatus.message}
-                        </p>
-                      )}
+                      <div className="mt-2 min-h-6 text-sm text-red-400">
+                        {errors.legalStatus?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.legalStatus.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </section>
@@ -1173,11 +1203,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </label>
                         </div>
                       </div>
-                      {errors.days?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.days.message}
-                        </p>
-                      )}
+                      <div className="mt-2 min-h-6 text-sm text-red-400">
+                        {errors.days?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.days.message}
+                          </p>
+                        )}
+                      </div>
                     </fieldset>
                   </div>
                 </div>
@@ -1200,11 +1232,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       autoComplete="open"
                       className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                     />
-                    {errors.hours?.open?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.hours.open.message}
-                      </p>
-                    )}
+                    <div className="mt-2 min-h-6 text-sm text-red-400">
+                      {errors.hours?.open?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.hours.open.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
                   <p className="mt-4">to</p>
                   {/* Close */}
@@ -1223,11 +1257,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       autoComplete="close"
                       className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
                     />
-                    {errors.hours?.close?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.hours.close.message}
-                      </p>
-                    )}
+                    <div className="mt-2 min-h-6 text-sm text-red-400">
+                      {errors.hours?.close?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.hours.close.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </section>
@@ -1408,7 +1444,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 {/* left section */}
                 <section className="h-2/3 w-full lg:w-1/2">
                   <div className="mb-2 flex flex-col">
-                    <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
+                    <div className="flex flex-col lg:flex-row lg:gap-12">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
                         Does your organization accept volunteers?
                         <span className="ml-1 text-sm text-red-400">*</span>
@@ -1450,11 +1486,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
                     </div>
-                    {errors.volunteerFields?.volunteers?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.volunteerFields.volunteers.message}
-                      </p>
-                    )}
+                    <div className="mt-2 min-h-6 text-sm text-red-400">
+                      {errors.volunteerFields?.volunteers?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.volunteerFields.volunteers.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   <section
@@ -1476,11 +1514,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         placeholder="List type of volunteer work, age, training, background checks, other requirements for your volunteers"
                         className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                       ></textarea>
-                      {errors.volunteerFields?.vol_reqs?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.volunteerFields.vol_reqs.message}
-                        </p>
-                      )}
+                      <div className="mt-2 min-h-6 text-sm text-red-400">
+                        {errors.volunteerFields?.vol_reqs?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.volunteerFields.vol_reqs.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex w-full flex-col gap-6 sm:flex-row">
@@ -1497,11 +1537,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           disabled={volunteerChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.volunteerFields?.vol_coor?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.volunteerFields?.vol_coor.message}
-                          </p>
-                        )}
+                        <div className="mt-2 min-h-6 text-sm text-red-400">
+                          {errors.volunteerFields?.vol_coor?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.volunteerFields?.vol_coor.message}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       <div className="w-full sm:w-1/2">
@@ -1518,11 +1560,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
 
-                        {errors.volunteerFields?.vol_coor_tel?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.volunteerFields.vol_coor_tel.message}
-                          </p>
-                        )}
+                        <div className="mt-2 min-h-6 text-sm text-red-400">
+                          {errors.volunteerFields?.vol_coor_tel?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.volunteerFields.vol_coor_tel.message}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </section>
@@ -1531,7 +1575,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 {/* right section */}
                 <section className="h-2/3 w-full lg:w-1/2">
                   <div className="mb-2 flex flex-col">
-                    <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
+                    <div className="flex flex-col lg:flex-row">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
                         Does your organization accept ongoing, non-monetary
                         donations in support of programs or services?
@@ -1572,11 +1616,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
                     </div>
-                    {errors.donationFields?.donation?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.donationFields.donation.message}
-                      </p>
-                    )}
+                    <div className="mt-2 min-h-6 text-sm text-red-400">
+                      {errors.donationFields?.donation?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.donationFields.donation.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   <section
@@ -1598,11 +1644,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 lg:w-2/3"
                         ></input>
                       </div>
-                      {errors.donationFields?.don_ex?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.donationFields.don_ex.message}
-                        </p>
-                      )}
+                      <div className="mt-2 min-h-6 text-sm text-red-400">
+                        {errors.donationFields?.don_ex?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.donationFields.don_ex.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
 
                     <div className="mt-8 flex flex-row gap-6">
@@ -1648,11 +1696,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
                     </div>
-                    {errors.donationFields?.pickup?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.donationFields.pickup.message}
-                      </p>
-                    )}
+                    <div className="mt-2 min-h-6 text-sm text-red-400">
+                      {errors.donationFields?.pickup?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.donationFields.pickup.message}
+                        </p>
+                      )}
+                    </div>
 
                     {/* pick up service */}
                     <section
@@ -1660,7 +1710,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         pickupChecked === 'false' ? 'opacity-50' : ''
                       }`}
                     >
-                      <div className="mb-6">
+                      <div className="">
                         <div className="flex flex-row items-center gap-4">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
                             Where?
@@ -1673,11 +1723,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           ></input>
                         </div>
-                        {errors.donationFields?.pickup_loc?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.donationFields?.pickup_loc.message}
-                          </p>
-                        )}
+                        <div className="mt-2 min-h-6 text-sm text-red-400">
+                          {errors.donationFields?.pickup_loc?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.donationFields?.pickup_loc.message}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </section>
 
@@ -1694,11 +1746,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           disabled={donationChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.donationFields?.don_coor?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.donationFields.don_coor.message}
-                          </p>
-                        )}
+                        <div className="mt-2 min-h-6 text-sm text-red-400">
+                          {errors.donationFields?.don_coor?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.donationFields.don_coor.message}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       <div className="w-full sm:w-1/2">
@@ -1713,11 +1767,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           disabled={donationChecked === 'false'}
                           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.donationFields?.don_coor_tel?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.donationFields.don_coor_tel.message}
-                          </p>
-                        )}
+                        <div className="mt-2 min-h-6 text-sm text-red-400">
+                          {errors.donationFields?.don_coor_tel?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.donationFields.don_coor_tel.message}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </section>
@@ -1770,11 +1826,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
                     </div>
-                    {errors.recommendationFields?.recommendation?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.recommendationFields.recommendation.message}
-                      </p>
-                    )}
+                    <div className="mt-2 min-h-6 text-sm text-red-400">
+                      {errors.recommendationFields?.recommendation?.message && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.recommendationFields.recommendation.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   <section
@@ -1798,15 +1856,17 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
                         className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                       ></textarea>
-                      {errors.recommendationFields?.recommendations_contact
-                        ?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {
-                            errors.recommendationFields.recommendations_contact
-                              .message
-                          }
-                        </p>
-                      )}
+                      <div className="mt-2 min-h-6 text-sm text-red-400">
+                        {errors.recommendationFields?.recommendations_contact
+                          ?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {
+                              errors.recommendationFields
+                                .recommendations_contact.message
+                            }
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </section>
                 </section>
