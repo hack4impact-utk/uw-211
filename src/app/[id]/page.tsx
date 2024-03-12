@@ -1822,12 +1822,73 @@ homeless men, etc.) This helps us to make appropriate referrals."
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Review
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Please review your selections and submit.
-            </p>
+            <div className="flex flex-col gap-10">
+              {/* Header */}
+              <section>
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Review
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Please review your selections and submit.
+                </p>
+              </section>
+
+              {/* Preliminaries */}
+              <section className="flex flex-col">
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Preliminaries
+                </h2>
+
+                <p>
+                  <span className="text-md leading-6 text-gray-600">
+                    Agency Name:
+                  </span>{' '}
+                  {getValues('agencyInfo')}
+                </p>
+
+                {getValues('akas') ? (
+                  <p>
+                    <span className="text-md leading-6 text-gray-600">
+                      Also Known As:
+                    </span>{' '}
+                    {getValues('akas')}
+                  </p>
+                ) : (
+                  <p className="text-md leading-6 text-gray-400">
+                    Also known as: N/A
+                  </p>
+                )}
+
+                <p>
+                  <span className="text-md leading-6 text-gray-600">
+                    Legal Status:
+                  </span>{' '}
+                  {getValues('legalStatus').charAt(0).toUpperCase() +
+                    getValues('legalStatus').slice(1)}
+                </p>
+
+                <p>
+                  <span className="text-md leading-6 text-gray-600">
+                    Legal Name:
+                  </span>{' '}
+                  {getValues('legalName')}
+                </p>
+
+                <p>
+                  <span className="text-md leading-6 text-gray-600">
+                    Agency Info:
+                  </span>{' '}
+                  {getValues('agencyInfo')}
+                </p>
+
+                <p>
+                  <span className="text-md leading-6 text-gray-600">
+                    Director Name:
+                  </span>{' '}
+                  {getValues('directorName')}
+                </p>
+              </section>
+            </div>
           </motion.div>
         )}
       </form>
