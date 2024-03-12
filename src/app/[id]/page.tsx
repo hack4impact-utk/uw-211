@@ -10,6 +10,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Footer from '@/components/Footer';
+import ServicesReview from '@/components/ServicesReview';
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -34,7 +35,7 @@ import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
 import { formSteps } from '@/utils/constants/formSteps';
 
 type Inputs = z.infer<typeof FormDataSchema>;
-type Service = z.infer<typeof ServiceSchema>;
+export type Service = z.infer<typeof ServiceSchema>;
 
 const steps = formSteps;
 
@@ -866,6 +867,17 @@ homeless men, etc.) This helps us to make appropriate referrals."
         )}
       </div>
     );
+  };
+
+  const get_services = () => {
+    const services = getValues('services');
+    console.log(services);
+
+    const service_items = services.map((service: Service) =>
+      ServicesReview(service)
+    );
+
+    return service_items;
   };
 
   return (
@@ -1835,15 +1847,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
               {/* Preliminaries */}
               <section className="flex flex-col">
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                   Preliminaries
                 </h2>
 
                 <p>
                   <span className="text-md leading-6 text-gray-600">
-                    Agency Name:
+                    Legal Name:
                   </span>{' '}
-                  {getValues('agencyInfo')}
+                  {getValues('legalName')}
                 </p>
 
                 {getValues('akas') ? (
@@ -1867,18 +1879,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     getValues('legalStatus').slice(1)}
                 </p>
 
+                {/* TODO */}
                 <p>
-                  <span className="text-md leading-6 text-gray-600">
-                    Legal Name:
-                  </span>{' '}
-                  {getValues('legalName')}
-                </p>
-
-                <p>
-                  <span className="text-md leading-6 text-gray-600">
-                    Agency Info:
-                  </span>{' '}
-                  {getValues('agencyInfo')}
+                  <span className="bg-red-500 text-white">
+                    TODO: Hours of operation
+                  </span>
                 </p>
 
                 <p>
@@ -1887,6 +1892,31 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   </span>{' '}
                   {getValues('directorName')}
                 </p>
+
+                <p>
+                  <span className="text-md leading-6 text-gray-600">
+                    Agency Info:
+                  </span>{' '}
+                  {getValues('agencyInfo')}
+                </p>
+              </section>
+
+              {/* Services */}
+              {/* s */}
+              <section>
+                <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                  Services
+                </h2>
+
+                {getValues('services').length > 0 ? (
+                  <div className="flex flex-col flex-wrap gap-2 sm:flex-row sm:gap-4">
+                    {get_services()}
+                  </div>
+                ) : (
+                  <p className="text-md leading-6 text-gray-400">
+                    No services listed.
+                  </p>
+                )}
               </section>
             </div>
           </motion.div>
