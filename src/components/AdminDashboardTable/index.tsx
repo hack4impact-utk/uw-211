@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { agencyUpdateStatus } from '@/utils/constants';
+import useTranslation from 'next-translate/useTranslation';
 
 export type AgencyDashboardInfo = {
   name: string;
@@ -44,73 +45,74 @@ function statusColor(status: agencyUpdateStatus) {
   }
 }
 
-// Column definitions for table
-const columns: ColumnDef<AgencyDashboardInfo>[] = [
-  {
-    accessorKey: 'name',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Agency
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: 'lastUpdate',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Last Update
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ getValue }) => {
-      const value = getValue() as Date;
-      return value
-        ? new Date(value).toLocaleDateString('en-US', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-          })
-        : 'Never';
-    },
-  },
-  {
-    accessorKey: 'status',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Information Status
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
-    // Overwrites every cell in column to be a <a/> link with the email, instead of just text.
-    cell: ({ row }) => (
-      <a href={`mailto:${row.original.email}`} className="hover:underline">
-        {row.original.email}
-      </a>
-    ),
-  },
-];
-
 interface AdminDashboardTableProps {
   data: AgencyDashboardInfo[];
 }
 
 export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
+  const { t } = useTranslation('common');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  // Column definitions for table
+  const columns: ColumnDef<AgencyDashboardInfo>[] = [
+    {
+      accessorKey: 'name',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          {t('dashboard.agency')}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+    },
+    {
+      accessorKey: 'lastUpdate',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          {t('dashboard.lastUpdate')}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ getValue }) => {
+        const value = getValue() as Date;
+        return value
+          ? new Date(value).toLocaleDateString('en-US', {
+              day: '2-digit',
+              month: 'long',
+              year: 'numeric',
+            })
+          : 'Never';
+      },
+    },
+    {
+      accessorKey: 'status',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          {t('dashboard.informationStatus')}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+    },
+    {
+      accessorKey: 'email',
+      header: t('dashboard.email'),
+      // Overwrites every cell in column to be a <a/> link with the email, instead of just text.
+      cell: ({ row }) => (
+        <a href={`mailto:${row.original.email}`} className="hover:underline">
+          {row.original.email}
+        </a>
+      ),
+    },
+  ];
 
   const table = useReactTable({
     columns,
@@ -131,7 +133,7 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
       {/* Search Bar for filtering by name */}
       <div className="flex items-center py-4">
         <Input
-          placeholder="Search for an agency..."
+          placeholder={t('dashboard.search')}
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
@@ -192,7 +194,7 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {t('dashboard.noResults')}
                 </TableCell>
               </TableRow>
             )}

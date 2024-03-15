@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import useTranslation from 'next-translate/useTranslation';
 
 interface SignInFormProps extends HTMLAttributes<HTMLDivElement> {}
 interface IconProps extends HTMLAttributes<SVGElement> {}
@@ -51,6 +52,7 @@ const Icons = {
 export default function SignInForm({ className, ...props }: SignInFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+  const { t } = useTranslation('common');
 
   async function onClick(event: SyntheticEvent) {
     event.preventDefault();
@@ -73,7 +75,7 @@ export default function SignInForm({ className, ...props }: SignInFormProps) {
         ) : (
           <Icons.microsoft className="mr-2 h-4 w-4" />
         )}{' '}
-        Sign in with Microsoft
+        {t('signin.microsoft')}
       </Button>
     </div>
   );

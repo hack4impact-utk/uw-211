@@ -147,10 +147,13 @@
   "signin": {
     "title": "Iniciar sesión",
     "microsoft": "Iniciar sesión con Microsoft",
-    "disclaimer": "Al registrarse, acepta nuestras Condiciones de servicio y nuestra Política de privacidad.",
+    "disclaimer": "Al registrarse, acepta nuestras {{link}} y nuestra {{link}}.",
+    "termsOfService": "Condiciones de servicio",
+    "privacyPolicy": "Política de privacidad",
     "missionStatement": "United Way of Greater Knoxville impulsa el cambio en nuestra comunidad uniendo a personas, empresas y organizaciones. Juntos, estamos creando un Knoxville más equitativo donde tenemos vivienda estable, seguridad financiera, cuidado y educación temprana de calidad, acceso a alimentos y más. Únete a nosotros y responde a la llamada."
   },
   "navigation": {
+    "menu": "Menú",
     "home": "Inicio",
     "dashboard": "Tablero",
     "resources": "Recursos",
@@ -161,7 +164,8 @@
     "agency": "Agencia",
     "lastUpdate": "Última actualización",
     "informationStatus": "Estado de la información",
-    "email": "Correo electrónico"
+    "email": "Correo electrónico",
+    "noResults": "No hay resultados."
   },
   "agencyUpdateStatus": {
     "completed": "Completado",

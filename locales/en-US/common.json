@@ -147,10 +147,13 @@
   "signin": {
     "title": "Sign In",
     "microsoft": "Sign in with Microsoft",
-    "disclaimer": "By signing in, you agree to our Terms of Service and Privacy Policy.",
+    "disclaimer": "By signing in, you agree to our {{link}} and {{link}}.",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
     "missionStatement": "United Way of Greater Knoxville is driving change in our community by uniting people, businesses, and organizations. Together, we're creating a more equitable Knoxville where we have stable housing, financial security, quality early care and education, access to food, and more. Join us and answer the call."
   },
   "navigation": {
+    "menu": "Menu",
     "home": "Home",
     "dashboard": "Dashboard",
     "resources": "Resources",
@@ -161,7 +164,8 @@
     "agency": "Agency",
     "lastUpdate": "Last Update",
     "informationStatus": "Information Status",
-    "email": "Email"
+    "email": "Email",
+    "noResults": "No results."
   },
   "agencyUpdateStatus": {
     "completed": "Completed",

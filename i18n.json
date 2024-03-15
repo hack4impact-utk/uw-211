@@ -1,6 +1,6 @@
 {
   "locales": ["en-US", "es-US"],
-  "defaultLocale": "es-US",
+  "defaultLocale": "en-US",
   "pages": {
     "*": ["common"]
   }
