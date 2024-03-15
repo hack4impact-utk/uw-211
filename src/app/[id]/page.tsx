@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/sheet';
 import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
 import { formSteps } from '@/utils/constants/formSteps';
+import useTranslation from 'next-translate/useTranslation';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
@@ -39,8 +40,11 @@ type Service = z.infer<typeof ServiceSchema>;
 const steps = formSteps;
 
 export default function Form({ params }: { params: { id: string } }) {
+  //i18n
+  const { t } = useTranslation('common');
+
   const [previousStep, setPreviousStep] = useState(-1);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(2);
   const delta = currentStep - previousStep;
 
   const {
@@ -110,7 +114,9 @@ export default function Form({ params }: { params: { id: string } }) {
   const add_service = () => {
     const idx = getValues('services').length;
     const new_service: Service = {
-      name: `New Service #${getValues('services').length + 1}`,
+      name: t('form.services.namePlaceholder', {
+        number: getValues('services').length + 1,
+      }),
       id: Date.now(),
       contact: '',
       description: '',
@@ -186,7 +192,7 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="name"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Name
+          {t('form.services.name')}
         </label>
         <Input
           id="name"
@@ -203,7 +209,7 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="description"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Full Description
+          {t('form.services.description')}
         </label>
         <Textarea
           id="description"
@@ -220,12 +226,12 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="contact"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Contact Person
+          {t('form.services.contact.title')}
         </label>
         <Input
           id="contact"
           className="mb-2"
-          placeholder="Only add contact person if different from Director or if contact persons differ by service."
+          placeholder={t('form.services.contact.description')}
           {...register(`services.${serviceIdx}.contact`)}
         />
 
@@ -234,7 +240,7 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="hours"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Hours
+          {t('form.services.hours')}
         </label>
         <div className="mb-2">
           <p className="text-sm leading-6 text-gray-600">TBD...</p>
@@ -244,15 +250,12 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="eligibility"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Eligibility Requirements
+          {t('form.services.eligibility.title')}
         </label>
         <Textarea
           id="eligibility"
           className="mb-2"
-          placeholder="Who is eligible for this service? Who is the population the service is trying to serve?
-It is okay to restrict services to certain populations based on gender; family status, disability,
-age, personal situations, etc. (i.e. battered women with children, people with visual impairments,
-homeless men, etc.) This helps us to make appropriate referrals."
+          placeholder={t('form.services.eligibility.description')}
           {...register(`services.${serviceIdx}.eligibility`)}
         />
         {errors.services?.[serviceIdx]?.eligibility?.message && (
@@ -267,10 +270,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
           htmlFor="applicationProcess"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Application Process
+          {t('form.services.applicationProcess.title')}
         </label>
         <p className="text-sm leading-6 text-gray-600">
-          How would someone apply for this service?
+          {t('form.services.applicationProcess.description')}
         </p>
         <div id="applicationProcess" className="mb-2 ml-2 flex flex-col">
           <div className="space-x-2">
@@ -284,7 +287,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="walkIn"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Walk-in
+              {t('form.services.applicationProcess.walkIn')}
             </label>
           </div>
 
@@ -301,7 +304,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="telephone"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Telephone
+              {t('form.services.applicationProcess.telephone')}
             </label>
           </div>
 
@@ -318,7 +321,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="appointment"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Call to Schedule an Appointment
+              {t('form.services.applicationProcess.appointment')}
             </label>
           </div>
 
@@ -333,7 +336,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="online"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Apply Online
+              {t('form.services.applicationProcess.online')}
             </label>
           </div>
 
@@ -350,7 +353,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="applicationProcessOther"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Other
+              {t('form.services.applicationProcess.other.title')}
             </label>
             {watch(
               `services.${serviceIdx}.applicationProcess.other.selected`
@@ -358,7 +361,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
               <>
                 <Input
                   className="m-2"
-                  placeholder="Please specify."
+                  placeholder={t(
+                    'form.services.applicationProcess.other.description'
+                  )}
                   {...register(
                     `services.${serviceIdx}.applicationProcess.other.content`
                   )}
@@ -393,7 +398,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="referral"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Referral Required
+              {t('form.services.applicationProcess.referralRequired.title')}
             </label>
             {watch(
               `services.${serviceIdx}.applicationProcess.referral.required`
@@ -401,7 +406,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
               <>
                 <Input
                   className="m-2"
-                  placeholder="By whom?"
+                  placeholder={t(
+                    'form.services.applicationProcess.referralRequired.description'
+                  )}
                   {...register(
                     `services.${serviceIdx}.applicationProcess.referral.content`
                   )}
@@ -433,10 +440,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
           htmlFor="fees"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Fees
+          {t('form.services.fees.title')}
         </label>
         <p className="text-sm leading-6 text-gray-600">
-          Are individuals charged for your services? What is your fee structure?
+          {t('form.services.fees.description')}
         </p>
         <div id="fees" className="mb-2 ml-2 flex flex-col">
           <div className="space-x-2">
@@ -450,7 +457,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="noFees"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              No Fees
+              {t('form.services.fees.noFees')}
             </label>
           </div>
 
@@ -466,13 +473,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="straight"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Straight Fee
+              {t('form.services.fees.straight.title')}
             </label>
             {watch(`services.${serviceIdx}.fees.straight.selected`) ? (
               <>
                 <Input
                   className="m-2"
-                  placeholder="Please specify."
+                  placeholder={t('form.services.fees.straight.description')}
                   {...register(`services.${serviceIdx}.fees.straight.content`)}
                   disabled={watch(`services.${serviceIdx}.fees.none`)}
                 />
@@ -499,7 +506,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="sliding"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Sliding Scale Fee
+              {t('form.services.fees.slidingScale')}
             </label>
           </div>
 
@@ -515,7 +522,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="medicaid_tenncare"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Medicaid/TennCare
+              {t('form.services.fees.medicaidTenncare')}
             </label>
           </div>
 
@@ -531,7 +538,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="medicare"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Medicare
+              {t('form.services.fees.medicare')}
             </label>
           </div>
 
@@ -547,7 +554,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="private"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Private Insurance
+              {t('form.services.fees.private')}
             </label>
           </div>
         </div>
@@ -563,10 +570,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
           htmlFor="requiredDocuments"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Required Documents
+          {t('form.services.requiredDocuments.title')}
         </label>
         <p className="text-sm leading-6 text-gray-600">
-          What would someone need to bring when applying?
+          {t('form.services.requiredDocuments.description')}
         </p>
         <div id="requiredDocuments" className="mb-2 ml-2 grid grid-cols-3">
           <div className="space-x-2">
@@ -580,7 +587,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="noDocuments"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              No Documents
+              {t('form.services.requiredDocuments.noDocuments')}
             </label>
           </div>
 
@@ -596,7 +603,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="stateId"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              State Issued ID
+              {t('form.services.requiredDocuments.stateId')}
             </label>
           </div>
 
@@ -612,7 +619,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="ssn"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Social Security Card
+              {t('form.services.requiredDocuments.ssn')}
             </label>
           </div>
 
@@ -630,7 +637,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfResidence"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Residence
+              {t('form.services.requiredDocuments.proofOfResidence')}
             </label>
           </div>
 
@@ -648,7 +655,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfIncome"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Income
+              {t('form.services.requiredDocuments.proofOfIncome')}
             </label>
           </div>
 
@@ -666,7 +673,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="birthCertificate"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Birth Certificate
+              {t('form.services.requiredDocuments.birthCertificate')}
             </label>
           </div>
 
@@ -684,7 +691,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="medicalRecords"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Medical Records
+              {t('form.services.requiredDocuments.medicalRecords')}
             </label>
           </div>
 
@@ -702,7 +709,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="psychRecords"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Psych Records
+              {t('form.services.requiredDocuments.psychRecords')}
             </label>
           </div>
 
@@ -720,7 +727,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfNeed"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Need
+              {t('form.services.requiredDocuments.proofOfNeed')}
             </label>
           </div>
 
@@ -738,7 +745,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="utilityBill"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Utility Bill
+              {t('form.services.requiredDocuments.utilityBill')}
             </label>
           </div>
 
@@ -756,7 +763,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="utilityCutoffNotice"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Utility Cutoff Notice
+              {t('form.services.requiredDocuments.utilityCutoffNotice')}
             </label>
           </div>
 
@@ -774,7 +781,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfCitizenship"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Citizenship
+              {t('form.services.requiredDocuments.proofOfCitizenship')}
             </label>
           </div>
 
@@ -792,7 +799,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfPublicAssistance"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Public Assistance
+              {t('form.services.requiredDocuments.proofOfPublicAssistance')}
             </label>
           </div>
 
@@ -810,7 +817,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="driversLicense"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Driver&apos;s License
+              {t('form.services.requiredDocuments.driversLicense')}
             </label>
           </div>
 
@@ -828,7 +835,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="requiredDocumentsOther"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Other
+              {t('form.services.requiredDocuments.other.title')}
             </label>
             {watch(
               `services.${serviceIdx}.requiredDocuments.other.selected`
@@ -836,7 +843,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
               <>
                 <Input
                   className="m-2"
-                  placeholder="Please specify."
+                  placeholder={t(
+                    'form.services.requiredDocuments.other.description'
+                  )}
                   {...register(
                     `services.${serviceIdx}.requiredDocuments.other.content`
                   )}
@@ -883,10 +892,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
         {currentStep === 0 && (
           <>
             <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Preliminaries
+              {t('form.preliminaries.title')}
             </h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Let&apos;s get to know your agency...
+              {t('form.preliminaries.description')}
             </p>
             <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
               {/* right section */}
@@ -897,7 +906,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     htmlFor="legalName"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Legal Agency Name
+                    {t('form.preliminaries.name')}
                     <span className="ml-1 text-sm text-red-400">*</span>
                   </label>
                   <div className="mt-2">
@@ -922,7 +931,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     htmlFor="lastName"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Director Name/Title
+                    {t('form.preliminaries.director')}
                     <span className="ml-1 text-sm text-red-400">*</span>
                   </label>
                   <div className="mt-2">
@@ -947,7 +956,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     htmlFor="legalStatus"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Brief Agency Information
+                    {t('form.preliminaries.agencyInfo')}
                     <span className="ml-1 text-sm text-red-400">*</span>
                   </label>
                   <div className="mt-2">
@@ -976,7 +985,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       htmlFor="lastName"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Also known as
+                      {t('form.preliminaries.aka')}
                     </label>
                     <div className="mt-2">
                       <input
@@ -1000,7 +1009,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       htmlFor="legalStatus"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Legal Organizational Status
+                      {t('form.preliminaries.legalStatus.title')}
                       <span className="ml-1 text-sm text-red-400">*</span>
                     </label>
                     <div className="mt-2">
@@ -1011,15 +1020,35 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         autoComplete="legalStatus"
                         className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
                       >
-                        <option value="">Please Select One</option>
-                        <option value="federal">Federal</option>
-                        <option value="state">State</option>
-                        <option value="county">County</option>
-                        <option value="city">City</option>
-                        <option value="non-profit">Non-profit</option>
-                        <option value="501(c)3">501(c)3</option>
-                        <option value="For profit">For profit</option>
-                        <option value="other">Other</option>
+                        <option value="">
+                          {t('form.preliminaries.legalStatus.options.empty')}
+                        </option>
+                        <option value="federal">
+                          {t('form.preliminaries.legalStatus.options.federal')}
+                        </option>
+                        <option value="state">
+                          {t('form.preliminaries.legalStatus.options.state')}
+                        </option>
+                        <option value="county">
+                          {t('form.preliminaries.legalStatus.options.county')}
+                        </option>
+                        <option value="city">
+                          {t('form.preliminaries.legalStatus.options.city')}
+                        </option>
+                        <option value="non-profit">
+                          {t(
+                            'form.preliminaries.legalStatus.options.nonprofit'
+                          )}
+                        </option>
+                        <option value="501(c)3">
+                          {t('form.preliminaries.legalStatus.options.501c3')}
+                        </option>
+                        <option value="For profit">
+                          {t('form.preliminaries.legalStatus.options.profit')}
+                        </option>
+                        <option value="other">
+                          {t('form.preliminaries.legalStatus.options.other')}
+                        </option>
                       </select>
                       {errors.legalStatus?.message && (
                         <p className="mt-2 text-sm text-red-400">
@@ -1036,7 +1065,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     htmlFor="legalStatus"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Hours of Operation
+                    {t('form.preliminaries.hours')}
                   </label>
                   <div className="mt-2">
                     <fieldset>
@@ -1244,7 +1273,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
           >
             <>
               <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Services
+                {t('form.services.title')}
               </h2>
               {screenWidth >= 1100 ? (
                 <ResizablePanelGroup
@@ -1301,7 +1330,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         type="button"
                       >
                         <Plus size={16} className="mr-2" />
-                        Add Service
+                        {t('form.services.addService')}
                       </Button>
                     </div>
                   </ResizablePanel>
@@ -1310,7 +1339,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {serviceIdx === -1 ? (
                       <div className="flex h-full items-center justify-center">
                         <p className="text-sm text-gray-600">
-                          Add or select a service to begin.
+                          {t('form.services.instructionsDesktop')}
                         </p>
                       </div>
                     ) : (
@@ -1324,13 +1353,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   <Sheet>
                     <SheetTrigger asChild>
                       <Button variant="outline" className="mx-4" type="button">
-                        Services List
+                        {t('form.services.mobileList')}
                       </Button>
                     </SheetTrigger>
                     <SheetContent className="z-50">
                       <SheetHeader className="pb-2 text-3xl">
                         <SheetTitle className="text-center text-2xl">
-                          Services List
+                          {t('form.services.mobileList')}
                         </SheetTitle>
                       </SheetHeader>
                       <div className="flex flex-col justify-center gap-2">
@@ -1341,7 +1370,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           type="button"
                         >
                           <Plus size={16} className="mr-2" />
-                          Add Service
+                          {t('form.services.addService')}
                         </Button>
                         <Separator className="my-2" />
                         {getValues('services').map(
@@ -1383,7 +1412,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   {serviceIdx === -1 ? (
                     <div className="flex h-full items-center justify-center p-5">
                       <p className="text-sm text-gray-600">
-                        Open the services list to begin.
+                        {t('form.services.instructionsMobile')}
                       </p>
                     </div>
                   ) : (
@@ -1410,7 +1439,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   <div className="mb-2 flex flex-col">
                     <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Does your organization accept volunteers?
+                        {t('form.opportunities.acceptVolunteers.title')}
                         <span className="ml-1 text-sm text-red-400">*</span>
                       </h2>
                       {/* radio button */}
@@ -1429,7 +1458,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             defaultChecked
                           />
                           <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            No
+                            {t('form.no')}
                           </label>
                         </div>
                         <div>
@@ -1445,7 +1474,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                           />
                           <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            Yes
+                            {t('form.yes')}
                           </label>
                         </div>
                       </div>
@@ -1464,7 +1493,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   >
                     <div className="mb-4">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Who is eligible to volunteer?
+                        {t(
+                          'form.opportunities.acceptVolunteers.eligibility.title'
+                        )}
                       </h2>
                       <textarea
                         id="vol_reqs"
@@ -1473,7 +1504,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         cols={30}
                         rows={10}
                         disabled={volunteerChecked === 'false'}
-                        placeholder="List type of volunteer work, age, training, background checks, other requirements for your volunteers"
+                        placeholder={t(
+                          'form.opportunities.acceptVolunteers.eligibility.description'
+                        )}
                         className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                       ></textarea>
                       {errors.volunteerFields?.vol_reqs?.message && (
@@ -1486,7 +1519,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     <div className="flex w-full flex-col gap-6 sm:flex-row">
                       <div className="w-full sm:w-1/2">
                         <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Volunteer Coordinator:
+                          {t(
+                            'form.opportunities.acceptVolunteers.eligibility.coordinator'
+                          )}
                         </h2>
 
                         <input
@@ -1506,7 +1541,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                       <div className="w-full sm:w-1/2">
                         <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Phone #:
+                          {t(
+                            'form.opportunities.acceptVolunteers.eligibility.phone'
+                          )}
                         </h2>
 
                         <input
@@ -1533,8 +1570,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   <div className="mb-2 flex flex-col">
                     <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Does your organization accept ongoing, non-monetary
-                        donations in support of programs or services?
+                        {t('form.opportunities.acceptDonations.title')}
                         <span className="ml-1 text-sm text-red-400">*</span>
                       </h2>
                       {/* radio button */}
@@ -1552,7 +1588,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             defaultChecked
                           />
                           <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            No
+                            {t('form.no')}
                           </label>
                         </div>
                         <div>
@@ -1567,7 +1603,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                           />
                           <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            Yes
+                            {t('form.yes')}
                           </label>
                         </div>
                       </div>
@@ -1587,13 +1623,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     <div className="mb-2">
                       <div className="flex flex-col items-start lg:flex-row lg:items-center lg:gap-8">
                         <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Please list.
+                          {t('form.opportunities.acceptDonations.list.title')}
                         </h2>
                         <input
                           type="text"
                           {...register('donationFields.don_ex')}
                           id="don_ex"
-                          placeholder="Example: pet food, clothing, appliances, furniture"
+                          placeholder={t(
+                            'form.opportunities.acceptDonations.list.description'
+                          )}
                           disabled={donationChecked === 'false'}
                           className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 lg:w-2/3"
                         ></input>
@@ -1609,7 +1647,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       {/* radio button */}
                       <div className="mb-1 flex flex-col gap-4 sm:flex-row sm:gap-12">
                         <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Do you provide pick-up service?
+                          {t('form.opportunities.acceptDonations.pickup.title')}
                         </h2>
                         <div className="flex flex-row gap-4 whitespace-nowrap">
                           <div>
@@ -1626,7 +1664,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               defaultChecked
                             />
                             <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                              No
+                              {t('form.no')}
                             </label>
                           </div>
                           <div>
@@ -1642,7 +1680,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                             />
                             <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                              Yes
+                              {t('form.yes')}
                             </label>
                           </div>
                         </div>
@@ -1663,7 +1701,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <div className="mb-6">
                         <div className="flex flex-row items-center gap-4">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Where?
+                            {t(
+                              'form.opportunities.acceptDonations.pickup.where'
+                            )}
                           </h2>
                           <input
                             type="text"
@@ -1684,7 +1724,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     <div className="flex w-full flex-col gap-6 sm:flex-row">
                       <div className="w-full sm:w-1/2">
                         <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Donation Coordinator:
+                          {t('form.opportunities.acceptDonations.coordinator')}
                         </h2>
 
                         <input
@@ -1703,7 +1743,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                       <div className="w-full sm:w-1/2">
                         <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Phone #:
+                          {t('form.opportunities.acceptDonations.phone')}
                         </h2>
 
                         <input
@@ -1730,9 +1770,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   <div className="mb-4 flex flex-col">
                     <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Are there other agencies or services that have been
-                        helpful that you would recommend to be included in our
-                        resource database?
+                        {t('form.opportunities.other.title')}
                         <span className="ml-1 text-sm text-red-400">*</span>
                       </h2>
                       {/* radio button */}
@@ -1750,7 +1788,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             defaultChecked
                           />
                           <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            No
+                            {t('form.no')}
                           </label>
                         </div>
                         <div>
@@ -1765,7 +1803,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                           />
                           <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            Yes
+                            {t('form.yes')}
                           </label>
                         </div>
                       </div>
@@ -1784,8 +1822,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   >
                     <div>
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Please provide contact information for these
-                        agencies/services.
+                        {t('form.opportunities.other.contactInformation')}
                       </h2>
                       <textarea
                         {...register(
@@ -1795,7 +1832,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         cols={30}
                         rows={10}
                         disabled={recommendationChecked === 'false'}
-                        placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
                         className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                       ></textarea>
                       {errors.recommendationFields?.recommendations_contact
@@ -1823,10 +1859,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
             <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Review
+              {t('form.review.title')}
             </h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Please review your selections and submit.
+              {t('form.review.description')}
             </p>
           </motion.div>
         )}

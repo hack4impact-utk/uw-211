@@ -1,0 +1,175 @@
+{
+  "landing": {
+    "validWelcome": "Welcome, {{org_name}}!",
+    "validInstructions": "Your completion of this form is a valuable step towards connecting individuals with resources in the Greater Knoxville area. To learn more about our services, please visit our {{website}}.",
+    "website": "website",
+    "getStarted": "Get Started!",
+    "invalidWelcome": "Oops!",
+    "invalidInstructions": "It seems the form link you have been provided is invalid. Please reach out to us via email at {{email}} or by phone at {{phone}} to receive a valid link for your organization. We apologize for any inconvenience this may have caused."
+  },
+  "form": {
+    "preliminaries": {
+      "title": "Preliminaries",
+      "description": "Let's get to know your agency...",
+      "name": "Legal Agency Name",
+      "director": "Director Name/Title",
+      "agencyInfo": "Brief Agency Information",
+      "hours": "Hours of Operation",
+      "aka": "Also known as",
+      "legalStatus": {
+        "title": "Legal Organization Status",
+        "options": {
+          "empty": "Please Select One",
+          "federal": "Federal",
+          "state": "State",
+          "county": "County",
+          "city": "City",
+          "nonprofit": "Non-profit",
+          "501c3": "501(c)3",
+          "profit": "For profit",
+          "other": "Other"
+        }
+      }
+    },
+    "services": {
+      "title": "Services",
+      "instructionsDesktop": "Add or select a service to begin.",
+      "instructionsMobile": "Open the services list to begin.",
+      "mobileList": "Services List",
+      "addService": "Add Service",
+      "namePlaceholder": "New Service #{{number}}",
+      "name": "Name",
+      "description": "Full Description",
+      "contact": {
+        "title": "Contact Person",
+        "description": "Only add contact person if different from Director or if contact persons differ by service."
+      },
+      "hours": "Hours",
+      "eligibility": {
+        "title": "Eligibility Process",
+        "description": "Who is eligible for this service? Who is the population the service is trying to serve? It is okay to restrict services to certain populations based on gender; family status, disability, age, personal situations, etc. (i.e. battered women with children, people with visual impairments, homeless men, etc.) This helps us to make appropriate referrals."
+      },
+      "applicationProcess": {
+        "title": "Application Process",
+        "description": "How would someone apply for this service?",
+        "walkIn": "Walk-in",
+        "telephone": "Telephone",
+        "appointment": "Call to Schedule an Appointment",
+        "online": "Apply Online",
+        "other": {
+          "title": "Other",
+          "description": "Please specify."
+        },
+        "referralRequired": {
+          "title": "Referral Required",
+          "description": "By whom?"
+        }
+      },
+      "fees": {
+        "title": "Fees",
+        "description": "Are individuals charged for your services? What is your fee structure?",
+        "noFees": "No Fees",
+        "straight": {
+          "title": "Straight Fee",
+          "description": "Please specify."
+        },
+        "slidingScale": "Sliding Scale Fee",
+        "medicaidTenncare": "Medicaid/TennCare",
+        "medicare": "Medicare",
+        "private": "Private Insurance"
+      },
+      "requiredDocuments": {
+        "title": "Required Documents",
+        "description": "What would someone need to bring when applying?",
+        "noDocuments": "No Documents",
+        "stateId": "State Issued ID",
+        "ssn": "Social Security Card",
+        "proofOfResidence": "Proof of Residence",
+        "proofOfIncome": "Proof of Income",
+        "birthCertificate": "Birth Certificate",
+        "medicalRecords": "Medical Records",
+        "psychRecords": "Psych Records",
+        "proofOfNeed": "Proof of Need",
+        "utilityBill": "Utility Bill",
+        "utilityCutoffNotice": "Utility Cutoff Notice",
+        "proofOfCitizenship": "Proof of Citizenship",
+        "proofOfPublicAssistance": "Proof of Public Assistance",
+        "driversLicense": "Driver's License",
+        "other": {
+          "title": "Other",
+          "description": "Please specify."
+        }
+      }
+    },
+    "opportunities": {
+      "title": "Opportunities",
+      "acceptVolunteers": {
+        "title": "Does your organization accept volunteers?",
+        "eligibility": {
+          "title": "Who is eligible to volunteer?",
+          "description": "List type of volunteer work, age, training, background checks, and other requirements for your volunteers.",
+          "coordinator": "Volunteer Coordinator:",
+          "phone": "Phone #:"
+        }
+      },
+      "acceptDonations": {
+        "title": "Does your organization accept ongoing, non-monetary donations in support of programs or services?",
+        "list": {
+          "title": "Please list.",
+          "description": "Example: pet food, clothing, appliances, furniture"
+        },
+        "pickup": {
+          "title": "Do you provide pick-up service?",
+          "where": "Where?"
+        },
+        "coordinator": "Donation Coordinator:",
+        "phone": "Phone #:"
+      },
+      "other": {
+        "title": "Are there other agencies or services that have been helpful that you would recommend to be included in our resource database?",
+        "contactInformation": "Please provide contact information for these agencies/services."
+      }
+    },
+    "review": {
+      "title": "Review",
+      "description": "Please review your selections and submit."
+    },
+    "hours": {
+      "day": "Day",
+      "open": "Open",
+      "close": "Close",
+      "am": "AM",
+      "pm": "PM"
+    },
+    "yes": "Yes",
+    "no": "No"
+  },
+  "signin": {
+    "title": "Sign In",
+    "microsoft": "Sign in with Microsoft",
+    "disclaimer": "By signing in, you agree to our Terms of Service and Privacy Policy.",
+    "missionStatement": "United Way of Greater Knoxville is driving change in our community by uniting people, businesses, and organizations. Together, we're creating a more equitable Knoxville where we have stable housing, financial security, quality early care and education, access to food, and more. Join us and answer the call."
+  },
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "resources": "Resources",
+    "about": "About"
+  },
+  "dashboard": {
+    "search": "Search for an agency...",
+    "agency": "Agency",
+    "lastUpdate": "Last Update",
+    "informationStatus": "Information Status",
+    "email": "Email"
+  },
+  "agencyUpdateStatus": {
+    "completed": "Completed",
+    "needsReview": "Needs Review",
+    "expired": "Expired"
+  },
+  "errors": {
+    "required": "Required.",
+    "phone": "Must be a valid phone number."
+  }
+}
