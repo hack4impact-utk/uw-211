@@ -27,6 +27,24 @@ export function ServicesReview(service: Service) {
     ['private', 'Private Insurance'],
   ]);
 
+  const required_documents = new Map([
+    ['none', 'No Documents'],
+    ['proofOfResidence', 'Proof of Residence'],
+    ['medicalRecords', 'Medical Records'],
+    ['utilityBill', 'Utility Bill'],
+    ['proofOfPublicAssistance', 'Proof of Public Assistance'],
+    ['stateId', 'State Issued ID'],
+    ['proofOfIncome', 'Proof of Income'],
+    ['psychRecords', 'Psych Records'],
+    ['utilityCutoffNotice', 'Utility Cutoff Notice'],
+    ['driversLicense', "Driver's License"],
+    ['ssn', 'Social Security Card'],
+    ['birthCertificate', 'Birth Certificate'],
+    ['proofOfNeed', 'Proof of Need'],
+    ['proofOfCitizenship', 'Proof of Citizenship'],
+    ['other', 'Other'],
+  ]);
+
   const get_app_proccess = () => {
     const applicationProcess = service.applicationProcess;
     let options: string = '';
@@ -34,16 +52,18 @@ export function ServicesReview(service: Service) {
     let referral: string = '';
 
     Object.entries(applicationProcess).forEach(([key, value]) => {
-      if (value) {
+      if (value && key != 'other' && key != 'referral') {
         options += app_proccess.get(key) + ', ';
       }
     });
 
     if (applicationProcess.other?.selected) {
+      options += 'Other, ';
       other = String(applicationProcess.other.content);
     }
 
     if (applicationProcess.referral?.required) {
+      options += 'Referral, ';
       referral = String(applicationProcess.referral.content);
     }
 
@@ -65,12 +85,13 @@ export function ServicesReview(service: Service) {
 
     if (fees_array.none == false) {
       Object.entries(fees_array).forEach(([key, value]) => {
-        if (value && key != 'none') {
+        if (value && key != 'none' && key != 'straightFee') {
           options += fees.get(key) + ', ';
         }
       });
 
       if (fees_array.straight?.selected) {
+        options += 'Straight Fee, ';
         straight_fee = String(fees_array.straight.content);
       }
 
@@ -84,6 +105,34 @@ export function ServicesReview(service: Service) {
       );
     } else {
       return <p>No fees required.</p>;
+    }
+  };
+
+  const get_req_docs = () => {
+    const req_docs = service.requiredDocuments;
+    let options: string = '';
+    let other: string = '';
+
+    if (req_docs.none == false) {
+      Object.entries(req_docs).forEach(([key, value]) => {
+        if (value && key != 'none' && key != 'other') {
+          options += required_documents.get(key) + ', ';
+        }
+      });
+
+      if (req_docs.other?.selected) {
+        options += 'Other, ';
+        other = String(req_docs.other.content);
+      }
+
+      return (
+        <>
+          <p>{options.substring(0, options.length - 2)}</p>
+          <div className="ml-6">{other != '' ? <p>Other: {other}</p> : ''}</div>
+        </>
+      );
+    } else {
+      return <p>No documents required.</p>;
     }
   };
 
@@ -143,6 +192,13 @@ export function ServicesReview(service: Service) {
               structure?
             </h3>
             {get_fees()}
+          </div>
+
+          <div>
+            <h3 className="text-base font-semibold leading-7 text-gray-900">
+              What would someone need to bring when applying?
+            </h3>
+            {get_req_docs()}
           </div>
         </section>
       </CardContent>

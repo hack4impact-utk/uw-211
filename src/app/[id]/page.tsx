@@ -1921,7 +1921,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
               </section>
 
               {/* Services */}
-              {/*  */}
               <section>
                 <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                   Services
