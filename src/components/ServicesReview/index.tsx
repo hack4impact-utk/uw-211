@@ -172,6 +172,11 @@ export function ServicesReview(service: Service) {
             )}
           </div>
 
+          {/* TODO */}
+          <div>
+            <span className="bg-red-500 text-white">TODO: Hours</span>
+          </div>
+
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               How would someone apply for this service?
