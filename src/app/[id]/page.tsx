@@ -25,6 +25,13 @@ import { Plus, Trash2 } from 'lucide-react';
 import FormStepper from '@/components/FormStepper';
 import { useWindowSize } from '@/utils/hooks/useWindowSize';
 import {
+  Carousel,
+  CarouselContent,
+  CarouselPrevious,
+  CarouselNext,
+  CarouselItem,
+} from '@/components/ui/carousel';
+import {
   Sheet,
   SheetTrigger,
   SheetHeader,
@@ -873,9 +880,21 @@ homeless men, etc.) This helps us to make appropriate referrals."
     const services = getValues('services');
     console.log(services);
 
-    const service_items = services.map((service: Service) =>
-      ServicesReview(service)
-    );
+    let service_items = [];
+
+    if (services.length > 3) {
+      service_items = services.map((service: Service, index: number) => (
+        <CarouselItem className="md:basis-1/2 lg:basis-1/3" key={index}>
+          {ServicesReview(service)}
+        </CarouselItem>
+      ));
+    } else {
+      service_items = services.map((service: Service, index: number) => (
+        <div className="w-full lg:w-1/2 xl:w-1/3" key={index}>
+          {ServicesReview(service)}
+        </div>
+      ));
+    }
 
     return service_items;
   };
@@ -1902,20 +1921,28 @@ homeless men, etc.) This helps us to make appropriate referrals."
               </section>
 
               {/* Services */}
-              {/* s */}
+              {/*  */}
               <section>
                 <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                   Services
                 </h2>
 
-                {getValues('services').length > 0 ? (
-                  <div className="flex flex-col flex-wrap gap-2 sm:flex-row sm:gap-4">
-                    {get_services()}
-                  </div>
-                ) : (
+                {getValues('services').length > 3 ? (
+                  <Carousel>
+                    <CarouselContent className="flex">
+                      {get_services()}
+                    </CarouselContent>
+                    <CarouselNext />
+                    <CarouselPrevious />
+                  </Carousel>
+                ) : getValues('services').length == 0 ? (
                   <p className="text-md leading-6 text-gray-400">
                     No services listed.
                   </p>
+                ) : (
+                  <div className="flex w-full flex-col gap-4 md:flex-row">
+                    {get_services()}
+                  </div>
                 )}
               </section>
             </div>
