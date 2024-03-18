@@ -50,7 +50,7 @@ interface AdminDashboardTableProps {
 }
 
 export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
-  const { t } = useTranslation('common');
+  const { t, lang } = useTranslation('common');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -82,7 +82,7 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
       cell: ({ getValue }) => {
         const value = getValue() as Date;
         return value
-          ? new Date(value).toLocaleDateString('en-US', {
+          ? new Date(value).toLocaleDateString(lang, {
               day: '2-digit',
               month: 'long',
               year: 'numeric',
@@ -101,6 +101,24 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ row }) => {
+        let text;
+        switch (row.original.status) {
+          case agencyUpdateStatus.Completed:
+            text = t('agencyUpdateStatus.completed');
+            break;
+          case agencyUpdateStatus.NeedsReview:
+            text = t('agencyUpdateStatus.needsReview');
+            break;
+          case agencyUpdateStatus.Expired:
+            text = t('agencyUpdateStatus.expired');
+            break;
+          default:
+            text = 'Error'; // Default case to handle unexpected values
+        }
+
+        return <span>{text}</span>;
+      },
     },
     {
       accessorKey: 'email',

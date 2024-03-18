@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
 import {
-  FormDataSchema,
-  ServiceSchema,
+  getFormDataSchema,
+  getServiceSchema,
 } from '@/utils/constants/formDataSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -31,20 +31,21 @@ import {
   SheetContent,
 } from '@/components/ui/sheet';
 import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
-import { formSteps } from '@/utils/constants/formSteps';
+import { getFormSteps } from '@/utils/constants/getFormSteps';
 import useTranslation from 'next-translate/useTranslation';
-
-type Inputs = z.infer<typeof FormDataSchema>;
-type Service = z.infer<typeof ServiceSchema>;
-
-const steps = formSteps;
 
 export default function Form({ params }: { params: { id: string } }) {
   //i18n
   const { t } = useTranslation('common');
+  const FormDataSchema = getFormDataSchema(t);
+  const ServiceSchema = getServiceSchema(t);
+  type Inputs = z.infer<typeof FormDataSchema>;
+  type Service = z.infer<typeof ServiceSchema>;
+
+  const steps = getFormSteps(t);
 
   const [previousStep, setPreviousStep] = useState(-1);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(0);
   const delta = currentStep - previousStep;
 
   const {
