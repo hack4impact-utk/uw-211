@@ -882,15 +882,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
     let service_items = [];
 
-    if (services.length > 3) {
+    if (services.length > 2) {
       service_items = services.map((service: Service, index: number) => (
-        <CarouselItem className="md:basis-1/2 lg:basis-1/3" key={index}>
+        <CarouselItem className="lg:basis-1/2" key={index}>
           {ServicesReview(service)}
         </CarouselItem>
       ));
     } else {
       service_items = services.map((service: Service, index: number) => (
-        <div className="w-full lg:w-1/2 xl:w-1/3" key={index}>
+        <div className="w-full lg:w-1/2" key={index}>
           {ServicesReview(service)}
         </div>
       ));
@@ -1926,13 +1926,21 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   Services
                 </h2>
 
-                {getValues('services').length > 3 ? (
-                  <Carousel>
-                    <CarouselContent className="flex">
-                      {get_services()}
-                    </CarouselContent>
-                    <CarouselNext />
-                    <CarouselPrevious />
+                {getValues('services').length > 2 ? (
+                  <Carousel
+                    opts={{
+                      align: 'start',
+                    }}
+                  >
+                    <CarouselContent>{get_services()}</CarouselContent>
+                    <CarouselNext
+                      className="right-1/3 top-full mt-8 sm:-right-12 sm:top-1/2 sm:-translate-y-1/2"
+                      type="button"
+                    />
+                    <CarouselPrevious
+                      className="left-1/3 top-full mt-8 sm:-left-12 sm:top-1/2 sm:-translate-y-1/2"
+                      type="button"
+                    />
                   </Carousel>
                 ) : getValues('services').length == 0 ? (
                   <p className="text-md leading-6 text-gray-400">
