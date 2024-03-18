@@ -8,6 +8,7 @@
     "invalidInstructions": "Parece que el enlace al formulario que se le ha proporcionado no es válido. Póngase en contacto con nosotros por correo electrónico en {{email}} o por teléfono en el {{phone}} para recibir un enlace válido para su organización. Sentimos las molestias que esto haya podido causar."
   },
   "form": {
+    "navigateForm": "Formulario de navegación",
     "preliminaries": {
       "title": "Preliminares",
       "description": "Conozcamos su agencia...",

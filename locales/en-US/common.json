@@ -8,6 +8,7 @@
     "invalidInstructions": "It seems the form link you have been provided is invalid. Please reach out to us via email at {{email}} or by phone at {{phone}} to receive a valid link for your organization. We apologize for any inconvenience this may have caused."
   },
   "form": {
+    "navigateForm": "Navigate Form",
     "preliminaries": {
       "title": "Preliminaries",
       "description": "Let's get to know your agency...",

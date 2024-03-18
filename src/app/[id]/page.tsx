@@ -1220,7 +1220,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       htmlFor="open"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Open
+                      {t('form.hours.open')}
                       <span className="ml-1 text-sm text-red-400">*</span>
                     </label>
                     <input
@@ -1243,7 +1243,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       htmlFor="close"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Close
+                      {t('form.hours.close')}
                       <span className="ml-1 text-sm text-red-400">*</span>
                     </label>
                     <input
