@@ -878,7 +878,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
   const get_services = () => {
     const services = getValues('services');
-    console.log(services);
 
     let service_items = [];
 
