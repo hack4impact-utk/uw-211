@@ -1853,7 +1853,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
             <div className="flex flex-col gap-10">
-              {/* {console.log(getValues())} */}
               {/* Header */}
               <section>
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
