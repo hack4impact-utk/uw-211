@@ -1869,62 +1869,75 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   Preliminaries
                 </h2>
 
-                <p>
-                  <span className="text-base font-semibold leading-7 text-gray-900">
-                    Legal Name:
-                  </span>{' '}
-                  <span className="text-[#d95740]">
-                    {getValues('legalName')}
-                  </span>
-                </p>
+                <div className="flex flex-col gap-4 sm:flex-row sm:gap-12">
+                  {/* Prelim Info */}
+                  <section className="flex flex-col gap-2 sm:w-1/2">
+                    <div className="flex flex-col sm:flex-row">
+                      <p className="sm:w-1/2">
+                        <span className="text-base font-semibold leading-7 text-gray-900">
+                          Legal Name:
+                        </span>{' '}
+                        <span className="text-[#d95740]">
+                          {getValues('legalName')}
+                        </span>
+                      </p>
 
-                {getValues('akas') ? (
-                  <p>
-                    <span className="text-base font-semibold leading-7 text-gray-900">
-                      Also Known As:
-                    </span>{' '}
-                    <span className="text-[#d95740]">{getValues('akas')}</span>
-                  </p>
-                ) : (
-                  <p className="text-md leading-6 text-gray-400">
-                    Also known as: N/A
-                  </p>
-                )}
+                      {getValues('akas') ? (
+                        <p className="sm:w-1/2">
+                          <span className="text-base font-semibold leading-7 text-gray-900">
+                            Also Known As:
+                          </span>{' '}
+                          <span className="text-[#d95740]">
+                            {getValues('akas')}
+                          </span>
+                        </p>
+                      ) : (
+                        <p className="text-md leading-6 text-gray-400 sm:w-1/2">
+                          Also known as: N/A
+                        </p>
+                      )}
+                    </div>
 
-                <p>
-                  <span className="text-base font-semibold leading-7 text-gray-900">
-                    Legal Status:
-                  </span>{' '}
-                  <span className="text-[#d95740]">
-                    {getValues('legalStatus').charAt(0).toUpperCase() +
-                      getValues('legalStatus').slice(1)}
-                  </span>
-                </p>
+                    <div className="flex flex-col sm:flex-row">
+                      <p className="sm:w-1/2">
+                        <span className="text-base font-semibold leading-7 text-gray-900">
+                          Legal Status:
+                        </span>{' '}
+                        <span className="text-[#d95740]">
+                          {getValues('legalStatus').charAt(0).toUpperCase() +
+                            getValues('legalStatus').slice(1)}
+                        </span>
+                      </p>
 
-                {/* TODO */}
-                <p>
-                  <span className="bg-blue-500 text-white">
-                    TODO: Hours of operation
-                  </span>
-                </p>
+                      <p className="sm:w-1/2">
+                        <span className="text-base font-semibold leading-7 text-gray-900">
+                          Director Name:
+                        </span>{' '}
+                        <span className="text-[#d95740]">
+                          {getValues('directorName')}
+                        </span>
+                      </p>
+                    </div>
 
-                <p>
-                  <span className="text-base font-semibold leading-7 text-gray-900">
-                    Director Name:
-                  </span>{' '}
-                  <span className="text-[#d95740]">
-                    {getValues('directorName')}
-                  </span>
-                </p>
+                    <p className="text-base font-semibold leading-7 text-gray-900">
+                      Brief Agency Information
+                    </p>
+                    <p className="text-[#d95740]">{getValues('agencyInfo')}</p>
+                  </section>
 
-                <p>
-                  <span className="text-base font-semibold leading-7 text-gray-900">
-                    Agency Info:
-                  </span>{' '}
-                  <span className="text-[#d95740]">
-                    {getValues('agencyInfo')}
-                  </span>
-                </p>
+                  {/* Hours of Operation */}
+                  <section className="w-1/2">
+                    {/* TODO */}
+                    <h3 className="text-base font-semibold leading-7 text-gray-900">
+                      Hours of Operation
+                    </h3>
+                    <p>
+                      <span className="bg-blue-500 text-white">
+                        TODO: Hours of operation
+                      </span>
+                    </p>
+                  </section>
+                </div>
               </section>
 
               {/* Services */}
