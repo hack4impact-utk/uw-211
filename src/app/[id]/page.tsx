@@ -1853,6 +1853,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
             <div className="flex flex-col gap-10">
+              {/* {console.log(getValues())} */}
               {/* Header */}
               <section>
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -1870,18 +1871,20 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 </h2>
 
                 <p>
-                  <span className="text-md leading-6 text-gray-600">
+                  <span className="text-base font-semibold leading-7 text-gray-900">
                     Legal Name:
                   </span>{' '}
-                  {getValues('legalName')}
+                  <span className="text-[#d95740]">
+                    {getValues('legalName')}
+                  </span>
                 </p>
 
                 {getValues('akas') ? (
                   <p>
-                    <span className="text-md leading-6 text-gray-600">
+                    <span className="text-base font-semibold leading-7 text-gray-900">
                       Also Known As:
                     </span>{' '}
-                    {getValues('akas')}
+                    <span className="text-[#d95740]">{getValues('akas')}</span>
                   </p>
                 ) : (
                   <p className="text-md leading-6 text-gray-400">
@@ -1890,32 +1893,38 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 )}
 
                 <p>
-                  <span className="text-md leading-6 text-gray-600">
+                  <span className="text-base font-semibold leading-7 text-gray-900">
                     Legal Status:
                   </span>{' '}
-                  {getValues('legalStatus').charAt(0).toUpperCase() +
-                    getValues('legalStatus').slice(1)}
+                  <span className="text-[#d95740]">
+                    {getValues('legalStatus').charAt(0).toUpperCase() +
+                      getValues('legalStatus').slice(1)}
+                  </span>
                 </p>
 
                 {/* TODO */}
                 <p>
-                  <span className="bg-red-500 text-white">
+                  <span className="bg-blue-500 text-white">
                     TODO: Hours of operation
                   </span>
                 </p>
 
                 <p>
-                  <span className="text-md leading-6 text-gray-600">
+                  <span className="text-base font-semibold leading-7 text-gray-900">
                     Director Name:
                   </span>{' '}
-                  {getValues('directorName')}
+                  <span className="text-[#d95740]">
+                    {getValues('directorName')}
+                  </span>
                 </p>
 
                 <p>
-                  <span className="text-md leading-6 text-gray-600">
+                  <span className="text-base font-semibold leading-7 text-gray-900">
                     Agency Info:
                   </span>{' '}
-                  {getValues('agencyInfo')}
+                  <span className="text-[#d95740]">
+                    {getValues('agencyInfo')}
+                  </span>
                 </p>
               </section>
 
@@ -1950,6 +1959,173 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {get_services()}
                   </div>
                 )}
+              </section>
+
+              {/* Opportunities */}
+              <section className="flex flex-col gap-4">
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Opportunities
+                </h2>
+
+                {/* Volunteers */}
+                <section>
+                  <p>
+                    <span className="text-base font-semibold leading-7 text-gray-900">
+                      Does your organization accept volunteers?
+                    </span>{' '}
+                    <span className="ml-2 text-[#d95740]">
+                      {getValues('volunteerFields.volunteers') == 'true'
+                        ? 'Yes'
+                        : 'No'}
+                    </span>
+                  </p>
+
+                  {getValues('volunteerFields.volunteers') == 'true' ? (
+                    <div className="ml-8 flex flex-col gap-4">
+                      <div>
+                        <p className="text-base font-semibold leading-7 text-gray-900">
+                          Who is eligible to volunteer?
+                        </p>
+                        <p className="text-[#d95740]">
+                          {getValues('volunteerFields.vol_reqs')}
+                        </p>
+                      </div>
+
+                      <section className="flex flex-row gap-12">
+                        <div>
+                          <p className="text-base font-semibold leading-7 text-gray-900">
+                            Volunteer Coordinator
+                          </p>
+                          <p className="text-[#d95740]">
+                            {getValues('volunteerFields.vol_coor')}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-base font-semibold leading-7 text-gray-900">
+                            Phone #
+                          </p>
+                          <p className="text-[#d95740]">
+                            {getValues('volunteerFields.vol_coor_tel')}
+                          </p>
+                        </div>
+                      </section>
+                    </div>
+                  ) : (
+                    ''
+                  )}
+                </section>
+
+                {/* Donations */}
+                <section>
+                  <p>
+                    <span className="text-base font-semibold leading-7 text-gray-900">
+                      Does your organization accept ongoing, non-monetary
+                      donations in support of programs or services?
+                    </span>{' '}
+                    <span className="ml-2 text-[#d95740]">
+                      {getValues('donationFields.donation') == 'true'
+                        ? 'Yes'
+                        : 'No'}
+                    </span>
+                  </p>
+
+                  {getValues('donationFields.donation') == 'true' ? (
+                    <div className="ml-8 flex flex-col gap-4">
+                      <p>
+                        <span className="text-base font-semibold leading-7 text-gray-900">
+                          Please list.
+                        </span>{' '}
+                        <span className="ml-2 text-[#d95740]">
+                          {getValues('donationFields.don_ex')}
+                        </span>
+                      </p>
+
+                      <div>
+                        <p>
+                          <span className="text-base font-semibold leading-7 text-gray-900">
+                            Do you provide pick-up service?
+                          </span>{' '}
+                          <span className="ml-2 text-[#d95740]">
+                            {getValues('donationFields.pickup') == 'true'
+                              ? 'Yes'
+                              : 'No'}
+                          </span>
+                        </p>
+
+                        {getValues('donationFields.pickup') == 'true' ? (
+                          <p className="ml-8">
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Where?
+                            </span>{' '}
+                            <span className="ml-2 text-[#d95740]">
+                              {getValues('donationFields.pickup_loc')}
+                            </span>
+                          </p>
+                        ) : (
+                          ''
+                        )}
+                      </div>
+
+                      <section className="flex flex-row gap-12">
+                        <div>
+                          <p className="text-base font-semibold leading-7 text-gray-900">
+                            Donation Coordinator
+                          </p>
+                          <p className="text-[#d95740]">
+                            {getValues('donationFields.don_coor')}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-base font-semibold leading-7 text-gray-900">
+                            Phone #
+                          </p>
+                          <p className="text-[#d95740]">
+                            {getValues('donationFields.don_coor_tel')}
+                          </p>
+                        </div>
+                      </section>
+                    </div>
+                  ) : (
+                    ''
+                  )}
+                </section>
+
+                {/* Recommendations */}
+                <section>
+                  <p>
+                    <span className="text-base font-semibold leading-7 text-gray-900">
+                      Are there other agencies or services that have been
+                      helpful that you would recommend to be included in our
+                      resource database?
+                    </span>{' '}
+                    <span className="ml-2 text-[#d95740]">
+                      {getValues('recommendationFields.recommendation') ==
+                      'true'
+                        ? 'Yes'
+                        : 'No'}
+                    </span>
+                  </p>
+
+                  {getValues('recommendationFields.recommendation') ==
+                  'true' ? (
+                    <div className="ml-8">
+                      <p className="text-base font-semibold leading-7 text-gray-900">
+                        Please provide contact information for these
+                        agencies/services.
+                      </p>
+
+                      <p className="text-[#d95740]">
+                        {getValues(
+                          'recommendationFields.recommendations_contact'
+                        )}
+                      </p>
+                    </div>
+                  ) : (
+                    ''
+                  )}
+                </section>
               </section>
             </div>
           </motion.div>

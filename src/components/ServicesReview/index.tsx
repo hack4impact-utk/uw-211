@@ -147,7 +147,7 @@ export function ServicesReview(service: Service) {
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               Description:
             </h3>
-            <p>{service.description}</p>
+            <p className="text-[#d95740]">{service.description}</p>
           </div>
 
           <div>
@@ -167,28 +167,28 @@ export function ServicesReview(service: Service) {
                 <h3 className="text-base font-semibold leading-7 text-gray-900">
                   Contact Person
                 </h3>
-                <p>{service.contact}</p>
+                <p className="text-[#d95740]">{service.contact}</p>
               </>
             )}
           </div>
 
           {/* TODO */}
           <div>
-            <span className="bg-red-500 text-white">TODO: Hours</span>
+            <span className="bg-blue-500 text-white">TODO: Hours</span>
           </div>
 
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               How would someone apply for this service?
             </h3>
-            <p>{service.eligibility}</p>
+            <p className="text-[#d95740]">{service.eligibility}</p>
           </div>
 
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               How would someone apply for this service?
             </h3>
-            {get_app_proccess()}
+            <span className="text-[#d95740]">{get_app_proccess()}</span>
           </div>
 
           <div>
@@ -196,14 +196,14 @@ export function ServicesReview(service: Service) {
               Are individuals charged for your services? What is your fee
               structure?
             </h3>
-            {get_fees()}
+            <span className="text-[#d95740]">{get_fees()}</span>
           </div>
 
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               What would someone need to bring when applying?
             </h3>
-            {get_req_docs()}
+            <span className="text-[#d95740]">{get_req_docs()}</span>
           </div>
         </section>
       </CardContent>
