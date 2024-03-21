@@ -18,31 +18,26 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { agencyUpdateStatus } from '@/utils/constants';
 
-export type Agency = {
+export type AgencyDashboardInfo = {
   name: string;
-  lastUpdate?: Date;
-  status:
-    | 'Up to date'
-    | 'Email sent recently'
-    | 'Close to deadline'
-    | 'Expired';
-  email: string;
+  lastUpdate?: Date | undefined;
+  status: agencyUpdateStatus;
+  email: string | undefined;
 };
 
-function statusColor(status: Agency['status']) {
+function statusColor(status: agencyUpdateStatus) {
   switch (status) {
-    case 'Up to date':
+    case agencyUpdateStatus.Completed:
       return 'bg-green-100';
-    case 'Email sent recently':
+    case agencyUpdateStatus.NeedsReview:
       return 'bg-blue-100';
-    case 'Close to deadline':
-      return 'bg-yellow-100';
-    case 'Expired':
+    case agencyUpdateStatus.Expired:
       return 'bg-red-100';
     default:
       return '';
@@ -50,7 +45,7 @@ function statusColor(status: Agency['status']) {
 }
 
 // Column definitions for table
-const columns: ColumnDef<Agency>[] = [
+const columns: ColumnDef<AgencyDashboardInfo>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => (
@@ -110,7 +105,7 @@ const columns: ColumnDef<Agency>[] = [
 ];
 
 interface AdminDashboardTableProps {
-  data: Agency[];
+  data: AgencyDashboardInfo[];
 }
 
 export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
@@ -179,7 +174,7 @@ export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
                       key={cell.id}
                       className={
                         cell.column.id === 'status'
-                          ? statusColor(cell.getValue() as Agency['status'])
+                          ? statusColor(cell.getValue() as agencyUpdateStatus)
                           : ''
                       }
                     >

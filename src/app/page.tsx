@@ -1,10 +1,13 @@
 import WelcomePage from '@/components/WelcomePage';
+import { getAgencyById } from '@/server/actions/Agencies';
 import { Agency } from '@/utils/types';
 
-async function getAgency(id: string): Promise<Agency> {
-  const res = await fetch(`${process.env.BASE_URL}/api/agencies/${id}`);
-  const body = await res.json();
-  return body.data.agency;
+async function getAgency(id: string): Promise<Agency | undefined> {
+  try {
+    return await getAgencyById(id);
+  } catch (error) {
+    return undefined;
+  }
 }
 
 export default async function Home({
