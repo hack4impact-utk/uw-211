@@ -31,7 +31,6 @@ export default function HoursOfOperationPicker({
     control,
   });
 
-  // @ts-expect-error field.value has weird union type..., but it works
   const [hours, setHours] = useState<HoursOfOperation>(field.value || []);
 
   const [day, setDay] = useState<number>(0);
@@ -39,7 +38,6 @@ export default function HoursOfOperationPicker({
   const [close, setClose] = useState<number>(34); // Default 5:00 PM
 
   useEffect(() => {
-    // @ts-expect-error field.value has weird union type..., but it works
     setHours(field.value || []);
   }, [field.value]);
 

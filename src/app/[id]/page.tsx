@@ -236,7 +236,6 @@ export default function Form({ params }: { params: { id: string } }) {
           Hours
         </label>
         <div className="mb-2">
-          {/* @ts-expect-error name and control have weird type errors, but it works */}
           <HoursOfOperationPicker
             name={`services.${serviceIdx}.hours`}
             control={control}
@@ -1042,7 +1041,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     Hours of Operation
                     <span className="ml-1 text-sm text-red-400">*</span>
                   </label>
-                  {/* @ts-expect-error name and control have weird type errors, but it works */}
                   <HoursOfOperationPicker name="hours" control={control} />
                 </div>
               </section>
