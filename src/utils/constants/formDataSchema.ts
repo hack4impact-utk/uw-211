@@ -1,11 +1,22 @@
 import { z } from 'zod';
 
+export const HoursOfOperationOfADaySchema = z.object({
+  id: z.number(),
+  day: z.number(),
+  start: z.number(),
+  end: z.number(),
+});
+
+export const HoursOfOperationDataSchema = z
+  .array(HoursOfOperationOfADaySchema)
+  .refine((hours) => hours.length != 0, 'Required');
+
 export const ServiceSchema = z.object({
   name: z.string().min(1, 'Service name is required.'),
   id: z.number(),
   description: z.string().min(1, 'Service description is required.'),
   contact: z.string(),
-  // hours
+  hours: HoursOfOperationDataSchema,
   eligibility: z.string().min(1, 'Eligibility requirements is required.'),
   applicationProcess: z
     .object({
@@ -113,49 +124,6 @@ export const ServiceSchema = z.object({
       'A selection for required documents is required.'
     ),
 });
-
-const convertToMinutes = (hours: string, minutes: string) => {
-  return parseInt(hours) * 60 + parseInt(minutes);
-};
-
-const checkValidHours = (open: string, close: string) => {
-  const open_split = open.split(':');
-  const open_result = convertToMinutes(open_split[0], open_split[1]);
-
-  const close_split = close.split(':');
-  const close_result = convertToMinutes(close_split[0], close_split[1]);
-
-  if (open_result > close_result) {
-    return false;
-  } else {
-    return true;
-  }
-};
-
-const AgencyHours = z
-  .object({
-    open: z
-      .string()
-      .min(1, 'Required')
-      .regex(/^[0-2]{0,1}[0-9]{1}:[0-9]{2}$/, {
-        message: 'Must be a valid time. (HH:MM)',
-      }),
-    close: z
-      .string()
-      .min(1, 'Required')
-      .regex(/^[0-2]{0,1}[0-9]{1}:[0-9]{2}$/, {
-        message: 'Must be a valid time. (HH:MM)',
-      }),
-  })
-  .superRefine(({ open, close }, ctx) => {
-    if (!checkValidHours(open, close)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Opening time must be before closing time.',
-        path: ['open'],
-      });
-    }
-  });
 
 const VolunteerFields = z
   .object({
@@ -287,26 +255,7 @@ export const FormDataSchema = z.object({
   agencyInfo: z.string().min(1, 'Required'),
   directorName: z.string().min(1, 'Required'),
 
-  hours: AgencyHours,
-
-  days: z
-    .object({
-      monday: z.boolean(),
-      tuesday: z.boolean(),
-      wednesday: z.boolean(),
-      thursday: z.boolean(),
-      friday: z.boolean(),
-    })
-    .partial()
-    .refine(
-      (data) =>
-        data.monday ||
-        data.tuesday ||
-        data.wednesday ||
-        data.thursday ||
-        data.friday,
-      'Please select at least one operational business day'
-    ),
+  hours: HoursOfOperationDataSchema,
 
   // SERVICES
   services: z.array(ServiceSchema),

@@ -9,7 +9,6 @@ export const formSteps = [
       'agencyInfo',
       'directorName',
       'hours',
-      'days',
     ],
   },
   {
