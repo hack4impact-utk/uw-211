@@ -4,8 +4,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import uw211Logo from '@/../public/img/unitedway211.png';
 import React, { useState, useEffect } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 
 export function Navbar() {
+  const { t } = useTranslation('common');
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(true);
   const mdBreakpoint = 768; // TailwindCSS 'md' breakpoint.
 
@@ -46,7 +48,7 @@ export function Navbar() {
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <title>Menu</title>
+                <title>{t('navigation.menu')}</title>
                 <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
               </svg>
             </button>
@@ -58,25 +60,25 @@ export function Navbar() {
                   className="mt-4 block text-[#393a3d] md:mr-8 md:mt-0 md:inline-block"
                   href="/"
                 >
-                  Home
+                  {t('navigation.home')}
                 </Link>
                 <Link
                   className="mt-4 block text-[#393a3d] md:mr-8 md:mt-0 md:inline-block"
                   href="/dashboard"
                 >
-                  Dashboard
+                  {t('navigation.dashboard')}
                 </Link>
                 <Link
                   className="mt-4 block text-[#393a3d] md:mr-8 md:mt-0 md:inline-block"
                   href="/"
                 >
-                  Resources
+                  {t('navigation.resources')}
                 </Link>
                 <Link
                   className="mt-4 block text-[#393a3d] md:mt-0 md:inline-block"
                   href="/"
                 >
-                  About
+                  {t('navigation.about')}
                 </Link>
               </div>
               <div>

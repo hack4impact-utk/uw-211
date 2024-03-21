@@ -3,9 +3,12 @@ import SignInForm from '@/components/SignInForm';
 import { options } from '@/app/api/auth/[...nextauth]/options';
 import { getServerSession } from 'next-auth/next';
 import { redirect } from 'next/navigation';
+import useTranslation from 'next-translate/useTranslation';
 
 export default async function SignIn() {
   const session = await getServerSession(options);
+  const { t } = useTranslation('common');
+  const disclaimer = t('signin.disclaimer', { link: 'xxxx' }).split('xxxx');
 
   if (session && session.user) {
     redirect('/dashboard');
@@ -37,14 +40,7 @@ export default async function SignIn() {
           </Link>
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
-              <p className="text-lg">
-                &ldquo;United Way of Greater Knoxville is driving change in our
-                community by uniting people, businesses, and organizations.
-                Together, we&apos;re creating a more equitable Knoxville where
-                we have stable housing, financial security, quality early care
-                and education, access to food, and more.{' '}
-                <b>Join us and answer the call.</b>&rdquo;
-              </p>
+              <p className="text-lg">{t('signin.missionStatement')}</p>
             </blockquote>
           </div>
         </div>
@@ -52,25 +48,27 @@ export default async function SignIn() {
         <div className="p-8">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
-              <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
+              <h1 className="text-2xl font-semibold tracking-tight">
+                {t('signin.title')}
+              </h1>
             </div>
             <SignInForm />
             <p className="px-8 text-center text-sm text-muted-foreground">
-              By clicking continue, you agree to our{' '}
+              {disclaimer[0]}
               <Link
                 href="/terms"
                 className="underline underline-offset-4 hover:text-primary"
               >
-                Terms of Service
+                {t('signin.termsOfService')}
               </Link>{' '}
-              and{' '}
+              {disclaimer[1]}
               <Link
                 href="/privacy"
                 className="underline underline-offset-4 hover:text-primary"
               >
-                Privacy Policy
+                {t('signin.privacyPolicy')}
               </Link>
-              .
+              {disclaimer[2]}
             </p>
           </div>
         </div>

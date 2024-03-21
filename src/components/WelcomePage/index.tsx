@@ -5,6 +5,7 @@ import FormHeader from '@/components/FormHeader';
 import Footer from '@/components/Footer';
 import uwLogo from '@/../public/img/UWGK_Logo.png';
 import Image from 'next/image';
+import useTranslation from 'next-translate/useTranslation';
 
 interface WelcomePageProps {
   id?: string;
@@ -12,25 +13,37 @@ interface WelcomePageProps {
 }
 
 function WelcomePageBody({ id, agency }: WelcomePageProps) {
+  const { t } = useTranslation('common');
+
+  const validWelcome = t('landing.validWelcome', { org_name: 'xxxx' }).split(
+    'xxxx'
+  );
+  const validInstructions = t('landing.validInstructions', {
+    website: 'xxxx',
+  }).split('xxxx');
+  const invalidInstructions = t('landing.invalidInstructions', {
+    email: 'xxxx',
+    phone: 'xxxx',
+  }).split('xxxx');
+
   if (agency) {
     return (
       <>
         <div>
           <h1 className="text-3xl">
-            Welcome,
-            <span className="font-bold"> {agency.name}</span>!
+            {validWelcome[0]}
+            <span className="font-bold"> {agency.name}</span>
+            {validWelcome[1]}
           </h1>
           <p className="mb-2 mt-4 text-gray-700">
-            Your completion of this form is a valuable step towards connecting
-            individuals with resources in the Greater Knoxville area. To learn
-            more about our services, please visit our{' '}
+            {validInstructions[0]}
             <a
               className="text-blue-700 hover:underline"
               href="https://www.211.org/about-us"
             >
-              website
+              {t('landing.website')}
             </a>
-            .
+            {validInstructions[1]}
           </p>
         </div>
         <div className="flex justify-center">
@@ -39,7 +52,7 @@ function WelcomePageBody({ id, agency }: WelcomePageProps) {
               id="start-button"
               className="w-36 rounded-sm border-none bg-[#1e57a1] p-2 text-white  hover:bg-[#7b8fc3] sm:w-48"
             >
-              <label htmlFor="start-button">Get Started!</label>
+              <label htmlFor="start-button">{t('landing.getStarted')}</label>
             </button>
           </Link>
         </div>
@@ -49,22 +62,20 @@ function WelcomePageBody({ id, agency }: WelcomePageProps) {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold">Oops!</h1>
+      <h1 className="text-3xl font-bold">{t('landing.invalidWelcome')}</h1>
       <p className="mb-2 mt-4 text-gray-700">
-        It seems the form link you have been provided is invalid. Please reach
-        out to us via email at{' '}
+        {invalidInstructions[0]}
         <a
           className="text-blue-700 hover:underline"
           href="mailto: respecialist@oconnorcenter.org"
         >
           respecialist@oconnorcenter.org
-        </a>{' '}
-        or by phone at{' '}
+        </a>
+        {invalidInstructions[1]}
         <a className="text-blue-700 hover:underline" href="tel:8655231329">
           (865) 523-1329
-        </a>{' '}
-        to receive a valid link for your organization. We apologize for any
-        inconvenience this may have caused.
+        </a>
+        {invalidInstructions[2]}
       </p>
     </div>
   );
