@@ -908,7 +908,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Let&apos;s get to know your agency...
             </p>
-            <div className="mt-10 flex w-full flex-col lg:flex-row">
+            <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
               {/* right section */}
               <section className="flex w-full flex-col lg:w-1/2">
                 {/* Legal Agency Name */}
@@ -1575,7 +1575,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 {/* right section */}
                 <section className="h-2/3 w-full lg:w-1/2">
                   <div className="mb-2 flex flex-col">
-                    <div className="flex flex-col lg:flex-row">
+                    <div className="flex flex-col gap-4 lg:flex-row">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
                         Does your organization accept ongoing, non-monetary
                         donations in support of programs or services?
