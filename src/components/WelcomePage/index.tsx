@@ -11,6 +11,64 @@ interface WelcomePageProps {
   agency?: Agency;
 }
 
+function WelcomePageBody({ id, agency }: WelcomePageProps) {
+  if (agency) {
+    return (
+      <>
+        <div>
+          <h1 className="text-3xl">
+            Welcome,
+            <span className="font-bold"> {agency.name}</span>!
+          </h1>
+          <p className="mb-2 mt-4 text-gray-700">
+            Your completion of this form is a valuable step towards connecting
+            individuals with resources in the Greater Knoxville area. To learn
+            more about our services, please visit our{' '}
+            <a
+              className="text-blue-700 hover:underline"
+              href="https://www.211.org/about-us"
+            >
+              website
+            </a>
+            .
+          </p>
+        </div>
+        <div className="flex justify-center">
+          <Link href={`/${id}`}>
+            <button
+              id="start-button"
+              className="w-36 rounded-sm border-none bg-[#1e57a1] p-2 text-white  hover:bg-[#7b8fc3] sm:w-48"
+            >
+              <label htmlFor="start-button">Get Started!</label>
+            </button>
+          </Link>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <div>
+      <h1 className="text-3xl font-bold">Oops!</h1>
+      <p className="mb-2 mt-4 text-gray-700">
+        It seems the form link you have been provided is invalid. Please reach
+        out to us via email at{' '}
+        <a
+          className="text-blue-700 hover:underline"
+          href="mailto: respecialist@oconnorcenter.org"
+        >
+          respecialist@oconnorcenter.org
+        </a>{' '}
+        or by phone at{' '}
+        <a className="text-blue-700 hover:underline" href="tel:8655231329">
+          (865) 523-1329
+        </a>{' '}
+        to receive a valid link for your organization. We apologize for any
+        inconvenience this may have caused.
+      </p>
+    </div>
+  );
+}
 function WelcomePage({ id, agency }: WelcomePageProps) {
   return (
     <>
@@ -30,38 +88,7 @@ function WelcomePage({ id, agency }: WelcomePageProps) {
                   height="200"
                 />
               </div>
-              <div>
-                <h1 className="text-3xl">
-                  Welcome,
-                  <span className="font-bold">
-                    {' '}
-                    {agency ? agency.name : 'Participant'}
-                  </span>
-                  !
-                </h1>
-                <p className="mb-2 mt-4 text-gray-700">
-                  Your completion of this form is a valuable step towards
-                  connecting individuals with resources in the Greater Knoxville
-                  area. To learn more about our services, please visit our{' '}
-                  <a
-                    className="text-blue-700 hover:underline"
-                    href="https://www.211.org/about-us"
-                  >
-                    website
-                  </a>
-                  .
-                </p>
-              </div>
-              <div className="flex justify-center">
-                <Link href={id && agency ? `/${id}` : '/'}>
-                  <button
-                    id="start-button"
-                    className="w-36 rounded-sm border-none bg-[#1e57a1] p-2 text-white  hover:bg-[#7b8fc3] sm:w-48"
-                  >
-                    <label htmlFor="start-button">Get Started!</label>
-                  </button>
-                </Link>
-              </div>
+              <WelcomePageBody id={id} agency={agency} />
             </div>
           </div>
         </div>

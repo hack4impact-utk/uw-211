@@ -133,6 +133,10 @@ describe('Agency', () => {
 
     // Check if the daysSinceEmailSent field is set to 0
     expect(agency.daysSinceEmailSent).toBe(0);
+
+    // Check if the latestInfo field is equal to the last info in the
+    // original array
+    expect(agency.latestInfo).toEqual(agency.info[agency.info.length - 1]);
   });
 
   it('Test page return size from getPagineatedAgencies', async () => {
