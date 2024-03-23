@@ -33,189 +33,10 @@ import {
 import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
 import { formSteps } from '@/utils/constants/formSteps';
 import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
-import { AgencyInfoForm } from '@/utils/types';
-import { Service as ServiceModel } from '@/utils/types';
+import { zodFormToTs } from '@/utils/conversions';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
-
-const dayMapping: {
-  [key: string]:
-    | 'Monday'
-    | 'Tuesday'
-    | 'Wednesday'
-    | 'Thursday'
-    | 'Friday'
-    | 'Saturday'
-    | 'Sunday';
-} = {
-  monday: 'Monday',
-  tuesday: 'Tuesday',
-  wednesday: 'Wednesday',
-  thursday: 'Thursday',
-  friday: 'Friday',
-  saturday: 'Saturday',
-  sunday: 'Sunday',
-};
-
-function zodApplicationToTs(
-  data: Service
-): (
-  | 'Walk-in'
-  | 'Telephone'
-  | 'Call to Schedule Appointment'
-  | 'Apply Online'
-  | string
-)[] {
-  const eligibility: (
-    | 'Walk-in'
-    | 'Telephone'
-    | 'Call to Schedule Appointment'
-    | 'Apply Online'
-    | string
-  )[] = [];
-  if (data.applicationProcess.walkIn) eligibility.push('Walk-in');
-  if (data.applicationProcess.telephone) eligibility.push('Telephone');
-  if (data.applicationProcess.appointment)
-    eligibility.push('Call to Schedule Appointment');
-  if (data.applicationProcess.online) eligibility.push('Apply Online');
-  if (
-    data.applicationProcess.other?.selected &&
-    data.applicationProcess.other.content
-  )
-    eligibility.push(data.applicationProcess.other.content);
-  return eligibility;
-}
-
-function zodFeeToTs(
-  data: Service
-):
-  | 'No Fee'
-  | 'Sliding Scale'
-  | 'Income Based'
-  | 'Fee'
-  | 'Insurance: Medicaid/TennCare'
-  | 'Insurance: Medicare'
-  | 'Insurance: Private' {
-  if (data.feeCategory.straight?.selected) return 'Fee';
-  if (data.feeCategory.slidingScale) return 'Sliding Scale';
-  if (data.feeCategory.medicaid_tenncare) return 'Insurance: Medicaid/TennCare';
-  if (data.feeCategory.medicare) return 'Insurance: Medicare';
-  if (data.feeCategory.private) return 'Insurance: Private';
-  return 'No Fee';
-}
-
-function zodDocumentsToTs(data: Service): ServiceModel['requiredDocuments'] {
-  const documents: ServiceModel['requiredDocuments'] = [];
-  if (data.requiredDocuments.none) {
-    documents.push('No Documents');
-    return documents;
-  }
-  if (data.requiredDocuments.stateId) documents.push('State Issued ID');
-  if (data.requiredDocuments.ssn) documents.push('Social Security Card');
-  if (data.requiredDocuments.proofOfResidence)
-    documents.push('Proof of Residence');
-  if (data.requiredDocuments.proofOfIncome) documents.push('Proof of Income');
-  if (data.requiredDocuments.birthCertificate)
-    documents.push('Birth Certificate');
-  if (data.requiredDocuments.medicalRecords) documents.push('Medical Records');
-  if (data.requiredDocuments.psychRecords) documents.push('Psych Records');
-  if (data.requiredDocuments.proofOfNeed) documents.push('Proof of Need');
-  if (data.requiredDocuments.utilityBill) documents.push('Utility Bill');
-  if (data.requiredDocuments.utilityCutoffNotice)
-    documents.push('Utility Cutoff Notice');
-  if (data.requiredDocuments.proofOfCitizenship)
-    documents.push('Proof of Citizenship');
-  if (data.requiredDocuments.proofOfPublicAssistance)
-    documents.push('Proof of Public Assistance');
-  if (data.requiredDocuments.driversLicense) documents.push('Drivers License');
-  if (
-    data.requiredDocuments.other?.selected &&
-    data.requiredDocuments.other.content
-  )
-    documents.push(data.requiredDocuments.other.content);
-  return documents;
-}
-
-function zodServiceToTs(data: Service): ServiceModel {
-  const service: ServiceModel = {
-    name: data.name,
-    fullDescription: data.fullDescription,
-    contactPersonName: data.contactPersonName,
-    daysOpen: data.daysOpen.map((day) => {
-      return {
-        day: day.day,
-        openTime: day.openTime,
-        closeTime: day.closeTime,
-      };
-    }),
-    eligibilityRequirements: data.eligibilityRequirements,
-    applicationProcess: zodApplicationToTs(data),
-    applicationProcessReferralRequiredByWhom: data.applicationProcess.referral
-      ?.required
-      ? data.applicationProcess.referral.content
-      : '',
-    feeCategory: zodFeeToTs(data),
-    feeStraightFeeAmount: data.feeCategory.straight?.content,
-    requiredDocuments: zodDocumentsToTs(data),
-  };
-  return service;
-}
-
-function zodVolCoordinatorToTs(
-  data: Inputs
-): AgencyInfoForm['volunteerCoordinatorContactInfo'] {
-  const contactInfo: AgencyInfoForm['volunteerCoordinatorContactInfo'] = {
-    name: data.volunteerFields.vol_coor,
-    phoneNumber: data.volunteerFields.vol_coor_tel,
-  };
-  return contactInfo;
-}
-
-function zodFormToTS(data: Inputs): AgencyInfoForm {
-  const agencyInfo: AgencyInfoForm = {
-    legalAgencyName: data.legalName,
-    alsoKnownAs: data.akas.split(' '),
-    legalOrganizationalStatus: data.legalStatus.split(' '),
-    briefAgencyDescription: data.agencyInfo,
-    directorNameOrTitle: data.directorName,
-    serviceArea: data.serviceArea || {},
-    fundingSources: data.fundingSources || [],
-    location: data.location || {
-      physicalAddress: 'The zod schema/front end need to collect an address',
-    },
-    contactInfo: data.contactInfo || {
-      phoneNumber: 'The zod schema/front end need to collect a phone number',
-    },
-    languageTeleInterpreterService: data.teleinterpreterLanguageService,
-    languages: data.supportedLanguages || [],
-    languagesWithoutPriorNotice: data.supportedLanguagesWithoutNotice,
-    accessibilityADA: data.accessibilityADA,
-    regularHoursOpening: data.hours.open,
-    regularHoursClosing: data.hours.close,
-    regularDaysOpen: Object.entries(data.days)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .filter(([_, value]) => value)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .map(([key, _]) => dayMapping[key]),
-    updaterContactInfo: data.updaterContactInfo || {
-      phoneNumber: 'The zod schema/front end need to collect a phone number',
-    },
-    services: data.services.map((service) => zodServiceToTs(service)),
-    volunteerOpportunities: data.volunteerFields.volunteers == 'true',
-    volunteerOpportunitiesEligibility: data.volunteerFields.vol_reqs,
-    volunteerCoordinatorContactInfo: zodVolCoordinatorToTs(data),
-    donations: data.donationFields.don_ex?.split(','), // split by comma
-    donationPickUpLocation: {
-      physicalAddress: 'The zod schema/front end need to collect an address',
-    },
-    donationCoordinatorContactInfo: {
-      name: data.donationFields.don_coor,
-      phoneNumber: data.donationFields.don_coor_tel,
-    },
-  };
-  return agencyInfo;
-}
 
 const steps = formSteps;
 
@@ -244,7 +65,7 @@ export default function Form({ params }: { params: { id: string } }) {
   const { width: screenWidth } = useWindowSize();
 
   const processForm: SubmitHandler<Inputs> = (data) => {
-    const validatedInfo = zodFormToTS(data);
+    const validatedInfo = zodFormToTs(data);
     createAgencyInfoWithServices(params.id, validatedInfo);
     reset();
   };
@@ -2020,12 +1841,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Please review your selections and submit.
             </p>
-            {/* <button
-              type="submit"
-              className="rounded bg-blue-600 px-2 py-1 text-black"
-            >
-              Click to submit
-            </button> */}
             <Button type="submit">Click to Submit</Button>
           </motion.div>
         )}

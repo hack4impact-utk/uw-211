@@ -162,8 +162,6 @@ export async function createAgencyInfoWithServices(
   agencyInfo: AgencyInfoForm
 ): Promise<string> {
   await dbConnect();
-  console.log(agencyId);
-  console.log(agencyInfo);
   const serviceIds = [];
   if (!agencyInfo.services) {
     throw new JSendResponse({
