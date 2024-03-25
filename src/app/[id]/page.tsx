@@ -1992,7 +1992,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </p>
                     </div>
 
-                    {getValues('volunteerFields.volunteers') == 'true' ? (
+                    {getValues('volunteerFields.volunteers') == 'true' && (
                       <div>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
                           <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
@@ -2024,8 +2024,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </p>
                         </div>
                       </div>
-                    ) : (
-                      ''
                     )}
                   </section>
 
@@ -2044,7 +2042,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </p>
                     </div>
 
-                    {getValues('donationFields.donation') == 'true' ? (
+                    {getValues('donationFields.donation') == 'true' && (
                       <div>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
                           <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
@@ -2097,8 +2095,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </p>
                         </div>
                       </div>
-                    ) : (
-                      ''
                     )}
                   </section>
 
@@ -2120,7 +2116,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     </div>
 
                     {getValues('recommendationFields.recommendation') ==
-                    'true' ? (
+                      'true' && (
                       <div className="flex flex-col sm:flex-row sm:gap-16">
                         <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                           Please provide contact information for these
@@ -2133,8 +2129,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           )}
                         </p>
                       </div>
-                    ) : (
-                      ''
                     )}
                   </section>
                 </section>
