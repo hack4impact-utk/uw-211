@@ -47,32 +47,47 @@ export function ServicesReview(service: Service) {
 
   const get_app_proccess = () => {
     const applicationProcess = service.applicationProcess;
-    let options: string = '';
+    const options: string[] = [];
     let other: string = '';
     let referral: string = '';
 
     Object.entries(applicationProcess).forEach(([key, value]) => {
       if (value && key != 'other' && key != 'referral') {
-        options += app_proccess.get(key) + ', ';
+        options.push(app_proccess.get(key)!);
       }
     });
 
     if (applicationProcess.other?.selected) {
-      options += 'Other, ';
       other = String(applicationProcess.other.content);
+      options.push('Other');
     }
 
     if (applicationProcess.referral?.required) {
-      options += 'Referral, ';
       referral = String(applicationProcess.referral.content);
+      options.push('Referral');
     }
 
     return (
       <>
-        <p>{options.substring(0, options.length - 2)}</p>
+        <p>
+          {options.map((item, index) => (
+            <span key={index}>
+              <span className="underline">{item}</span>
+              {index !== options.length - 1 && ', '}
+            </span>
+          ))}
+        </p>
         <div className="ml-6">
-          {other != '' ? <p>Other: {other}</p> : ''}
-          {referral != '' ? <p>Referral: {referral}</p> : ''}
+          {other != '' && (
+            <p>
+              Other: <span className="underline">{other}</span>
+            </p>
+          )}
+          {referral != '' && (
+            <p>
+              Referral: <span className="underline">{referral}</span>
+            </p>
+          )}
         </div>
       </>
     );
@@ -80,25 +95,38 @@ export function ServicesReview(service: Service) {
 
   const get_fees = () => {
     const fees_array = service.fees;
-    let options: string = '';
+    const options: string[] = [];
     let straight_fee: string = '';
 
     if (fees_array.none == false) {
       Object.entries(fees_array).forEach(([key, value]) => {
-        if (value && key != 'none' && key != 'straightFee') {
-          options += fees.get(key) + ', ';
+        if (value && key != 'none' && key != 'straight') {
+          options.push(fees.get(key)!);
         }
       });
 
       if (fees_array.straight?.selected) {
         straight_fee = String(fees_array.straight.content);
+        options.push('Straight Fee');
       }
 
       return (
         <>
-          <p>{options.substring(0, options.length - 2)}</p>
+          <p>
+            {options.map((item, index) => (
+              <span key={index}>
+                <span className="underline">{item}</span>
+                {index !== options.length - 1 && ', '}
+              </span>
+            ))}
+          </p>
+
           <div className="ml-6">
-            {straight_fee != '' ? <p>Straight Fee: {straight_fee}</p> : ''}
+            {straight_fee != '' && (
+              <p>
+                Straight Fee: <span className="underline">{straight_fee}</span>
+              </p>
+            )}
           </div>
         </>
       );
@@ -109,25 +137,38 @@ export function ServicesReview(service: Service) {
 
   const get_req_docs = () => {
     const req_docs = service.requiredDocuments;
-    let options: string = '';
+    const options: string[] = [];
     let other: string = '';
 
     if (req_docs.none == false) {
       Object.entries(req_docs).forEach(([key, value]) => {
         if (value && key != 'none' && key != 'other') {
-          options += required_documents.get(key) + ', ';
+          options.push(required_documents.get(key)!);
         }
       });
 
       if (req_docs.other?.selected) {
-        options += 'Other, ';
         other = String(req_docs.other.content);
+        options.push('Other');
       }
 
       return (
         <>
-          <p>{options.substring(0, options.length - 2)}</p>
-          <div className="ml-6">{other != '' ? <p>Other: {other}</p> : ''}</div>
+          <p>
+            {options.map((item, index) => (
+              <span key={index}>
+                <span className="underline">{item}</span>
+                {index !== options.length - 1 && ', '}
+              </span>
+            ))}
+          </p>
+          <div className="ml-6">
+            {other != '' && (
+              <p>
+                Other: <span className="underline">{other}</span>
+              </p>
+            )}
+          </div>
         </>
       );
     } else {
@@ -146,7 +187,7 @@ export function ServicesReview(service: Service) {
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               Description
             </h3>
-            <p className="underline">{service.description}</p>
+            <p>{service.description}</p>
           </div>
 
           <div>
@@ -187,7 +228,7 @@ export function ServicesReview(service: Service) {
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               How would someone apply for this service?
             </h3>
-            <span className="underline">{get_app_proccess()}</span>
+            {get_app_proccess()}
           </div>
 
           <div>
@@ -195,14 +236,14 @@ export function ServicesReview(service: Service) {
               Are individuals charged for your services? What is your fee
               structure?
             </h3>
-            <span className="underline">{get_fees()}</span>
+            {get_fees()}
           </div>
 
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               What would someone need to bring when applying?
             </h3>
-            <span className="underline">{get_req_docs()}</span>
+            {get_req_docs()}
           </div>
         </section>
       </CardContent>
