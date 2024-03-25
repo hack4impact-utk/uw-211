@@ -31,17 +31,45 @@ interface AdminDashboardTableProps {
   params: dashboardParams;
 }
 
-function cmpAgencyByField(field: string, descending: boolean) {
+/**
+ * @brief Accesses nested properties of an object
+ * @example Can access obj.prop1.prop2 like getValueByPath(obj, "prop1.prop2")
+ * @param obj Any object
+ * @param path Path to the property as a dot-delimited string
+ * @returns The property at the specified path
+ */
+function getValueByPath(obj: any, path: string) {
+  const keys: string[] = path.split('.');
+  let current: any = obj;
+  for (const key of keys) {
+    if (current[key] === undefined) {
+      return undefined;
+    }
+    current = current[key];
+  }
+  return current;
+}
+
+/**
+ * @brief Makes a comparison function that compares two agencies based on a provided field; used to sort agencies
+ * @param field A field of the Agency type (e.g. "name")
+ * @param descending If true, reverses the sort
+ * @returns A comparison function used to sort agencies
+ */
+function makeAgencyCmpFn(
+  field: string,
+  descending: boolean
+): (a: Agency, b: Agency) => number {
   return (a: Agency, b: Agency) => {
     const reverse: number = descending === true ? -1 : 1;
-    const key: keyof Agency = field as keyof Agency;
-    console.log(a[key]!);
+    const a_val = getValueByPath(a, field);
+    const b_val = getValueByPath(b, field);
 
-    if (a[key]! < b[key]!) {
+    if (a_val < b_val) {
       return -1 * reverse;
     }
 
-    if (a[key]! > b[key]!) {
+    if (a_val > b_val) {
       return 1 * reverse;
     }
 
@@ -59,7 +87,7 @@ export async function AdminDashboardTable({
   try {
     agencies = await getAgencies(
       true,
-      cmpAgencyByField(params.sortField || 'name', sortDescending)
+      makeAgencyCmpFn(params.sortField || 'name', sortDescending)
     );
   } catch (error) {
     return <h1>Error loading data</h1>;
