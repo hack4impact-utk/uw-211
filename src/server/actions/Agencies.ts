@@ -10,12 +10,15 @@ import {
   AgencyModel,
   ServiceModel,
 } from '@/server/models';
+import { authOptions } from '@/app/api/auth/[...nextauth]/options';
+import { getServerSession } from 'next-auth';
 
 /**
  * @brief Gets all agencies
  * @returns An array of all agencies in the "agencies" collection with fields populated
  */
 export async function getAgencies(): Promise<Agency[]> {
+  authenticateUser();
   try {
     await dbConnect();
     const agencies = await AgencyModel.find({})
@@ -44,6 +47,7 @@ export async function getPaginatedAgencies(
   page: number,
   pageSize: number
 ): Promise<Agency[]> {
+  authenticateUser();
   if (page < 1) {
     throw new JSendResponse({
       status: 'fail',
@@ -112,6 +116,7 @@ export async function getAgencyById(id: string): Promise<Agency> {
  * @throws See mongoErrorHandler for common insertion errors
  */
 export async function createService(service: Service): Promise<Service> {
+  authenticateUser();
   await dbConnect();
   const newService = await ServiceModel.create(service).catch((err) => {
     mongoErrorHandler(err);
@@ -126,6 +131,7 @@ export async function createService(service: Service): Promise<Service> {
  * @throws See mongoErrorHandler for common insertion errors
  */
 export async function createAgency(agency: Agency): Promise<Agency> {
+  authenticateUser();
   await dbConnect();
 
   const newAgency = await AgencyModel.create(agency).catch((error) => {
@@ -143,6 +149,7 @@ export async function createAgency(agency: Agency): Promise<Agency> {
 export async function createAgencyInfo(
   agencyInfo: AgencyInfoForm
 ): Promise<AgencyInfoForm> {
+  authenticateUser();
   await dbConnect();
 
   const newAgencyInfo = await AgencyInfoFormModel.create(agencyInfo).catch(
@@ -164,6 +171,7 @@ export async function updateAgency(
   id: string,
   updates: Partial<Agency>
 ): Promise<Agency | null> {
+  authenticateUser();
   await dbConnect();
   const updatedAgency = await AgencyModel.updateOne({ _id: id }, updates).catch(
     (error) => {
@@ -196,6 +204,7 @@ export async function updateService(
   id: string,
   updates: Partial<Service>
 ): Promise<Service | null> {
+  authenticateUser();
   await dbConnect();
   const updatedService = await ServiceModel.updateOne(
     { _id: id },
@@ -220,6 +229,7 @@ export async function updateService(
  * @throws 404 if no agency is found with the ID
  */
 export async function deleteAgency(id: string): Promise<Agency | null> {
+  authenticateUser();
   await dbConnect();
   const deletedAgency = await AgencyModel.findByIdAndDelete(id).catch(
     (error) => {
@@ -242,6 +252,7 @@ export async function deleteAgency(id: string): Promise<Agency | null> {
  * @throws 404 if no service is found with the ID
  */
 export async function deleteService(id: string): Promise<Service | null> {
+  authenticateUser();
   await dbConnect();
   const deletedService = await ServiceModel.findByIdAndDelete(id).catch(
     (error) => {
@@ -270,6 +281,7 @@ export async function approveAgency(
   newInfo: AgencyInfoForm,
   newApprovalStatus: 'Pending' | 'Approved'
 ): Promise<Agency | null> {
+  authenticateUser();
   await dbConnect();
 
   const { services, ...infoWithoutServices } = newInfo;
@@ -356,5 +368,16 @@ function mongoErrorHandler(error: MongoError) {
       // Catch non-mongoose errors
       throw new JSendResponse({ status: 'error', message: errors.serverError });
       break;
+  }
+}
+
+function authenticateUser() {
+  const session = getServerSession(authOptions);
+  if (!session) {
+    throw new JSendResponse({
+      status: 'error',
+      message: 'Unauthorized',
+      code: 401,
+    });
   }
 }

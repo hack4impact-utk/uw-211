@@ -6,8 +6,22 @@ import {
 } from '@/server/actions/Agencies';
 import '@/server/models/Service';
 import { AgencyInfoForm, JSendResponse } from '@/utils/types';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../auth/[...nextauth]/options';
 
 export async function GET() {
+  // Check if user is authenticated
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return Response.json(
+      new JSendResponse({
+        status: 'error',
+        message: 'Unauthorized',
+      }),
+      { status: 401 }
+    );
+  }
+
   try {
     const agencies = await getAgencies();
     const filteredAgencies = agencies.map((agency) => ({
@@ -35,6 +49,18 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  // Check if user is authenticated
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return Response.json(
+      new JSendResponse({
+        status: 'error',
+        message: 'Unauthorized',
+      }),
+      { status: 401 }
+    );
+  }
+
   try {
     const body = await request.json();
     const { info, ...agencyWithoutInfo } = body;
