@@ -1877,7 +1877,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         <span className="text-base font-semibold leading-7 text-gray-900">
                           Legal Name:
                         </span>{' '}
-                        <span className="text-[#d95740]">
+                        <span className="underline">
                           {getValues('legalName')}
                         </span>
                       </p>
@@ -1887,9 +1887,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <span className="text-base font-semibold leading-7 text-gray-900">
                             Also Known As:
                           </span>{' '}
-                          <span className="text-[#d95740]">
-                            {getValues('akas')}
-                          </span>
+                          <span className="underline">{getValues('akas')}</span>
                         </p>
                       ) : (
                         <p className="text-md leading-6 text-gray-400 sm:w-1/2">
@@ -1903,7 +1901,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         <span className="text-base font-semibold leading-7 text-gray-900">
                           Legal Status:
                         </span>{' '}
-                        <span className="text-[#d95740]">
+                        <span className="underline">
                           {getValues('legalStatus').charAt(0).toUpperCase() +
                             getValues('legalStatus').slice(1)}
                         </span>
@@ -1913,7 +1911,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         <span className="text-base font-semibold leading-7 text-gray-900">
                           Director Name:
                         </span>{' '}
-                        <span className="text-[#d95740]">
+                        <span className="underline">
                           {getValues('directorName')}
                         </span>
                       </p>
@@ -1922,7 +1920,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     <p className="text-base font-semibold leading-7 text-gray-900">
                       Brief Agency Information
                     </p>
-                    <p className="text-[#d95740]">{getValues('agencyInfo')}</p>
+                    <p>{getValues('agencyInfo')}</p>
                   </section>
 
                   {/* Hours of Operation */}

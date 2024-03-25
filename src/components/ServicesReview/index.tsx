@@ -146,7 +146,7 @@ export function ServicesReview(service: Service) {
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               Description
             </h3>
-            <p className="text-[#d95740]">{service.description}</p>
+            <p className="underline">{service.description}</p>
           </div>
 
           <div>
@@ -166,7 +166,7 @@ export function ServicesReview(service: Service) {
                 <h3 className="text-base font-semibold leading-7 text-gray-900">
                   Contact Person
                 </h3>
-                <p className="text-[#d95740]">{service.contact}</p>
+                <p className="underline">{service.contact}</p>
               </>
             )}
           </div>
@@ -180,14 +180,14 @@ export function ServicesReview(service: Service) {
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               How would someone apply for this service?
             </h3>
-            <p className="text-[#d95740]">{service.eligibility}</p>
+            <p className="underline">{service.eligibility}</p>
           </div>
 
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               How would someone apply for this service?
             </h3>
-            <span className="text-[#d95740]">{get_app_proccess()}</span>
+            <span className="underline">{get_app_proccess()}</span>
           </div>
 
           <div>
@@ -195,14 +195,14 @@ export function ServicesReview(service: Service) {
               Are individuals charged for your services? What is your fee
               structure?
             </h3>
-            <span className="text-[#d95740]">{get_fees()}</span>
+            <span className="underline">{get_fees()}</span>
           </div>
 
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               What would someone need to bring when applying?
             </h3>
-            <span className="text-[#d95740]">{get_req_docs()}</span>
+            <span className="underline">{get_req_docs()}</span>
           </div>
         </section>
       </CardContent>
