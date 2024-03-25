@@ -1877,9 +1877,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         <span className="text-base font-semibold leading-7 text-gray-900">
                           Legal Name:
                         </span>{' '}
-                        <span className="underline">
-                          {getValues('legalName')}
-                        </span>
+                        {getValues('legalName')}
                       </p>
 
                       {getValues('akas') ? (
@@ -1887,7 +1885,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <span className="text-base font-semibold leading-7 text-gray-900">
                             Also Known As:
                           </span>{' '}
-                          <span className="underline">{getValues('akas')}</span>
+                          {getValues('akas')}
                         </p>
                       ) : (
                         <p className="text-md leading-6 text-gray-400 sm:w-1/2">
@@ -1901,19 +1899,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         <span className="text-base font-semibold leading-7 text-gray-900">
                           Legal Status:
                         </span>{' '}
-                        <span className="underline">
-                          {getValues('legalStatus').charAt(0).toUpperCase() +
-                            getValues('legalStatus').slice(1)}
-                        </span>
+                        {getValues('legalStatus').charAt(0).toUpperCase() +
+                          getValues('legalStatus').slice(1)}
                       </p>
 
                       <p className="sm:w-1/2">
                         <span className="text-base font-semibold leading-7 text-gray-900">
                           Director Name:
                         </span>{' '}
-                        <span className="underline">
-                          {getValues('directorName')}
-                        </span>
+                        {getValues('directorName')}
                       </p>
                     </div>
 
@@ -1985,7 +1979,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         Does your organization accept volunteers?
                       </p>
 
-                      <p className="underline sm:w-1/2">
+                      <p className="sm:w-1/2">
                         {getValues('volunteerFields.volunteers') == 'true'
                           ? 'Yes'
                           : 'No'}
@@ -1999,7 +1993,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             Who is eligible to volunteer?
                           </p>
 
-                          <p className="underline sm:w-1/2">
+                          <p className="sm:w-1/2">
                             {getValues('volunteerFields.vol_reqs')}
                           </p>
                         </div>
@@ -2009,7 +2003,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             Volunteer Coordinator
                           </p>
 
-                          <p className="underline sm:w-1/2">
+                          <p className="sm:w-1/2">
                             {getValues('volunteerFields.vol_coor')}
                           </p>
                         </div>
@@ -2019,7 +2013,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             Phone #
                           </p>
 
-                          <p className="underline sm:w-1/2">
+                          <p className="sm:w-1/2">
                             {getValues('volunteerFields.vol_coor_tel')}
                           </p>
                         </div>
@@ -2035,7 +2029,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         donations in support of programs or services?
                       </p>
 
-                      <p className="underline sm:w-1/2">
+                      <p className="sm:w-1/2">
                         {getValues('donationFields.donation') == 'true'
                           ? 'Yes'
                           : 'No'}
@@ -2049,7 +2043,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             Please list.
                           </p>
 
-                          <p className="underline sm:w-1/2">
+                          <p className="sm:w-1/2">
                             {getValues('donationFields.don_ex')}
                           </p>
                         </div>
@@ -2059,7 +2053,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             Do you provide pick-up service?
                           </p>
 
-                          <p className="underline sm:w-1/2">
+                          <p className="sm:w-1/2">
                             {getValues('donationFields.pickup') == 'true'
                               ? 'Yes'
                               : 'No'}
@@ -2071,7 +2065,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             Where?
                           </p>
 
-                          <p className="underline sm:w-1/2">
+                          <p className="sm:w-1/2">
                             {getValues('donationFields.pickup_loc')}
                           </p>
                         </div>
@@ -2081,7 +2075,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             Donation Coordinator
                           </p>
 
-                          <p className="underline sm:w-1/2">
+                          <p className="sm:w-1/2">
                             {getValues('donationFields.don_coor')}
                           </p>
                         </div>
@@ -2090,7 +2084,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                             Phone #
                           </p>
-                          <p className="underline sm:w-1/2">
+                          <p className="sm:w-1/2">
                             {getValues('donationFields.don_coor_tel')}
                           </p>
                         </div>
@@ -2107,7 +2101,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         resource database?
                       </p>
 
-                      <p className="underline sm:w-1/2">
+                      <p className="sm:w-1/2">
                         {getValues('recommendationFields.recommendation') ==
                         'true'
                           ? 'Yes'
@@ -2123,7 +2117,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           agencies/services.
                         </p>
 
-                        <p className="underline sm:w-1/2">
+                        <p className="sm:w-1/2">
                           {getValues(
                             'recommendationFields.recommendations_contact'
                           )}

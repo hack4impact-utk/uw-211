@@ -72,7 +72,7 @@ export function ServicesReview(service: Service) {
         <p>
           {options.map((item, index) => (
             <span key={index}>
-              <span className="underline">{item}</span>
+              {item}
               {index !== options.length - 1 && ', '}
             </span>
           ))}
@@ -115,7 +115,7 @@ export function ServicesReview(service: Service) {
           <p>
             {options.map((item, index) => (
               <span key={index}>
-                <span className="underline">{item}</span>
+                {item}
                 {index !== options.length - 1 && ', '}
               </span>
             ))}
@@ -157,7 +157,7 @@ export function ServicesReview(service: Service) {
           <p>
             {options.map((item, index) => (
               <span key={index}>
-                <span className="underline">{item}</span>
+                {item}
                 {index !== options.length - 1 && ', '}
               </span>
             ))}
@@ -207,7 +207,7 @@ export function ServicesReview(service: Service) {
                 <h3 className="text-base font-semibold leading-7 text-gray-900">
                   Contact Person
                 </h3>
-                <p className="underline">{service.contact}</p>
+                <p>{service.contact}</p>
               </>
             )}
           </div>
@@ -221,7 +221,7 @@ export function ServicesReview(service: Service) {
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               How would someone apply for this service?
             </h3>
-            <p className="underline">{service.eligibility}</p>
+            <p>{service.eligibility}</p>
           </div>
 
           <div>
