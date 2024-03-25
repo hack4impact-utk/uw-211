@@ -91,7 +91,6 @@ export function ServicesReview(service: Service) {
       });
 
       if (fees_array.straight?.selected) {
-        options += 'Straight Fee, ';
         straight_fee = String(fees_array.straight.content);
       }
 
@@ -145,7 +144,7 @@ export function ServicesReview(service: Service) {
         <section className="flex flex-col gap-4">
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
-              Description:
+              Description
             </h3>
             <p className="text-[#d95740]">{service.description}</p>
           </div>

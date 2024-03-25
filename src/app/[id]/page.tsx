@@ -1893,7 +1893,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </p>
                       ) : (
                         <p className="text-md leading-6 text-gray-400 sm:w-1/2">
-                          Also known as: N/A
+                          Also Known As: N/A
                         </p>
                       )}
                     </div>
@@ -1979,164 +1979,166 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   Opportunities
                 </h2>
 
-                {/* Volunteers */}
-                <section>
-                  <p>
-                    <span className="text-base font-semibold leading-7 text-gray-900">
-                      Does your organization accept volunteers?
-                    </span>{' '}
-                    <span className="ml-2 text-[#d95740]">
-                      {getValues('volunteerFields.volunteers') == 'true'
-                        ? 'Yes'
-                        : 'No'}
-                    </span>
-                  </p>
+                <section className="flex flex-col gap-8">
+                  {/* Volunteers */}
+                  <section>
+                    <div className="flex flex-col sm:flex-row sm:gap-16">
+                      <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                        Does your organization accept volunteers?
+                      </p>
 
-                  {getValues('volunteerFields.volunteers') == 'true' ? (
-                    <div className="ml-8 flex flex-col gap-4">
+                      <p className="underline sm:w-1/2">
+                        {getValues('volunteerFields.volunteers') == 'true'
+                          ? 'Yes'
+                          : 'No'}
+                      </p>
+                    </div>
+
+                    {getValues('volunteerFields.volunteers') == 'true' ? (
                       <div>
-                        <p className="text-base font-semibold leading-7 text-gray-900">
-                          Who is eligible to volunteer?
-                        </p>
-                        <p className="text-[#d95740]">
-                          {getValues('volunteerFields.vol_reqs')}
-                        </p>
-                      </div>
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            Who is eligible to volunteer?
+                          </p>
 
-                      <section className="flex flex-row gap-12">
-                        <div>
-                          <p className="text-base font-semibold leading-7 text-gray-900">
+                          <p className="underline sm:w-1/2">
+                            {getValues('volunteerFields.vol_reqs')}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                             Volunteer Coordinator
                           </p>
-                          <p className="text-[#d95740]">
+
+                          <p className="underline sm:w-1/2">
                             {getValues('volunteerFields.vol_coor')}
                           </p>
                         </div>
 
-                        <div>
-                          <p className="text-base font-semibold leading-7 text-gray-900">
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                             Phone #
                           </p>
-                          <p className="text-[#d95740]">
+
+                          <p className="underline sm:w-1/2">
                             {getValues('volunteerFields.vol_coor_tel')}
                           </p>
                         </div>
-                      </section>
-                    </div>
-                  ) : (
-                    ''
-                  )}
-                </section>
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                  </section>
 
-                {/* Donations */}
-                <section>
-                  <p>
-                    <span className="text-base font-semibold leading-7 text-gray-900">
-                      Does your organization accept ongoing, non-monetary
-                      donations in support of programs or services?
-                    </span>{' '}
-                    <span className="ml-2 text-[#d95740]">
-                      {getValues('donationFields.donation') == 'true'
-                        ? 'Yes'
-                        : 'No'}
-                    </span>
-                  </p>
-
-                  {getValues('donationFields.donation') == 'true' ? (
-                    <div className="ml-8 flex flex-col gap-4">
-                      <p>
-                        <span className="text-base font-semibold leading-7 text-gray-900">
-                          Please list.
-                        </span>{' '}
-                        <span className="ml-2 text-[#d95740]">
-                          {getValues('donationFields.don_ex')}
-                        </span>
+                  {/* Donations */}
+                  <section>
+                    <div className="flex flex-col sm:flex-row sm:gap-16">
+                      <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                        Does your organization accept ongoing, non-monetary
+                        donations in support of programs or services?
                       </p>
 
+                      <p className="underline sm:w-1/2">
+                        {getValues('donationFields.donation') == 'true'
+                          ? 'Yes'
+                          : 'No'}
+                      </p>
+                    </div>
+
+                    {getValues('donationFields.donation') == 'true' ? (
                       <div>
-                        <p>
-                          <span className="text-base font-semibold leading-7 text-gray-900">
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            Please list.
+                          </p>
+
+                          <p className="underline sm:w-1/2">
+                            {getValues('donationFields.don_ex')}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                             Do you provide pick-up service?
-                          </span>{' '}
-                          <span className="ml-2 text-[#d95740]">
+                          </p>
+
+                          <p className="underline sm:w-1/2">
                             {getValues('donationFields.pickup') == 'true'
                               ? 'Yes'
                               : 'No'}
-                          </span>
-                        </p>
-
-                        {getValues('donationFields.pickup') == 'true' ? (
-                          <p className="ml-8">
-                            <span className="text-base font-semibold leading-7 text-gray-900">
-                              Where?
-                            </span>{' '}
-                            <span className="ml-2 text-[#d95740]">
-                              {getValues('donationFields.pickup_loc')}
-                            </span>
                           </p>
-                        ) : (
-                          ''
-                        )}
-                      </div>
+                        </div>
 
-                      <section className="flex flex-row gap-12">
-                        <div>
-                          <p className="text-base font-semibold leading-7 text-gray-900">
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            Where?
+                          </p>
+
+                          <p className="underline sm:w-1/2">
+                            {getValues('donationFields.pickup_loc')}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                             Donation Coordinator
                           </p>
-                          <p className="text-[#d95740]">
+
+                          <p className="underline sm:w-1/2">
                             {getValues('donationFields.don_coor')}
                           </p>
                         </div>
 
-                        <div>
-                          <p className="text-base font-semibold leading-7 text-gray-900">
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                             Phone #
                           </p>
-                          <p className="text-[#d95740]">
+                          <p className="underline sm:w-1/2">
                             {getValues('donationFields.don_coor_tel')}
                           </p>
                         </div>
-                      </section>
-                    </div>
-                  ) : (
-                    ''
-                  )}
-                </section>
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                  </section>
 
-                {/* Recommendations */}
-                <section>
-                  <p>
-                    <span className="text-base font-semibold leading-7 text-gray-900">
-                      Are there other agencies or services that have been
-                      helpful that you would recommend to be included in our
-                      resource database?
-                    </span>{' '}
-                    <span className="ml-2 text-[#d95740]">
-                      {getValues('recommendationFields.recommendation') ==
-                      'true'
-                        ? 'Yes'
-                        : 'No'}
-                    </span>
-                  </p>
-
-                  {getValues('recommendationFields.recommendation') ==
-                  'true' ? (
-                    <div className="ml-8">
-                      <p className="text-base font-semibold leading-7 text-gray-900">
-                        Please provide contact information for these
-                        agencies/services.
+                  {/* Recommendations */}
+                  <section>
+                    <div className="flex flex-col sm:flex-row sm:gap-16">
+                      <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                        Are there other agencies or services that have been
+                        helpful that you would recommend to be included in our
+                        resource database?
                       </p>
 
-                      <p className="text-[#d95740]">
-                        {getValues(
-                          'recommendationFields.recommendations_contact'
-                        )}
+                      <p className="underline sm:w-1/2">
+                        {getValues('recommendationFields.recommendation') ==
+                        'true'
+                          ? 'Yes'
+                          : 'No'}
                       </p>
                     </div>
-                  ) : (
-                    ''
-                  )}
+
+                    {getValues('recommendationFields.recommendation') ==
+                    'true' ? (
+                      <div className="flex flex-col sm:flex-row sm:gap-16">
+                        <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                          Please provide contact information for these
+                          agencies/services.
+                        </p>
+
+                        <p className="underline sm:w-1/2">
+                          {getValues(
+                            'recommendationFields.recommendations_contact'
+                          )}
+                        </p>
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                  </section>
                 </section>
               </section>
             </div>
