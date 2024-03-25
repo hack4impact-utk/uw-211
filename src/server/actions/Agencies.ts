@@ -1,6 +1,3 @@
-// import AgencyInfoFormModel from '@/server/models/AgencyInfoForm';
-// import AgencyModel from '@/server/models/Agency';
-// import ServiceModel from '@/server/models/Service';
 import { Service, Agency, MongoError, AgencyInfoForm } from '@/utils/types';
 import dbConnect from '@/utils/db-connect';
 import { JSendResponse } from '@/utils/types';
@@ -13,18 +10,34 @@ import {
 
 /**
  * @brief Gets all agencies
- * @returns An array of all agencies in the "agencies" collection with fields populated
+ * @param populateServices Populates the agencies' "services" field
+ * @param compareFn Sorts the array of agencies before returning using the specified function; leave empty for no sorting
+ * @returns An array of all agencies in the "agencies" collection
  */
-export async function getAgencies(): Promise<Agency[]> {
+export async function getAgencies(
+  populateServices: boolean = true,
+  compareFn?: (a: Agency, b: Agency) => number
+): Promise<Agency[]> {
   try {
     await dbConnect();
-    const agencies = await AgencyModel.find({})
-      .populate({
+    let query = AgencyModel.find({});
+
+    if (populateServices) {
+      query = query.populate({
         path: 'info',
         populate: { path: 'services' },
-      })
-      .exec();
-    return agencies as Agency[];
+      });
+    } else {
+      query = query.populate('info');
+    }
+
+    let agencies: Agency[] = await query.exec();
+
+    if (compareFn) {
+      agencies = agencies.sort(compareFn);
+    }
+
+    return agencies;
   } catch (error) {
     mongoErrorHandler(error as MongoError);
     return [];

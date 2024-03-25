@@ -1,15 +1,14 @@
-'use client';
-
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+// import {
+//     Column,
+//     ColumnDef,
+//     PaginationState,
+//     flexRender,
+//     getCoreRowModel,
+//     getFilteredRowModel,
+//     getPaginationRowModel,
+//     getSortedRowModel,
+//     useReactTable,
+// } from '@tanstack/react-table';
 import {
   Table,
   TableBody,
@@ -18,187 +17,90 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowUpDown } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { agencyUpdateStatus } from '@/utils/constants';
+import React from 'react';
+// import { InferGetServerSidePropsType, GetServerSideProps } from 'next';
+// import { Button } from '@/components/ui/button';
+// import { ArrowUpDown } from 'lucide-react';
+// import { Input } from '@/components/ui/input';
+// import { agencyUpdateStatus } from '@/utils/constants';
 
-export type AgencyDashboardInfo = {
-  name: string;
-  lastUpdate?: Date | undefined;
-  status: agencyUpdateStatus;
-  email: string | undefined;
-};
-
-function statusColor(status: agencyUpdateStatus) {
-  switch (status) {
-    case agencyUpdateStatus.Completed:
-      return 'bg-green-100';
-    case agencyUpdateStatus.NeedsReview:
-      return 'bg-blue-100';
-    case agencyUpdateStatus.Expired:
-      return 'bg-red-100';
-    default:
-      return '';
-  }
-}
-
-// Column definitions for table
-const columns: ColumnDef<AgencyDashboardInfo>[] = [
-  {
-    accessorKey: 'name',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Agency
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: 'lastUpdate',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Last Update
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ getValue }) => {
-      const value = getValue() as Date;
-      return value
-        ? new Date(value).toLocaleDateString('en-US', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-          })
-        : 'Never';
-    },
-  },
-  {
-    accessorKey: 'status',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Information Status
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
-    // Overwrites every cell in column to be a <a/> link with the email, instead of just text.
-    cell: ({ row }) => (
-      <a href={`mailto:${row.original.email}`} className="hover:underline">
-        {row.original.email}
-      </a>
-    ),
-  },
-];
+import { Agency, dashboardParams } from '@/utils/types';
+import { getAgencies } from '@/server/actions/Agencies';
 
 interface AdminDashboardTableProps {
-  data: AgencyDashboardInfo[];
+  params: dashboardParams;
 }
 
-export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+function cmpAgencyByField(field: string, descending: boolean) {
+  return (a: Agency, b: Agency) => {
+    const reverse: number = descending === true ? -1 : 1;
+    const key: keyof Agency = field as keyof Agency;
+    console.log(a[key]!);
 
-  const table = useReactTable({
-    columns,
-    data,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      columnFilters,
-    },
-  });
+    if (a[key]! < b[key]!) {
+      return -1 * reverse;
+    }
+
+    if (a[key]! > b[key]!) {
+      return 1 * reverse;
+    }
+
+    return 0;
+  };
+}
+
+export async function AdminDashboardTable({
+  params,
+}: AdminDashboardTableProps) {
+  let agencies: Agency[] = [];
+  const sortDescending: boolean =
+    params.sortDescending === undefined ? false : params.sortDescending === '1';
+
+  try {
+    agencies = await getAgencies(
+      true,
+      cmpAgencyByField(params.sortField || 'name', sortDescending)
+    );
+  } catch (error) {
+    return <h1>Error loading data</h1>;
+  }
 
   return (
-    <div className="px-5">
-      {/* Search Bar for filtering by name */}
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Search for an agency..."
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('name')?.setFilterValue(event.target.value)
-          }
-          className="max-w"
-        />
-      </div>
-
-      {/* Dynamic Table: doesn't need to be edited to add additional functionality.*/}
-      <div className="rounded-md border shadow">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row, rowIndex) => (
-                <TableRow
-                  key={row.id}
-                  className={rowIndex % 2 === 1 ? 'bg-gray-100' : ''}
-                  data-state={row.getIsSelected() && 'selected'}
+    <div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Agency Name</TableHead>
+            <TableHead>Last Update</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Updater Email</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {agencies.map((agency, index) => (
+            <TableRow key={index}>
+              <TableCell>{agency.name}</TableCell>
+              <TableCell>
+                {agency.updatedAt === undefined
+                  ? ''
+                  : agency.updatedAt.toLocaleDateString('en-us', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+              </TableCell>
+              <TableCell>{agency.currentStatus}</TableCell>
+              <TableCell>
+                <a
+                  href={`mailto:${agency.latestInfo?.updaterContactInfo.email}`}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={
-                        cell.column.id === 'status'
-                          ? statusColor(cell.getValue() as agencyUpdateStatus)
-                          : ''
-                      }
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                  {agency.latestInfo?.updaterContactInfo.email}
+                </a>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }
