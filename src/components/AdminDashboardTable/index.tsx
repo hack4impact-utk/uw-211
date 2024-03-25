@@ -1,21 +1,3 @@
-// TOOD:
-// Pagination
-// Styling from old
-// Sort buttons to change sort
-// Search bar
-// Other nicities from the old dashboard
-
-// import {
-//     Column,
-//     ColumnDef,
-//     PaginationState,
-//     flexRender,
-//     getCoreRowModel,
-//     getFilteredRowModel,
-//     getPaginationRowModel,
-//     getSortedRowModel,
-//     useReactTable,
-// } from '@tanstack/react-table';
 import {
   Table,
   TableBody,
@@ -25,14 +7,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import React from 'react';
-// import { InferGetServerSidePropsType, GetServerSideProps } from 'next';
-// import { Button } from '@/components/ui/button';
-// import { ArrowUpDown } from 'lucide-react';
-// import { Input } from '@/components/ui/input';
-// import { agencyUpdateStatus } from '@/utils/constants';
+import { agencyUpdateStatus } from '@/utils/constants';
 import { Input } from '@/components/ui/input';
-import { ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
-
+import { ArrowUp, ArrowDown } from 'lucide-react';
 import { Agency, dashboardParams } from '@/utils/types';
 import { getAgencies } from '@/server/actions/Agencies';
 
@@ -86,6 +63,20 @@ function makeAgencyCmpFn(
   };
 }
 
+function statusColor(status: agencyUpdateStatus) {
+  switch (status) {
+    case agencyUpdateStatus.Completed:
+      return 'bg-green-100';
+    case agencyUpdateStatus.NeedsReview:
+      return 'bg-blue-100';
+    case agencyUpdateStatus.Expired:
+      return 'bg-red-100';
+    default:
+      return '';
+  }
+}
+
+/** Helper function to create sortable table heads */
 function addTableHead(
   property: string,
   name: string,
@@ -118,7 +109,7 @@ function addTableHead(
               <ArrowDown className="ml-2 h-4 w-4" />
             )
           ) : (
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <></>
           )}
         </button>
       </form>
@@ -143,12 +134,14 @@ export async function AdminDashboardTable({
     return <h1>Error loading data</h1>;
   }
 
+  // Hidden inputs inserted into the search form to preserve other query parameters
   const searchHiddenInputs = Object.entries(params).map(([key, value]) => {
     if (key !== 'search') {
       return <input type="hidden" key={key} name={key} value={value} />;
     }
   });
 
+  // Same, but for the sort buttons on each table head
   const sortHiddenInputs = Object.entries(params).map(([key, value]) => {
     if (key !== 'sortField' && key !== 'sortAscending') {
       return <input type="hidden" key={key} name={key} value={value} />;
@@ -237,7 +230,15 @@ export async function AdminDashboardTable({
                       day: 'numeric',
                     })}
               </TableCell>
-              <TableCell>{agency.currentStatus}</TableCell>
+              <TableCell
+                className={
+                  agency.currentStatus
+                    ? statusColor(agency.currentStatus as agencyUpdateStatus)
+                    : ''
+                }
+              >
+                {agency.currentStatus}
+              </TableCell>
               <TableCell>
                 <a
                   href={`mailto:${agency.latestInfo?.updaterContactInfo.email}`}
