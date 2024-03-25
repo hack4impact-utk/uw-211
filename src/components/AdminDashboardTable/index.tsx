@@ -31,6 +31,8 @@ import React from 'react';
 // import { Input } from '@/components/ui/input';
 // import { agencyUpdateStatus } from '@/utils/constants';
 import { Input } from '@/components/ui/input';
+import { ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
+
 import { Agency, dashboardParams } from '@/utils/types';
 import { getAgencies } from '@/server/actions/Agencies';
 
@@ -60,15 +62,15 @@ function getValueByPath(obj: any, path: string) {
 /**
  * @brief Makes a comparison function that compares two agencies based on a provided field; used to sort agencies
  * @param field A field of the Agency type (e.g. "name")
- * @param descending If true, reverses the sort
+ * @param ascending If false, reverses the sort
  * @returns A comparison function used to sort agencies
  */
 function makeAgencyCmpFn(
   field: string = 'name',
-  descending: boolean = false
+  ascending: boolean = false
 ): (a: Agency, b: Agency) => number {
   return (a: Agency, b: Agency) => {
-    const reverse: number = descending === true ? -1 : 1;
+    const reverse: number = ascending === true ? 1 : -1;
     const a_val = getValueByPath(a, field);
     const b_val = getValueByPath(b, field);
 
@@ -84,25 +86,71 @@ function makeAgencyCmpFn(
   };
 }
 
+function addTableHead(
+  property: string,
+  name: string,
+  activeSortField: string | undefined,
+  sortHiddenInputs: (React.JSX.Element | undefined)[],
+  sortAscending: boolean
+) {
+  return (
+    <TableHead>
+      <form action="./dashboard" method="GET">
+        {sortHiddenInputs}
+        <input
+          type="hidden"
+          key={'sortField'}
+          name={'sortField'}
+          value={property}
+        ></input>
+        <input
+          type="hidden"
+          key={'sortAscending'}
+          name={'sortAscending'}
+          value={sortAscending ? '0' : '1'}
+        ></input>
+        <button className="flex items-center">
+          {name}
+          {activeSortField == property ? (
+            sortAscending ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            )
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </button>
+      </form>
+    </TableHead>
+  );
+}
+
 export async function AdminDashboardTable({
   params,
 }: AdminDashboardTableProps) {
   let agencies: Agency[] = [];
-  const sortDescending: boolean =
-    params.sortDescending === undefined ? false : params.sortDescending === '1';
+  const sortAscending: boolean =
+    params.sortAscending === undefined ? false : params.sortAscending === '1';
 
   try {
     agencies = await getAgencies(
       false,
       params.search,
-      makeAgencyCmpFn(params.sortField, sortDescending)
+      makeAgencyCmpFn(params.sortField, sortAscending)
     );
   } catch (error) {
     return <h1>Error loading data</h1>;
   }
 
-  const hiddenInputs = Object.entries(params).map(([key, value]) => {
+  const searchHiddenInputs = Object.entries(params).map(([key, value]) => {
     if (key !== 'search') {
+      return <input type="hidden" key={key} name={key} value={value} />;
+    }
+  });
+
+  const sortHiddenInputs = Object.entries(params).map(([key, value]) => {
+    if (key !== 'sortField' && key !== 'sortAscending') {
       return <input type="hidden" key={key} name={key} value={value} />;
     }
   });
@@ -114,13 +162,17 @@ export async function AdminDashboardTable({
         action="./dashboard"
         method="GET"
       >
-        {hiddenInputs}
+        {searchHiddenInputs}
         <Input
           placeholder="Search for an agency..."
           className="max-w"
           name="search"
+          defaultValue={params.search || ''}
         />
-        <button type="submit" className="ml-2">
+        <button
+          type="submit"
+          className="rounded-r-md border border-l-0 bg-blue-500 px-4 font-bold text-white hover:bg-blue-700"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="2em"
@@ -136,18 +188,45 @@ export async function AdminDashboardTable({
           </svg>
         </button>
       </form>
-      <Table>
+      <Table className="rounded-md border shadow">
         <TableHeader>
           <TableRow>
-            <TableHead>Agency Name</TableHead>
-            <TableHead>Last Update</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Updater Email</TableHead>
+            {addTableHead(
+              'name',
+              'Agency Name',
+              params.sortField,
+              sortHiddenInputs,
+              sortAscending
+            )}
+            {addTableHead(
+              'updatedAt',
+              'Last Update',
+              params.sortField,
+              sortHiddenInputs,
+              sortAscending
+            )}
+            {addTableHead(
+              'currentStatus',
+              'Status',
+              params.sortField,
+              sortHiddenInputs,
+              sortAscending
+            )}
+            {addTableHead(
+              'latestInfo.updaterContactInfo.email',
+              'Updater Email',
+              params.sortField,
+              sortHiddenInputs,
+              sortAscending
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
           {agencies.map((agency, index) => (
-            <TableRow key={index}>
+            <TableRow
+              key={index}
+              className={index % 2 === 1 ? 'bg-gray-100' : ''}
+            >
               <TableCell>{agency.name}</TableCell>
               <TableCell>
                 {agency.updatedAt === undefined

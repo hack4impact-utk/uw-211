@@ -1,6 +1,6 @@
 export interface dashboardParams {
   sortField?: string;
-  sortDescending?: string;
+  sortAscending?: string;
   page?: string;
   pageSize?: string;
   search?: string;
