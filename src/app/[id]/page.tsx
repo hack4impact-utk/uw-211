@@ -1008,7 +1008,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
               {/* left section */}
               <section className="flex w-full flex-col lg:w-1/2">
-                <section className="flex flex-col xl:flex-row">
+                <section className="flex flex-col gap-4 xl:flex-row">
                   {/* Also known as */}
                   <div className="w-full xl:w-2/3">
                     <label
