@@ -32,6 +32,8 @@ import {
 } from '@/components/ui/sheet';
 import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
 import { formSteps } from '@/utils/constants/formSteps';
+import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
+import { zodFormToTs } from '@/utils/conversions';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
@@ -63,8 +65,8 @@ export default function Form({ params }: { params: { id: string } }) {
   const { width: screenWidth } = useWindowSize();
 
   const processForm: SubmitHandler<Inputs> = (data) => {
-    console.log('Form data for agency with id', params.id);
-    console.log(data);
+    const validatedInfo = zodFormToTs(data);
+    createAgencyInfoWithServices(params.id, validatedInfo);
     reset();
   };
 
@@ -112,9 +114,10 @@ export default function Form({ params }: { params: { id: string } }) {
     const new_service: Service = {
       name: `New Service #${getValues('services').length + 1}`,
       id: Date.now(),
-      contact: '',
-      description: '',
-      eligibility: '',
+      contactPersonName: '',
+      daysOpen: [],
+      fullDescription: '',
+      eligibilityRequirements: '',
       applicationProcess: {
         walkIn: false,
         telephone: false,
@@ -129,7 +132,7 @@ export default function Form({ params }: { params: { id: string } }) {
           content: '',
         },
       },
-      fees: {
+      feeCategory: {
         none: false,
         straight: {
           selected: false,
@@ -210,12 +213,12 @@ export default function Form({ params }: { params: { id: string } }) {
         <Textarea
           id="description"
           className="mb-2"
-          {...register(`services.${serviceIdx}.description`)}
+          {...register(`services.${serviceIdx}.fullDescription`)}
         />
         <div className="mt-2 min-h-6 ">
-          {errors.services?.[serviceIdx]?.description?.message && (
+          {errors.services?.[serviceIdx]?.fullDescription?.message && (
             <p className="mt-2 text-sm text-red-400">
-              {errors.services[serviceIdx]?.description?.message}
+              {errors.services[serviceIdx]?.fullDescription?.message}
             </p>
           )}
         </div>
@@ -230,7 +233,7 @@ export default function Form({ params }: { params: { id: string } }) {
           id="contact"
           className="mb-2"
           placeholder="Only add contact person if different from Director or if contact persons differ by service."
-          {...register(`services.${serviceIdx}.contact`)}
+          {...register(`services.${serviceIdx}.contactPersonName`)}
         />
 
         {/* hours here eventually */}
@@ -257,12 +260,12 @@ export default function Form({ params }: { params: { id: string } }) {
 It is okay to restrict services to certain populations based on gender; family status, disability,
 age, personal situations, etc. (i.e. battered women with children, people with visual impairments,
 homeless men, etc.) This helps us to make appropriate referrals."
-          {...register(`services.${serviceIdx}.eligibility`)}
+          {...register(`services.${serviceIdx}.eligibilityRequirements`)}
         />
         <div className="mt-2 min-h-6 ">
-          {errors.services?.[serviceIdx]?.eligibility?.message && (
+          {errors.services?.[serviceIdx]?.eligibilityRequirements?.message && (
             <p className="mt-2 text-sm text-red-400">
-              {errors.services[serviceIdx]?.eligibility?.message}
+              {errors.services[serviceIdx]?.eligibilityRequirements?.message}
             </p>
           )}
         </div>
@@ -456,7 +459,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="noFees"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.none`)}
+              {...register(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="noFees"
@@ -471,8 +474,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="straight"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.straight.selected`)}
-              disabled={watch(`services.${serviceIdx}.fees.none`)}
+              {...register(
+                `services.${serviceIdx}.feeCategory.straight.selected`
+              )}
+              disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="straight"
@@ -480,18 +485,24 @@ homeless men, etc.) This helps us to make appropriate referrals."
             >
               Straight Fee
             </label>
-            {watch(`services.${serviceIdx}.fees.straight.selected`) ? (
+            {watch(`services.${serviceIdx}.feeCategory.straight.selected`) ? (
               <>
                 <Input
                   className="m-2"
                   placeholder="Please specify."
-                  {...register(`services.${serviceIdx}.fees.straight.content`)}
-                  disabled={watch(`services.${serviceIdx}.fees.none`)}
+                  {...register(
+                    `services.${serviceIdx}.feeCategory.straight.content`
+                  )}
+                  disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
                 />
                 <div className="mt-2 min-h-6 ">
-                  {errors.services?.[serviceIdx]?.fees?.straight?.message && (
+                  {errors.services?.[serviceIdx]?.feeCategory?.straight
+                    ?.message && (
                     <p className="mt-2 text-sm text-red-400">
-                      {errors.services[serviceIdx]?.fees?.straight?.message}
+                      {
+                        errors.services[serviceIdx]?.feeCategory?.straight
+                          ?.message
+                      }
                     </p>
                   )}
                 </div>
@@ -506,8 +517,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="sliding"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.slidingScale`)}
-              disabled={watch(`services.${serviceIdx}.fees.none`)}
+              {...register(`services.${serviceIdx}.feeCategory.slidingScale`)}
+              disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="sliding"
@@ -522,8 +533,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="medicaid_tenncare"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.medicaid_tenncare`)}
-              disabled={watch(`services.${serviceIdx}.fees.none`)}
+              {...register(
+                `services.${serviceIdx}.feeCategory.medicaid_tenncare`
+              )}
+              disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="medicaid_tenncare"
@@ -538,8 +551,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="medicare"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.medicare`)}
-              disabled={watch(`services.${serviceIdx}.fees.none`)}
+              {...register(`services.${serviceIdx}.feeCategory.medicare`)}
+              disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="medicare"
@@ -554,8 +567,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
               type="checkbox"
               id="private"
               className="form-checkbox"
-              {...register(`services.${serviceIdx}.fees.private`)}
-              disabled={watch(`services.${serviceIdx}.fees.none`)}
+              {...register(`services.${serviceIdx}.feeCategory.private`)}
+              disabled={watch(`services.${serviceIdx}.feeCategory.none`)}
             />
             <label
               htmlFor="private"
@@ -566,9 +579,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
           </div>
         </div>
         <div className="mt-2 min-h-6 ">
-          {errors.services?.[serviceIdx]?.fees?.message && (
+          {errors.services?.[serviceIdx]?.feeCategory?.message && (
             <p className="mt-2 text-sm text-red-400">
-              {errors.services[serviceIdx]?.fees?.message}
+              {errors.services[serviceIdx]?.feeCategory?.message}
             </p>
           )}
         </div>
@@ -1010,7 +1023,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         id="akas"
                         {...register('akas')}
                         autoComplete="akas"
-                        className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6  md:w-2/3 xl:w-full"
+                        className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
                       />
                       <div className="mt-2 min-h-6 ">
                         {errors.akas?.message && (
@@ -1888,6 +1901,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Please review your selections and submit.
             </p>
+            <Button type="submit">Click to Submit</Button>
           </motion.div>
         )}
       </form>

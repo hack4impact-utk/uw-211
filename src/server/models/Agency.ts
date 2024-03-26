@@ -68,5 +68,12 @@ AgencySchema.virtual('daysSinceEmailSent').get(function () {
   return daysSinceEmailSent;
 });
 
+AgencySchema.virtual('latestInfo').get(function (this: Agency) {
+  if (this.info.length === 0) {
+    return null;
+  }
+  return this.info[this.info.length - 1];
+});
+
 export default mongoose.models.Agency ||
   mongoose.model<Agency>('Agency', AgencySchema);

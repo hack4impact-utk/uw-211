@@ -61,10 +61,6 @@ export interface AgencyInfoForm {
   )[]; // other
   location: Location;
   contactInfo: ContactInfo;
-  // languageASL?: boolean;
-  // languageSpanish?: boolean;
-  // languageTeleInterpreterService?: boolean;
-  // languageOthers?: string[];
   languageTeleInterpreterService?: boolean;
   languages: ('ASL' | 'Spanish' | string)[]; // other
   languagesWithoutPriorNotice?: string[];
@@ -93,6 +89,7 @@ export interface AgencyInfoForm {
 
 export interface Service {
   _id?: string;
+  name: string;
   fullDescription: string;
   contactPersonName: string;
   daysOpen: Day[];
@@ -138,6 +135,7 @@ export interface Agency {
   updatedAt?: Date;
   name: string;
   info: AgencyInfoForm[];
+  latestInfo?: AgencyInfoForm;
   updateScheduleInDays: number;
   emailSentTimestamp?: Date;
   currentStatus?: 'Completed' | 'Needs Review' | 'Expired';

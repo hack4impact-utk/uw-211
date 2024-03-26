@@ -11,6 +11,9 @@ export async function GET() {
   try {
     const agencies = await getAgencies();
     const filteredAgencies = agencies.map((agency) => ({
+      _id: agency._id,
+      createdAt: agency.createdAt,
+      updatedAt: agency.updatedAt,
       name: agency.name,
       info: agency.info,
       currentStatus: agency.currentStatus,
