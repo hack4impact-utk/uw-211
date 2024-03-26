@@ -27,6 +27,10 @@ const DaySchema = new mongoose.Schema<Day>({
 
 const ServiceSchema = new mongoose.Schema<Service>(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     fullDescription: {
       type: String,
       required: true,
