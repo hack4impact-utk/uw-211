@@ -1,12 +1,8 @@
-import { Service } from '@/app/[id]/page';
-import {
-  Card,
-  CardHeader,
-  // CardFooter,
-  CardTitle,
-  // CardDescription,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { z } from 'zod';
+import { ServiceSchema } from '@/utils/constants/formDataSchema';
+
+type Service = z.infer<typeof ServiceSchema>;
 
 export function ServicesReview(service: Service) {
   const app_proccess = new Map([

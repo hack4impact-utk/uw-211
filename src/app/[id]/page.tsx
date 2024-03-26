@@ -42,7 +42,7 @@ import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
 import { formSteps } from '@/utils/constants/formSteps';
 
 type Inputs = z.infer<typeof FormDataSchema>;
-export type Service = z.infer<typeof ServiceSchema>;
+type Service = z.infer<typeof ServiceSchema>;
 
 const steps = formSteps;
 
