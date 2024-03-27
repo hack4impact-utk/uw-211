@@ -90,7 +90,7 @@ export function ServicesReview(service: Service) {
   };
 
   const get_fees = () => {
-    const fees_array = service.fees;
+    const fees_array = service.feeCategory;
     const options: string[] = [];
     let straight_fee: string = '';
 
@@ -183,11 +183,11 @@ export function ServicesReview(service: Service) {
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               Description
             </h3>
-            <p>{service.description}</p>
+            <p>{service.fullDescription}</p>
           </div>
 
           <div>
-            {service.contact == '' ? (
+            {service.contactPersonName == '' ? (
               <>
                 <h3 className="text-base font-semibold leading-7 text-gray-400">
                   Contact Person
@@ -203,7 +203,7 @@ export function ServicesReview(service: Service) {
                 <h3 className="text-base font-semibold leading-7 text-gray-900">
                   Contact Person
                 </h3>
-                <p>{service.contact}</p>
+                <p>{service.contactPersonName}</p>
               </>
             )}
           </div>
@@ -217,7 +217,7 @@ export function ServicesReview(service: Service) {
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               How would someone apply for this service?
             </h3>
-            <p>{service.eligibility}</p>
+            <p>{service.eligibilityRequirements}</p>
           </div>
 
           <div>
