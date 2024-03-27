@@ -10,6 +10,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Footer from '@/components/Footer';
+import ServicesReview from '@/components/ServicesReview';
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -20,9 +21,16 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, CornerDownRight } from 'lucide-react';
 import FormStepper from '@/components/FormStepper';
 import { useWindowSize } from '@/utils/hooks/useWindowSize';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselPrevious,
+  CarouselNext,
+  CarouselItem,
+} from '@/components/ui/carousel';
 import {
   Sheet,
   SheetTrigger,
@@ -899,6 +907,28 @@ homeless men, etc.) This helps us to make appropriate referrals."
         </div>
       </div>
     );
+  };
+
+  const get_services = () => {
+    const services = getValues('services');
+
+    let service_items = [];
+
+    if (screenWidth < 720 || services.length > 2) {
+      service_items = services.map((service: Service, index: number) => (
+        <CarouselItem className="lg:basis-1/2" key={index}>
+          {ServicesReview(service)}
+        </CarouselItem>
+      ));
+    } else {
+      service_items = services.map((service: Service, index: number) => (
+        <div className="w-full lg:w-1/2" key={index}>
+          {ServicesReview(service)}
+        </div>
+      ));
+    }
+
+    return service_items;
   };
 
   return (
@@ -1895,12 +1925,291 @@ homeless men, etc.) This helps us to make appropriate referrals."
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Review
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Please review your selections and submit.
-            </p>
+            <div className="flex flex-col gap-10">
+              {/* Header */}
+              <section>
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Review
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Please review your selections and submit.
+                </p>
+              </section>
+
+              {/* Preliminaries */}
+              <section className="flex flex-col">
+                <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                  Preliminaries
+                </h2>
+
+                <div className="flex flex-col gap-4 sm:flex-row sm:gap-12">
+                  {/* Prelim Info */}
+                  <section className="flex flex-col gap-2 sm:w-1/2">
+                    <div className="flex flex-col sm:flex-row">
+                      <p className="sm:w-1/2">
+                        <span className="text-base font-semibold leading-7 text-gray-900">
+                          Legal Name:
+                        </span>{' '}
+                        {getValues('legalName')}
+                      </p>
+
+                      {getValues('akas') ? (
+                        <p className="sm:w-1/2">
+                          <span className="text-base font-semibold leading-7 text-gray-900">
+                            Also Known As:
+                          </span>{' '}
+                          {getValues('akas')}
+                        </p>
+                      ) : (
+                        <p className="text-md leading-6 text-gray-400 sm:w-1/2">
+                          Also Known As: N/A
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row">
+                      <p className="sm:w-1/2">
+                        <span className="text-base font-semibold leading-7 text-gray-900">
+                          Legal Status:
+                        </span>{' '}
+                        {getValues('legalStatus').charAt(0).toUpperCase() +
+                          getValues('legalStatus').slice(1)}
+                      </p>
+
+                      <p className="sm:w-1/2">
+                        <span className="text-base font-semibold leading-7 text-gray-900">
+                          Director Name:
+                        </span>{' '}
+                        {getValues('directorName')}
+                      </p>
+                    </div>
+
+                    <p className="text-base font-semibold leading-7 text-gray-900">
+                      Brief Agency Information
+                    </p>
+                    <p>{getValues('agencyInfo')}</p>
+                  </section>
+
+                  {/* Hours of Operation */}
+                  <section className="w-1/2">
+                    {/* TODO */}
+                    <h3 className="text-base font-semibold leading-7 text-gray-900">
+                      Hours of Operation
+                    </h3>
+                    <p>
+                      <span className="bg-blue-500 text-white">
+                        TODO: Hours of operation
+                      </span>
+                    </p>
+                  </section>
+                </div>
+              </section>
+
+              {/* Services */}
+              <section>
+                <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                  Services
+                </h2>
+
+                {screenWidth < 720 || getValues('services').length > 2 ? (
+                  <Carousel
+                    opts={{
+                      align: 'start',
+                    }}
+                  >
+                    <CarouselContent>{get_services()}</CarouselContent>
+                    <CarouselNext
+                      className="right-1/3 top-full mt-8 sm:-right-12 sm:top-1/2 sm:-translate-y-1/2"
+                      type="button"
+                    />
+                    <CarouselPrevious
+                      className="left-1/3 top-full mt-8 sm:-left-12 sm:top-1/2 sm:-translate-y-1/2"
+                      type="button"
+                    />
+                  </Carousel>
+                ) : getValues('services').length == 0 ? (
+                  <p className="text-md leading-6 text-gray-400">
+                    No services listed.
+                  </p>
+                ) : (
+                  <div className="flex w-full flex-col gap-4 md:flex-row">
+                    {get_services()}
+                  </div>
+                )}
+              </section>
+
+              {/* Opportunities */}
+              <section className="mt-8 flex flex-col gap-4 sm:mt-0">
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Opportunities
+                </h2>
+
+                <section className="flex flex-col gap-8">
+                  {/* Volunteers */}
+                  <section>
+                    <div className="flex flex-col sm:flex-row sm:gap-16">
+                      <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                        Does your organization accept volunteers?
+                      </p>
+
+                      <p className="sm:w-1/2">
+                        {getValues('volunteerFields.volunteers') == 'true'
+                          ? 'Yes'
+                          : 'No'}
+                      </p>
+                    </div>
+
+                    {getValues('volunteerFields.volunteers') == 'true' && (
+                      <div>
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
+                            Who is eligible to volunteer?
+                          </p>
+
+                          <p className="sm:w-1/2">
+                            {getValues('volunteerFields.vol_reqs')}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
+                            Volunteer Coordinator
+                          </p>
+
+                          <p className="sm:w-1/2">
+                            {getValues('volunteerFields.vol_coor')}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
+                            Phone #
+                          </p>
+
+                          <p className="sm:w-1/2">
+                            {getValues('volunteerFields.vol_coor_tel')}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </section>
+
+                  {/* Donations */}
+                  <section>
+                    <div className="flex flex-col sm:flex-row sm:gap-16">
+                      <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                        Does your organization accept ongoing, non-monetary
+                        donations in support of programs or services?
+                      </p>
+
+                      <p className="sm:w-1/2">
+                        {getValues('donationFields.donation') == 'true'
+                          ? 'Yes'
+                          : 'No'}
+                      </p>
+                    </div>
+
+                    {getValues('donationFields.donation') == 'true' && (
+                      <div>
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
+                            Please list.
+                          </p>
+
+                          <p className="sm:w-1/2">
+                            {getValues('donationFields.don_ex')}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
+                            Do you provide pick-up service?
+                          </p>
+
+                          <p className="sm:w-1/2">
+                            {getValues('donationFields.pickup') == 'true'
+                              ? 'Yes'
+                              : 'No'}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="ml-6 mr-1" />
+                            Where?
+                          </p>
+
+                          <p className="ml-6 flex sm:ml-0 sm:w-1/2">
+                            {getValues('donationFields.pickup_loc')}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
+                            Donation Coordinator
+                          </p>
+
+                          <p className="sm:w-1/2">
+                            {getValues('donationFields.don_coor')}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:gap-16">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
+                            Phone #
+                          </p>
+                          <p className="sm:w-1/2">
+                            {getValues('donationFields.don_coor_tel')}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </section>
+
+                  {/* Recommendations */}
+                  <section>
+                    <div className="flex flex-col sm:flex-row sm:gap-16">
+                      <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                        Are there other agencies or services that have been
+                        helpful that you would recommend to be included in our
+                        resource database?
+                      </p>
+
+                      <p className="sm:w-1/2">
+                        {getValues('recommendationFields.recommendation') ==
+                        'true'
+                          ? 'Yes'
+                          : 'No'}
+                      </p>
+                    </div>
+
+                    {getValues('recommendationFields.recommendation') ==
+                      'true' && (
+                      <div className="flex flex-col sm:flex-row sm:gap-16">
+                        <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                          <CornerDownRight className="mr-1" />
+                          Please provide contact information for these
+                          agencies/services.
+                        </p>
+
+                        <p className="sm:w-1/2">
+                          {getValues(
+                            'recommendationFields.recommendations_contact'
+                          )}
+                        </p>
+                      </div>
+                    )}
+                  </section>
+                </section>
+              </section>
+            </div>
             <Button type="submit">Click to Submit</Button>
           </motion.div>
         )}
