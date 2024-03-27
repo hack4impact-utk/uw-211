@@ -914,7 +914,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
     let service_items = [];
 
-    if (services.length > 2) {
+    if (screenWidth < 720 || services.length > 2) {
       service_items = services.map((service: Service, index: number) => (
         <CarouselItem className="lg:basis-1/2" key={index}>
           {ServicesReview(service)}
@@ -2011,7 +2011,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   Services
                 </h2>
 
-                {getValues('services').length > 2 ? (
+                {screenWidth < 720 || getValues('services').length > 2 ? (
                   <Carousel
                     opts={{
                       align: 'start',
