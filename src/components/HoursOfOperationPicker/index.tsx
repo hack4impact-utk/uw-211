@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { z } from 'zod';
 import {
+  FormDataSchema,
   HoursOfOperationDataSchema,
   HoursOfOperationOfADaySchema,
 } from '@/utils/constants/formDataSchema';
@@ -18,11 +19,12 @@ import { UseControllerProps, useController } from 'react-hook-form';
 
 type Hours = z.infer<typeof HoursOfOperationOfADaySchema>;
 type HoursOfOperation = z.infer<typeof HoursOfOperationDataSchema>;
+type FormData = z.infer<typeof FormDataSchema>;
 
 export default function HoursOfOperationPicker({
   name,
   control,
-}: UseControllerProps<HoursOfOperation>) {
+}: UseControllerProps<FormData>) {
   const {
     field,
     fieldState: { error },
@@ -31,14 +33,14 @@ export default function HoursOfOperationPicker({
     control,
   });
 
-  const [hours, setHours] = useState<HoursOfOperation>(field.value || []);
+  const [hours, setHours] = useState((field.value as HoursOfOperation) || []);
 
   const [day, setDay] = useState<number>(0);
   const [open, setOpen] = useState<number>(18); // Default 9:00 AM
   const [close, setClose] = useState<number>(34); // Default 5:00 PM
 
   useEffect(() => {
-    setHours(field.value || []);
+    setHours((field.value as HoursOfOperation) || []);
   }, [field.value]);
 
   const times = (() => {
@@ -133,7 +135,7 @@ export default function HoursOfOperationPicker({
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Select onValueChange={(v) => setOpen(+v)}>
+        <Select onValueChange={(v: string) => setOpen(+v)}>
           <SelectTrigger>
             <SelectValue placeholder="Open">{times[open]}</SelectValue>
           </SelectTrigger>
@@ -147,7 +149,7 @@ export default function HoursOfOperationPicker({
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Select onValueChange={(v) => setClose(+v)}>
+        <Select onValueChange={(v: string) => setClose(+v)}>
           <SelectTrigger>
             <SelectValue placeholder="Close">{times[close]}</SelectValue>
           </SelectTrigger>
