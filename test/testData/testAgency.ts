@@ -50,6 +50,7 @@ export const testAgency: Agency = {
       },
       services: [
         {
+          name: 'Testing name',
           fullDescription: 'hi this a description.',
           contactPersonName: 'Emma',
           daysOpen: [
