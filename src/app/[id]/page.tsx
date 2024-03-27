@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, CornerDownRight } from 'lucide-react';
 import FormStepper from '@/components/FormStepper';
 import { useWindowSize } from '@/utils/hooks/useWindowSize';
 import {
@@ -2062,7 +2062,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {getValues('volunteerFields.volunteers') == 'true' && (
                       <div>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
                             Who is eligible to volunteer?
                           </p>
 
@@ -2072,7 +2073,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
 
                         <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
                             Volunteer Coordinator
                           </p>
 
@@ -2082,7 +2084,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
 
                         <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
                             Phone #
                           </p>
 
@@ -2112,7 +2115,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {getValues('donationFields.donation') == 'true' && (
                       <div>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
                             Please list.
                           </p>
 
@@ -2122,7 +2126,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
 
                         <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
                             Do you provide pick-up service?
                           </p>
 
@@ -2134,17 +2139,19 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
 
                         <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="ml-6 mr-1" />
                             Where?
                           </p>
 
-                          <p className="sm:w-1/2">
+                          <p className="ml-6 flex sm:ml-0 sm:w-1/2">
                             {getValues('donationFields.pickup_loc')}
                           </p>
                         </div>
 
                         <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
                             Donation Coordinator
                           </p>
 
@@ -2154,7 +2161,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
 
                         <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            <CornerDownRight className="mr-1" />
                             Phone #
                           </p>
                           <p className="sm:w-1/2">
@@ -2185,7 +2193,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {getValues('recommendationFields.recommendation') ==
                       'true' && (
                       <div className="flex flex-col sm:flex-row sm:gap-16">
-                        <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                        <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                          <CornerDownRight className="mr-1" />
                           Please provide contact information for these
                           agencies/services.
                         </p>
