@@ -6,21 +6,10 @@ import {
 } from '@/server/actions/Agencies';
 import '@/server/models/Service';
 import { AgencyInfoForm, JSendResponse } from '@/utils/types';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/options';
+import { authenticateServerEndpoint } from '@/utils/auth';
 
 export async function GET() {
-  // Check if user is authenticated
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return Response.json(
-      new JSendResponse({
-        status: 'error',
-        message: 'Unauthorized',
-      }),
-      { status: 401 }
-    );
-  }
+  await authenticateServerEndpoint();
 
   try {
     const agencies = await getAgencies();
@@ -49,17 +38,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  // Check if user is authenticated
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return Response.json(
-      new JSendResponse({
-        status: 'error',
-        message: 'Unauthorized',
-      }),
-      { status: 401 }
-    );
-  }
+  await authenticateServerEndpoint();
 
   try {
     const body = await request.json();

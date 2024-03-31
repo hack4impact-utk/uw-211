@@ -1,23 +1,12 @@
 import { generatePdf } from '@/server/actions/PdfGeneration';
 import { JSendResponse } from '@/utils/types';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/options';
+import { authenticateServerEndpoint } from '@/utils/auth';
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  // Check if user is authenticated
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return Response.json(
-      new JSendResponse({
-        status: 'error',
-        message: 'Unauthorized',
-      }),
-      { status: 401 }
-    );
-  }
+  await authenticateServerEndpoint();
 
   const id = params.id;
   try {
