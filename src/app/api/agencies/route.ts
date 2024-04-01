@@ -30,6 +30,9 @@ export async function GET() {
       { status: 200 }
     );
   } catch (error) {
+    if (error instanceof JSendResponse) {
+      return Response.json(error, { status: 400 });
+    }
     return Response.json(
       new JSendResponse({ status: 'error', message: 'Internal Server Error' }),
       { status: 500 }
