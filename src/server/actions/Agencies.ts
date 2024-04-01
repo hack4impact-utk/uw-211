@@ -17,16 +17,24 @@ import {
  * @param compareFn Sorts the array of agencies before returning using the specified function; leave empty for no sorting
  * @returns An array of all agencies in the "agencies" collection
  */
+type CurrentStatusFilters = {
+  showCompleted: boolean;
+  showNeedsReview: boolean;
+  showExpired: boolean;
+};
 export async function getAgencies(
   populateServices: boolean = true,
   searchString?: string,
+  currentStatusFilters?: CurrentStatusFilters,
   compareFn?: (a: Agency, b: Agency) => number
 ): Promise<Agency[]> {
   try {
     await dbConnect();
-    let query = searchString
-      ? AgencyModel.find({ name: new RegExp(searchString, 'i') })
-      : AgencyModel.find({});
+    let query = AgencyModel.find({});
+
+    if (searchString) {
+      query = query.find({ name: new RegExp(searchString, 'i') });
+    }
 
     if (populateServices) {
       query = query.populate({
@@ -43,6 +51,20 @@ export async function getAgencies(
       agencies = agencies.sort(compareFn);
     }
 
+    if (currentStatusFilters) {
+      agencies = agencies.filter((agency) => {
+        switch (agency.currentStatus) {
+          case 'Completed':
+            return currentStatusFilters.showCompleted;
+          case 'Needs Review':
+            return currentStatusFilters.showNeedsReview;
+          case 'Expired':
+            return currentStatusFilters.showExpired;
+          default:
+            return true;
+        }
+      });
+    }
     return agencies;
   } catch (error) {
     mongoErrorHandler(error as MongoError);
