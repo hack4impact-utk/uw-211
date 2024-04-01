@@ -3,7 +3,7 @@ import React from 'react';
 import Image from 'next/image';
 import uw211Logo from '@/../public/img/unitedway211.png';
 import { useState } from 'react';
-import { useWindowSize } from '../../utils/hooks/useWindowSize';
+import { useWindowSize } from '@/utils/hooks/useWindowSize';
 
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
