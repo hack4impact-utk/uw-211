@@ -207,7 +207,7 @@ export default function Header() {
                       fill="#a0251e"
                     ></path>
                   </svg>
-                  <div className="hidden md:visible md:flex">Espanol</div>
+                  <div className="hidden md:visible md:flex">Español</div>
                 </div>
               </SelectItem>
             </SelectGroup>
