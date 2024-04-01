@@ -17,7 +17,7 @@ import { authenticateServerAction } from '@/utils/auth';
  * @returns An array of all agencies in the "agencies" collection with fields populated
  */
 export async function getAgencies(): Promise<Agency[]> {
-  authenticateServerAction();
+  await authenticateServerAction();
   try {
     await dbConnect();
     const agencies = await AgencyModel.find({})
@@ -46,7 +46,7 @@ export async function getPaginatedAgencies(
   page: number,
   pageSize: number
 ): Promise<Agency[]> {
-  authenticateServerAction();
+  await authenticateServerAction();
   if (page < 1) {
     throw new JSendResponse({
       status: 'fail',
@@ -115,7 +115,7 @@ export async function getAgencyById(id: string): Promise<Agency> {
  * @throws See mongoErrorHandler for common insertion errors
  */
 export async function createService(service: Service): Promise<Service> {
-  authenticateServerAction();
+  await authenticateServerAction();
   await dbConnect();
   const newService = await ServiceModel.create(service).catch((err) => {
     mongoErrorHandler(err);
@@ -130,7 +130,7 @@ export async function createService(service: Service): Promise<Service> {
  * @throws See mongoErrorHandler for common insertion errors
  */
 export async function createAgency(agency: Agency): Promise<Agency> {
-  authenticateServerAction();
+  await authenticateServerAction();
   await dbConnect();
 
   const newAgency = await AgencyModel.create(agency).catch((error) => {
@@ -148,7 +148,7 @@ export async function createAgency(agency: Agency): Promise<Agency> {
 export async function createAgencyInfo(
   agencyInfo: AgencyInfoForm
 ): Promise<AgencyInfoForm> {
-  authenticateServerAction();
+  await authenticateServerAction();
   await dbConnect();
 
   const newAgencyInfo = await AgencyInfoFormModel.create(agencyInfo).catch(
@@ -170,7 +170,7 @@ export async function updateAgency(
   id: string,
   updates: Partial<Agency>
 ): Promise<Agency | null> {
-  authenticateServerAction();
+  await authenticateServerAction();
   await dbConnect();
   const updatedAgency = await AgencyModel.updateOne({ _id: id }, updates).catch(
     (error) => {
@@ -203,7 +203,7 @@ export async function updateService(
   id: string,
   updates: Partial<Service>
 ): Promise<Service | null> {
-  authenticateServerAction();
+  await authenticateServerAction();
   await dbConnect();
   const updatedService = await ServiceModel.updateOne(
     { _id: id },
@@ -228,7 +228,7 @@ export async function updateService(
  * @throws 404 if no agency is found with the ID
  */
 export async function deleteAgency(id: string): Promise<Agency | null> {
-  authenticateServerAction();
+  await authenticateServerAction();
   await dbConnect();
   const deletedAgency = await AgencyModel.findByIdAndDelete(id).catch(
     (error) => {
@@ -251,7 +251,7 @@ export async function deleteAgency(id: string): Promise<Agency | null> {
  * @throws 404 if no service is found with the ID
  */
 export async function deleteService(id: string): Promise<Service | null> {
-  authenticateServerAction();
+  await authenticateServerAction();
   await dbConnect();
   const deletedService = await ServiceModel.findByIdAndDelete(id).catch(
     (error) => {
@@ -280,7 +280,7 @@ export async function approveAgency(
   newInfo: AgencyInfoForm,
   newApprovalStatus: 'Pending' | 'Approved'
 ): Promise<Agency | null> {
-  authenticateServerAction();
+  await authenticateServerAction();
   await dbConnect();
 
   const { services, ...infoWithoutServices } = newInfo;
