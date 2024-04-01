@@ -1,6 +1,5 @@
-// import AgencyInfoFormModel from '@/server/models/AgencyInfoForm';
-// import AgencyModel from '@/server/models/Agency';
-// import ServiceModel from '@/server/models/Service';
+'use server';
+
 import { Service, Agency, MongoError, AgencyInfoForm } from '@/utils/types';
 import dbConnect from '@/utils/db-connect';
 import { JSendResponse } from '@/utils/types';
@@ -14,19 +13,39 @@ import { authenticateServerAction } from '@/utils/auth';
 
 /**
  * @brief Gets all agencies
- * @returns An array of all agencies in the "agencies" collection with fields populated
+ * @param populateServices Populates the agencies' "services" field
+ * @param searchString Filters agencies that do not have the search term present in their name or
+ * @param compareFn Sorts the array of agencies before returning using the specified function; leave empty for no sorting
+ * @returns An array of all agencies in the "agencies" collection
  */
-export async function getAgencies(): Promise<Agency[]> {
+export async function getAgencies(
+  populateServices: boolean = true,
+  searchString?: string,
+  compareFn?: (a: Agency, b: Agency) => number
+): Promise<Agency[]> {
   await authenticateServerAction();
   try {
     await dbConnect();
-    const agencies = await AgencyModel.find({})
-      .populate({
+    let query = searchString
+      ? AgencyModel.find({ name: new RegExp(searchString, 'i') })
+      : AgencyModel.find({});
+
+    if (populateServices) {
+      query = query.populate({
         path: 'info',
         populate: { path: 'services' },
-      })
-      .exec();
-    return agencies as Agency[];
+      });
+    } else {
+      query = query.populate('info');
+    }
+
+    let agencies: Agency[] = await query.exec();
+
+    if (compareFn) {
+      agencies = agencies.sort(compareFn);
+    }
+
+    return agencies;
   } catch (error) {
     mongoErrorHandler(error as MongoError);
     return [];
@@ -157,6 +176,49 @@ export async function createAgencyInfo(
     }
   );
   return newAgencyInfo as AgencyInfoForm;
+}
+
+/**
+ * @param agencyInfo The agency form data to be created, with services array
+ * @returns New AgencyInfoForm object with attached mongo _id
+ * @throws See mongoErrorHandler for common insertion errors
+ */
+export async function createAgencyInfoWithServices(
+  agencyId: string,
+  agencyInfo: AgencyInfoForm
+): Promise<string> {
+  await dbConnect();
+  const serviceIds = [];
+  if (!agencyInfo.services) {
+    throw new JSendResponse({
+      status: 'fail',
+      data: { message: 'Services are required' },
+    });
+  }
+  for (const service of agencyInfo.services) {
+    const newService = await createService(service);
+    serviceIds.push(newService._id);
+  }
+  const updatedInfo = {
+    ...agencyInfo,
+    services: serviceIds,
+  } as unknown as AgencyInfoForm;
+
+  try {
+    const newAgencyInfo = await createAgencyInfo(updatedInfo);
+    const updatedAgency = await AgencyModel.updateOne(
+      { _id: agencyId },
+      {
+        $push: { info: newAgencyInfo._id },
+      }
+    ).catch((error) => {
+      mongoErrorHandler(error);
+    });
+    return JSON.stringify(updatedAgency);
+  } catch (error) {
+    mongoErrorHandler(error as MongoError);
+  }
+  return '';
 }
 
 /**

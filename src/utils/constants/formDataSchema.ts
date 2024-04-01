@@ -1,12 +1,29 @@
 import { z } from 'zod';
 
+const daySchema = z.object({
+  day: z.union([
+    z.literal('Monday'),
+    z.literal('Tuesday'),
+    z.literal('Wednesday'),
+    z.literal('Thursday'),
+    z.literal('Friday'),
+    z.literal('Saturday'),
+    z.literal('Sunday'),
+  ]),
+  openTime: z.string(),
+  closeTime: z.string(),
+});
+
 export const ServiceSchema = z.object({
   name: z.string().min(1, 'Service name is required.'),
   id: z.number(),
-  description: z.string().min(1, 'Service description is required.'),
-  contact: z.string(),
+  fullDescription: z.string().min(1, 'Service description is required.'),
+  contactPersonName: z.string(),
   // hours
-  eligibility: z.string().min(1, 'Eligibility requirements is required.'),
+  daysOpen: z.array(daySchema),
+  eligibilityRequirements: z
+    .string()
+    .min(1, 'Eligibility requirements is required.'),
   applicationProcess: z
     .object({
       walkIn: z.boolean(),
@@ -40,7 +57,7 @@ export const ServiceSchema = z.object({
         (data.other?.selected ?? false),
       'An application process selection is required.'
     ),
-  fees: z
+  feeCategory: z
     .object({
       none: z.boolean(),
       straight: z
@@ -279,6 +296,50 @@ const RecommendationFields = z
     }
   });
 
+const locationSchema = z.object({
+  confidential: z.boolean(),
+  physicalAddress: z.string(),
+  mailingAddress: z.string(),
+  county: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zipCode: z.string().optional(),
+});
+
+const serviceAreaSchema = z.object({
+  locations: z.array(locationSchema),
+  statewide: z.boolean().optional(),
+  nationwide: z.boolean().optional(),
+  other: z.string().optional(),
+});
+
+const fundingSourcesSchema = z.array(
+  z.union([
+    z.literal('Federal'),
+    z.literal('State'),
+    z.literal('County'),
+    z.literal('City'),
+    z.literal('Donations'),
+    z.literal('Foundations/Private Org.'),
+    z.literal('Fees/Dues'),
+    z.literal('United Way'),
+    z.string(),
+  ])
+);
+
+const contactInfoSchema = z.object({
+  name: z.string(),
+  title: z.string(),
+  phoneNumber: z.string(),
+  faxNumber: z.string().optional(),
+  tollFreeNumber: z.string().optional(),
+  TDDTTYNumber: z.string().optional(),
+  additionalNumbers: z.array(z.string()).optional(),
+  email: z.string(),
+  website: z.string().optional(),
+  hideFromWebsite: z.boolean(),
+});
+
 export const FormDataSchema = z.object({
   // PRELIMINARIES
   legalName: z.string().min(1, 'Required'),
@@ -286,6 +347,21 @@ export const FormDataSchema = z.object({
   legalStatus: z.string().min(1, 'Required'),
   agencyInfo: z.string().min(1, 'Required'),
   directorName: z.string().min(1, 'Required'),
+
+  // the following must be required, currently not implement in the front end
+  // Fields with .optional will be required in the future
+  serviceArea: serviceAreaSchema.optional(),
+  fundingSources: fundingSourcesSchema.optional(),
+  location: locationSchema.optional(),
+  contactInfo: contactInfoSchema.optional(),
+  teleinterpreterLanguageService: z.boolean().optional(),
+  supportedLanguages: z
+    .array(z.union([z.literal('ASL'), z.literal('Spanish'), z.string()]))
+    .optional(),
+  supportedLanguagesWithoutNotice: z.array(z.string()).optional(),
+  accessibilityADA: z.boolean().optional(),
+  updaterContactInfo: contactInfoSchema.optional(),
+  // Up until here
 
   hours: AgencyHours,
 
@@ -296,6 +372,8 @@ export const FormDataSchema = z.object({
       wednesday: z.boolean(),
       thursday: z.boolean(),
       friday: z.boolean(),
+      saturday: z.boolean(),
+      sunday: z.boolean(),
     })
     .partial()
     .refine(
@@ -304,7 +382,9 @@ export const FormDataSchema = z.object({
         data.tuesday ||
         data.wednesday ||
         data.thursday ||
-        data.friday,
+        data.friday ||
+        data.saturday ||
+        data.sunday,
       'Please select at least one operational business day'
     ),
 
