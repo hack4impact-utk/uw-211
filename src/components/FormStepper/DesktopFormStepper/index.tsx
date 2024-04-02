@@ -9,17 +9,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+// import { transform } from 'framer-motion';
+import { useState } from 'react';
+
+interface FormStepperSubpage {
+  id: string;
+  name: string;
+  fields: Array<string>;
+}
 interface DesktopFormStepperProps {
   currentPageIndex: number;
-  formSteps: Array<{ id: string; name: string; fields: Array<string> }>;
+  formSteps: Array<{
+    id: string;
+    name: string;
+    subpages: Array<FormStepperSubpage>;
+  }>;
   setCurrentStep: (step: number) => void;
+  setCurrentSubstep: (step: number) => void;
 }
 
 interface StepItem {
-  step: { id: string; name: string; fields: Array<string> };
+  step: { id: string; name: string; subpages: Array<FormStepperSubpage> };
   index: number;
   currentPageIndex: number;
   setCurrentStep: (step: number) => void;
+  setCurrentSubstep: (step: number) => void;
 }
 
 const BreadItem = ({
@@ -27,13 +41,16 @@ const BreadItem = ({
   step,
   currentPageIndex,
   setCurrentStep,
+  setCurrentSubstep,
 }: StepItem) => {
-  if (step.name === 'Preliminaries') {
+  const [dropdown, setDropdown] = useState(false);
+
+  if (step.subpages.length > 1) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            // onClick={() => setCurrentStep(index)}
+            onClick={() => setDropdown(!dropdown)}
             className={`bg-white hover:bg-slate-200 ${
               index > currentPageIndex
                 ? 'pointer-events-none text-gray-400'
@@ -42,16 +59,19 @@ const BreadItem = ({
           >
             {step.name}
             <svg
-              className="ml-1 mt-0.5 h-5 w-5 text-gray-900"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#000000"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              className="ml-2"
             >
-              <path
-                fillRule="evenodd"
-                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                clipRule="evenodd"
-              />
+              <path d="M7 15l5 5 5-5" />
+              <path d="M7 9l5-5 5 5" />
             </svg>
           </Button>
         </DropdownMenuTrigger>
@@ -59,9 +79,17 @@ const BreadItem = ({
           <DropdownMenuLabel>{step.name}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            {step.subpages.map((subpage, subindex) => (
+              <DropdownMenuItem
+                onClick={() => {
+                  setCurrentStep(index);
+                  setCurrentSubstep(subindex + 1);
+                }}
+                key={index}
+              >
+                {subpage.name}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -69,7 +97,10 @@ const BreadItem = ({
   } else {
     return (
       <Button
-        onClick={() => setCurrentStep(index)}
+        onClick={() => {
+          setCurrentStep(index);
+          setCurrentSubstep(1);
+        }}
         className={`bg-white hover:bg-slate-200 ${
           index > currentPageIndex
             ? 'pointer-events-none text-gray-400'
@@ -86,6 +117,7 @@ export default function DesktopFormStepper({
   currentPageIndex,
   formSteps,
   setCurrentStep,
+  setCurrentSubstep,
 }: DesktopFormStepperProps) {
   return (
     <Breadcrumb>
@@ -96,6 +128,7 @@ export default function DesktopFormStepper({
             step={step}
             currentPageIndex={currentPageIndex}
             setCurrentStep={setCurrentStep}
+            setCurrentSubstep={setCurrentSubstep}
           />
         </BreadcrumbItem>
       ))}
