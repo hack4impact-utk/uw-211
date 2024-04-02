@@ -19,15 +19,7 @@ export const formSteps = [
       {
         id: 'Step 1.2',
         name: 'Accessibility',
-        fields: [
-          'legalName',
-          'akas',
-          'legalStatus',
-          'agencyInfo',
-          'directorName',
-          'hours',
-          'days',
-        ],
+        fields: ['accessibilityADA'],
       },
     ],
   },
