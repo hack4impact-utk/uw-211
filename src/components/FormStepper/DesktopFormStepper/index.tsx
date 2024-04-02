@@ -65,9 +65,9 @@ const BreadItem = ({
               viewBox="0 0 24 24"
               fill="none"
               stroke="#000000"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               className="ml-2"
             >
               <path d="M7 15l5 5 5-5" />
@@ -83,9 +83,9 @@ const BreadItem = ({
               <DropdownMenuItem
                 onClick={() => {
                   setCurrentStep(index);
-                  setCurrentSubstep(subindex + 1);
+                  setCurrentSubstep(subindex);
                 }}
-                key={index}
+                key={`${index}.${subindex}`}
               >
                 {subpage.name}
               </DropdownMenuItem>
