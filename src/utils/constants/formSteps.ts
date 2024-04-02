@@ -2,25 +2,56 @@ export const formSteps = [
   {
     id: 'Step 1',
     name: 'Preliminaries',
-    fields: [
-      'legalName',
-      'akas',
-      'legalStatus',
-      'agencyInfo',
-      'directorName',
-      'hours',
-      'days',
+    subpages: [
+      {
+        id: 'Step 1.1',
+        name: 'General',
+        fields: [
+          'legalName',
+          'akas',
+          'legalStatus',
+          'agencyInfo',
+          'directorName',
+          'hours',
+          'days',
+        ],
+      },
+      {
+        id: 'Step 1.2',
+        name: 'Accessibility',
+        fields: [
+          'legalName',
+          'akas',
+          'legalStatus',
+          'agencyInfo',
+          'directorName',
+          'hours',
+          'days',
+        ],
+      },
     ],
   },
   {
     id: 'Step 2',
     name: 'Services',
-    fields: ['services'],
+    subpages: [
+      {
+        id: 'Step 2.1',
+        name: 'Services',
+        fields: ['services'],
+      },
+    ],
   },
   {
     id: 'Step 3',
     name: 'Opportunities',
-    fields: ['volunteerFields', 'donationFields', 'recommendationFields'],
+    subpages: [
+      {
+        id: 'Step 3.1',
+        name: 'Opportunities',
+        fields: ['volunteerFields', 'donationFields', 'recommendationFields'],
+      },
+    ],
   },
-  { id: 'Step 4', name: 'Review', fields: [] },
+  { id: 'Step 4', name: 'Review', subpages: [] },
 ];
