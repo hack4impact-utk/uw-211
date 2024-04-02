@@ -51,7 +51,11 @@ const steps = formSteps;
 export default function Form({ params }: { params: { id: string } }) {
   const [previousStep, setPreviousStep] = useState(-1);
   const [currentStep, setCurrentStep] = useState(0);
+  const [currentSubstep, setCurrentSubstep] = useState(0);
+  const [previousSubstep, setPreviousSubstep] = useState(-1);
   const delta = currentStep - previousStep;
+  const subdelta = currentSubstep - previousSubstep;
+  console.log(subdelta);
 
   const {
     register,
@@ -81,24 +85,46 @@ export default function Form({ params }: { params: { id: string } }) {
   type FieldName = keyof Inputs;
 
   const next = async () => {
-    const fields = steps[currentStep].fields;
+    const subpage_length = steps[currentStep].subpages.length - 1;
+    const fields = steps[currentStep].subpages[currentSubstep].fields;
     const output = await trigger(fields as FieldName[], { shouldFocus: true });
 
     if (!output) return;
 
     if (currentStep < steps.length) {
-      if (currentStep === steps.length - 1) {
+      if (currentStep + currentSubstep === steps.length + subpage_length - 1) {
         await handleSubmit(processForm)();
       }
-      setPreviousStep(currentStep);
-      setCurrentStep((step) => step + 1);
+
+      if (currentSubstep < subpage_length) {
+        setPreviousSubstep(currentSubstep);
+        setCurrentSubstep((substep) => substep + 1);
+        console.log(currentStep, currentSubstep + 1);
+      } else {
+        setPreviousStep(currentStep);
+        setCurrentStep((step) => step + 1);
+        setCurrentSubstep(0);
+        console.log(currentStep + 1, 0);
+      }
     }
   };
 
   const prev = () => {
-    if (currentStep > 0) {
-      setPreviousStep(currentStep);
-      setCurrentStep((step) => step - 1);
+    if (currentStep > 0 || currentSubstep > 0) {
+      if (currentSubstep > 0) {
+        setPreviousSubstep(currentSubstep);
+        setCurrentSubstep((substep) => substep - 1);
+        console.log(currentStep, currentSubstep - 1);
+      } else {
+        setPreviousStep(currentStep);
+        setCurrentStep((step) => step - 1);
+        setPreviousSubstep(currentSubstep);
+        setCurrentSubstep(steps[currentStep - 1].subpages.length - 1);
+        console.log(
+          currentStep - 1,
+          steps[currentStep - 1].subpages.length - 1
+        );
+      }
     }
   };
 
@@ -938,6 +964,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
         currentPageIndex={currentStep}
         formSteps={steps}
         setCurrentStep={setCurrentStep}
+        setCurrentSubstep={setCurrentSubstep}
       />
 
       {/* Form */}
@@ -945,372 +972,383 @@ homeless men, etc.) This helps us to make appropriate referrals."
         {/* Preliminaries */}
         {currentStep === 0 && (
           <>
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Preliminaries
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Let&apos;s get to know your agency...
-            </p>
-            <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
-              {/* right section */}
-              <section className="flex w-full flex-col lg:w-1/2">
-                {/* Legal Agency Name */}
-                <div>
-                  <label
-                    htmlFor="legalName"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Legal Agency Name
-                    <span className="ml-1 text-sm text-red-400">*</span>
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      id="legalName"
-                      {...register('legalName')}
-                      autoComplete="legalName"
-                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:w-full  sm:text-sm sm:leading-6 md:w-2/3 lg:w-full"
-                    />
-                    <div className="mt-2 min-h-6 ">
-                      {errors.legalName?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.legalName.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Director Name/Title */}
-                <div>
-                  <label
-                    htmlFor="lastName"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Director Name/Title
-                    <span className="ml-1 text-sm text-red-400">*</span>
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      id="directorName"
-                      {...register('directorName')}
-                      autoComplete="directorName"
-                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm  sm:leading-6 md:w-2/3"
-                    />
-                    <div className="mt-2 min-h-6 ">
-                      {errors.directorName?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.directorName.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Brief Agency Information */}
-                <div>
-                  <label
-                    htmlFor="legalStatus"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Brief Agency Information
-                    <span className="ml-1 text-sm text-red-400">*</span>
-                  </label>
-                  <div className="mt-2">
-                    <textarea
-                      id="agencyInfo"
-                      v-model="agencyInfo"
-                      {...register('agencyInfo')}
-                      autoComplete="agencyInfo"
-                      className="block w-full resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 md:w-5/6"
-                    />
-                    <div className="mt-2 min-h-6 ">
-                      {errors.agencyInfo?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.agencyInfo.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              {/* left section */}
-              <section className="flex w-full flex-col lg:w-1/2">
-                <section className="flex flex-col gap-4 xl:flex-row">
-                  {/* Also known as */}
-                  <div className="w-full xl:w-2/3">
-                    <label
-                      htmlFor="lastName"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Also known as
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        type="text"
-                        id="akas"
-                        {...register('akas')}
-                        autoComplete="akas"
-                        className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
-                      />
-                      <div className="mt-2 min-h-6 ">
-                        {errors.akas?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.akas.message}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Legal organizational Status */}
-                  <div className="w-full xl:w-1/3">
-                    <label
-                      htmlFor="legalStatus"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Legal Organizational Status
-                      <span className="ml-1 text-sm text-red-400">*</span>
-                    </label>
-                    <div className="mt-2">
-                      <select
-                        id="legalStatus"
-                        v-model="legalStatus"
-                        {...register('legalStatus')}
-                        autoComplete="legalStatus"
-                        className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
-                      >
-                        <option value="">Please Select One</option>
-                        <option value="federal">Federal</option>
-                        <option value="state">State</option>
-                        <option value="county">County</option>
-                        <option value="city">City</option>
-                        <option value="non-profit">Non-profit</option>
-                        <option value="501(c)3">501(c)3</option>
-                        <option value="For profit">For profit</option>
-                        <option value="other">Other</option>
-                      </select>
-                      <div className="mt-2 min-h-6 ">
-                        {errors.legalStatus?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.legalStatus.message}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
-                {/* Hours of Operation */}
-                <div>
-                  <label
-                    htmlFor="legalStatus"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Hours of Operation
-                  </label>
-                  <div className="mt-2">
-                    <fieldset>
+            {/* General */}
+            {currentSubstep === 0 && (
+              <>
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Preliminaries - General
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Let&apos;s get to know your agency...
+                </p>
+                <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
+                  {/* right section */}
+                  <section className="flex w-full flex-col lg:w-1/2">
+                    {/* Legal Agency Name */}
+                    <div>
                       <label
-                        htmlFor="legalStatus"
-                        className="mb-2 block text-sm font-medium leading-6 text-gray-900"
+                        htmlFor="legalName"
+                        className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Select day(s) of operation
+                        Legal Agency Name
                         <span className="ml-1 text-sm text-red-400">*</span>
                       </label>
-
-                      <div className="flex flex-col gap-4 sm:flex-row sm:gap-2">
-                        <div className="flex flex-row gap-2">
-                          {/* Monday */}
-                          <label>
-                            <input
-                              type="checkbox"
-                              id="monday"
-                              className="form-checkbox hidden"
-                              checked={isMondayChecked}
-                              {...register('days.monday', {
-                                onChange: () => {
-                                  setMondayChecked(!isMondayChecked);
-                                },
-                              })}
-                            />
-                            <span
-                              className={
-                                isMondayChecked
-                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                              }
-                            >
-                              Monday
-                            </span>
-                          </label>
-
-                          {/* Tuesday */}
-                          <label>
-                            <input
-                              type="checkbox"
-                              id="tuesday"
-                              className="form-checkbox hidden"
-                              checked={isTuesdayChecked}
-                              {...register('days.tuesday', {
-                                onChange: () => {
-                                  setTuesdayChecked(!isTuesdayChecked);
-                                },
-                              })}
-                            />
-                            <span
-                              className={
-                                isTuesdayChecked
-                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                              }
-                            >
-                              Tuesday
-                            </span>
-                          </label>
-
-                          {/* Wednesday */}
-                          <label>
-                            <input
-                              type="checkbox"
-                              id="wednesday"
-                              className="form-checkbox hidden"
-                              checked={isWednesdayChecked}
-                              {...register('days.wednesday', {
-                                onChange: () => {
-                                  setWednesdayChecked(!isWednesdayChecked);
-                                },
-                              })}
-                            />
-                            <span
-                              className={
-                                isWednesdayChecked
-                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                              }
-                            >
-                              Wednesday
-                            </span>
-                          </label>
-                        </div>
-
-                        <div className="flex flex-row gap-2">
-                          {/* Thursday */}
-                          <label>
-                            <input
-                              type="checkbox"
-                              id="thursday"
-                              className="form-checkbox hidden"
-                              checked={isThursdayChecked}
-                              {...register('days.thursday', {
-                                onChange: () => {
-                                  setThursdayChecked(!isThursdayChecked);
-                                },
-                              })}
-                            />
-                            <span
-                              className={
-                                isThursdayChecked
-                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                              }
-                            >
-                              Thursday
-                            </span>
-                          </label>
-
-                          {/* Friday */}
-                          <label>
-                            <input
-                              type="checkbox"
-                              className="form-checkbox hidden"
-                              id="friday"
-                              checked={isFridayChecked}
-                              {...register('days.friday', {
-                                onChange: () => {
-                                  setFridayChecked(!isFridayChecked);
-                                },
-                              })}
-                            />
-                            <span
-                              className={
-                                isFridayChecked
-                                  ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                  : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                              }
-                            >
-                              Friday
-                            </span>
-                          </label>
+                      <div className="mt-2">
+                        <input
+                          type="text"
+                          id="legalName"
+                          {...register('legalName')}
+                          autoComplete="legalName"
+                          className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:w-full  sm:text-sm sm:leading-6 md:w-2/3 lg:w-full"
+                        />
+                        <div className="mt-2 min-h-6 ">
+                          {errors.legalName?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.legalName.message}
+                            </p>
+                          )}
                         </div>
                       </div>
-                      <div className="mt-2 min-h-6 ">
-                        {errors.days?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.days.message}
-                          </p>
-                        )}
-                      </div>
-                    </fieldset>
-                  </div>
-                </div>
+                    </div>
 
-                {/* Open/Close */}
-                <div className="flex w-full flex-row items-center gap-4 md:w-5/6">
-                  {/* Open */}
-                  <div>
-                    <label
-                      htmlFor="open"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Open
-                      <span className="ml-1 text-sm text-red-400">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="open"
-                      {...register('hours.open')}
-                      autoComplete="open"
-                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
-                    <div className="mt-2 min-h-6 ">
-                      {errors.hours?.open?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.hours.open.message}
-                        </p>
-                      )}
+                    {/* Director Name/Title */}
+                    <div>
+                      <label
+                        htmlFor="lastName"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Director Name/Title
+                        <span className="ml-1 text-sm text-red-400">*</span>
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          type="text"
+                          id="directorName"
+                          {...register('directorName')}
+                          autoComplete="directorName"
+                          className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm  sm:leading-6 md:w-2/3"
+                        />
+                        <div className="mt-2 min-h-6 ">
+                          {errors.directorName?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.directorName.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <p className="mt-4">to</p>
-                  {/* Close */}
-                  <div>
-                    <label
-                      htmlFor="close"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Close
-                      <span className="ml-1 text-sm text-red-400">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="close"
-                      {...register('hours.close')}
-                      autoComplete="close"
-                      className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
-                    />
-                    <div className="mt-2 min-h-6 ">
-                      {errors.hours?.close?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.hours.close.message}
-                        </p>
-                      )}
+
+                    {/* Brief Agency Information */}
+                    <div>
+                      <label
+                        htmlFor="legalStatus"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Brief Agency Information
+                        <span className="ml-1 text-sm text-red-400">*</span>
+                      </label>
+                      <div className="mt-2">
+                        <textarea
+                          id="agencyInfo"
+                          v-model="agencyInfo"
+                          {...register('agencyInfo')}
+                          autoComplete="agencyInfo"
+                          className="block w-full resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 md:w-5/6"
+                        />
+                        <div className="mt-2 min-h-6 ">
+                          {errors.agencyInfo?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.agencyInfo.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </section>
+
+                  {/* left section */}
+                  <section className="flex w-full flex-col lg:w-1/2">
+                    <section className="flex flex-col gap-4 xl:flex-row">
+                      {/* Also known as */}
+                      <div className="w-full xl:w-2/3">
+                        <label
+                          htmlFor="lastName"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Also known as
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="akas"
+                            {...register('akas')}
+                            autoComplete="akas"
+                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
+                          />
+                          <div className="mt-2 min-h-6 ">
+                            {errors.akas?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.akas.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Legal organizational Status */}
+                      <div className="w-full xl:w-1/3">
+                        <label
+                          htmlFor="legalStatus"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Legal Organizational Status
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <select
+                            id="legalStatus"
+                            v-model="legalStatus"
+                            {...register('legalStatus')}
+                            autoComplete="legalStatus"
+                            className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
+                          >
+                            <option value="">Please Select One</option>
+                            <option value="federal">Federal</option>
+                            <option value="state">State</option>
+                            <option value="county">County</option>
+                            <option value="city">City</option>
+                            <option value="non-profit">Non-profit</option>
+                            <option value="501(c)3">501(c)3</option>
+                            <option value="For profit">For profit</option>
+                            <option value="other">Other</option>
+                          </select>
+                          <div className="mt-2 min-h-6 ">
+                            {errors.legalStatus?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.legalStatus.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
+                    {/* Hours of Operation */}
+                    <div>
+                      <label
+                        htmlFor="legalStatus"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Hours of Operation
+                      </label>
+                      <div className="mt-2">
+                        <fieldset>
+                          <label
+                            htmlFor="legalStatus"
+                            className="mb-2 block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Select day(s) of operation
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+
+                          <div className="flex flex-col gap-4 sm:flex-row sm:gap-2">
+                            <div className="flex flex-row gap-2">
+                              {/* Monday */}
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  id="monday"
+                                  className="form-checkbox hidden"
+                                  checked={isMondayChecked}
+                                  {...register('days.monday', {
+                                    onChange: () => {
+                                      setMondayChecked(!isMondayChecked);
+                                    },
+                                  })}
+                                />
+                                <span
+                                  className={
+                                    isMondayChecked
+                                      ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                      : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                                  }
+                                >
+                                  Monday
+                                </span>
+                              </label>
+
+                              {/* Tuesday */}
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  id="tuesday"
+                                  className="form-checkbox hidden"
+                                  checked={isTuesdayChecked}
+                                  {...register('days.tuesday', {
+                                    onChange: () => {
+                                      setTuesdayChecked(!isTuesdayChecked);
+                                    },
+                                  })}
+                                />
+                                <span
+                                  className={
+                                    isTuesdayChecked
+                                      ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                      : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                                  }
+                                >
+                                  Tuesday
+                                </span>
+                              </label>
+
+                              {/* Wednesday */}
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  id="wednesday"
+                                  className="form-checkbox hidden"
+                                  checked={isWednesdayChecked}
+                                  {...register('days.wednesday', {
+                                    onChange: () => {
+                                      setWednesdayChecked(!isWednesdayChecked);
+                                    },
+                                  })}
+                                />
+                                <span
+                                  className={
+                                    isWednesdayChecked
+                                      ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                      : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                                  }
+                                >
+                                  Wednesday
+                                </span>
+                              </label>
+                            </div>
+
+                            <div className="flex flex-row gap-2">
+                              {/* Thursday */}
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  id="thursday"
+                                  className="form-checkbox hidden"
+                                  checked={isThursdayChecked}
+                                  {...register('days.thursday', {
+                                    onChange: () => {
+                                      setThursdayChecked(!isThursdayChecked);
+                                    },
+                                  })}
+                                />
+                                <span
+                                  className={
+                                    isThursdayChecked
+                                      ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                      : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                                  }
+                                >
+                                  Thursday
+                                </span>
+                              </label>
+
+                              {/* Friday */}
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  className="form-checkbox hidden"
+                                  id="friday"
+                                  checked={isFridayChecked}
+                                  {...register('days.friday', {
+                                    onChange: () => {
+                                      setFridayChecked(!isFridayChecked);
+                                    },
+                                  })}
+                                />
+                                <span
+                                  className={
+                                    isFridayChecked
+                                      ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                      : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                                  }
+                                >
+                                  Friday
+                                </span>
+                              </label>
+                            </div>
+                          </div>
+                          <div className="mt-2 min-h-6 ">
+                            {errors.days?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.days.message}
+                              </p>
+                            )}
+                          </div>
+                        </fieldset>
+                      </div>
+                    </div>
+
+                    {/* Open/Close */}
+                    <div className="flex w-full flex-row items-center gap-4 md:w-5/6">
+                      {/* Open */}
+                      <div>
+                        <label
+                          htmlFor="open"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Open
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="open"
+                          {...register('hours.open')}
+                          autoComplete="open"
+                          className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        />
+                        <div className="mt-2 min-h-6 ">
+                          {errors.hours?.open?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.hours.open.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <p className="mt-4">to</p>
+                      {/* Close */}
+                      <div>
+                        <label
+                          htmlFor="close"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Close
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="close"
+                          {...register('hours.close')}
+                          autoComplete="close"
+                          className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                        />
+                        <div className="mt-2 min-h-6 ">
+                          {errors.hours?.close?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.hours.close.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
                 </div>
-              </section>
-            </div>
+              </>
+            )}
+
+            {currentSubstep === 1 && (
+              <>
+                <h1>Accessibility</h1>
+              </>
+            )}
           </>
         )}
 
@@ -2221,7 +2259,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
           <button
             type="button"
             onClick={prev}
-            disabled={currentStep === 0}
+            disabled={currentStep === 0 && currentSubstep == 0}
             className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <svg
@@ -2242,7 +2280,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
           <button
             type="button"
             onClick={next}
-            disabled={currentStep === steps.length - 1}
+            disabled={
+              currentStep === steps.length - 1 &&
+              currentSubstep === steps[currentStep].subpages.length
+            }
             className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <svg
