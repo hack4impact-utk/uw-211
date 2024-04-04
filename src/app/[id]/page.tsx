@@ -54,9 +54,7 @@ export default function Form({ params }: { params: { id: string } }) {
   const [currentSubstep, setCurrentSubstep] = useState(0);
   const [previousSubstep, setPreviousSubstep] = useState(-1);
   const delta = currentStep - previousStep;
-  console.log('delta', currentStep, previousStep, delta);
   const subdelta = currentSubstep - previousSubstep;
-  console.log('subdelta', currentSubstep, previousSubstep, subdelta);
 
   const {
     register,
