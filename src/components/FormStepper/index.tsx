@@ -9,6 +9,7 @@ interface FormStepperSubpage {
 }
 interface FormStepperProps {
   currentPageIndex: number;
+  currentSubpageIndex: number;
   formSteps: Array<{
     id: string;
     name: string;
@@ -20,6 +21,7 @@ interface FormStepperProps {
 
 export default function FormStepper({
   currentPageIndex,
+  currentSubpageIndex,
   formSteps,
   setCurrentStep,
   setCurrentSubstep,
@@ -40,6 +42,7 @@ export default function FormStepper({
   return (
     <DesktopFormStepper
       currentPageIndex={currentPageIndex}
+      currentSubpageIndex={currentSubpageIndex}
       formSteps={formSteps}
       setCurrentStep={setCurrentStep}
       setCurrentSubstep={setCurrentSubstep}

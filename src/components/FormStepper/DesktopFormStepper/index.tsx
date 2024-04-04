@@ -19,6 +19,7 @@ interface FormStepperSubpage {
 }
 interface DesktopFormStepperProps {
   currentPageIndex: number;
+  currentSubpageIndex: number;
   formSteps: Array<{
     id: string;
     name: string;
@@ -32,6 +33,7 @@ interface StepItem {
   step: { id: string; name: string; subpages: Array<FormStepperSubpage> };
   index: number;
   currentPageIndex: number;
+  currentSubpageIndex: number;
   setCurrentStep: (step: number) => void;
   setCurrentSubstep: (step: number) => void;
 }
@@ -40,6 +42,7 @@ const BreadItem = ({
   index,
   step,
   currentPageIndex,
+  currentSubpageIndex,
   setCurrentStep,
   setCurrentSubstep,
 }: StepItem) => {
@@ -86,6 +89,11 @@ const BreadItem = ({
                   setCurrentSubstep(subindex);
                 }}
                 key={`${index}.${subindex}`}
+                className={`${
+                  subindex > currentSubpageIndex
+                    ? 'pointer-events-none text-gray-400'
+                    : 'text-black'
+                }`}
               >
                 {subpage.name}
               </DropdownMenuItem>
@@ -127,6 +135,7 @@ export default function DesktopFormStepper({
             index={index}
             step={step}
             currentPageIndex={currentPageIndex}
+            currentSubpageIndex={currentPageIndex}
             setCurrentStep={setCurrentStep}
             setCurrentSubstep={setCurrentSubstep}
           />

@@ -959,6 +959,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
       {/* Stepper */}
       <FormStepper
         currentPageIndex={currentStep}
+        currentSubpageIndex={currentSubstep}
         formSteps={steps}
         setCurrentStep={setCurrentStep}
         setCurrentSubstep={setCurrentSubstep}
