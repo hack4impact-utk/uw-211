@@ -54,8 +54,9 @@ export default function Form({ params }: { params: { id: string } }) {
   const [currentSubstep, setCurrentSubstep] = useState(0);
   const [previousSubstep, setPreviousSubstep] = useState(-1);
   const delta = currentStep - previousStep;
+  console.log('delta', currentStep, previousStep, delta);
   const subdelta = currentSubstep - previousSubstep;
-  console.log(subdelta);
+  console.log('subdelta', currentSubstep, previousSubstep, subdelta);
 
   const {
     register,
@@ -99,12 +100,11 @@ export default function Form({ params }: { params: { id: string } }) {
       if (currentSubstep < subpage_length) {
         setPreviousSubstep(currentSubstep);
         setCurrentSubstep((substep) => substep + 1);
-        console.log(currentStep, currentSubstep + 1);
       } else {
         setPreviousStep(currentStep);
         setCurrentStep((step) => step + 1);
         setCurrentSubstep(0);
-        console.log(currentStep + 1, 0);
+        setPreviousSubstep(-1);
       }
     }
   };
@@ -114,18 +114,17 @@ export default function Form({ params }: { params: { id: string } }) {
       if (currentSubstep > 0) {
         setPreviousSubstep(currentSubstep);
         setCurrentSubstep((substep) => substep - 1);
-        console.log(currentStep, currentSubstep - 1);
       } else {
         setPreviousStep(currentStep);
         setCurrentStep((step) => step - 1);
-        setPreviousSubstep(currentSubstep);
+        setPreviousSubstep(steps[currentStep - 1].subpages.length);
         setCurrentSubstep(steps[currentStep - 1].subpages.length - 1);
-        console.log(
-          currentStep - 1,
-          steps[currentStep - 1].subpages.length - 1
-        );
       }
     }
+  };
+
+  const get_subpage_name = (currentStep: number, currentSubstep: number) => {
+    return steps[currentStep].subpages[currentSubstep].name;
   };
 
   const [isMondayChecked, setMondayChecked] = useState(false);
@@ -971,16 +970,30 @@ homeless men, etc.) This helps us to make appropriate referrals."
       <form className="py-6" onSubmit={handleSubmit(processForm)}>
         {/* Preliminaries */}
         {currentStep === 0 && (
-          <>
-            {/* General */}
+          <motion.div
+            initial={{
+              x: delta >= 0 && subdelta < 0 ? '50%' : '-50%',
+              opacity: 0,
+            }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
+            <h2 className="text-base font-semibold leading-7 text-gray-900">
+              Preliminaries - {get_subpage_name(currentStep, currentSubstep)}
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-gray-600">
+              Let&apos;s get to know your agency...
+            </p>
+            {/* General Subpage */}
             {currentSubstep === 0 && (
-              <>
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Preliminaries - General
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  Let&apos;s get to know your agency...
-                </p>
+              <motion.div
+                initial={{
+                  x: subdelta >= 0 && delta < 0 ? '50%' : '-50%',
+                  opacity: 0,
+                }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
                 <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
                   {/* right section */}
                   <section className="flex w-full flex-col lg:w-1/2">
@@ -1341,131 +1354,69 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     </div>
                   </section>
                 </div>
-              </>
+              </motion.div>
             )}
 
+            {/* Accessibility Subpage */}
             {currentSubstep === 1 && (
-              <>
-                <h1>Accessibility</h1>
-              </>
+              <motion.div
+                initial={{
+                  x: subdelta >= 0 && delta < 0 ? '50%' : '-50%',
+                  opacity: 0,
+                }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
+                <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
+                  <p>test</p>
+                </div>
+              </motion.div>
             )}
-          </>
+          </motion.div>
         )}
 
         {/* Services */}
         {currentStep === 1 && (
           <motion.div
-            initial={{ x: delta >= 0 ? '50%' : '-50%', opacity: 0 }}
+            initial={{
+              x: delta >= 0 ? '50%' : '-50%',
+              opacity: 0,
+            }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <>
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Services
-              </h2>
-              {screenWidth >= 1100 ? (
-                <ResizablePanelGroup
-                  direction="horizontal"
-                  className="rounded-lg border"
-                >
-                  <ResizablePanel defaultSize={20}>
-                    <div className="mt-2 flex flex-col px-4 py-2">
-                      {/* Fix the height to be dynamic */}
-                      <ScrollArea className="flex h-80 flex-col">
-                        {getValues('services').map((service: Service) => (
-                          <div key={service.id} className="flex flex-row">
-                            <Button
-                              onClick={() =>
-                                setServiceIdx(
-                                  getValues('services').findIndex(
-                                    (i) => i.id === service.id
-                                  )
-                                )
-                              }
-                              className="m-1 flex-grow"
-                              variant={
-                                getValues(`services.${serviceIdx}.id`) ===
-                                service.id
-                                  ? 'default'
-                                  : 'outline'
-                              }
-                              type="button"
-                            >
-                              {service.name}
-                            </Button>
-                            <Button
-                              variant={
-                                getValues(`services.${serviceIdx}.id`) ===
-                                service.id
-                                  ? 'default'
-                                  : 'outline'
-                              }
-                              size="icon"
-                              className="m-1"
-                              onClick={() => delete_service(service.id)}
-                              type="button"
-                            >
-                              <Trash2 size={20} />
-                            </Button>
-                          </div>
-                        ))}
-                      </ScrollArea>
-                      <Separator className="my-2" />
-                      <Button
-                        className="m-1"
-                        variant="outline"
-                        onClick={add_service}
-                        type="button"
-                      >
-                        <Plus size={16} className="mr-2" />
-                        Add Service
-                      </Button>
-                    </div>
-                  </ResizablePanel>
-                  <ResizableHandle withHandle />
-                  <ResizablePanel defaultSize={80}>
-                    {serviceIdx === -1 ? (
-                      <div className="flex h-full items-center justify-center">
-                        <p className="text-sm text-gray-600">
-                          Add or select a service to begin.
-                        </p>
-                      </div>
-                    ) : (
-                      /* Fix the height to be dynamic */
-                      <ScrollArea className="h-96">{ServicesForm()}</ScrollArea>
-                    )}
-                  </ResizablePanel>
-                </ResizablePanelGroup>
-              ) : (
-                <div className="flex flex-col">
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <Button variant="outline" className="mx-4" type="button">
-                        Services List
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent className="z-50">
-                      <SheetHeader className="pb-2 text-3xl">
-                        <SheetTitle className="text-center text-2xl">
-                          Services List
-                        </SheetTitle>
-                      </SheetHeader>
-                      <div className="flex flex-col justify-center gap-2">
-                        <Button
-                          className="m-1"
-                          variant="outline"
-                          onClick={add_service}
-                          type="button"
-                        >
-                          <Plus size={16} className="mr-2" />
-                          Add Service
-                        </Button>
-                        <Separator className="my-2" />
-                        {getValues('services').map(
-                          (service: Service, idx: number) => (
+            {/* Services Subpage */}
+            {currentSubstep === 0 && (
+              <motion.div
+                initial={{
+                  x: subdelta >= 0 ? '50%' : '-50%',
+                  opacity: 0,
+                }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Services
+                </h2>
+                {screenWidth >= 1100 ? (
+                  <ResizablePanelGroup
+                    direction="horizontal"
+                    className="rounded-lg border"
+                  >
+                    <ResizablePanel defaultSize={20}>
+                      <div className="mt-2 flex flex-col px-4 py-2">
+                        {/* Fix the height to be dynamic */}
+                        <ScrollArea className="flex h-80 flex-col">
+                          {getValues('services').map((service: Service) => (
                             <div key={service.id} className="flex flex-row">
                               <Button
-                                onClick={() => setServiceIdx(idx)}
+                                onClick={() =>
+                                  setServiceIdx(
+                                    getValues('services').findIndex(
+                                      (i) => i.id === service.id
+                                    )
+                                  )
+                                }
                                 className="m-1 flex-grow"
                                 variant={
                                   getValues(`services.${serviceIdx}.id`) ===
@@ -1492,23 +1443,114 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 <Trash2 size={20} />
                               </Button>
                             </div>
-                          )
-                        )}
+                          ))}
+                        </ScrollArea>
+                        <Separator className="my-2" />
+                        <Button
+                          className="m-1"
+                          variant="outline"
+                          onClick={add_service}
+                          type="button"
+                        >
+                          <Plus size={16} className="mr-2" />
+                          Add Service
+                        </Button>
                       </div>
-                    </SheetContent>
-                  </Sheet>
-                  {serviceIdx === -1 ? (
-                    <div className="flex h-full items-center justify-center p-5">
-                      <p className="text-sm text-gray-600">
-                        Open the services list to begin.
-                      </p>
-                    </div>
-                  ) : (
-                    ServicesForm()
-                  )}
-                </div>
-              )}
-            </>
+                    </ResizablePanel>
+                    <ResizableHandle withHandle />
+                    <ResizablePanel defaultSize={80}>
+                      {serviceIdx === -1 ? (
+                        <div className="flex h-full items-center justify-center">
+                          <p className="text-sm text-gray-600">
+                            Add or select a service to begin.
+                          </p>
+                        </div>
+                      ) : (
+                        /* Fix the height to be dynamic */
+                        <ScrollArea className="h-96">
+                          {ServicesForm()}
+                        </ScrollArea>
+                      )}
+                    </ResizablePanel>
+                  </ResizablePanelGroup>
+                ) : (
+                  <div className="flex flex-col">
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="mx-4"
+                          type="button"
+                        >
+                          Services List
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent className="z-50">
+                        <SheetHeader className="pb-2 text-3xl">
+                          <SheetTitle className="text-center text-2xl">
+                            Services List
+                          </SheetTitle>
+                        </SheetHeader>
+                        <div className="flex flex-col justify-center gap-2">
+                          <Button
+                            className="m-1"
+                            variant="outline"
+                            onClick={add_service}
+                            type="button"
+                          >
+                            <Plus size={16} className="mr-2" />
+                            Add Service
+                          </Button>
+                          <Separator className="my-2" />
+                          {getValues('services').map(
+                            (service: Service, idx: number) => (
+                              <div key={service.id} className="flex flex-row">
+                                <Button
+                                  onClick={() => setServiceIdx(idx)}
+                                  className="m-1 flex-grow"
+                                  variant={
+                                    getValues(`services.${serviceIdx}.id`) ===
+                                    service.id
+                                      ? 'default'
+                                      : 'outline'
+                                  }
+                                  type="button"
+                                >
+                                  {service.name}
+                                </Button>
+                                <Button
+                                  variant={
+                                    getValues(`services.${serviceIdx}.id`) ===
+                                    service.id
+                                      ? 'default'
+                                      : 'outline'
+                                  }
+                                  size="icon"
+                                  className="m-1"
+                                  onClick={() => delete_service(service.id)}
+                                  type="button"
+                                >
+                                  <Trash2 size={20} />
+                                </Button>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </SheetContent>
+                    </Sheet>
+                    {serviceIdx === -1 ? (
+                      <div className="flex h-full items-center justify-center p-5">
+                        <p className="text-sm text-gray-600">
+                          Open the services list to begin.
+                        </p>
+                      </div>
+                    ) : (
+                      ServicesForm()
+                    )}
+                  </div>
+                )}
+              </motion.div>
+            )}
           </motion.div>
         )}
 
@@ -1519,440 +1561,461 @@ homeless men, etc.) This helps us to make appropriate referrals."
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <div className="flex flex-col gap-6">
-              {/* top container */}
-              <div className="flex h-full w-full flex-col gap-8 lg:flex-row">
-                {/* left section */}
-                <section className="h-2/3 w-full lg:w-1/2">
-                  <div className="mb-2 flex flex-col">
-                    <div className="flex flex-col lg:flex-row lg:gap-12">
-                      <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Does your organization accept volunteers?
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </h2>
-                      {/* radio button */}
-                      <div className="flex flex-row gap-4 whitespace-nowrap">
-                        <div>
-                          <input
-                            id="volunteers"
-                            type="radio"
-                            value="false"
-                            {...register('volunteerFields.volunteers')}
-                            onChange={(e) => {
-                              setVolunteerChecked(e.target.value);
-                            }}
-                            autoComplete="volunteers"
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                            defaultChecked
-                          />
-                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            No
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            id="volunteers"
-                            type="radio"
-                            value="true"
-                            {...register('volunteerFields.volunteers')}
-                            onChange={(e) => {
-                              setVolunteerChecked(e.target.value);
-                            }}
-                            autoComplete="volunteers"
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                          />
-                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            Yes
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-2 min-h-6 ">
-                      {errors.volunteerFields?.volunteers?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.volunteerFields.volunteers.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <section
-                    className={`w-full, ${
-                      volunteerChecked === 'false' ? 'opacity-50' : ''
-                    }`}
-                  >
-                    <div className="mb-4">
-                      <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Who is eligible to volunteer?
-                      </h2>
-                      <textarea
-                        id="vol_reqs"
-                        {...register('volunteerFields.vol_reqs')}
-                        autoComplete="vol_reqs"
-                        cols={30}
-                        rows={10}
-                        disabled={volunteerChecked === 'false'}
-                        placeholder="List type of volunteer work, age, training, background checks, other requirements for your volunteers"
-                        className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                      ></textarea>
-                      <div className="mt-2 min-h-6 ">
-                        {errors.volunteerFields?.vol_reqs?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.volunteerFields.vol_reqs.message}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex w-full flex-col gap-6 sm:flex-row">
-                      <div className="w-full sm:w-1/2">
-                        <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Volunteer Coordinator:
-                        </h2>
-
-                        <input
-                          type="text"
-                          id="vol_coor"
-                          {...register('volunteerFields.vol_coor')}
-                          autoComplete="vol_coor"
-                          disabled={volunteerChecked === 'false'}
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.volunteerFields?.vol_coor?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.volunteerFields?.vol_coor.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="w-full sm:w-1/2">
-                        <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Phone #:
-                        </h2>
-
-                        <input
-                          type="tel"
-                          id="vol_coor_tel"
-                          {...register('volunteerFields.vol_coor_tel')}
-                          autoComplete="vol_coor_tel"
-                          disabled={volunteerChecked === 'false'}
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-
-                        <div className="mt-2 min-h-6 ">
-                          {errors.volunteerFields?.vol_coor_tel?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.volunteerFields.vol_coor_tel.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-                </section>
-
-                {/* right section */}
-                <section className="h-2/3 w-full lg:w-1/2">
-                  <div className="mb-2 flex flex-col">
-                    <div className="flex flex-col gap-4 lg:flex-row">
-                      <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Does your organization accept ongoing, non-monetary
-                        donations in support of programs or services?
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </h2>
-                      {/* radio button */}
-                      <div className="flex flex-row gap-4 whitespace-nowrap">
-                        <div>
-                          <input
-                            id="donation"
-                            type="radio"
-                            value="false"
-                            {...register('donationFields.donation')}
-                            onChange={(e) => {
-                              setDonationChecked(e.target.value);
-                            }}
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                            defaultChecked
-                          />
-                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            No
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            id="donation"
-                            type="radio"
-                            value="true"
-                            {...register('donationFields.donation')}
-                            onChange={(e) => {
-                              setDonationChecked(e.target.value);
-                            }}
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                          />
-                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            Yes
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-2 min-h-6 ">
-                      {errors.donationFields?.donation?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.donationFields.donation.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <section
-                    className={`${
-                      donationChecked === 'false' ? 'opacity-50' : ''
-                    }`}
-                  >
-                    <div className="mb-2">
-                      <div className="flex flex-col items-start lg:flex-row lg:items-center lg:gap-8">
-                        <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Please list.
-                        </h2>
-                        <input
-                          type="text"
-                          {...register('donationFields.don_ex')}
-                          id="don_ex"
-                          placeholder="Example: pet food, clothing, appliances, furniture"
-                          disabled={donationChecked === 'false'}
-                          className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 lg:w-2/3"
-                        ></input>
-                      </div>
-                      <div className="mt-2 min-h-6 ">
-                        {errors.donationFields?.don_ex?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {errors.donationFields.don_ex.message}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="mt-8 flex flex-row gap-6">
-                      {/* radio button */}
-                      <div className="mb-1 flex flex-col gap-4 sm:flex-row sm:gap-12">
-                        <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Do you provide pick-up service?
-                        </h2>
-                        <div className="flex flex-row gap-4 whitespace-nowrap">
-                          <div>
-                            <input
-                              id="pickup"
-                              type="radio"
-                              value="false"
-                              disabled={donationChecked === 'false'}
-                              {...register('donationFields.pickup')}
-                              onChange={(e) => {
-                                setPickupChecked(e.target.value);
-                              }}
-                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                              defaultChecked
-                            />
-                            <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                              No
-                            </label>
-                          </div>
-                          <div>
-                            <input
-                              id="pickup"
-                              type="radio"
-                              value="true"
-                              disabled={donationChecked === 'false'}
-                              {...register('donationFields.pickup')}
-                              onChange={(e) => {
-                                setPickupChecked(e.target.value);
-                              }}
-                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                            />
-                            <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                              Yes
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-2 min-h-6 ">
-                      {errors.donationFields?.pickup?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.donationFields.pickup.message}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* pick up service */}
-                    <section
-                      className={`${
-                        pickupChecked === 'false' ? 'opacity-50' : ''
-                      }`}
-                    >
-                      <div className="">
-                        <div className="flex flex-row items-center gap-4">
+            {/* Opportunities Subpage */}
+            {currentSubstep === 0 && (
+              <motion.div
+                initial={{
+                  x: subdelta >= 0 ? '50%' : '-50%',
+                  opacity: 0,
+                }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
+                <div className="flex flex-col gap-6">
+                  {/* top container */}
+                  <div className="flex h-full w-full flex-col gap-8 lg:flex-row">
+                    {/* left section */}
+                    <section className="h-2/3 w-full lg:w-1/2">
+                      <div className="mb-2 flex flex-col">
+                        <div className="flex flex-col lg:flex-row lg:gap-12">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Where?
+                            Does your organization accept volunteers?
+                            <span className="ml-1 text-sm text-red-400">*</span>
                           </h2>
-                          <input
-                            type="text"
-                            {...register('donationFields.pickup_loc')}
-                            id="pickup_loc"
-                            disabled={pickupChecked === 'false'}
-                            className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          ></input>
+                          {/* radio button */}
+                          <div className="flex flex-row gap-4 whitespace-nowrap">
+                            <div>
+                              <input
+                                id="volunteers"
+                                type="radio"
+                                value="false"
+                                {...register('volunteerFields.volunteers')}
+                                onChange={(e) => {
+                                  setVolunteerChecked(e.target.value);
+                                }}
+                                autoComplete="volunteers"
+                                className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                                defaultChecked
+                              />
+                              <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                No
+                              </label>
+                            </div>
+                            <div>
+                              <input
+                                id="volunteers"
+                                type="radio"
+                                value="true"
+                                {...register('volunteerFields.volunteers')}
+                                onChange={(e) => {
+                                  setVolunteerChecked(e.target.value);
+                                }}
+                                autoComplete="volunteers"
+                                className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              />
+                              <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Yes
+                              </label>
+                            </div>
+                          </div>
                         </div>
                         <div className="mt-2 min-h-6 ">
-                          {errors.donationFields?.pickup_loc?.message && (
+                          {errors.volunteerFields?.volunteers?.message && (
                             <p className="mt-2 text-sm text-red-400">
-                              {errors.donationFields?.pickup_loc.message}
+                              {errors.volunteerFields.volunteers.message}
                             </p>
                           )}
                         </div>
                       </div>
+
+                      <section
+                        className={`w-full, ${
+                          volunteerChecked === 'false' ? 'opacity-50' : ''
+                        }`}
+                      >
+                        <div className="mb-4">
+                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            Who is eligible to volunteer?
+                          </h2>
+                          <textarea
+                            id="vol_reqs"
+                            {...register('volunteerFields.vol_reqs')}
+                            autoComplete="vol_reqs"
+                            cols={30}
+                            rows={10}
+                            disabled={volunteerChecked === 'false'}
+                            placeholder="List type of volunteer work, age, training, background checks, other requirements for your volunteers"
+                            className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          ></textarea>
+                          <div className="mt-2 min-h-6 ">
+                            {errors.volunteerFields?.vol_reqs?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.volunteerFields.vol_reqs.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex w-full flex-col gap-6 sm:flex-row">
+                          <div className="w-full sm:w-1/2">
+                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                              Volunteer Coordinator:
+                            </h2>
+
+                            <input
+                              type="text"
+                              id="vol_coor"
+                              {...register('volunteerFields.vol_coor')}
+                              autoComplete="vol_coor"
+                              disabled={volunteerChecked === 'false'}
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.volunteerFields?.vol_coor?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.volunteerFields?.vol_coor.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="w-full sm:w-1/2">
+                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                              Phone #:
+                            </h2>
+
+                            <input
+                              type="tel"
+                              id="vol_coor_tel"
+                              {...register('volunteerFields.vol_coor_tel')}
+                              autoComplete="vol_coor_tel"
+                              disabled={volunteerChecked === 'false'}
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+
+                            <div className="mt-2 min-h-6 ">
+                              {errors.volunteerFields?.vol_coor_tel
+                                ?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.volunteerFields.vol_coor_tel.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </section>
                     </section>
 
-                    <div className="flex w-full flex-col gap-6 sm:flex-row">
-                      <div className="w-full sm:w-1/2">
-                        <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Donation Coordinator:
-                        </h2>
-
-                        <input
-                          type="text"
-                          {...register('donationFields.don_coor')}
-                          id="don_coor"
-                          disabled={donationChecked === 'false'}
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
+                    {/* right section */}
+                    <section className="h-2/3 w-full lg:w-1/2">
+                      <div className="mb-2 flex flex-col">
+                        <div className="flex flex-col gap-4 lg:flex-row">
+                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            Does your organization accept ongoing, non-monetary
+                            donations in support of programs or services?
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </h2>
+                          {/* radio button */}
+                          <div className="flex flex-row gap-4 whitespace-nowrap">
+                            <div>
+                              <input
+                                id="donation"
+                                type="radio"
+                                value="false"
+                                {...register('donationFields.donation')}
+                                onChange={(e) => {
+                                  setDonationChecked(e.target.value);
+                                }}
+                                className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                                defaultChecked
+                              />
+                              <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                No
+                              </label>
+                            </div>
+                            <div>
+                              <input
+                                id="donation"
+                                type="radio"
+                                value="true"
+                                {...register('donationFields.donation')}
+                                onChange={(e) => {
+                                  setDonationChecked(e.target.value);
+                                }}
+                                className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              />
+                              <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Yes
+                              </label>
+                            </div>
+                          </div>
+                        </div>
                         <div className="mt-2 min-h-6 ">
-                          {errors.donationFields?.don_coor?.message && (
+                          {errors.donationFields?.donation?.message && (
                             <p className="mt-2 text-sm text-red-400">
-                              {errors.donationFields.don_coor.message}
+                              {errors.donationFields.donation.message}
                             </p>
                           )}
                         </div>
                       </div>
 
-                      <div className="w-full sm:w-1/2">
-                        <h2 className="text-base font-semibold leading-7 text-gray-900">
-                          Phone #:
-                        </h2>
+                      <section
+                        className={`${
+                          donationChecked === 'false' ? 'opacity-50' : ''
+                        }`}
+                      >
+                        <div className="mb-2">
+                          <div className="flex flex-col items-start lg:flex-row lg:items-center lg:gap-8">
+                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                              Please list.
+                            </h2>
+                            <input
+                              type="text"
+                              {...register('donationFields.don_ex')}
+                              id="don_ex"
+                              placeholder="Example: pet food, clothing, appliances, furniture"
+                              disabled={donationChecked === 'false'}
+                              className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 lg:w-2/3"
+                            ></input>
+                          </div>
+                          <div className="mt-2 min-h-6 ">
+                            {errors.donationFields?.don_ex?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.donationFields.don_ex.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
 
-                        <input
-                          type="tel"
-                          {...register('donationFields.don_coor_tel')}
-                          id="don_coor_tel"
-                          disabled={donationChecked === 'false'}
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
+                        <div className="mt-8 flex flex-row gap-6">
+                          {/* radio button */}
+                          <div className="mb-1 flex flex-col gap-4 sm:flex-row sm:gap-12">
+                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                              Do you provide pick-up service?
+                            </h2>
+                            <div className="flex flex-row gap-4 whitespace-nowrap">
+                              <div>
+                                <input
+                                  id="pickup"
+                                  type="radio"
+                                  value="false"
+                                  disabled={donationChecked === 'false'}
+                                  {...register('donationFields.pickup')}
+                                  onChange={(e) => {
+                                    setPickupChecked(e.target.value);
+                                  }}
+                                  className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                                  defaultChecked
+                                />
+                                <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                  No
+                                </label>
+                              </div>
+                              <div>
+                                <input
+                                  id="pickup"
+                                  type="radio"
+                                  value="true"
+                                  disabled={donationChecked === 'false'}
+                                  {...register('donationFields.pickup')}
+                                  onChange={(e) => {
+                                    setPickupChecked(e.target.value);
+                                  }}
+                                  className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                                />
+                                <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                  Yes
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         <div className="mt-2 min-h-6 ">
-                          {errors.donationFields?.don_coor_tel?.message && (
+                          {errors.donationFields?.pickup?.message && (
                             <p className="mt-2 text-sm text-red-400">
-                              {errors.donationFields.don_coor_tel.message}
+                              {errors.donationFields.pickup.message}
                             </p>
                           )}
                         </div>
-                      </div>
-                    </div>
-                  </section>
-                </section>
-              </div>
 
-              {/* bottom container */}
-              <div className="flex h-full w-full flex-col lg:flex-row">
-                <section className="h-full w-full">
-                  <div className="mb-4 flex flex-col">
-                    <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
-                      <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Are there other agencies or services that have been
-                        helpful that you would recommend to be included in our
-                        resource database?
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </h2>
-                      {/* radio button */}
-                      <div className="flex flex-row gap-4 whitespace-nowrap">
-                        <div>
-                          <input
-                            id="recommendation"
-                            type="radio"
-                            value="false"
-                            {...register('recommendationFields.recommendation')}
-                            onChange={(e) => {
-                              setRecommendationChecked(e.target.value);
-                            }}
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                            defaultChecked
-                          />
-                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            No
-                          </label>
+                        {/* pick up service */}
+                        <section
+                          className={`${
+                            pickupChecked === 'false' ? 'opacity-50' : ''
+                          }`}
+                        >
+                          <div className="">
+                            <div className="flex flex-row items-center gap-4">
+                              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                                Where?
+                              </h2>
+                              <input
+                                type="text"
+                                {...register('donationFields.pickup_loc')}
+                                id="pickup_loc"
+                                disabled={pickupChecked === 'false'}
+                                className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                              ></input>
+                            </div>
+                            <div className="mt-2 min-h-6 ">
+                              {errors.donationFields?.pickup_loc?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.donationFields?.pickup_loc.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </section>
+
+                        <div className="flex w-full flex-col gap-6 sm:flex-row">
+                          <div className="w-full sm:w-1/2">
+                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                              Donation Coordinator:
+                            </h2>
+
+                            <input
+                              type="text"
+                              {...register('donationFields.don_coor')}
+                              id="don_coor"
+                              disabled={donationChecked === 'false'}
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.donationFields?.don_coor?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.donationFields.don_coor.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="w-full sm:w-1/2">
+                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                              Phone #:
+                            </h2>
+
+                            <input
+                              type="tel"
+                              {...register('donationFields.don_coor_tel')}
+                              id="don_coor_tel"
+                              disabled={donationChecked === 'false'}
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.donationFields?.don_coor_tel?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.donationFields.don_coor_tel.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <input
-                            id="recommendation"
-                            type="radio"
-                            value="true"
-                            {...register('recommendationFields.recommendation')}
-                            onChange={(e) => {
-                              setRecommendationChecked(e.target.value);
-                            }}
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                          />
-                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            Yes
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-2 min-h-6 ">
-                      {errors.recommendationFields?.recommendation?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.recommendationFields.recommendation.message}
-                        </p>
-                      )}
-                    </div>
+                      </section>
+                    </section>
                   </div>
 
-                  <section
-                    className={`${
-                      recommendationChecked === 'false' ? 'opacity-50' : ''
-                    }`}
-                  >
-                    <div>
-                      <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Please provide contact information for these
-                        agencies/services.
-                      </h2>
-                      <textarea
-                        {...register(
-                          'recommendationFields.recommendations_contact'
-                        )}
-                        id="recommendations_contact"
-                        cols={30}
-                        rows={10}
-                        disabled={recommendationChecked === 'false'}
-                        placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
-                        className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                      ></textarea>
-                      <div className="mt-2 min-h-6 ">
-                        {errors.recommendationFields?.recommendations_contact
-                          ?.message && (
-                          <p className="mt-2 text-sm text-red-400">
-                            {
-                              errors.recommendationFields
-                                .recommendations_contact.message
-                            }
-                          </p>
-                        )}
+                  {/* bottom container */}
+                  <div className="flex h-full w-full flex-col lg:flex-row">
+                    <section className="h-full w-full">
+                      <div className="mb-4 flex flex-col">
+                        <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
+                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            Are there other agencies or services that have been
+                            helpful that you would recommend to be included in
+                            our resource database?
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </h2>
+                          {/* radio button */}
+                          <div className="flex flex-row gap-4 whitespace-nowrap">
+                            <div>
+                              <input
+                                id="recommendation"
+                                type="radio"
+                                value="false"
+                                {...register(
+                                  'recommendationFields.recommendation'
+                                )}
+                                onChange={(e) => {
+                                  setRecommendationChecked(e.target.value);
+                                }}
+                                className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                                defaultChecked
+                              />
+                              <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                No
+                              </label>
+                            </div>
+                            <div>
+                              <input
+                                id="recommendation"
+                                type="radio"
+                                value="true"
+                                {...register(
+                                  'recommendationFields.recommendation'
+                                )}
+                                onChange={(e) => {
+                                  setRecommendationChecked(e.target.value);
+                                }}
+                                className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              />
+                              <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Yes
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-2 min-h-6 ">
+                          {errors.recommendationFields?.recommendation
+                            ?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {
+                                errors.recommendationFields.recommendation
+                                  .message
+                              }
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </section>
-                </section>
-              </div>
-            </div>
+
+                      <section
+                        className={`${
+                          recommendationChecked === 'false' ? 'opacity-50' : ''
+                        }`}
+                      >
+                        <div>
+                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            Please provide contact information for these
+                            agencies/services.
+                          </h2>
+                          <textarea
+                            {...register(
+                              'recommendationFields.recommendations_contact'
+                            )}
+                            id="recommendations_contact"
+                            cols={30}
+                            rows={10}
+                            disabled={recommendationChecked === 'false'}
+                            placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
+                            className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          ></textarea>
+                          <div className="mt-2 min-h-6 ">
+                            {errors.recommendationFields
+                              ?.recommendations_contact?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {
+                                  errors.recommendationFields
+                                    .recommendations_contact.message
+                                }
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </section>
+                    </section>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         )}
 
@@ -1963,292 +2026,304 @@ homeless men, etc.) This helps us to make appropriate referrals."
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <div className="flex flex-col gap-10">
-              {/* Header */}
-              <section>
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Review
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  Please review your selections and submit.
-                </p>
-              </section>
-
-              {/* Preliminaries */}
-              <section className="flex flex-col">
-                <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                  Preliminaries
-                </h2>
-
-                <div className="flex flex-col gap-4 sm:flex-row sm:gap-12">
-                  {/* Prelim Info */}
-                  <section className="flex flex-col gap-2 sm:w-1/2">
-                    <div className="flex flex-col sm:flex-row">
-                      <p className="sm:w-1/2">
-                        <span className="text-base font-semibold leading-7 text-gray-900">
-                          Legal Name:
-                        </span>{' '}
-                        {getValues('legalName')}
-                      </p>
-
-                      {getValues('akas') ? (
-                        <p className="sm:w-1/2">
-                          <span className="text-base font-semibold leading-7 text-gray-900">
-                            Also Known As:
-                          </span>{' '}
-                          {getValues('akas')}
-                        </p>
-                      ) : (
-                        <p className="text-md leading-6 text-gray-400 sm:w-1/2">
-                          Also Known As: N/A
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row">
-                      <p className="sm:w-1/2">
-                        <span className="text-base font-semibold leading-7 text-gray-900">
-                          Legal Status:
-                        </span>{' '}
-                        {getValues('legalStatus').charAt(0).toUpperCase() +
-                          getValues('legalStatus').slice(1)}
-                      </p>
-
-                      <p className="sm:w-1/2">
-                        <span className="text-base font-semibold leading-7 text-gray-900">
-                          Director Name:
-                        </span>{' '}
-                        {getValues('directorName')}
-                      </p>
-                    </div>
-
-                    <p className="text-base font-semibold leading-7 text-gray-900">
-                      Brief Agency Information
-                    </p>
-                    <p>{getValues('agencyInfo')}</p>
-                  </section>
-
-                  {/* Hours of Operation */}
-                  <section className="w-1/2">
-                    {/* TODO */}
-                    <h3 className="text-base font-semibold leading-7 text-gray-900">
-                      Hours of Operation
-                    </h3>
-                    <p>
-                      <span className="bg-blue-500 text-white">
-                        TODO: Hours of operation
-                      </span>
-                    </p>
-                  </section>
-                </div>
-              </section>
-
-              {/* Services */}
-              <section>
-                <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                  Services
-                </h2>
-
-                {screenWidth < 720 || getValues('services').length > 2 ? (
-                  <Carousel
-                    opts={{
-                      align: 'start',
-                    }}
-                  >
-                    <CarouselContent>{get_services()}</CarouselContent>
-                    <CarouselNext
-                      className="right-1/3 top-full mt-8 sm:-right-12 sm:top-1/2 sm:-translate-y-1/2"
-                      type="button"
-                    />
-                    <CarouselPrevious
-                      className="left-1/3 top-full mt-8 sm:-left-12 sm:top-1/2 sm:-translate-y-1/2"
-                      type="button"
-                    />
-                  </Carousel>
-                ) : getValues('services').length == 0 ? (
-                  <p className="text-md leading-6 text-gray-400">
-                    No services listed.
-                  </p>
-                ) : (
-                  <div className="flex w-full flex-col gap-4 md:flex-row">
-                    {get_services()}
-                  </div>
-                )}
-              </section>
-
-              {/* Opportunities */}
-              <section className="mt-8 flex flex-col gap-4 sm:mt-0">
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Opportunities
-                </h2>
-
-                <section className="flex flex-col gap-8">
-                  {/* Volunteers */}
+            {/* Review Subpage */}
+            {currentSubstep === 0 && (
+              <motion.div
+                initial={{
+                  x: subdelta >= 0 ? '50%' : '-50%',
+                  opacity: 0,
+                }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
+                <div className="flex flex-col gap-10">
+                  {/* Header */}
                   <section>
-                    <div className="flex flex-col sm:flex-row sm:gap-16">
-                      <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                        Does your organization accept volunteers?
-                      </p>
+                    <h2 className="text-base font-semibold leading-7 text-gray-900">
+                      Review
+                    </h2>
+                    <p className="mt-1 text-sm leading-6 text-gray-600">
+                      Please review your selections and submit.
+                    </p>
+                  </section>
 
-                      <p className="sm:w-1/2">
-                        {getValues('volunteerFields.volunteers') == 'true'
-                          ? 'Yes'
-                          : 'No'}
-                      </p>
+                  {/* Preliminaries */}
+                  <section className="flex flex-col">
+                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                      Preliminaries
+                    </h2>
+
+                    <div className="flex flex-col gap-4 sm:flex-row sm:gap-12">
+                      {/* Prelim Info */}
+                      <section className="flex flex-col gap-2 sm:w-1/2">
+                        <div className="flex flex-col sm:flex-row">
+                          <p className="sm:w-1/2">
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Legal Name:
+                            </span>{' '}
+                            {getValues('legalName')}
+                          </p>
+
+                          {getValues('akas') ? (
+                            <p className="sm:w-1/2">
+                              <span className="text-base font-semibold leading-7 text-gray-900">
+                                Also Known As:
+                              </span>{' '}
+                              {getValues('akas')}
+                            </p>
+                          ) : (
+                            <p className="text-md leading-6 text-gray-400 sm:w-1/2">
+                              Also Known As: N/A
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row">
+                          <p className="sm:w-1/2">
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Legal Status:
+                            </span>{' '}
+                            {getValues('legalStatus').charAt(0).toUpperCase() +
+                              getValues('legalStatus').slice(1)}
+                          </p>
+
+                          <p className="sm:w-1/2">
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Director Name:
+                            </span>{' '}
+                            {getValues('directorName')}
+                          </p>
+                        </div>
+
+                        <p className="text-base font-semibold leading-7 text-gray-900">
+                          Brief Agency Information
+                        </p>
+                        <p>{getValues('agencyInfo')}</p>
+                      </section>
+
+                      {/* Hours of Operation */}
+                      <section className="w-1/2">
+                        {/* TODO */}
+                        <h3 className="text-base font-semibold leading-7 text-gray-900">
+                          Hours of Operation
+                        </h3>
+                        <p>
+                          <span className="bg-blue-500 text-white">
+                            TODO: Hours of operation
+                          </span>
+                        </p>
+                      </section>
                     </div>
+                  </section>
 
-                    {getValues('volunteerFields.volunteers') == 'true' && (
-                      <div>
-                        <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            <CornerDownRight className="mr-1" />
-                            Who is eligible to volunteer?
-                          </p>
+                  {/* Services */}
+                  <section>
+                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                      Services
+                    </h2>
 
-                          <p className="sm:w-1/2">
-                            {getValues('volunteerFields.vol_reqs')}
-                          </p>
-                        </div>
-
-                        <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            <CornerDownRight className="mr-1" />
-                            Volunteer Coordinator
-                          </p>
-
-                          <p className="sm:w-1/2">
-                            {getValues('volunteerFields.vol_coor')}
-                          </p>
-                        </div>
-
-                        <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            <CornerDownRight className="mr-1" />
-                            Phone #
-                          </p>
-
-                          <p className="sm:w-1/2">
-                            {getValues('volunteerFields.vol_coor_tel')}
-                          </p>
-                        </div>
+                    {screenWidth < 720 || getValues('services').length > 2 ? (
+                      <Carousel
+                        opts={{
+                          align: 'start',
+                        }}
+                      >
+                        <CarouselContent>{get_services()}</CarouselContent>
+                        <CarouselNext
+                          className="right-1/3 top-full mt-8 sm:-right-12 sm:top-1/2 sm:-translate-y-1/2"
+                          type="button"
+                        />
+                        <CarouselPrevious
+                          className="left-1/3 top-full mt-8 sm:-left-12 sm:top-1/2 sm:-translate-y-1/2"
+                          type="button"
+                        />
+                      </Carousel>
+                    ) : getValues('services').length == 0 ? (
+                      <p className="text-md leading-6 text-gray-400">
+                        No services listed.
+                      </p>
+                    ) : (
+                      <div className="flex w-full flex-col gap-4 md:flex-row">
+                        {get_services()}
                       </div>
                     )}
                   </section>
 
-                  {/* Donations */}
-                  <section>
-                    <div className="flex flex-col sm:flex-row sm:gap-16">
-                      <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                        Does your organization accept ongoing, non-monetary
-                        donations in support of programs or services?
-                      </p>
+                  {/* Opportunities */}
+                  <section className="mt-8 flex flex-col gap-4 sm:mt-0">
+                    <h2 className="text-base font-semibold leading-7 text-gray-900">
+                      Opportunities
+                    </h2>
 
-                      <p className="sm:w-1/2">
-                        {getValues('donationFields.donation') == 'true'
-                          ? 'Yes'
-                          : 'No'}
-                      </p>
-                    </div>
-
-                    {getValues('donationFields.donation') == 'true' && (
-                      <div>
+                    <section className="flex flex-col gap-8">
+                      {/* Volunteers */}
+                      <section>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            <CornerDownRight className="mr-1" />
-                            Please list.
+                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            Does your organization accept volunteers?
                           </p>
 
                           <p className="sm:w-1/2">
-                            {getValues('donationFields.don_ex')}
-                          </p>
-                        </div>
-
-                        <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            <CornerDownRight className="mr-1" />
-                            Do you provide pick-up service?
-                          </p>
-
-                          <p className="sm:w-1/2">
-                            {getValues('donationFields.pickup') == 'true'
+                            {getValues('volunteerFields.volunteers') == 'true'
                               ? 'Yes'
                               : 'No'}
                           </p>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            <CornerDownRight className="ml-6 mr-1" />
-                            Where?
-                          </p>
+                        {getValues('volunteerFields.volunteers') == 'true' && (
+                          <div>
+                            <div className="flex flex-col sm:flex-row sm:gap-16">
+                              <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                                <CornerDownRight className="mr-1" />
+                                Who is eligible to volunteer?
+                              </p>
 
-                          <p className="ml-6 flex sm:ml-0 sm:w-1/2">
-                            {getValues('donationFields.pickup_loc')}
-                          </p>
-                        </div>
+                              <p className="sm:w-1/2">
+                                {getValues('volunteerFields.vol_reqs')}
+                              </p>
+                            </div>
 
+                            <div className="flex flex-col sm:flex-row sm:gap-16">
+                              <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                                <CornerDownRight className="mr-1" />
+                                Volunteer Coordinator
+                              </p>
+
+                              <p className="sm:w-1/2">
+                                {getValues('volunteerFields.vol_coor')}
+                              </p>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row sm:gap-16">
+                              <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                                <CornerDownRight className="mr-1" />
+                                Phone #
+                              </p>
+
+                              <p className="sm:w-1/2">
+                                {getValues('volunteerFields.vol_coor_tel')}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </section>
+
+                      {/* Donations */}
+                      <section>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            <CornerDownRight className="mr-1" />
-                            Donation Coordinator
+                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            Does your organization accept ongoing, non-monetary
+                            donations in support of programs or services?
                           </p>
 
                           <p className="sm:w-1/2">
-                            {getValues('donationFields.don_coor')}
+                            {getValues('donationFields.donation') == 'true'
+                              ? 'Yes'
+                              : 'No'}
                           </p>
                         </div>
 
+                        {getValues('donationFields.donation') == 'true' && (
+                          <div>
+                            <div className="flex flex-col sm:flex-row sm:gap-16">
+                              <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                                <CornerDownRight className="mr-1" />
+                                Please list.
+                              </p>
+
+                              <p className="sm:w-1/2">
+                                {getValues('donationFields.don_ex')}
+                              </p>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row sm:gap-16">
+                              <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                                <CornerDownRight className="mr-1" />
+                                Do you provide pick-up service?
+                              </p>
+
+                              <p className="sm:w-1/2">
+                                {getValues('donationFields.pickup') == 'true'
+                                  ? 'Yes'
+                                  : 'No'}
+                              </p>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row sm:gap-16">
+                              <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                                <CornerDownRight className="ml-6 mr-1" />
+                                Where?
+                              </p>
+
+                              <p className="ml-6 flex sm:ml-0 sm:w-1/2">
+                                {getValues('donationFields.pickup_loc')}
+                              </p>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row sm:gap-16">
+                              <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                                <CornerDownRight className="mr-1" />
+                                Donation Coordinator
+                              </p>
+
+                              <p className="sm:w-1/2">
+                                {getValues('donationFields.don_coor')}
+                              </p>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row sm:gap-16">
+                              <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                                <CornerDownRight className="mr-1" />
+                                Phone #
+                              </p>
+                              <p className="sm:w-1/2">
+                                {getValues('donationFields.don_coor_tel')}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </section>
+
+                      {/* Recommendations */}
+                      <section>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
-                          <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            <CornerDownRight className="mr-1" />
-                            Phone #
+                          <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                            Are there other agencies or services that have been
+                            helpful that you would recommend to be included in
+                            our resource database?
                           </p>
+
                           <p className="sm:w-1/2">
-                            {getValues('donationFields.don_coor_tel')}
+                            {getValues('recommendationFields.recommendation') ==
+                            'true'
+                              ? 'Yes'
+                              : 'No'}
                           </p>
                         </div>
-                      </div>
-                    )}
-                  </section>
 
-                  {/* Recommendations */}
-                  <section>
-                    <div className="flex flex-col sm:flex-row sm:gap-16">
-                      <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                        Are there other agencies or services that have been
-                        helpful that you would recommend to be included in our
-                        resource database?
-                      </p>
-
-                      <p className="sm:w-1/2">
                         {getValues('recommendationFields.recommendation') ==
-                        'true'
-                          ? 'Yes'
-                          : 'No'}
-                      </p>
-                    </div>
+                          'true' && (
+                          <div className="flex flex-col sm:flex-row sm:gap-16">
+                            <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
+                              <CornerDownRight className="mr-1" />
+                              Please provide contact information for these
+                              agencies/services.
+                            </p>
 
-                    {getValues('recommendationFields.recommendation') ==
-                      'true' && (
-                      <div className="flex flex-col sm:flex-row sm:gap-16">
-                        <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                          <CornerDownRight className="mr-1" />
-                          Please provide contact information for these
-                          agencies/services.
-                        </p>
-
-                        <p className="sm:w-1/2">
-                          {getValues(
-                            'recommendationFields.recommendations_contact'
-                          )}
-                        </p>
-                      </div>
-                    )}
+                            <p className="sm:w-1/2">
+                              {getValues(
+                                'recommendationFields.recommendations_contact'
+                              )}
+                            </p>
+                          </div>
+                        )}
+                      </section>
+                    </section>
                   </section>
-                </section>
-              </section>
-            </div>
-            <Button type="submit">Click to Submit</Button>
+                </div>
+                <Button type="submit">Click to Submit</Button>
+              </motion.div>
+            )}
           </motion.div>
         )}
       </form>
