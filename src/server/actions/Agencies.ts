@@ -20,7 +20,7 @@ type CurrentStatusFilters = {
  * @brief Gets all agencies
  * @param populateServices Populates the agencies' "services" field
  * @param searchString Filters agencies that do not have the search term present in their name or
- * @param 
+ * @param currentStatusFilters Filters agencies based on their current status
  * @param compareFn Sorts the array of agencies before returning using the specified function; leave empty for no sorting
  * @returns An array of all agencies in the "agencies" collection
  */
