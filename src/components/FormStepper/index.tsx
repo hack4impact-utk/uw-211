@@ -1,6 +1,6 @@
 import { useWindowSize } from '@/utils/hooks/useWindowSize';
 import DesktopFormStepper from './DesktopFormStepper';
-// import MobileFormStepper from './MobileFormStepper';
+import MobileFormStepper from './MobileFormStepper';
 
 interface FormStepperSubpage {
   id: string;
@@ -29,14 +29,15 @@ export default function FormStepper({
   const { width: screenWidth } = useWindowSize();
 
   if (screenWidth < 768) {
-    // return (
-    // <MobileFormStepper
-    //   currentPageIndex={currentPageIndex}
-    //   formSteps={formSteps}
-    //   setCurrentStep={setCurrentStep}
-    //   setCurrentSubstep={setCurrentSubstep}
-    // />
-    // );
+    return (
+      <MobileFormStepper
+        currentPageIndex={currentPageIndex}
+        currentSubpageIndex={currentSubpageIndex}
+        formSteps={formSteps}
+        setCurrentStep={setCurrentStep}
+        setCurrentSubstep={setCurrentSubstep}
+      />
+    );
   }
 
   return (
