@@ -9,5 +9,6 @@
     "**/Thumbs.db": true,
     "**/.keep": true
   },
-  "jest.runMode": "on-demand"
+  "jest.runMode": "on-demand",
+  "cSpell.words": ["Pagesub"]
 }

@@ -96,9 +96,11 @@ export default function Form({ params }: { params: { id: string } }) {
       }
 
       if (currentSubstep < subpage_length) {
+        // if there are more subpages in current page
         setPreviousSubstep(currentSubstep);
         setCurrentSubstep((substep) => substep + 1);
       } else {
+        // at the end of all subpages, go to next page
         setPreviousStep(currentStep);
         setCurrentStep((step) => step + 1);
         setCurrentSubstep(0);
@@ -108,11 +110,14 @@ export default function Form({ params }: { params: { id: string } }) {
   };
 
   const prev = () => {
+    // if it is not the beginning of the form
     if (currentStep > 0 || currentSubstep > 0) {
       if (currentSubstep > 0) {
+        // you are inside a page with subpages
         setPreviousSubstep(currentSubstep);
         setCurrentSubstep((substep) => substep - 1);
       } else {
+        // at beginning of subpages, go back a to the last subpage of prev page
         setPreviousStep(currentStep);
         setCurrentStep((step) => step - 1);
         setPreviousSubstep(steps[currentStep - 1].subpages.length);

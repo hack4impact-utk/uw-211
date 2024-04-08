@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 // import { transform } from 'framer-motion';
-import { useState } from 'react';
 
 interface FormStepperSubpage {
   id: string;
@@ -38,7 +37,7 @@ interface StepItem {
   setCurrentSubstep: (step: number) => void;
 }
 
-const BreadItem = ({
+const StepItem = ({
   index,
   step,
   currentPageIndex,
@@ -46,14 +45,12 @@ const BreadItem = ({
   setCurrentStep,
   setCurrentSubstep,
 }: StepItem) => {
-  const [dropdown, setDropdown] = useState(false);
-
   if (step.subpages.length > 1) {
+    // there are subpages
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            onClick={() => setDropdown(!dropdown)}
             className={`bg-white hover:bg-slate-200 ${
               index > currentPageIndex
                 ? 'pointer-events-none text-gray-400'
@@ -90,7 +87,8 @@ const BreadItem = ({
                 }}
                 key={`${index}.${subindex}`}
                 className={`${
-                  subindex > currentSubpageIndex
+                  // have not got to this subpage && have to go to page at all
+                  subindex > currentSubpageIndex && index >= currentPageIndex
                     ? 'pointer-events-none text-gray-400'
                     : 'text-black'
                 }`}
@@ -103,11 +101,12 @@ const BreadItem = ({
       </DropdownMenu>
     );
   } else {
+    // no subpages, return normal button
     return (
       <Button
         onClick={() => {
           setCurrentStep(index);
-          setCurrentSubstep(1);
+          setCurrentSubstep(0);
         }}
         className={`bg-white hover:bg-slate-200 ${
           index > currentPageIndex
@@ -123,6 +122,7 @@ const BreadItem = ({
 
 export default function DesktopFormStepper({
   currentPageIndex,
+  currentSubpageIndex,
   formSteps,
   setCurrentStep,
   setCurrentSubstep,
@@ -131,11 +131,11 @@ export default function DesktopFormStepper({
     <Breadcrumb>
       {formSteps.map((step, index) => (
         <BreadcrumbItem key={index}>
-          <BreadItem
+          <StepItem
             index={index}
             step={step}
             currentPageIndex={currentPageIndex}
-            currentSubpageIndex={currentPageIndex}
+            currentSubpageIndex={currentSubpageIndex}
             setCurrentStep={setCurrentStep}
             setCurrentSubstep={setCurrentSubstep}
           />

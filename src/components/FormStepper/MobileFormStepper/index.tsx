@@ -50,11 +50,17 @@ const StepItem = ({
   setCurrentSubstep,
 }: StepItem) => {
   if (step.subpages.length > 1) {
-    console.log(step.subpages.length);
+    // there are subpages
     return (
       <Accordion type="single" collapsible>
         <AccordionItem value="item-1">
-          <AccordionTrigger className="text-xl hover:bg-gray-400">
+          <AccordionTrigger
+            className={`text-xl hover:bg-gray-400 ${
+              index > currentPageIndex
+                ? 'pointer-events-none text-gray-400'
+                : 'text-black'
+            }`}
+          >
             {step.name}
           </AccordionTrigger>
           <AccordionContent className="flex flex-col">
@@ -66,7 +72,8 @@ const StepItem = ({
                 }}
                 key={`${index}.${subindex}`}
                 className={`justify-start bg-white text-left text-lg hover:bg-gray-400 ${
-                  subindex > currentSubpageIndex
+                  // have not got to this subpage && have to go to page at all
+                  subindex > currentSubpageIndex && index >= currentPageIndex
                     ? 'pointer-events-none text-gray-400'
                     : 'text-black'
                 }`}
@@ -80,9 +87,13 @@ const StepItem = ({
       </Accordion>
     );
   } else {
+    // no subpages, return normal button
     return (
       <Button
-        onClick={() => setCurrentStep(index)}
+        onClick={() => {
+          setCurrentStep(index);
+          setCurrentSubstep(0);
+        }}
         className={`bg-white text-xl hover:bg-gray-400 ${
           index > currentPageIndex
             ? 'pointer-events-none text-gray-400'
