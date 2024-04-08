@@ -976,7 +976,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
         {currentStep === 0 && (
           <motion.div
             initial={{
-              x: delta >= 0 && subdelta < 0 ? '50%' : '-50%',
+              x: delta >= 0 ? '50%' : '-50%',
               opacity: 0,
             }}
             animate={{ x: 0, opacity: 1 }}
@@ -992,7 +992,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
             {currentSubstep === 0 && (
               <motion.div
                 initial={{
-                  x: subdelta >= 0 && delta < 0 ? '50%' : '-50%',
+                  x: subdelta >= 0 ? '50%' : '-50%',
                   opacity: 0,
                 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -1365,7 +1365,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
             {currentSubstep === 1 && (
               <motion.div
                 initial={{
-                  x: subdelta >= 0 && delta < 0 ? '50%' : '-50%',
+                  x: subdelta >= 0 ? '50%' : '-50%',
                   opacity: 0,
                 }}
                 animate={{ x: 0, opacity: 1 }}
