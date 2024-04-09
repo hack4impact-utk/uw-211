@@ -998,7 +998,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
-                <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
+                <section className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
                   {/* left section */}
                   <section className="flex w-full flex-col lg:w-1/2">
                     <div className="flex w-full flex-col gap-4 md:flex-row">
@@ -1342,7 +1342,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </div>
                     </section>
                   </section>
-                </div>
+                </section>
               </motion.div>
             )}
 
@@ -1356,226 +1356,643 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
-                <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
-                  {/* Hours of Operation */}
-                  <div>
+                <section className="mt-10 flex flex-col md:flex-row">
+                  <section className="flex w-full flex-col md:w-1/2">
+                    {/* Hours of Operation */}
                     <div>
-                      <label
-                        htmlFor="legalStatus"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Hours of Operation
-                      </label>
-                      <div className="mt-2">
-                        <fieldset>
+                      <div>
+                        <h3 className="block text-sm font-medium leading-6 text-gray-900">
+                          Hours of Operation
+                        </h3>
+                        <div className="mt-2">
+                          <fieldset>
+                            <label
+                              htmlFor="days"
+                              className="mb-2 block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              Select day(s) of operation
+                              <span className="ml-1 text-sm text-red-400">
+                                *
+                              </span>
+                            </label>
+
+                            <div className="flex flex-col gap-4 sm:flex-row sm:gap-2">
+                              <div className="flex flex-row gap-2">
+                                {/* Monday */}
+                                <label>
+                                  <input
+                                    type="checkbox"
+                                    id="monday"
+                                    className="form-checkbox hidden"
+                                    checked={isMondayChecked}
+                                    {...register('days.monday', {
+                                      onChange: () => {
+                                        setMondayChecked(!isMondayChecked);
+                                      },
+                                    })}
+                                  />
+                                  <span
+                                    className={
+                                      isMondayChecked
+                                        ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                        : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                                    }
+                                  >
+                                    Monday
+                                  </span>
+                                </label>
+
+                                {/* Tuesday */}
+                                <label>
+                                  <input
+                                    type="checkbox"
+                                    id="tuesday"
+                                    className="form-checkbox hidden"
+                                    checked={isTuesdayChecked}
+                                    {...register('days.tuesday', {
+                                      onChange: () => {
+                                        setTuesdayChecked(!isTuesdayChecked);
+                                      },
+                                    })}
+                                  />
+                                  <span
+                                    className={
+                                      isTuesdayChecked
+                                        ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                        : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                                    }
+                                  >
+                                    Tuesday
+                                  </span>
+                                </label>
+
+                                {/* Wednesday */}
+                                <label>
+                                  <input
+                                    type="checkbox"
+                                    id="wednesday"
+                                    className="form-checkbox hidden"
+                                    checked={isWednesdayChecked}
+                                    {...register('days.wednesday', {
+                                      onChange: () => {
+                                        setWednesdayChecked(
+                                          !isWednesdayChecked
+                                        );
+                                      },
+                                    })}
+                                  />
+                                  <span
+                                    className={
+                                      isWednesdayChecked
+                                        ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                        : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                                    }
+                                  >
+                                    Wednesday
+                                  </span>
+                                </label>
+                              </div>
+
+                              <div className="flex flex-row gap-2">
+                                {/* Thursday */}
+                                <label>
+                                  <input
+                                    type="checkbox"
+                                    id="thursday"
+                                    className="form-checkbox hidden"
+                                    checked={isThursdayChecked}
+                                    {...register('days.thursday', {
+                                      onChange: () => {
+                                        setThursdayChecked(!isThursdayChecked);
+                                      },
+                                    })}
+                                  />
+                                  <span
+                                    className={
+                                      isThursdayChecked
+                                        ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                        : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                                    }
+                                  >
+                                    Thursday
+                                  </span>
+                                </label>
+
+                                {/* Friday */}
+                                <label>
+                                  <input
+                                    type="checkbox"
+                                    className="form-checkbox hidden"
+                                    id="friday"
+                                    checked={isFridayChecked}
+                                    {...register('days.friday', {
+                                      onChange: () => {
+                                        setFridayChecked(!isFridayChecked);
+                                      },
+                                    })}
+                                  />
+                                  <span
+                                    className={
+                                      isFridayChecked
+                                        ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
+                                        : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
+                                    }
+                                  >
+                                    Friday
+                                  </span>
+                                </label>
+                              </div>
+                            </div>
+                            <div className="mt-2 min-h-6 ">
+                              {errors.days?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.days.message}
+                                </p>
+                              )}
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div>
+
+                      {/* Open/Close */}
+                      <div className="flex w-full flex-row items-center gap-4 md:w-5/6">
+                        {/* Open */}
+                        <div>
                           <label
-                            htmlFor="legalStatus"
-                            className="mb-2 block text-sm font-medium leading-6 text-gray-900"
+                            htmlFor="open"
+                            className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Select day(s) of operation
+                            Open
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
-
-                          <div className="flex flex-col gap-4 sm:flex-row sm:gap-2">
-                            <div className="flex flex-row gap-2">
-                              {/* Monday */}
-                              <label>
-                                <input
-                                  type="checkbox"
-                                  id="monday"
-                                  className="form-checkbox hidden"
-                                  checked={isMondayChecked}
-                                  {...register('days.monday', {
-                                    onChange: () => {
-                                      setMondayChecked(!isMondayChecked);
-                                    },
-                                  })}
-                                />
-                                <span
-                                  className={
-                                    isMondayChecked
-                                      ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                      : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                                  }
-                                >
-                                  Monday
-                                </span>
-                              </label>
-
-                              {/* Tuesday */}
-                              <label>
-                                <input
-                                  type="checkbox"
-                                  id="tuesday"
-                                  className="form-checkbox hidden"
-                                  checked={isTuesdayChecked}
-                                  {...register('days.tuesday', {
-                                    onChange: () => {
-                                      setTuesdayChecked(!isTuesdayChecked);
-                                    },
-                                  })}
-                                />
-                                <span
-                                  className={
-                                    isTuesdayChecked
-                                      ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                      : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                                  }
-                                >
-                                  Tuesday
-                                </span>
-                              </label>
-
-                              {/* Wednesday */}
-                              <label>
-                                <input
-                                  type="checkbox"
-                                  id="wednesday"
-                                  className="form-checkbox hidden"
-                                  checked={isWednesdayChecked}
-                                  {...register('days.wednesday', {
-                                    onChange: () => {
-                                      setWednesdayChecked(!isWednesdayChecked);
-                                    },
-                                  })}
-                                />
-                                <span
-                                  className={
-                                    isWednesdayChecked
-                                      ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                      : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                                  }
-                                >
-                                  Wednesday
-                                </span>
-                              </label>
-                            </div>
-
-                            <div className="flex flex-row gap-2">
-                              {/* Thursday */}
-                              <label>
-                                <input
-                                  type="checkbox"
-                                  id="thursday"
-                                  className="form-checkbox hidden"
-                                  checked={isThursdayChecked}
-                                  {...register('days.thursday', {
-                                    onChange: () => {
-                                      setThursdayChecked(!isThursdayChecked);
-                                    },
-                                  })}
-                                />
-                                <span
-                                  className={
-                                    isThursdayChecked
-                                      ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                      : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                                  }
-                                >
-                                  Thursday
-                                </span>
-                              </label>
-
-                              {/* Friday */}
-                              <label>
-                                <input
-                                  type="checkbox"
-                                  className="form-checkbox hidden"
-                                  id="friday"
-                                  checked={isFridayChecked}
-                                  {...register('days.friday', {
-                                    onChange: () => {
-                                      setFridayChecked(!isFridayChecked);
-                                    },
-                                  })}
-                                />
-                                <span
-                                  className={
-                                    isFridayChecked
-                                      ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                      : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                                  }
-                                >
-                                  Friday
-                                </span>
-                              </label>
-                            </div>
-                          </div>
+                          <input
+                            type="text"
+                            id="open"
+                            {...register('hours.open')}
+                            autoComplete="open"
+                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
                           <div className="mt-2 min-h-6 ">
-                            {errors.days?.message && (
+                            {errors.hours?.open?.message && (
                               <p className="mt-2 text-sm text-red-400">
-                                {errors.days.message}
+                                {errors.hours.open.message}
                               </p>
                             )}
                           </div>
-                        </fieldset>
+                        </div>
+                        <p className="mt-4">to</p>
+                        {/* Close */}
+                        <div>
+                          <label
+                            htmlFor="close"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Close
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            id="close"
+                            {...register('hours.close')}
+                            autoComplete="close"
+                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                          />
+                          <div className="mt-2 min-h-6 ">
+                            {errors.hours?.close?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.hours.close.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Open/Close */}
-                    <div className="flex w-full flex-row items-center gap-4 md:w-5/6">
-                      {/* Open */}
-                      <div>
-                        <label
-                          htmlFor="open"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Open
-                          <span className="ml-1 text-sm text-red-400">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          id="open"
-                          {...register('hours.open')}
-                          autoComplete="open"
-                          className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
+                    {/* Funding Sources */}
+                    <div className="mt-8">
+                      <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
+                        Funding Sources
+                        <span className="ml-1 text-sm text-red-400">*</span>
+                      </h3>
+
+                      <div className="flex w-full flex-col md:w-2/3 md:flex-row">
+                        {/* left column */}
+                        <section className="w-full md:w-1/2">
+                          {/* Federal */}
+                          <div className="space-x-2">
+                            <input
+                              type="checkbox"
+                              id="fundingSources.federal"
+                              className="form-checkbox"
+                              {...register('fundingSources.federal')}
+                            />
+                            <label
+                              htmlFor="fundingSources.federal"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Federal
+                            </label>
+                          </div>
+
+                          {/* State */}
+                          <div className="space-x-2">
+                            <input
+                              type="checkbox"
+                              id="fundingSources.state"
+                              className="form-checkbox"
+                              {...register('fundingSources.state')}
+                            />
+                            <label
+                              htmlFor="fundingSources.state"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              State
+                            </label>
+                          </div>
+
+                          {/* County */}
+                          <div className="space-x-2">
+                            <input
+                              type="checkbox"
+                              id="fundingSources.county"
+                              className="form-checkbox"
+                              {...register('fundingSources.county')}
+                            />
+                            <label
+                              htmlFor="fundingSources.county"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              County
+                            </label>
+                          </div>
+
+                          {/* City */}
+                          <div className="space-x-2">
+                            <input
+                              type="checkbox"
+                              id="fundingSources.city"
+                              className="form-checkbox"
+                              {...register('fundingSources.city')}
+                            />
+                            <label
+                              htmlFor="fundingSources.city"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              City
+                            </label>
+                          </div>
+
+                          {/* Donations */}
+                          <div className="space-x-2">
+                            <input
+                              type="checkbox"
+                              id="fundingSources.donations"
+                              className="form-checkbox"
+                              {...register('fundingSources.donations')}
+                            />
+                            <label
+                              htmlFor="fundingSources.donations"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Donations
+                            </label>
+                          </div>
+                        </section>
+
+                        {/* right column */}
+                        <section className="w-full md:w-1/2">
+                          {/* Foundations/Private Org */}
+                          <div className="space-x-2">
+                            <input
+                              type="checkbox"
+                              id="fundingSources.foundations"
+                              className="form-checkbox"
+                              {...register('fundingSources.foundations')}
+                            />
+                            <label
+                              htmlFor="fundingSources.foundations"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Foundations/Private Org.
+                            </label>
+                          </div>
+
+                          {/* Fees/Dues */}
+                          <div className="space-x-2">
+                            <input
+                              type="checkbox"
+                              id="fundingSources.feesDues"
+                              className="form-checkbox"
+                              {...register('fundingSources.feesDues')}
+                            />
+                            <label
+                              htmlFor="fundingSources.feesDues"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Fees/Dues
+                            </label>
+                          </div>
+
+                          {/* United Way */}
+                          <div className="space-x-2">
+                            <input
+                              type="checkbox"
+                              id="fundingSources.unitedWay"
+                              className="form-checkbox"
+                              {...register('fundingSources.unitedWay')}
+                            />
+                            <label
+                              htmlFor="fundingSources.unitedWay"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              United Way
+                            </label>
+                          </div>
+
+                          {/* Other */}
+                          <div className="space-x-2">
+                            <input
+                              type="checkbox"
+                              id="fundingSources.other"
+                              className="form-checkbox"
+                              {...register('fundingSources.other.selected')}
+                            />
+                            <label
+                              htmlFor="fundingSources.other"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Other
+                            </label>
+                            {watch('fundingSources.other.selected') ? (
+                              <>
+                                <Input
+                                  className="m-2"
+                                  placeholder="Please specify."
+                                  {...register('fundingSources.other.content')}
+                                />
+                                <div className="mt-2 min-h-6 ">
+                                  {errors.fundingSources?.other?.message && (
+                                    <p className="mt-2 text-sm text-red-400">
+                                      {errors.fundingSources.other.message}
+                                    </p>
+                                  )}
+                                </div>
+                              </>
+                            ) : (
+                              <></>
+                            )}
+                          </div>
+                        </section>
+                      </div>
+
+                      {/* Error Message */}
+                      <div className="mt-2 min-h-6 ">
+                        {errors.fundingSources?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.fundingSources.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Location */}
+                  <div className="w-full md:w-1/2">
+                    <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
+                      Location Information
+                    </h3>
+                    {/* location.confidential */}
+                    <div>
+                      <label
+                        htmlFor="location.confidential"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Is the physical address confidential?
+                        <span className="ml-1 text-sm text-red-400">*</span>
+                      </label>
+                      <div className="flex flex-row gap-4 whitespace-nowrap">
+                        <div>
+                          <input
+                            id="location.confidential"
+                            type="radio"
+                            value="false"
+                            {...register('location.confidential')}
+                            autoComplete="location.confidential"
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            defaultChecked
+                          />
+                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            No
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            id="location.confidential"
+                            type="radio"
+                            value="true"
+                            {...register('location.confidential', {
+                              setValueAs: (value: string) =>
+                                value === 'true' ? true : false,
+                            })}
+                            autoComplete="location.confidential"
+                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          />
+                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            Yes
+                          </label>
+                        </div>
                         <div className="mt-2 min-h-6 ">
-                          {errors.hours?.open?.message && (
+                          {errors.location?.confidential?.message && (
                             <p className="mt-2 text-sm text-red-400">
-                              {errors.hours.open.message}
+                              {errors.location.confidential.message}
                             </p>
                           )}
                         </div>
                       </div>
-                      <p className="mt-4">to</p>
-                      {/* Close */}
-                      <div>
-                        <label
-                          htmlFor="close"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Close
-                          <span className="ml-1 text-sm text-red-400">*</span>
-                        </label>
+                    </div>
+
+                    {/* location.physicalAddress */}
+                    <div className="w-full">
+                      <label
+                        htmlFor="location.physicalAddress"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Physical Address
+                        <span className="ml-1 text-sm text-red-400">*</span>
+                      </label>
+                      <div className="mt-2">
                         <input
                           type="text"
-                          id="close"
-                          {...register('hours.close')}
-                          autoComplete="close"
-                          className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
+                          id="location.physicalAddress"
+                          {...register('location.physicalAddress')}
+                          autoComplete="location.physicalAddress"
+                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                         />
                         <div className="mt-2 min-h-6 ">
-                          {errors.hours?.close?.message && (
+                          {errors.location?.physicalAddress?.message && (
                             <p className="mt-2 text-sm text-red-400">
-                              {errors.hours.close.message}
+                              {errors.location.physicalAddress.message}
                             </p>
                           )}
+                        </div>
+                      </div>
+                    </div>
+                    {/* location.mailingAddress */}
+                    <div className="w-full">
+                      <label
+                        htmlFor="location.mailingAddress"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Mailing Address (Only list if different from Physical.)
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          type="text"
+                          id="location.mailingAddress"
+                          {...register('location.mailingAddress')}
+                          autoComplete="location.mailingAddress"
+                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        />
+                        <div className="mt-2 min-h-6 ">
+                          {errors.location?.mailingAddress?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.location.mailingAddress.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    {/* location.county */}
+                    <div className="w-full">
+                      <label
+                        htmlFor="location.county"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        County
+                        <span className="ml-1 text-sm text-red-400">*</span>
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          type="text"
+                          id="location.county"
+                          {...register('location.county')}
+                          autoComplete="location.county"
+                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        />
+                        <div className="mt-2 min-h-6 ">
+                          {errors.location?.county?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.location.county.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2 md:flex-row md:gap-4">
+                      {/* location.city */}
+                      <div className="w-full sm:w-1/2 md:w-3/6">
+                        <label
+                          htmlFor="location.city"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          City
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="location.city"
+                            {...register('location.city')}
+                            autoComplete="location.city"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                          <div className="mt-2 min-h-6 ">
+                            {errors.location?.city?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.location.city.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* location.state */}
+                      <div className="w-full sm:w-1/2 md:w-1/6">
+                        <label
+                          htmlFor="location.state"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          State
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="location.state"
+                            {...register('location.state')}
+                            autoComplete="location.state"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                          <div className="mt-2 min-h-6 ">
+                            {errors.location?.state?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.location.state.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* location.zipCode */}
+                      <div className="w-full sm:w-1/2 md:w-2/6">
+                        <label
+                          htmlFor="location.zipCode"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Zip Code
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="location.zipCode"
+                            {...register('location.zipCode')}
+                            autoComplete="location.zipCode"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                          <div className="mt-2 min-h-6 ">
+                            {errors.location?.zipCode?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.location.zipCode.message}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                </section>
+              </motion.div>
+            )}
 
-                  <p>
-                    Hours of operation, location, funding sources, service area,
-                    Information Update Contact Info
-                  </p>
+            {/* Additional Subpage */}
+            {currentSubstep === 2 && (
+              <motion.div
+                initial={{
+                  x: subdelta >= 0 ? '50%' : '-50%',
+                  opacity: 0,
+                }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
+                <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
+                  <p>service area, Information Update Contact Info</p>
                 </div>
               </motion.div>
             )}
 
             {/* Accessibility Subpage */}
-            {currentSubstep === 2 && (
+            {currentSubstep === 3 && (
               <motion.div
                 initial={{
                   x: subdelta >= 0 ? '50%' : '-50%',

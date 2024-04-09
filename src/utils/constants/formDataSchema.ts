@@ -297,13 +297,13 @@ const RecommendationFields = z
   });
 
 const locationSchema = z.object({
-  confidential: z.boolean(),
-  physicalAddress: z.string(),
+  confidential: z.coerce.boolean(),
+  physicalAddress: z.string().min(1, 'Required'),
   mailingAddress: z.string(),
-  county: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  zipCode: z.string().optional(),
+  county: z.string().min(1, 'Required'),
+  city: z.string().min(1, 'Required'),
+  state: z.string().min(1, 'Required'),
+  zipCode: z.string().min(1, 'Required'),
 });
 
 const serviceAreaSchema = z.object({
@@ -313,19 +313,39 @@ const serviceAreaSchema = z.object({
   other: z.string().optional(),
 });
 
-const fundingSourcesSchema = z.array(
-  z.union([
-    z.literal('Federal'),
-    z.literal('State'),
-    z.literal('County'),
-    z.literal('City'),
-    z.literal('Donations'),
-    z.literal('Foundations/Private Org.'),
-    z.literal('Fees/Dues'),
-    z.literal('United Way'),
-    z.string(),
-  ])
-);
+const fundingSourcesSchema = z
+  .object({
+    federal: z.boolean(),
+    state: z.boolean(),
+    county: z.boolean(),
+    city: z.boolean(),
+    donations: z.boolean(),
+    foundations: z.boolean(),
+    feesDues: z.boolean(),
+    unitedWay: z.boolean(),
+    other: z
+      .object({
+        selected: z.boolean(),
+        content: z.string().optional(),
+      })
+      .refine((data) => !data.selected || (data.selected && data.content), {
+        message: 'Please specify other.',
+      }),
+  })
+  .partial()
+  .refine(
+    (data) =>
+      data.federal ||
+      data.state ||
+      data.county ||
+      data.city ||
+      data.donations ||
+      data.foundations ||
+      data.feesDues ||
+      data.unitedWay ||
+      (data.other?.selected ?? false),
+    'A funding source selection is required.'
+  );
 
 const contactInfoSchema = z.object({
   phoneNumber: z
@@ -399,8 +419,8 @@ export const FormDataSchema = z.object({
   // the following must be required, currently not implement in the front end
   // Fields with .optional will be required in the future
   serviceArea: serviceAreaSchema.optional(),
-  fundingSources: fundingSourcesSchema.optional(),
-  location: locationSchema.optional(),
+  fundingSources: fundingSourcesSchema,
+  location: locationSchema,
   contactInfo: contactInfoSchema,
   annualAgencyUpdate: annualAgencyUpdateSchema.optional(),
   teleinterpreterLanguageService: z.boolean().optional(),

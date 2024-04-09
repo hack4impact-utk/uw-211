@@ -18,17 +18,15 @@ export const formSteps = [
       {
         id: 'Step 1.2',
         name: 'Operations',
-        fields: [
-          'hours',
-          'days',
-          'location',
-          'funding sources',
-          'service area',
-          'Information Update Contact Info',
-        ],
+        fields: ['hours', 'days', 'location', 'fundingSources'],
       },
       {
         id: 'Step 1.3',
+        name: 'Additional',
+        fields: ['service area', 'Information Update Contact Info'],
+      },
+      {
+        id: 'Step 1.4',
         name: 'Accessibility',
         fields: [
           'Teleinterpreter Language Service',
