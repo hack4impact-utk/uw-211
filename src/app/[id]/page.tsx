@@ -999,95 +999,38 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
-                  {/* right section */}
-                  <section className="flex w-full flex-col lg:w-1/2">
-                    {/* Legal Agency Name */}
-                    <div>
-                      <label
-                        htmlFor="legalName"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Legal Agency Name
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          id="legalName"
-                          {...register('legalName')}
-                          autoComplete="legalName"
-                          className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:w-full  sm:text-sm sm:leading-6 md:w-2/3 lg:w-full"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.legalName?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.legalName.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Director Name/Title */}
-                    <div>
-                      <label
-                        htmlFor="lastName"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Director Name/Title
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          id="directorName"
-                          {...register('directorName')}
-                          autoComplete="directorName"
-                          className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm  sm:leading-6 md:w-2/3"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.directorName?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.directorName.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Brief Agency Information */}
-                    <div>
-                      <label
-                        htmlFor="legalStatus"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Brief Agency Information
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="mt-2">
-                        <textarea
-                          id="agencyInfo"
-                          v-model="agencyInfo"
-                          {...register('agencyInfo')}
-                          autoComplete="agencyInfo"
-                          className="block w-full resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 md:w-5/6"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.agencyInfo?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.agencyInfo.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-
                   {/* left section */}
                   <section className="flex w-full flex-col lg:w-1/2">
-                    <section className="flex flex-col gap-4 xl:flex-row">
+                    <div className="flex w-full flex-col gap-4 md:flex-row">
+                      {/* Legal Agency Name */}
+                      <div className="w-full sm:w-1/2 md:w-2/3">
+                        <label
+                          htmlFor="legalName"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Legal Agency Name
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="legalName"
+                            {...register('legalName')}
+                            autoComplete="legalName"
+                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                          <div className="mt-2 min-h-6 ">
+                            {errors.legalName?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.legalName.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
                       {/* Also known as */}
-                      <div className="w-full xl:w-2/3">
+                      <div className="w-full sm:w-1/2  md:w-1/3">
                         <label
                           htmlFor="lastName"
                           className="block text-sm font-medium leading-6 text-gray-900"
@@ -1100,7 +1043,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             id="akas"
                             {...register('akas')}
                             autoComplete="akas"
-                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
+                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
                             {errors.akas?.message && (
@@ -1111,9 +1054,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
                         </div>
                       </div>
+                    </div>
 
+                    <div className="flex w-full flex-col gap-4 md:flex-row">
                       {/* Legal organizational Status */}
-                      <div className="w-full xl:w-1/3">
+                      <div className="w-full sm:w-1/2 md:w-1/3">
                         <label
                           htmlFor="legalStatus"
                           className="block text-sm font-medium leading-6 text-gray-900"
@@ -1127,7 +1072,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             v-model="legalStatus"
                             {...register('legalStatus')}
                             autoComplete="legalStatus"
-                            className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
+                            className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                           >
                             <option value="">Please Select One</option>
                             <option value="federal">Federal</option>
@@ -1148,9 +1093,258 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
                         </div>
                       </div>
-                    </section>
 
-                    {/* Hours of Operation */}
+                      {/* Director Name/Title */}
+                      <div className="w-full sm:w-1/2 md:w-2/3">
+                        <label
+                          htmlFor="lastName"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Director Name/Title
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="directorName"
+                            {...register('directorName')}
+                            autoComplete="directorName"
+                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                          <div className="mt-2 min-h-6 ">
+                            {errors.directorName?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.directorName.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Brief Agency Information */}
+                    <div>
+                      <label
+                        htmlFor="legalStatus"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Brief Agency Information
+                        <span className="ml-1 text-sm text-red-400">*</span>
+                      </label>
+                      <div className="mt-2">
+                        <textarea
+                          id="agencyInfo"
+                          v-model="agencyInfo"
+                          {...register('agencyInfo')}
+                          autoComplete="agencyInfo"
+                          className="block h-36 w-full resize-none rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        />
+                        <div className="mt-2 min-h-6 ">
+                          {errors.agencyInfo?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.agencyInfo.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* right section */}
+                  <section className="flex w-full flex-col lg:w-1/2">
+                    {/* Contact Information */}
+                    <section>
+                      <div className="flex w-full flex-col gap-4 md:flex-row">
+                        {/* contactInfo.phoneNumber */}
+                        <div className="w-full md:w-1/2">
+                          <label
+                            htmlFor="contactInfo.phoneNumber"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Main Phone Number
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+
+                          <input
+                            type="tel"
+                            id="contactInfo.phoneNumber"
+                            v-model="contactInfo.phoneNumber"
+                            {...register('contactInfo.phoneNumber')}
+                            autoComplete="contactInfo.phoneNumber"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+
+                          <div className="mt-2 min-h-6 ">
+                            {errors.contactInfo?.phoneNumber?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.contactInfo?.phoneNumber.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* contactInfo.faxNumber */}
+                        <div className="w-full md:w-1/2">
+                          <label
+                            htmlFor="contactInfo.faxNumber"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Fax Number
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+
+                          <input
+                            type="tel"
+                            id="contactInfo.faxNumber"
+                            v-model="contactInfo.faxNumber"
+                            {...register('contactInfo.faxNumber')}
+                            autoComplete="contactInfo.faxNumber"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+
+                          <div className="mt-2 min-h-6 ">
+                            {errors.contactInfo?.faxNumber?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.contactInfo?.faxNumber.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex w-full flex-col gap-4 md:flex-row">
+                        {/* contactInfo.tollFreeNumber */}
+                        <div className="w-full md:w-1/3">
+                          <label
+                            htmlFor="contactInfo.tollFreeNumber"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Toll Free Number
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+
+                          <input
+                            type="tel"
+                            id="contactInfo.tollFreeNumber"
+                            v-model="contactInfo.tollFreeNumber"
+                            {...register('contactInfo.tollFreeNumber')}
+                            autoComplete="contactInfo.tollFreeNumber"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+
+                          <div className="mt-2 min-h-6 ">
+                            {errors.contactInfo?.tollFreeNumber?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.contactInfo?.tollFreeNumber.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* contactInfo.TDDTTYNumber */}
+                        <div className="w-full md:w-2/3">
+                          <label
+                            htmlFor="contactInfo.TDDTTYNumber"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            TDD/TTY Number
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+
+                          <input
+                            type="tel"
+                            id="contactInfo.TDDTTYNumber"
+                            v-model="contactInfo.TDDTTYNumber"
+                            {...register('contactInfo.TDDTTYNumber')}
+                            autoComplete="contactInfo.TDDTTYNumber"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+
+                          <div className="mt-2 min-h-6 ">
+                            {errors.contactInfo?.TDDTTYNumber?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.contactInfo?.TDDTTYNumber.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <p>Additional Numbers</p>
+
+                      {/* contactInfo.email */}
+                      <div>
+                        <label
+                          htmlFor="contactInfo.email"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Email
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+
+                        <input
+                          type="email"
+                          id="contactInfo.email"
+                          v-model="contactInfo.email"
+                          {...register('contactInfo.email')}
+                          autoComplete="contactInfo.email"
+                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        />
+
+                        <div className="mt-2 min-h-6 ">
+                          {errors.contactInfo?.email?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.contactInfo?.email.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* contactInfo.website */}
+                      <div>
+                        <label
+                          htmlFor="contactInfo.website"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Website
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+
+                        <input
+                          id="contactInfo.website"
+                          v-model="contactInfo.website"
+                          {...register('contactInfo.website')}
+                          autoComplete="contactInfo.website"
+                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        />
+
+                        <div className="mt-2 min-h-6 ">
+                          {errors.contactInfo?.website?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.contactInfo?.website.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </section>
+                  </section>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Operations Subpage */}
+            {currentSubstep === 1 && (
+              <motion.div
+                initial={{
+                  x: subdelta >= 0 ? '50%' : '-50%',
+                  opacity: 0,
+                }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
+                <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
+                  {/* Hours of Operation */}
+                  <div>
                     <div>
                       <label
                         htmlFor="legalStatus"
@@ -1356,13 +1550,18 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
                     </div>
-                  </section>
+                  </div>
+
+                  <p>
+                    Hours of operation, location, funding sources, service area,
+                    Information Update Contact Info
+                  </p>
                 </div>
               </motion.div>
             )}
 
             {/* Accessibility Subpage */}
-            {currentSubstep === 1 && (
+            {currentSubstep === 2 && (
               <motion.div
                 initial={{
                   x: subdelta >= 0 ? '50%' : '-50%',
@@ -1372,7 +1571,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
-                  <p>test</p>
+                  <p>
+                    Teleinterpreter Language Service, Supported Languages,
+                    Supported Languages Without Notice, Accessibility ADA
+                  </p>
                 </div>
               </motion.div>
             )}

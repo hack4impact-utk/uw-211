@@ -328,15 +328,63 @@ const fundingSourcesSchema = z.array(
 );
 
 const contactInfoSchema = z.object({
+  phoneNumber: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{10}$/, {
+      message: 'Must be a valid phone number.',
+    }),
+  faxNumber: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{10}$/, {
+      message: 'Must be a valid phone number.',
+    }),
+  tollFreeNumber: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{10}$/, {
+      message: 'Must be a valid phone number.',
+    }),
+  TDDTTYNumber: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{10}$/, {
+      message: 'Must be a valid phone number.',
+    }),
+  additionalNumbers: z.array(z.string()).optional(),
+  email: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
+      message: 'Must be a valid email address.',
+    }),
+  website: z
+    .string()
+    .min(1, 'Required')
+    .regex(
+      /^(https?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})+(\/[^\s]*)?$/,
+      {
+        message: 'Must be a valid web address.',
+      }
+    ),
+});
+
+const annualAgencyUpdateSchema = z.object({
   name: z.string(),
   title: z.string(),
-  phoneNumber: z.string(),
-  faxNumber: z.string().optional(),
-  tollFreeNumber: z.string().optional(),
-  TDDTTYNumber: z.string().optional(),
-  additionalNumbers: z.array(z.string()).optional(),
-  email: z.string(),
-  website: z.string().optional(),
+  phoneNumber: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{10}$/, {
+      message: 'Must be a valid phone number.',
+    }),
+  email: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
+      message: 'Must be a valid email address.',
+    }),
   hideFromWebsite: z.boolean(),
 });
 
@@ -353,7 +401,8 @@ export const FormDataSchema = z.object({
   serviceArea: serviceAreaSchema.optional(),
   fundingSources: fundingSourcesSchema.optional(),
   location: locationSchema.optional(),
-  contactInfo: contactInfoSchema.optional(),
+  contactInfo: contactInfoSchema,
+  annualAgencyUpdate: annualAgencyUpdateSchema.optional(),
   teleinterpreterLanguageService: z.boolean().optional(),
   supportedLanguages: z
     .array(z.union([z.literal('ASL'), z.literal('Spanish'), z.string()]))
