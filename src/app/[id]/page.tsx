@@ -1017,7 +1017,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             id="legalName"
                             {...register('legalName')}
                             autoComplete="legalName"
-                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
                             {errors.legalName?.message && (
@@ -1043,7 +1043,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             id="akas"
                             {...register('akas')}
                             autoComplete="akas"
-                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
                             {errors.akas?.message && (
@@ -1072,7 +1072,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             v-model="legalStatus"
                             {...register('legalStatus')}
                             autoComplete="legalStatus"
-                            className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            className="block h-8 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                           >
                             <option value="">Please Select One</option>
                             <option value="federal">Federal</option>
@@ -1109,7 +1109,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             id="directorName"
                             {...register('directorName')}
                             autoComplete="directorName"
-                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
                             {errors.directorName?.message && (
@@ -1165,21 +1165,23 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
 
-                          <input
-                            type="tel"
-                            id="contactInfo.phoneNumber"
-                            v-model="contactInfo.phoneNumber"
-                            {...register('contactInfo.phoneNumber')}
-                            autoComplete="contactInfo.phoneNumber"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
+                          <div className="mt-2">
+                            <input
+                              type="tel"
+                              id="contactInfo.phoneNumber"
+                              v-model="contactInfo.phoneNumber"
+                              {...register('contactInfo.phoneNumber')}
+                              autoComplete="contactInfo.phoneNumber"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
 
-                          <div className="mt-2 min-h-6 ">
-                            {errors.contactInfo?.phoneNumber?.message && (
-                              <p className="mt-2 text-sm text-red-400">
-                                {errors.contactInfo?.phoneNumber.message}
-                              </p>
-                            )}
+                            <div className="mt-2 min-h-6 ">
+                              {errors.contactInfo?.phoneNumber?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.contactInfo?.phoneNumber.message}
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -1193,21 +1195,23 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
 
-                          <input
-                            type="tel"
-                            id="contactInfo.faxNumber"
-                            v-model="contactInfo.faxNumber"
-                            {...register('contactInfo.faxNumber')}
-                            autoComplete="contactInfo.faxNumber"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
+                          <div className="mt-2">
+                            <input
+                              type="tel"
+                              id="contactInfo.faxNumber"
+                              v-model="contactInfo.faxNumber"
+                              {...register('contactInfo.faxNumber')}
+                              autoComplete="contactInfo.faxNumber"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
 
-                          <div className="mt-2 min-h-6 ">
-                            {errors.contactInfo?.faxNumber?.message && (
-                              <p className="mt-2 text-sm text-red-400">
-                                {errors.contactInfo?.faxNumber.message}
-                              </p>
-                            )}
+                            <div className="mt-2 min-h-6 ">
+                              {errors.contactInfo?.faxNumber?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.contactInfo?.faxNumber.message}
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1223,21 +1227,23 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
 
-                          <input
-                            type="tel"
-                            id="contactInfo.tollFreeNumber"
-                            v-model="contactInfo.tollFreeNumber"
-                            {...register('contactInfo.tollFreeNumber')}
-                            autoComplete="contactInfo.tollFreeNumber"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
+                          <div className="mt-2">
+                            <input
+                              type="tel"
+                              id="contactInfo.tollFreeNumber"
+                              v-model="contactInfo.tollFreeNumber"
+                              {...register('contactInfo.tollFreeNumber')}
+                              autoComplete="contactInfo.tollFreeNumber"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
 
-                          <div className="mt-2 min-h-6 ">
-                            {errors.contactInfo?.tollFreeNumber?.message && (
-                              <p className="mt-2 text-sm text-red-400">
-                                {errors.contactInfo?.tollFreeNumber.message}
-                              </p>
-                            )}
+                            <div className="mt-2 min-h-6 ">
+                              {errors.contactInfo?.tollFreeNumber?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.contactInfo?.tollFreeNumber.message}
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -1250,22 +1256,23 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             TDD/TTY Number
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
+                          <div className="mt-2">
+                            <input
+                              type="tel"
+                              id="contactInfo.TDDTTYNumber"
+                              v-model="contactInfo.TDDTTYNumber"
+                              {...register('contactInfo.TDDTTYNumber')}
+                              autoComplete="contactInfo.TDDTTYNumber"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
 
-                          <input
-                            type="tel"
-                            id="contactInfo.TDDTTYNumber"
-                            v-model="contactInfo.TDDTTYNumber"
-                            {...register('contactInfo.TDDTTYNumber')}
-                            autoComplete="contactInfo.TDDTTYNumber"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
-
-                          <div className="mt-2 min-h-6 ">
-                            {errors.contactInfo?.TDDTTYNumber?.message && (
-                              <p className="mt-2 text-sm text-red-400">
-                                {errors.contactInfo?.TDDTTYNumber.message}
-                              </p>
-                            )}
+                            <div className="mt-2 min-h-6 ">
+                              {errors.contactInfo?.TDDTTYNumber?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.contactInfo?.TDDTTYNumber.message}
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1282,21 +1289,23 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
 
-                        <input
-                          type="email"
-                          id="contactInfo.email"
-                          v-model="contactInfo.email"
-                          {...register('contactInfo.email')}
-                          autoComplete="contactInfo.email"
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
+                        <div className="mt-2">
+                          <input
+                            type="email"
+                            id="contactInfo.email"
+                            v-model="contactInfo.email"
+                            {...register('contactInfo.email')}
+                            autoComplete="contactInfo.email"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
 
-                        <div className="mt-2 min-h-6 ">
-                          {errors.contactInfo?.email?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.contactInfo?.email.message}
-                            </p>
-                          )}
+                          <div className="mt-2 min-h-6 ">
+                            {errors.contactInfo?.email?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.contactInfo?.email.message}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
 
@@ -1309,21 +1318,22 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           Website
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
+                        <div className="mt-2">
+                          <input
+                            id="contactInfo.website"
+                            v-model="contactInfo.website"
+                            {...register('contactInfo.website')}
+                            autoComplete="contactInfo.website"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
 
-                        <input
-                          id="contactInfo.website"
-                          v-model="contactInfo.website"
-                          {...register('contactInfo.website')}
-                          autoComplete="contactInfo.website"
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-
-                        <div className="mt-2 min-h-6 ">
-                          {errors.contactInfo?.website?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.contactInfo?.website.message}
-                            </p>
-                          )}
+                          <div className="mt-2 min-h-6 ">
+                            {errors.contactInfo?.website?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.contactInfo?.website.message}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </section>
