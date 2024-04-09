@@ -171,6 +171,7 @@ export default function Form({ params }: { params: { id: string } }) {
           content: '',
         },
       },
+      isSeasonal: false,
     };
 
     getValues('services').push(new_service);
