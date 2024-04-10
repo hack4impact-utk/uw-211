@@ -6,7 +6,11 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  await authenticateServerEndpoint();
+  try {
+    await authenticateServerEndpoint();
+  } catch (error) {
+    return Response.json(error, { status: 401 });
+  }
 
   const id = params.id;
   try {

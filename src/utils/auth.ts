@@ -16,12 +16,9 @@ export async function authenticateServerAction() {
 export async function authenticateServerEndpoint() {
   const session = await getServerSession(authOptions);
   if (!session) {
-    return Response.json(
-      new JSendResponse({
-        status: 'error',
-        message: 'Unauthorized',
-      }),
-      { status: 401 }
-    );
+    throw new JSendResponse({
+      status: 'error',
+      message: 'Unauthorized',
+    });
   }
 }

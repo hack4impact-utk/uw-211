@@ -9,7 +9,11 @@ import { AgencyInfoForm, JSendResponse } from '@/utils/types';
 import { authenticateServerEndpoint } from '@/utils/auth';
 
 export async function GET() {
-  await authenticateServerEndpoint();
+  try {
+    await authenticateServerEndpoint();
+  } catch (error) {
+    return Response.json(error, { status: 401 });
+  }
 
   try {
     const agencies = await getAgencies();
@@ -41,7 +45,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  await authenticateServerEndpoint();
+  try {
+    await authenticateServerEndpoint();
+  } catch (error) {
+    return Response.json(error, { status: 401 });
+  }
 
   try {
     const body = await request.json();
