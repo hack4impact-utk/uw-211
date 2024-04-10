@@ -134,7 +134,6 @@ export async function getAgencyById(id: string): Promise<Agency> {
  * @throws See mongoErrorHandler for common insertion errors
  */
 export async function createService(service: Service): Promise<Service> {
-  await authenticateServerAction();
   await dbConnect();
   const newService = await ServiceModel.create(service).catch((err) => {
     mongoErrorHandler(err);
@@ -167,7 +166,6 @@ export async function createAgency(agency: Agency): Promise<Agency> {
 export async function createAgencyInfo(
   agencyInfo: AgencyInfoForm
 ): Promise<AgencyInfoForm> {
-  await authenticateServerAction();
   await dbConnect();
 
   const newAgencyInfo = await AgencyInfoFormModel.create(agencyInfo).catch(
