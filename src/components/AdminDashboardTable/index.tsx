@@ -137,7 +137,6 @@ export async function AdminDashboardTable({
     showNeedsReview,
     showExpired,
   };
-  console.log(currentStatusFilters);
 
   let agencies: Agency[] = [];
   try {

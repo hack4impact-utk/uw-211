@@ -32,11 +32,12 @@ export async function getAgencies(
 ): Promise<Agency[]> {
   try {
     await dbConnect();
-    let query = AgencyModel.find({});
 
-    if (searchString) {
-      query = query.find({ name: new RegExp(searchString, 'i') });
-    }
+    const findFilters = searchString
+      ? { name: new RegExp(searchString, 'i') }
+      : {};
+
+    let query = AgencyModel.find(findFilters);
 
     if (populateServices) {
       query = query.populate({
@@ -67,6 +68,7 @@ export async function getAgencies(
         }
       });
     }
+
     return agencies;
   } catch (error) {
     mongoErrorHandler(error as MongoError);
