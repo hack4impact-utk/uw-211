@@ -129,6 +129,7 @@ export const ServiceSchema = z.object({
         (data.other?.selected ?? false),
       'A selection for required documents is required.'
     ),
+  isSeasonal: z.boolean(),
 });
 
 const convertToMinutes = (hours: string, minutes: string) => {

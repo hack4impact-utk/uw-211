@@ -9,6 +9,7 @@ import {
   AgencyModel,
   ServiceModel,
 } from '@/server/models';
+import { authenticateServerAction } from '@/utils/auth';
 
 type CurrentStatusFilters = {
   showCompleted: boolean;
@@ -30,6 +31,7 @@ export async function getAgencies(
   currentStatusFilters?: CurrentStatusFilters,
   compareFn?: (a: Agency, b: Agency) => number
 ): Promise<Agency[]> {
+  await authenticateServerAction();
   try {
     await dbConnect();
 
@@ -89,6 +91,7 @@ export async function getPaginatedAgencies(
   page: number,
   pageSize: number
 ): Promise<Agency[]> {
+  await authenticateServerAction();
   if (page < 1) {
     throw new JSendResponse({
       status: 'fail',
@@ -171,6 +174,7 @@ export async function createService(service: Service): Promise<Service> {
  * @throws See mongoErrorHandler for common insertion errors
  */
 export async function createAgency(agency: Agency): Promise<Agency> {
+  await authenticateServerAction();
   await dbConnect();
 
   const newAgency = await AgencyModel.create(agency).catch((error) => {
@@ -252,6 +256,7 @@ export async function updateAgency(
   id: string,
   updates: Partial<Agency>
 ): Promise<Agency | null> {
+  await authenticateServerAction();
   await dbConnect();
   const updatedAgency = await AgencyModel.updateOne({ _id: id }, updates).catch(
     (error) => {
@@ -284,6 +289,7 @@ export async function updateService(
   id: string,
   updates: Partial<Service>
 ): Promise<Service | null> {
+  await authenticateServerAction();
   await dbConnect();
   const updatedService = await ServiceModel.updateOne(
     { _id: id },
@@ -308,6 +314,7 @@ export async function updateService(
  * @throws 404 if no agency is found with the ID
  */
 export async function deleteAgency(id: string): Promise<Agency | null> {
+  await authenticateServerAction();
   await dbConnect();
   const deletedAgency = await AgencyModel.findByIdAndDelete(id).catch(
     (error) => {
@@ -330,6 +337,7 @@ export async function deleteAgency(id: string): Promise<Agency | null> {
  * @throws 404 if no service is found with the ID
  */
 export async function deleteService(id: string): Promise<Service | null> {
+  await authenticateServerAction();
   await dbConnect();
   const deletedService = await ServiceModel.findByIdAndDelete(id).catch(
     (error) => {
@@ -358,6 +366,7 @@ export async function approveAgency(
   newInfo: AgencyInfoForm,
   newApprovalStatus: 'Pending' | 'Approved'
 ): Promise<Agency | null> {
+  await authenticateServerAction();
   await dbConnect();
 
   const { services, ...infoWithoutServices } = newInfo;

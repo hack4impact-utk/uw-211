@@ -36,11 +36,37 @@ const AgencySchema = new mongoose.Schema<Agency>(
   }
 );
 
+AgencySchema.virtual('latestInfo').get(function (this: Agency) {
+  if (this.info.length === 0) {
+    return null;
+  }
+  return this.info[this.info.length - 1];
+});
+
 AgencySchema.virtual('currentStatus').get(function (this: Agency) {
   const currentTime: Date = new Date();
   if (!this.updatedAt) {
     return agencyUpdateStatus.Expired;
   }
+  // Trigger expired status if any of the most current
+  // agencyInfoForm services are seasonal,
+  // and we're within a month of their seasonal start date
+  if (
+    this.latestInfo &&
+    this.latestInfo.services?.some((service) => service.isSeasonal)
+  ) {
+    for (const service of this.latestInfo.services) {
+      if (
+        service.isSeasonal &&
+        service.seasonalStartDate &&
+        currentTime.getTime() >=
+          service.seasonalStartDate.getTime() - 1000 * 60 * 60 * 24 * 30
+      ) {
+        return agencyUpdateStatus.Expired;
+      }
+    }
+  }
+
   const differenceInMilliseconds: number =
     currentTime.getTime() - this.updatedAt.getTime();
   const differenceInDays: number = Math.floor(
@@ -66,13 +92,6 @@ AgencySchema.virtual('daysSinceEmailSent').get(function () {
   const daysSinceEmailSent = Math.floor(timeDiff / millisecondsPerDay);
 
   return daysSinceEmailSent;
-});
-
-AgencySchema.virtual('latestInfo').get(function (this: Agency) {
-  if (this.info.length === 0) {
-    return null;
-  }
-  return this.info[this.info.length - 1];
 });
 
 export default mongoose.models.Agency ||

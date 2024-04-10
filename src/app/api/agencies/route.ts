@@ -6,8 +6,15 @@ import {
 } from '@/server/actions/Agencies';
 import '@/server/models/Service';
 import { AgencyInfoForm, JSendResponse } from '@/utils/types';
+import { authenticateServerEndpoint } from '@/utils/auth';
 
 export async function GET() {
+  try {
+    await authenticateServerEndpoint();
+  } catch (error) {
+    return Response.json(error, { status: 401 });
+  }
+
   try {
     const agencies = await getAgencies();
     const filteredAgencies = agencies.map((agency) => ({
@@ -27,6 +34,9 @@ export async function GET() {
       { status: 200 }
     );
   } catch (error) {
+    if (error instanceof JSendResponse) {
+      return Response.json(error, { status: 400 });
+    }
     return Response.json(
       new JSendResponse({ status: 'error', message: 'Internal Server Error' }),
       { status: 500 }
@@ -35,6 +45,12 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  try {
+    await authenticateServerEndpoint();
+  } catch (error) {
+    return Response.json(error, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const { info, ...agencyWithoutInfo } = body;
