@@ -125,6 +125,7 @@ function zodServiceToTs(data: Service): ServiceModel {
     feeCategory: zodFeeToTs(data),
     feeStraightFeeAmount: data.feeCategory.straight?.content,
     requiredDocuments: zodDocumentsToTs(data),
+    isSeasonal: data.isSeasonal,
   };
   return service;
 }

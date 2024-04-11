@@ -90,6 +90,16 @@ const ServiceSchema = new mongoose.Schema<Service>(
       //   'Drivers License',
       // ],
     },
+    isSeasonal: {
+      type: Boolean,
+      required: true,
+    },
+    seasonalStartDate: {
+      type: Date,
+    },
+    seasonalEndDate: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

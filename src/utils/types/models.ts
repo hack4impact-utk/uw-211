@@ -29,6 +29,7 @@ export interface ContactInfo {
 }
 
 export interface AgencyInfoForm {
+  [x: string]: unknown;
   _id?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -127,6 +128,9 @@ export interface Service {
     | 'Drivers License'
     | string
   )[]; // other
+  isSeasonal: boolean;
+  seasonalStartDate?: Date;
+  seasonalEndDate?: Date;
 }
 
 export interface Agency {
