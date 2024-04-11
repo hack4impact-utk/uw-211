@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -34,27 +34,16 @@ export function AdminDashboardTableFilterCheckbox({
     expired: initialExpired,
   });
 
-  const createQueryString = useCallback(
-    (
-      filters: Record<string, boolean>,
-      searchParamsObject: Record<string, string>
-    ) => {
-      const searchParams = new URLSearchParams(searchParamsObject);
-
-      searchParams.set('completed', filters.completed ? 'true' : 'false');
-      searchParams.set('needsReview', filters.needsReview ? 'true' : 'false');
-      searchParams.set('expired', filters.expired ? 'true' : 'false');
-
-      return searchParams.toString();
-    },
-    []
-  );
-
-  const handleSubmit = (event: React.MouseEvent) => {
+  const handleFilter = (event: React.MouseEvent) => {
     event.preventDefault();
-    router.replace(
-      '/dashboard' + '?' + createQueryString(filters, searchParams)
-    );
+
+    const urlSearchParams = new URLSearchParams(searchParams);
+
+    urlSearchParams.set('completed', filters.completed ? 'true' : 'false');
+    urlSearchParams.set('needsReview', filters.needsReview ? 'true' : 'false');
+    urlSearchParams.set('expired', filters.expired ? 'true' : 'false');
+
+    router.replace('/dashboard' + '?' + urlSearchParams.toString());
   };
 
   return (
@@ -99,7 +88,7 @@ export function AdminDashboardTableFilterCheckbox({
         </DropdownMenuCheckboxItem>
         <DropdownMenuSeparator />
         <button
-          onClick={handleSubmit}
+          onClick={handleFilter}
           className="mx-1 my-1 rounded-md bg-blue-500 px-2 py-1 font-semibold text-white  hover:bg-blue-700"
         >
           Filter
