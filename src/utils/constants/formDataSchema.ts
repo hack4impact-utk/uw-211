@@ -306,12 +306,27 @@ const locationSchema = z.object({
   zipCode: z.string().min(1, 'Required'),
 });
 
-const serviceAreaSchema = z.object({
-  locations: z.array(locationSchema),
-  statewide: z.boolean().optional(),
-  nationwide: z.boolean().optional(),
-  other: z.string().optional(),
-});
+const serviceAreaSchema = z
+  .object({
+    townCity: z.string(),
+    zipCodes: z.array(z.string()),
+    counties: z.array(z.string()),
+    statewide: z.boolean().optional(),
+    nationwide: z.boolean().optional(),
+    other: z.string(),
+  })
+  .refine(
+    (data) =>
+      data.townCity ||
+      data.zipCodes.length != 0 ||
+      data.counties.length != 0 ||
+      data.nationwide ||
+      data.statewide ||
+      data.other,
+    {
+      message: 'Please select at least one service area.',
+    }
+  );
 
 const fundingSourcesSchema = z
   .object({
@@ -418,7 +433,7 @@ export const FormDataSchema = z.object({
 
   // the following must be required, currently not implement in the front end
   // Fields with .optional will be required in the future
-  serviceArea: serviceAreaSchema.optional(),
+  serviceArea: serviceAreaSchema,
   fundingSources: fundingSourcesSchema,
   location: locationSchema,
   contactInfo: contactInfoSchema,
