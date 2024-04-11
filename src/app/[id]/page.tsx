@@ -126,10 +126,6 @@ export default function Form({ params }: { params: { id: string } }) {
     }
   };
 
-  const get_subpage_name = (currentStep: number, currentSubstep: number) => {
-    return steps[currentStep].subpages[currentSubstep].name;
-  };
-
   const [isMondayChecked, setMondayChecked] = useState(false);
   const [isTuesdayChecked, setTuesdayChecked] = useState(false);
   const [isWednesdayChecked, setWednesdayChecked] = useState(false);
@@ -982,12 +978,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Preliminaries - {get_subpage_name(currentStep, currentSubstep)}
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Let&apos;s get to know your agency...
-            </p>
             {/* General Subpage */}
             {currentSubstep === 0 && (
               <motion.div
@@ -998,6 +988,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Preliminaries - General
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Let&apos;s get to know your agency...
+                </p>
+
                 <section className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
                   {/* left section */}
                   <section className="flex w-full flex-col lg:w-1/2">
@@ -1356,6 +1353,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Preliminaries - Operations
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Let&apos;s get to know your agency...
+                </p>
+
                 <section className="mt-10 flex flex-col md:flex-row">
                   <section className="flex w-full flex-col md:w-1/2">
                     {/* Hours of Operation */}
@@ -1985,6 +1989,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Preliminaries - Additional
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Let&apos;s get to know your agency...
+                </p>
+
                 <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
                   <p>service area, Information Update Contact Info</p>
                 </div>
@@ -2012,8 +2023,36 @@ homeless men, etc.) This helps us to make appropriate referrals."
           </motion.div>
         )}
 
-        {/* Services */}
+        {/* Accessibility */}
         {currentStep === 1 && (
+          <motion.div
+            initial={{
+              x: delta >= 0 ? '50%' : '-50%',
+              opacity: 0,
+            }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
+            {/* Accessibility Subpage */}
+            {currentSubstep === 0 && (
+              <motion.div
+                initial={{
+                  x: subdelta >= 0 ? '50%' : '-50%',
+                  opacity: 0,
+                }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Accessibility
+                </h2>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Services */}
+        {currentStep === 2 && (
           <motion.div
             initial={{
               x: delta >= 0 ? '50%' : '-50%',
@@ -2192,7 +2231,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
         )}
 
         {/* Opportunities */}
-        {currentStep === 2 && (
+        {currentStep === 3 && (
           <motion.div
             initial={{ x: delta >= 0 ? '50%' : '-50%', opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -2657,7 +2696,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
         )}
 
         {/* Review */}
-        {currentStep === 3 && (
+        {currentStep === 4 && (
           <motion.div
             initial={{ x: delta >= 0 ? '50%' : '-50%', opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}

@@ -25,8 +25,14 @@ export const formSteps = [
         name: 'Additional',
         fields: ['service area', 'Information Update Contact Info'],
       },
+    ],
+  },
+  {
+    id: 'Step 2',
+    name: 'Accessibility',
+    subpages: [
       {
-        id: 'Step 1.4',
+        id: 'Step 2.1',
         name: 'Accessibility',
         fields: [
           'Teleinterpreter Language Service',
@@ -38,26 +44,36 @@ export const formSteps = [
     ],
   },
   {
-    id: 'Step 2',
+    id: 'Step 3',
     name: 'Services',
     subpages: [
       {
-        id: 'Step 2.1',
+        id: 'Step 3.1',
         name: 'Services',
         fields: ['services'],
       },
     ],
   },
   {
-    id: 'Step 3',
+    id: 'Step 4',
     name: 'Opportunities',
     subpages: [
       {
-        id: 'Step 3.1',
+        id: 'Step 4.1',
         name: 'Opportunities',
         fields: ['volunteerFields', 'donationFields', 'recommendationFields'],
       },
     ],
   },
-  { id: 'Step 4', name: 'Review', subpages: [] },
+  {
+    id: 'Step 5',
+    name: 'Review',
+    subpages: [
+      {
+        id: 'Step 5.1',
+        name: 'Review',
+        fields: [],
+      },
+    ],
+  },
 ];
