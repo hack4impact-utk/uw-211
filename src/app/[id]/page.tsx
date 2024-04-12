@@ -957,7 +957,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
   };
 
   const convertToArray = (input: string) => {
-    if (input == '') return [];
+    console.log(typeof input, input);
+
+    if (Array.isArray(input)) return input;
+    else if (input == '') return [];
     else if (input.includes(',')) {
       const str = input.replace(/\s/g, '');
       return str.split(',');
@@ -2030,13 +2033,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             autoComplete="serviceArea.townCity"
                             className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
-                          <div className="mt-2 min-h-6 ">
-                            {errors.serviceArea?.townCity?.message && (
-                              <p className="mt-2 text-sm text-red-400">
-                                {errors.serviceArea.townCity.message}
-                              </p>
-                            )}
-                          </div>
                         </div>
                       </div>
 
@@ -2146,14 +2142,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           />
                         </div>
                       </div>
-                    </div>
-
-                    <div className="mt-2 min-h-6 ">
-                      {errors.serviceArea?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.serviceArea.message}
-                        </p>
-                      )}
                     </div>
                   </section>
 
