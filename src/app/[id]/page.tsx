@@ -965,6 +965,23 @@ homeless men, etc.) This helps us to make appropriate referrals."
     } else return [input];
   };
 
+  interface preliminaries_header {
+    name: string;
+  }
+
+  const PreliminariesHeader = (data: preliminaries_header) => {
+    return (
+      <>
+        <h2 className="text-base font-semibold leading-7 text-gray-900">
+          Preliminaries - {data.name}
+        </h2>
+        <p className="mt-1 text-sm leading-6 text-gray-600">
+          Let&apos;s get to know your agency...
+        </p>
+      </>
+    );
+  };
+
   return (
     <section className="absolute inset-0 flex flex-col justify-between pl-4 pr-4 pt-24 sm:px-12 md:px-20">
       {/* Stepper */}
@@ -998,12 +1015,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Preliminaries - General
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  Let&apos;s get to know your agency...
-                </p>
+                <PreliminariesHeader
+                  name={steps[currentStep].subpages[currentSubstep].name}
+                />
 
                 <section className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
                   {/* left section */}
@@ -1363,12 +1377,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Preliminaries - Operations
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  Let&apos;s get to know your agency...
-                </p>
+                <PreliminariesHeader
+                  name={steps[currentStep].subpages[currentSubstep].name}
+                />
 
                 <section className="mt-10 flex flex-col md:flex-row">
                   <section className="flex w-full flex-col md:w-1/2">
@@ -1999,151 +2010,143 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Preliminaries - Additional
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  Let&apos;s get to know your agency...
-                </p>
+                <PreliminariesHeader
+                  name={steps[currentStep].subpages[currentSubstep].name}
+                />
 
                 <section className="mt-10 flex flex-col md:flex-row">
-                  {/* Service Area */}
                   <section>
+                    {/* Service Area */}
                     <div>
-                      <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
-                        Service Area
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </h3>
+                      <div className="flex flex-col gap-4">
+                        <h3 className="mb-4 block text-sm font-medium leading-6 text-gray-900">
+                          Service Area
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </h3>
 
-                      {/* serviceArea.townCity */}
-                      <div>
-                        <label
-                          htmlFor="serviceArea.townCity"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Specific Town/City
-                        </label>
-                        <div className="mt-2">
-                          <input
-                            type="text"
-                            id="serviceArea.townCity"
-                            {...register('serviceArea.townCity')}
-                            autoComplete="serviceArea.townCity"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
+                        {/* serviceArea.townCity */}
+                        <div>
+                          <label
+                            htmlFor="serviceArea.townCity"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Specific Town/City
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="serviceArea.townCity"
+                              {...register('serviceArea.townCity')}
+                              autoComplete="serviceArea.townCity"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
                         </div>
-                      </div>
 
-                      {/* serviceArea.zipCodes */}
-                      <div>
-                        <label
-                          htmlFor="serviceArea.zipCodes"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Specific Zip Code(s)
-                        </label>
-                        <div className="mt-2">
-                          <input
-                            type="text"
-                            id="serviceArea.zipCodes"
-                            {...register('serviceArea.zipCodes', {
-                              setValueAs: (data) => convertToArray(data),
-                            })}
-                            autoComplete="serviceArea.zipCodes"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
-                          <div className="mt-2 min-h-6 ">
-                            {errors.serviceArea?.zipCodes?.message && (
-                              <p className="mt-2 text-sm text-red-400">
-                                {errors.serviceArea.zipCodes.message}
-                              </p>
-                            )}
+                        {/* serviceArea.zipCodes */}
+                        <div>
+                          <label
+                            htmlFor="serviceArea.zipCodes"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Specific Zip Code(s)
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="serviceArea.zipCodes"
+                              {...register('serviceArea.zipCodes', {
+                                setValueAs: (data) => convertToArray(data),
+                              })}
+                              autoComplete="serviceArea.zipCodes"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                        </div>
+
+                        {/* serviceArea.counties */}
+                        <div>
+                          <label
+                            htmlFor="serviceArea.counties"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Specific County/Counties
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="serviceArea.counties"
+                              {...register('serviceArea.counties', {
+                                setValueAs: (data) => convertToArray(data),
+                              })}
+                              autoComplete="serviceArea.zipCodes"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Region */}
+                        <div className="flex flex-col items-center gap-4 md:flex-row">
+                          {/* serviceArea.statewide */}
+                          <div className="space-x-2">
+                            <input
+                              type="checkbox"
+                              id="serviceArea.statewide"
+                              className="form-checkbox"
+                              {...register('serviceArea.statewide')}
+                            />
+                            <label
+                              htmlFor="serviceArea.statewide"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Statewide
+                            </label>
+                          </div>
+
+                          {/* serviceArea.nationwide */}
+                          <div className="space-x-2">
+                            <input
+                              type="checkbox"
+                              id="serviceArea.nationwide"
+                              className="form-checkbox"
+                              {...register('serviceArea.nationwide')}
+                            />
+                            <label
+                              htmlFor="serviceArea.nationwide"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Nationwide
+                            </label>
+                          </div>
+
+                          <label
+                            htmlFor="serviceArea.other"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Other
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="serviceArea.other"
+                              {...register('serviceArea.other')}
+                              autoComplete="serviceArea.other"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
                           </div>
                         </div>
                       </div>
 
-                      {/* serviceArea.counties */}
-                      <div>
-                        <label
-                          htmlFor="serviceArea.counties"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Specific County/Counties
-                        </label>
-                        <div className="mt-2">
-                          <input
-                            type="text"
-                            id="serviceArea.counties"
-                            {...register('serviceArea.counties', {
-                              setValueAs: (data) => convertToArray(data),
-                            })}
-                            autoComplete="serviceArea.zipCodes"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
-                          <div className="mt-2 min-h-6 ">
-                            {errors.serviceArea?.counties?.message && (
-                              <p className="mt-2 text-sm text-red-400">
-                                {errors.serviceArea.counties.message}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Region */}
-                      <div className="flex flex-col items-center gap-4 md:flex-row">
-                        {/* serviceArea.statewide */}
-                        <div className="space-x-2">
-                          <input
-                            type="checkbox"
-                            id="serviceArea.statewide"
-                            className="form-checkbox"
-                            {...register('serviceArea.statewide')}
-                          />
-                          <label
-                            htmlFor="serviceArea.statewide"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            Statewide
-                          </label>
-                        </div>
-
-                        {/* serviceArea.nationwide */}
-                        <div className="space-x-2">
-                          <input
-                            type="checkbox"
-                            id="serviceArea.nationwide"
-                            className="form-checkbox"
-                            {...register('serviceArea.nationwide')}
-                          />
-                          <label
-                            htmlFor="serviceArea.nationwide"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            Nationwide
-                          </label>
-                        </div>
-
-                        <label
-                          htmlFor="serviceArea.other"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Other
-                        </label>
-                        <div className="mt-2">
-                          <input
-                            type="text"
-                            id="serviceArea.other"
-                            {...register('serviceArea.other')}
-                            autoComplete="serviceArea.other"
-                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
-                        </div>
+                      {/* Error */}
+                      <div className="mt-2 min-h-6 ">
+                        {errors.serviceArea?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.serviceArea.message}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </section>
-
-                  <section></section>
                 </section>
               </motion.div>
             )}
