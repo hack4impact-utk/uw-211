@@ -957,8 +957,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
   };
 
   const convertToArray = (input: string) => {
-    console.log(typeof input, input);
-
     if (Array.isArray(input)) return input;
     else if (input == '') return [];
     else if (input.includes(',')) {
