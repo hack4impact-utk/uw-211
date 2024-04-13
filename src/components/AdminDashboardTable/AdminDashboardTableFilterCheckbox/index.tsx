@@ -11,25 +11,40 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Filter } from 'lucide-react';
+import { DashboardParams } from '@/utils/types';
+import { useRouter } from 'next/navigation';
 
 type AdminDashboardTableFilterCheckboxProps = {
-  statusHiddenInputs: (React.JSX.Element | undefined)[];
+  searchParams: DashboardParams;
   initialCompleted: boolean;
   initialNeedsReview: boolean;
   initialExpired: boolean;
 };
 
 export function AdminDashboardTableFilterCheckbox({
-  statusHiddenInputs,
+  searchParams,
   initialCompleted,
   initialNeedsReview,
   initialExpired,
 }: AdminDashboardTableFilterCheckboxProps) {
+  const router = useRouter();
   const [filters, setFilters] = useState({
     completed: initialCompleted,
     needsReview: initialNeedsReview,
     expired: initialExpired,
   });
+
+  const handleFilter = (event: React.MouseEvent) => {
+    event.preventDefault();
+
+    const urlSearchParams = new URLSearchParams(searchParams);
+
+    urlSearchParams.set('completed', filters.completed ? 'true' : 'false');
+    urlSearchParams.set('needsReview', filters.needsReview ? 'true' : 'false');
+    urlSearchParams.set('expired', filters.expired ? 'true' : 'false');
+
+    router.replace('/dashboard' + '?' + urlSearchParams.toString());
+  };
 
   return (
     <DropdownMenu>
@@ -71,34 +86,13 @@ export function AdminDashboardTableFilterCheckbox({
         >
           Expired
         </DropdownMenuCheckboxItem>
-        <form action="./dashboard" method="GET">
-          {statusHiddenInputs}
-          <input
-            key={'completed'}
-            type="hidden"
-            name={'completed'}
-            value={filters.completed ? '1' : '0'}
-          />
-          <input
-            key={'needsReview'}
-            type="hidden"
-            name={'needsReview'}
-            value={filters.needsReview ? '1' : '0'}
-          />
-          <input
-            key={'expired'}
-            type="hidden"
-            name={'expired'}
-            value={filters.expired ? '1' : '0'}
-          />
-          <DropdownMenuSeparator />
-          <button
-            type="submit"
-            className="mx-1 my-1 rounded-md bg-blue-500 px-2 py-1 font-semibold text-white  hover:bg-blue-700"
-          >
-            Filter
-          </button>
-        </form>
+        <DropdownMenuSeparator />
+        <button
+          onClick={handleFilter}
+          className="mx-1 my-1 rounded-md bg-blue-500 px-2 py-1 font-semibold text-white  hover:bg-blue-700"
+        >
+          Filter
+        </button>
       </DropdownMenuContent>
     </DropdownMenu>
   );
