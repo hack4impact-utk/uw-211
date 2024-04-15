@@ -35,10 +35,9 @@ export const formSteps = [
         id: 'Step 2.1',
         name: 'Accessibility',
         fields: [
-          'Teleinterpreter Language Service',
-          'Supported Languages',
-          'Supported Languages Without Notice',
-          'Accessibility ADA',
+          'languageSupport',
+          'supportedLanguagesWithoutNotice',
+          'accessibilityADA',
         ],
       },
     ],

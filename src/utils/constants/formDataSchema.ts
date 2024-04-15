@@ -363,6 +363,23 @@ const fundingSourcesSchema = z
     'A funding source selection is required.'
   );
 
+const languageSupportSchema = z.object({
+  asl: z.boolean(),
+  spanish: z.boolean(),
+  teleinterpreterLanguageService: z.boolean(),
+  other: z
+    .object({
+      selected: z.boolean(),
+      content: z.array(z.string()),
+    })
+    .refine(
+      (data) => !data.selected || (data.selected && data.content.length != 0),
+      {
+        message: 'Please specify other.',
+      }
+    ),
+});
+
 const contactInfoSchema = z.object({
   phoneNumber: z
     .string()
@@ -468,12 +485,9 @@ export const FormDataSchema = z.object({
   updaterContactInfo: contactInfoSchema.optional(),
 
   // Accessibility
-  teleinterpreterLanguageService: z.boolean().optional(),
-  supportedLanguages: z
-    .array(z.union([z.literal('ASL'), z.literal('Spanish'), z.string()]))
-    .optional(),
-  supportedLanguagesWithoutNotice: z.array(z.string()).optional(),
-  accessibilityADA: z.boolean().optional(),
+  languageSupport: languageSupportSchema,
+  supportedLanguagesWithoutNotice: z.array(z.string()),
+  accessibilityADA: z.coerce.boolean({ invalid_type_error: 'invalid' }),
 
   // SERVICES
   services: z.array(ServiceSchema),
