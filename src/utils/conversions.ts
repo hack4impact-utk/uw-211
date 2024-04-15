@@ -140,6 +140,22 @@ function zodVolCoordinatorToTs(
   return contactInfo;
 }
 
+function zodFundingToTs(data: Inputs): AgencyInfoForm['fundingSources'] {
+  const funding: AgencyInfoForm['fundingSources'] = [];
+
+  if (data.fundingSources.federal) funding.push('Federal');
+  if (data.fundingSources.state) funding.push('State');
+  if (data.fundingSources.county) funding.push('County');
+  if (data.fundingSources.city) funding.push('City');
+  if (data.fundingSources.donations) funding.push('Donations');
+  if (data.fundingSources.foundations) funding.push('Foundations/Private Org.');
+  if (data.fundingSources.feesDues) funding.push('Fees/Dues');
+  if (data.fundingSources.unitedWay) funding.push('United Way');
+  if (data.fundingSources.other?.selected && data.fundingSources.other.content)
+    funding.push(data.fundingSources.other.content);
+  return funding;
+}
+
 export function zodFormToTs(data: Inputs): AgencyInfoForm {
   const agencyInfo: AgencyInfoForm = {
     legalAgencyName: data.legalName,
@@ -148,7 +164,7 @@ export function zodFormToTs(data: Inputs): AgencyInfoForm {
     briefAgencyDescription: data.agencyInfo,
     directorNameOrTitle: data.directorName,
     serviceArea: data.serviceArea || {},
-    fundingSources: data.fundingSources || [],
+    fundingSources: zodFundingToTs(data) || [],
     location: data.location || {
       physicalAddress: 'The zod schema/front end need to collect an address',
     },

@@ -5,7 +5,7 @@ import { ServiceSchema } from '@/utils/constants/formDataSchema';
 type Service = z.infer<typeof ServiceSchema>;
 
 export function ServicesReview(service: Service) {
-  const app_proccess = new Map([
+  const app_process = new Map([
     ['walkIn', 'Walk-in'],
     ['telephone', 'Telephone'],
     ['appointment', 'Call to Schedule an Appointment'],
@@ -41,7 +41,7 @@ export function ServicesReview(service: Service) {
     ['other', 'Other'],
   ]);
 
-  const get_app_proccess = () => {
+  const get_app_process = () => {
     const applicationProcess = service.applicationProcess;
     const options: string[] = [];
     let other: string = '';
@@ -49,7 +49,7 @@ export function ServicesReview(service: Service) {
 
     Object.entries(applicationProcess).forEach(([key, value]) => {
       if (value && key != 'other' && key != 'referral') {
-        options.push(app_proccess.get(key)!);
+        options.push(app_process.get(key)!);
       }
     });
 
@@ -224,7 +224,7 @@ export function ServicesReview(service: Service) {
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               How would someone apply for this service?
             </h3>
-            {get_app_proccess()}
+            {get_app_process()}
           </div>
 
           <div>

@@ -6,17 +6,112 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { CornerDownRight } from 'lucide-react';
+
+interface FormStepperSubpage {
+  id: string;
+  name: string;
+  fields: Array<string>;
+}
+
+interface StepItem {
+  step: { id: string; name: string; subpages: Array<FormStepperSubpage> };
+  index: number;
+  currentPageIndex: number;
+  currentSubpageIndex: number;
+  setCurrentStep: (step: number) => void;
+  setCurrentSubstep: (step: number) => void;
+}
 
 interface MobileFormStepperProps {
   currentPageIndex: number;
-  formSteps: Array<{ id: string; name: string; fields: Array<string> }>;
+  currentSubpageIndex: number;
+  formSteps: Array<{
+    id: string;
+    name: string;
+    subpages: Array<FormStepperSubpage>;
+  }>;
   setCurrentStep: (step: number) => void;
+  setCurrentSubstep: (step: number) => void;
 }
+
+const StepItem = ({
+  index,
+  step,
+  currentPageIndex,
+  currentSubpageIndex,
+  setCurrentStep,
+  setCurrentSubstep,
+}: StepItem) => {
+  if (step.subpages.length > 1) {
+    // there are subpages
+    return (
+      <Accordion type="single" collapsible>
+        <AccordionItem value="item-1">
+          <AccordionTrigger
+            className={`text-xl hover:bg-gray-400 ${
+              index > currentPageIndex
+                ? 'pointer-events-none text-gray-400'
+                : 'text-black'
+            }`}
+          >
+            {step.name}
+          </AccordionTrigger>
+          <AccordionContent className="flex flex-col">
+            {step.subpages.map((subpage, subindex) => (
+              <Button
+                onClick={() => {
+                  setCurrentStep(index);
+                  setCurrentSubstep(subindex);
+                }}
+                key={`${index}.${subindex}`}
+                className={`justify-start bg-white text-left text-lg hover:bg-gray-400 ${
+                  // have not got to this subpage && have to go to page at all
+                  subindex > currentSubpageIndex && index >= currentPageIndex
+                    ? 'pointer-events-none text-gray-400'
+                    : 'text-black'
+                }`}
+              >
+                <CornerDownRight className="mr-1" />
+                {subpage.name}
+              </Button>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    );
+  } else {
+    // no subpages, return normal button
+    return (
+      <Button
+        onClick={() => {
+          setCurrentStep(index);
+          setCurrentSubstep(0);
+        }}
+        className={`bg-white text-xl hover:bg-gray-400 ${
+          index > currentPageIndex
+            ? 'pointer-events-none text-gray-400'
+            : 'text-black'
+        }`}
+      >
+        {step.name}
+      </Button>
+    );
+  }
+};
 
 export default function MobileFormStepper({
   currentPageIndex,
+  currentSubpageIndex,
   formSteps,
   setCurrentStep,
+  setCurrentSubstep,
 }: MobileFormStepperProps) {
   return (
     <Sheet>
@@ -34,17 +129,15 @@ export default function MobileFormStepper({
         <div className="flex flex-col justify-center gap-2">
           {formSteps.map((step, index) => {
             return (
-              <Button
-                onClick={() => setCurrentStep(index)}
+              <StepItem
                 key={index}
-                className={`bg-white text-xl hover:bg-gray-400 ${
-                  index > currentPageIndex
-                    ? 'pointer-events-none text-gray-400'
-                    : 'text-black'
-                }`}
-              >
-                {step.name}
-              </Button>
+                index={index}
+                step={step}
+                currentPageIndex={currentPageIndex}
+                currentSubpageIndex={currentSubpageIndex}
+                setCurrentStep={setCurrentStep}
+                setCurrentSubstep={setCurrentSubstep}
+              />
             );
           })}
         </div>
