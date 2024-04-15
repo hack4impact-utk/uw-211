@@ -6,6 +6,7 @@ import { getAgencies } from '@/server/actions/Agencies';
 import { AdminDashboardTableFilterCheckbox } from '@/components/AdminDashboardTable/AdminDashboardTableFilterCheckbox';
 import AdminDashboardTableSearch from '@/components/AdminDashboardTable/AdminDashboardTableSearch';
 import AdminDashboardTableHeaders from './AdminDashboardTableHeaders';
+import AdminDashboardTablePaginationControls from './AdminDashboardTablePaginationControls';
 
 interface AdminDashboardTableProps {
   params: DashboardParams;
@@ -102,54 +103,59 @@ export async function AdminDashboardTable({
   }
 
   return (
-    <div>
-      <div className="flex w-full px-4 py-4">
-        <AdminDashboardTableSearch searchParams={params} />
-        <AdminDashboardTableFilterCheckbox
-          searchParams={params}
-          initialCompleted={showCompleted}
-          initialNeedsReview={showNeedsReview}
-          initialExpired={showExpired}
-        />
-      </div>
-      <Table className="rounded-md border shadow">
-        <AdminDashboardTableHeaders searchParams={params} />
-        <TableBody>
-          {agencies.map((agency, index) => (
-            <TableRow
-              key={index}
-              className={index % 2 === 1 ? 'bg-gray-100' : ''}
-            >
-              <TableCell>{agency.name}</TableCell>
-              <TableCell>
-                {agency.updatedAt === undefined
-                  ? ''
-                  : agency.updatedAt.toLocaleDateString('en-us', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-              </TableCell>
-              <TableCell
-                className={
-                  agency.currentStatus
-                    ? statusColor(agency.currentStatus as agencyUpdateStatus)
-                    : ''
-                }
+    <>
+      <div>
+        <div className="flex w-full px-4 py-4">
+          <AdminDashboardTableSearch searchParams={params} />
+          <AdminDashboardTableFilterCheckbox
+            searchParams={params}
+            initialCompleted={showCompleted}
+            initialNeedsReview={showNeedsReview}
+            initialExpired={showExpired}
+          />
+        </div>
+        <Table className="rounded-md border shadow">
+          <AdminDashboardTableHeaders searchParams={params} />
+          <TableBody>
+            {agencies.map((agency, index) => (
+              <TableRow
+                key={index}
+                className={index % 2 === 1 ? 'bg-gray-100' : ''}
               >
-                {agency.currentStatus}
-              </TableCell>
-              <TableCell>
-                <a
-                  href={`mailto:${agency.latestInfo?.updaterContactInfo.email}`}
+                <TableCell>{agency.name}</TableCell>
+                <TableCell>
+                  {agency.updatedAt === undefined
+                    ? ''
+                    : agency.updatedAt.toLocaleDateString('en-us', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                </TableCell>
+                <TableCell
+                  className={
+                    agency.currentStatus
+                      ? statusColor(agency.currentStatus as agencyUpdateStatus)
+                      : ''
+                  }
                 >
-                  {agency.latestInfo?.updaterContactInfo.email}
-                </a>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+                  {agency.currentStatus}
+                </TableCell>
+                <TableCell>
+                  <a
+                    href={`mailto:${agency.latestInfo?.updaterContactInfo.email}`}
+                  >
+                    {agency.latestInfo?.updaterContactInfo.email}
+                  </a>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex justify-end p-4">
+        <AdminDashboardTablePaginationControls searchParams={params} />
+      </div>
+    </>
   );
 }
