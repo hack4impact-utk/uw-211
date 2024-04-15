@@ -1370,6 +1370,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 />
 
                 <section className="mt-10 flex flex-col md:flex-row">
+                  {/* Left */}
                   <section className="flex w-full flex-col md:w-1/2">
                     {/* Hours of Operation */}
                     <div>
@@ -1769,50 +1770,50 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     </div>
                   </section>
 
-                  {/* Location */}
-                  <div className="w-full md:w-1/2">
-                    <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
-                      Location Information
-                    </h3>
-                    {/* location.confidential */}
+                  {/* Right */}
+                  <section className="w-full md:w-1/2">
+                    {/* Location */}
                     <div>
-                      <label
-                        htmlFor="location.confidential"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Is the physical address confidential?
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="flex flex-row gap-4 whitespace-nowrap">
-                        <div>
-                          <input
-                            id="location.confidential"
-                            type="radio"
-                            value="false"
-                            {...register('location.confidential')}
-                            autoComplete="location.confidential"
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                            defaultChecked
-                          />
-                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            No
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            id="location.confidential"
-                            type="radio"
-                            value="true"
-                            {...register('location.confidential', {
-                              setValueAs: (value: string) =>
-                                value === 'true' ? true : false,
-                            })}
-                            autoComplete="location.confidential"
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                          />
-                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            Yes
-                          </label>
+                      <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
+                        Location Information
+                      </h3>
+                      {/* location.confidential */}
+                      <div>
+                        <label
+                          htmlFor="location.confidential"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Is the physical address confidential?
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="flex flex-row gap-4 whitespace-nowrap">
+                          <div>
+                            <input
+                              id="location.confidential"
+                              type="radio"
+                              value=""
+                              {...register('location.confidential')}
+                              autoComplete="location.confidential"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              defaultChecked
+                            />
+                            <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              No
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              id="location.confidential"
+                              type="radio"
+                              value="true"
+                              {...register('location.confidential')}
+                              autoComplete="location.confidential"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              Yes
+                            </label>
+                          </div>
                         </div>
                         <div className="mt-2 min-h-6 ">
                           {errors.location?.confidential?.message && (
@@ -1822,168 +1823,172 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           )}
                         </div>
                       </div>
-                    </div>
 
-                    {/* location.physicalAddress */}
-                    <div className="w-full">
-                      <label
-                        htmlFor="location.physicalAddress"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Physical Address
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          id="location.physicalAddress"
-                          {...register('location.physicalAddress')}
-                          autoComplete="location.physicalAddress"
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.location?.physicalAddress?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.location.physicalAddress.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {/* location.mailingAddress */}
-                    <div className="w-full">
-                      <label
-                        htmlFor="location.mailingAddress"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Mailing Address (Only list if different from Physical.)
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          id="location.mailingAddress"
-                          {...register('location.mailingAddress')}
-                          autoComplete="location.mailingAddress"
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.location?.mailingAddress?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.location.mailingAddress.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {/* location.county */}
-                    <div className="w-full">
-                      <label
-                        htmlFor="location.county"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        County
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          id="location.county"
-                          {...register('location.county')}
-                          autoComplete="location.county"
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.location?.county?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.location.county.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-2 md:flex-row md:gap-4">
-                      {/* location.city */}
-                      <div className="w-full sm:w-1/2 md:w-3/6">
+                      {/* location.physicalAddress */}
+                      <div className="w-full">
                         <label
-                          htmlFor="location.city"
+                          htmlFor="location.physicalAddress"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          City
+                          Physical Address
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
                           <input
                             type="text"
-                            id="location.city"
-                            {...register('location.city')}
-                            autoComplete="location.city"
+                            id="location.physicalAddress"
+                            {...register('location.physicalAddress')}
+                            autoComplete="location.physicalAddress"
                             className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
-                            {errors.location?.city?.message && (
+                            {errors.location?.physicalAddress?.message && (
                               <p className="mt-2 text-sm text-red-400">
-                                {errors.location.city.message}
+                                {errors.location.physicalAddress.message}
                               </p>
                             )}
                           </div>
                         </div>
                       </div>
 
-                      {/* location.state */}
-                      <div className="w-full sm:w-1/2 md:w-1/6">
+                      {/* location.mailingAddress */}
+                      <div className="w-full">
                         <label
-                          htmlFor="location.state"
+                          htmlFor="location.mailingAddress"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          State
-                          <span className="ml-1 text-sm text-red-400">*</span>
+                          Mailing Address (Only list if different from
+                          Physical.)
                         </label>
                         <div className="mt-2">
                           <input
                             type="text"
-                            id="location.state"
-                            {...register('location.state')}
-                            autoComplete="location.state"
+                            id="location.mailingAddress"
+                            {...register('location.mailingAddress')}
+                            autoComplete="location.mailingAddress"
                             className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
-                            {errors.location?.state?.message && (
+                            {errors.location?.mailingAddress?.message && (
                               <p className="mt-2 text-sm text-red-400">
-                                {errors.location.state.message}
+                                {errors.location.mailingAddress.message}
                               </p>
                             )}
                           </div>
                         </div>
                       </div>
 
-                      {/* location.zipCode */}
-                      <div className="w-full sm:w-1/2 md:w-2/6">
+                      {/* location.county */}
+                      <div className="w-full">
                         <label
-                          htmlFor="location.zipCode"
+                          htmlFor="location.county"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Zip Code
+                          County
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
                           <input
                             type="text"
-                            id="location.zipCode"
-                            {...register('location.zipCode')}
-                            autoComplete="location.zipCode"
+                            id="location.county"
+                            {...register('location.county')}
+                            autoComplete="location.county"
                             className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
-                            {errors.location?.zipCode?.message && (
+                            {errors.location?.county?.message && (
                               <p className="mt-2 text-sm text-red-400">
-                                {errors.location.zipCode.message}
+                                {errors.location.county.message}
                               </p>
                             )}
                           </div>
                         </div>
                       </div>
+
+                      <div className="flex flex-col gap-2 md:flex-row md:gap-4">
+                        {/* location.city */}
+                        <div className="w-full sm:w-1/2 md:w-3/6">
+                          <label
+                            htmlFor="location.city"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            City
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="location.city"
+                              {...register('location.city')}
+                              autoComplete="location.city"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.location?.city?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.location.city.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* location.state */}
+                        <div className="w-full sm:w-1/2 md:w-1/6">
+                          <label
+                            htmlFor="location.state"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            State
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="location.state"
+                              {...register('location.state')}
+                              autoComplete="location.state"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.location?.state?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.location.state.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* location.zipCode */}
+                        <div className="w-full sm:w-1/2 md:w-2/6">
+                          <label
+                            htmlFor="location.zipCode"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Zip Code
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="location.zipCode"
+                              {...register('location.zipCode')}
+                              autoComplete="location.zipCode"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.location?.zipCode?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.location.zipCode.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </section>
                 </section>
               </motion.div>
             )}
@@ -2002,16 +2007,23 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   name={steps[currentStep].subpages[currentSubstep].name}
                 />
 
-                <section className="mt-10 flex flex-col md:flex-row">
-                  <section>
+                <section className="mt-10 flex w-full flex-col gap-4 md:flex-row">
+                  {/* Left */}
+                  <section className="w-full md:w-1/2">
                     {/* Service Area */}
                     <div>
-                      <div className="flex flex-col gap-4">
-                        <h3 className="mb-4 block text-sm font-medium leading-6 text-gray-900">
+                      <div className="mb-4">
+                        <h3 className="block text-sm font-medium leading-6 text-gray-900">
                           Service Area
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </h3>
+                        <p className="mt-1 text-sm leading-6 text-gray-600">
+                          Choose the description that best reflects your service
+                          area.
+                        </p>
+                      </div>
 
+                      <div className="flex flex-col gap-8">
                         {/* serviceArea.townCity */}
                         <div>
                           <label
@@ -2126,10 +2138,191 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </div>
 
                       {/* Error */}
-                      <div className="mt-2 min-h-6 ">
+                      <div className="mt-4 min-h-6 ">
                         {errors.serviceArea?.message && (
                           <p className="mt-2 text-sm text-red-400">
                             {errors.serviceArea.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Right */}
+                  <section className="w-full md:w-1/2">
+                    {/* Annual Agency Update */}
+                    <div>
+                      <div className="mb-4">
+                        <h3 className="block text-sm font-medium leading-6 text-gray-900">
+                          Annual Agency Update
+                        </h3>
+                        <p className="mt-1 text-sm leading-6 text-gray-600">
+                          Provide a person we can contact for our annual
+                          information update.
+                        </p>
+                      </div>
+
+                      <div className="flex flex-row gap-2 md:gap-4">
+                        {/* annualAgencyUpdate.name */}
+                        <div className="w-2/3">
+                          <label
+                            htmlFor="annualAgencyUpdate.name"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Name
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="annualAgencyUpdate.name"
+                              {...register('annualAgencyUpdate.name')}
+                              autoComplete="annualAgencyUpdate.name"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                          <div className="mt-2 min-h-6 ">
+                            {errors.annualAgencyUpdate?.name?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.annualAgencyUpdate.name.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* annualAgencyUpdate.title */}
+                        <div className="w-1/3">
+                          <label
+                            htmlFor="annualAgencyUpdate.title"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Title
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="annualAgencyUpdate.title"
+                              {...register('annualAgencyUpdate.title')}
+                              autoComplete="annualAgencyUpdate.title"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                          <div className="mt-2 min-h-6 ">
+                            {errors.annualAgencyUpdate?.title?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.annualAgencyUpdate.title.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* annualAgencyUpdate.phoneNumber */}
+                      <div>
+                        <label
+                          htmlFor="annualAgencyUpdate.phoneNumber"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Phone Number
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="annualAgencyUpdate.phoneNumber"
+                            {...register('annualAgencyUpdate.phoneNumber')}
+                            autoComplete="annualAgencyUpdate.phoneNumber"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+                        <div className="mt-2 min-h-6 ">
+                          {errors.annualAgencyUpdate?.phoneNumber?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.annualAgencyUpdate.phoneNumber.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* annualAgencyUpdate.email */}
+                      <div>
+                        <label
+                          htmlFor="annualAgencyUpdate.email"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Email
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="annualAgencyUpdate.email"
+                            {...register('annualAgencyUpdate.email')}
+                            autoComplete="annualAgencyUpdate.email"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+                        <div className="mt-2 min-h-6 ">
+                          {errors.annualAgencyUpdate?.email?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.annualAgencyUpdate.email.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* annualAgencyUpdate.hideFromWebsite */}
+                      <div className="flex flex-col gap-6 md:flex-row">
+                        <label
+                          htmlFor="annualAgencyUpdate.hideFromWebsite"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Would you like this information to be hidden from the
+                          website?
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="flex flex-row gap-4 whitespace-nowrap">
+                          <div>
+                            <input
+                              id="annualAgencyUpdate.hideFromWebsite"
+                              type="radio"
+                              value=""
+                              {...register(
+                                'annualAgencyUpdate.hideFromWebsite'
+                              )}
+                              autoComplete="annualAgencyUpdate.hideFromWebsite"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              defaultChecked
+                            />
+                            <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              No
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              id="annualAgencyUpdate.hideFromWebsite"
+                              type="radio"
+                              value="true"
+                              {...register(
+                                'annualAgencyUpdate.hideFromWebsite'
+                              )}
+                              autoComplete="annualAgencyUpdate.hideFromWebsite"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              Yes
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* errors */}
+                      <div className="mt-2 min-h-6 ">
+                        {errors.annualAgencyUpdate?.hideFromWebsite
+                          ?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.annualAgencyUpdate.hideFromWebsite.message}
                           </p>
                         )}
                       </div>

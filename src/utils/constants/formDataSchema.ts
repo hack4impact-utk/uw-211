@@ -298,7 +298,7 @@ const RecommendationFields = z
   });
 
 const locationSchema = z.object({
-  confidential: z.coerce.boolean(),
+  confidential: z.coerce.boolean({ invalid_type_error: 'invalid' }),
   physicalAddress: z.string().min(1, 'Required'),
   mailingAddress: z.string(),
   county: z.string().min(1, 'Required'),
@@ -407,8 +407,8 @@ const contactInfoSchema = z.object({
 });
 
 const annualAgencyUpdateSchema = z.object({
-  name: z.string(),
-  title: z.string(),
+  name: z.string().min(1, 'Required'),
+  title: z.string().min(1, 'Required'),
   phoneNumber: z
     .string()
     .min(1, 'Required')
@@ -421,7 +421,7 @@ const annualAgencyUpdateSchema = z.object({
     .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
       message: 'Must be a valid email address.',
     }),
-  hideFromWebsite: z.boolean(),
+  hideFromWebsite: z.coerce.boolean({ invalid_type_error: 'invalid' }),
 });
 
 export const FormDataSchema = z.object({
@@ -464,7 +464,7 @@ export const FormDataSchema = z.object({
 
   // Additional
   serviceArea: serviceAreaSchema,
-  annualAgencyUpdate: annualAgencyUpdateSchema.optional(),
+  annualAgencyUpdate: annualAgencyUpdateSchema,
   updaterContactInfo: contactInfoSchema.optional(),
 
   // Accessibility

@@ -23,7 +23,7 @@ export const formSteps = [
       {
         id: 'Step 1.3',
         name: 'Additional',
-        fields: ['serviceArea'],
+        fields: ['serviceArea', 'annualAgencyUpdate'],
       },
     ],
   },
