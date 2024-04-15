@@ -1,20 +1,14 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import React from 'react';
 import { agencyUpdateStatus } from '@/utils/constants';
-import { Input } from '@/components/ui/input';
-import { ArrowUp, ArrowDown } from 'lucide-react';
-import { Agency, dashboardParams } from '@/utils/types';
+import { Agency, DashboardParams } from '@/utils/types';
 import { getAgencies } from '@/server/actions/Agencies';
+import { AdminDashboardTableFilterCheckbox } from '@/components/AdminDashboardTable/AdminDashboardTableFilterCheckbox';
+import AdminDashboardTableSearch from '@/components/AdminDashboardTable/AdminDashboardTableSearch';
+import AdminDashboardTableHeaders from './AdminDashboardTableHeaders';
 
 interface AdminDashboardTableProps {
-  params: dashboardParams;
+  params: DashboardParams;
 }
 
 /**
@@ -24,9 +18,10 @@ interface AdminDashboardTableProps {
  * @param path Path to the property as a dot-delimited string
  * @returns The property at the specified path
  */
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 function getValueByPath(obj: any, path: string) {
   const keys: string[] = path.split('.');
-  let current: any = obj;
+  let current = obj;
   for (const key of keys) {
     if (current[key] === undefined) {
       return undefined;
@@ -76,144 +71,49 @@ function statusColor(status: agencyUpdateStatus) {
   }
 }
 
-/** Helper function to create sortable table heads */
-function addTableHead(
-  property: string,
-  name: string,
-  activeSortField: string | undefined,
-  sortHiddenInputs: (React.JSX.Element | undefined)[],
-  sortAscending: boolean
-) {
-  return (
-    <TableHead>
-      <form action="./dashboard" method="GET">
-        {sortHiddenInputs}
-        <input
-          type="hidden"
-          key={'sortField'}
-          name={'sortField'}
-          value={property}
-        ></input>
-        <input
-          type="hidden"
-          key={'sortAscending'}
-          name={'sortAscending'}
-          value={sortAscending ? '0' : '1'}
-        ></input>
-        <button className="flex items-center">
-          {name}
-          {activeSortField == property ? (
-            sortAscending ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            )
-          ) : (
-            <></>
-          )}
-        </button>
-      </form>
-    </TableHead>
-  );
-}
-
 export async function AdminDashboardTable({
   params,
 }: AdminDashboardTableProps) {
-  let agencies: Agency[] = [];
+  // extract sort and filter parameters
   const sortAscending: boolean =
-    params.sortAscending === undefined ? false : params.sortAscending === '1';
+    params.sortAscending === undefined || params.sortAscending === 'true';
+  const showCompleted =
+    params.completed === undefined || params.completed === 'true';
+  const showNeedsReview =
+    params.needsReview === undefined || params.needsReview === 'true';
+  const showExpired = params.expired === undefined || params.expired === 'true';
 
+  const currentStatusFilters = {
+    showCompleted,
+    showNeedsReview,
+    showExpired,
+  };
+
+  let agencies: Agency[] = [];
   try {
     agencies = await getAgencies(
       false,
       params.search,
+      currentStatusFilters,
       makeAgencyCmpFn(params.sortField, sortAscending)
     );
   } catch (error) {
     return <h1>Error loading data</h1>;
   }
 
-  // Hidden inputs inserted into the search form to preserve other query parameters
-  const searchHiddenInputs = Object.entries(params).map(([key, value]) => {
-    if (key !== 'search') {
-      return <input type="hidden" key={key} name={key} value={value} />;
-    }
-  });
-
-  // Same, but for the sort buttons on each table head
-  const sortHiddenInputs = Object.entries(params).map(([key, value]) => {
-    if (key !== 'sortField' && key !== 'sortAscending') {
-      return <input type="hidden" key={key} name={key} value={value} />;
-    }
-  });
-
   return (
     <div>
-      <form
-        className="flex items-center py-4"
-        action="./dashboard"
-        method="GET"
-      >
-        {searchHiddenInputs}
-        <Input
-          placeholder="Search for an agency..."
-          className="max-w"
-          name="search"
-          defaultValue={params.search || ''}
+      <div className="flex w-full px-4 py-4">
+        <AdminDashboardTableSearch searchParams={params} />
+        <AdminDashboardTableFilterCheckbox
+          searchParams={params}
+          initialCompleted={showCompleted}
+          initialNeedsReview={showNeedsReview}
+          initialExpired={showExpired}
         />
-        <button
-          type="submit"
-          className="rounded-r-md border border-l-0 bg-blue-500 px-4 font-bold text-white hover:bg-blue-700"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="2em"
-            height="2em"
-            viewBox="0 0 15 15"
-          >
-            <path
-              fill="currentColor"
-              fillRule="evenodd"
-              d="M10 6.5a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0m-.691 3.516a4.5 4.5 0 1 1 .707-.707l2.838 2.837a.5.5 0 0 1-.708.708z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-      </form>
+      </div>
       <Table className="rounded-md border shadow">
-        <TableHeader>
-          <TableRow>
-            {addTableHead(
-              'name',
-              'Agency Name',
-              params.sortField,
-              sortHiddenInputs,
-              sortAscending
-            )}
-            {addTableHead(
-              'updatedAt',
-              'Last Update',
-              params.sortField,
-              sortHiddenInputs,
-              sortAscending
-            )}
-            {addTableHead(
-              'currentStatus',
-              'Status',
-              params.sortField,
-              sortHiddenInputs,
-              sortAscending
-            )}
-            {addTableHead(
-              'latestInfo.updaterContactInfo.email',
-              'Updater Email',
-              params.sortField,
-              sortHiddenInputs,
-              sortAscending
-            )}
-          </TableRow>
-        </TableHeader>
+        <AdminDashboardTableHeaders searchParams={params} />
         <TableBody>
           {agencies.map((agency, index) => (
             <TableRow

@@ -1,11 +1,11 @@
 import { AdminDashboardTable } from '@/components/AdminDashboardTable';
 import { Navbar } from '@/components/Navbar';
-import { dashboardParams } from '@/utils/types';
+import { DashboardParams } from '@/utils/types';
 
 export default async function Dashboard({
   searchParams,
 }: {
-  searchParams: dashboardParams;
+  searchParams: DashboardParams;
 }) {
   return (
     <div>
