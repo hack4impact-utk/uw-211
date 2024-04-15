@@ -426,30 +426,17 @@ const annualAgencyUpdateSchema = z.object({
 
 export const FormDataSchema = z.object({
   // PRELIMINARIES
+
+  // General
   legalName: z.string().min(1, 'Required'),
   akas: z.string(),
   legalStatus: z.string().min(1, 'Required'),
   agencyInfo: z.string().min(1, 'Required'),
   directorName: z.string().min(1, 'Required'),
-
-  // the following must be required, currently not implement in the front end
-  // Fields with .optional will be required in the future
-  serviceArea: serviceAreaSchema,
-  fundingSources: fundingSourcesSchema,
-  location: locationSchema,
   contactInfo: contactInfoSchema,
-  annualAgencyUpdate: annualAgencyUpdateSchema.optional(),
-  teleinterpreterLanguageService: z.boolean().optional(),
-  supportedLanguages: z
-    .array(z.union([z.literal('ASL'), z.literal('Spanish'), z.string()]))
-    .optional(),
-  supportedLanguagesWithoutNotice: z.array(z.string()).optional(),
-  accessibilityADA: z.boolean().optional(),
-  updaterContactInfo: contactInfoSchema.optional(),
-  // Up until here
 
+  // Operations
   hours: AgencyHours,
-
   days: z
     .object({
       monday: z.boolean(),
@@ -472,6 +459,21 @@ export const FormDataSchema = z.object({
         data.sunday,
       'Please select at least one operational business day'
     ),
+  location: locationSchema,
+  fundingSources: fundingSourcesSchema,
+
+  // Additional
+  serviceArea: serviceAreaSchema,
+  annualAgencyUpdate: annualAgencyUpdateSchema.optional(),
+  updaterContactInfo: contactInfoSchema.optional(),
+
+  // Accessibility
+  teleinterpreterLanguageService: z.boolean().optional(),
+  supportedLanguages: z
+    .array(z.union([z.literal('ASL'), z.literal('Spanish'), z.string()]))
+    .optional(),
+  supportedLanguagesWithoutNotice: z.array(z.string()).optional(),
+  accessibilityADA: z.boolean().optional(),
 
   // SERVICES
   services: z.array(ServiceSchema),
