@@ -42,6 +42,7 @@ import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
 import { formSteps } from '@/utils/constants/formSteps';
 import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
 import { zodFormToTs } from '@/utils/conversions';
+import { convertToArray } from '@/utils/convertToArray';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
@@ -956,20 +957,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
     return service_items;
   };
 
-  const convertToArray = (input: string) => {
-    if (Array.isArray(input)) return input;
-    else if (input == '') return [];
-    else if (input.includes(',')) {
-      const str = input.replace(/\s/g, '');
-      return str.split(',');
-    } else return [input];
-  };
-
-  interface preliminaries_header {
-    name: string;
-  }
-
-  const PreliminariesHeader = (data: preliminaries_header) => {
+  const PreliminariesHeader = (data: { name: string }) => {
     return (
       <>
         <h2 className="text-base font-semibold leading-7 text-gray-900">
