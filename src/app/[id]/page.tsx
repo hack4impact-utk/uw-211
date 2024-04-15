@@ -2086,53 +2086,58 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
 
                         {/* Region */}
-                        <div className="flex flex-col items-center gap-4 md:flex-row">
-                          {/* serviceArea.statewide */}
-                          <div className="space-x-2">
-                            <input
-                              type="checkbox"
-                              id="serviceArea.statewide"
-                              className="form-checkbox"
-                              {...register('serviceArea.statewide')}
-                            />
-                            <label
-                              htmlFor="serviceArea.statewide"
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Statewide
-                            </label>
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                          <div className="flex flex-row gap-4">
+                            {/* serviceArea.statewide */}
+                            <div className="space-x-2">
+                              <input
+                                type="checkbox"
+                                id="serviceArea.statewide"
+                                className="form-checkbox"
+                                {...register('serviceArea.statewide')}
+                              />
+                              <label
+                                htmlFor="serviceArea.statewide"
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                Statewide
+                              </label>
+                            </div>
+
+                            {/* serviceArea.nationwide */}
+                            <div className="space-x-2">
+                              <input
+                                type="checkbox"
+                                id="serviceArea.nationwide"
+                                className="form-checkbox"
+                                {...register('serviceArea.nationwide')}
+                              />
+                              <label
+                                htmlFor="serviceArea.nationwide"
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                Nationwide
+                              </label>
+                            </div>
                           </div>
 
-                          {/* serviceArea.nationwide */}
-                          <div className="space-x-2">
-                            <input
-                              type="checkbox"
-                              id="serviceArea.nationwide"
-                              className="form-checkbox"
-                              {...register('serviceArea.nationwide')}
-                            />
+                          {/* other */}
+                          <div className="flex flex-row items-center gap-4">
                             <label
-                              htmlFor="serviceArea.nationwide"
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              htmlFor="serviceArea.other"
+                              className="block text-sm font-medium leading-6 text-gray-900"
                             >
-                              Nationwide
+                              Other
                             </label>
-                          </div>
-
-                          <label
-                            htmlFor="serviceArea.other"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Other
-                          </label>
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              id="serviceArea.other"
-                              {...register('serviceArea.other')}
-                              autoComplete="serviceArea.other"
-                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                            />
+                            <div className="mt-2">
+                              <input
+                                type="text"
+                                id="serviceArea.other"
+                                {...register('serviceArea.other')}
+                                autoComplete="serviceArea.other"
+                                className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
