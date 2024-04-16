@@ -1,7 +1,7 @@
 import React from 'react';
 import { Agency } from '@/utils/types';
 import Link from 'next/link';
-import FormHeader from '@/components/FormHeader';
+import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import uwLogo from '@/../public/img/UWGK_Logo.png';
 import Image from 'next/image';
@@ -72,7 +72,7 @@ function WelcomePageBody({ id, agency }: WelcomePageProps) {
 function WelcomePage({ id, agency }: WelcomePageProps) {
   return (
     <>
-      <FormHeader />
+      <Header className="fixed" />
       <div
         className="flex h-screen w-screen items-center justify-center bg-cover"
         style={{ backgroundImage: `url(/img/knoxville_bg.jpg)` }}
