@@ -15,13 +15,18 @@ import { useRouter } from 'next/navigation';
 
 type AdminDashboardTablePaginationControlsProps = {
   searchParams: DashboardParams;
+  numAgencies: number;
 };
 
 export default function AdminDashboardTablePaginationControls({
   searchParams,
+  numAgencies,
 }: AdminDashboardTablePaginationControlsProps) {
   const [count, setCount] = useState(
     searchParams.count ? parseInt(searchParams.count) : 10
+  );
+  const [page, setPage] = useState(
+    searchParams.page ? parseInt(searchParams.page) : 1
   );
   const router = useRouter();
 
@@ -37,8 +42,8 @@ export default function AdminDashboardTablePaginationControls({
   };
 
   const handleChangePage = (delta: number) => {
-    const page = searchParams.page ? parseInt(searchParams.page) : 1;
     const newPage = page + delta;
+    setPage(newPage);
 
     const urlSearchParams = new URLSearchParams(searchParams);
 
@@ -62,12 +67,17 @@ export default function AdminDashboardTablePaginationControls({
       <Button
         variant="outline"
         size="icon"
-        disabled={!searchParams.page || searchParams.page === '1'}
+        disabled={page.toString() === '1'}
         onClick={() => handleChangePage(-1)}
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
-      <Button variant="outline" size="icon" onClick={() => handleChangePage(1)}>
+      <Button
+        variant="outline"
+        size="icon"
+        disabled={(page - 1) * count + count >= numAgencies}
+        onClick={() => handleChangePage(1)}
+      >
         <ChevronRight className="h-4 w-4" />
       </Button>
     </div>
