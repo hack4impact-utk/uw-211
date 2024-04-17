@@ -1,13 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Separator } from '@/components/ui/separator';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { z } from 'zod';
 import {
@@ -121,48 +113,36 @@ export default function HoursOfOperationPicker({
   return (
     <>
       <div className="flex flex-row space-x-2">
-        <Select onValueChange={(v) => setDay(+v)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Day">{daysOfWeek[day]}</SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {daysOfWeek.map((dayOfWeek, index) => (
-                <SelectItem key={index} value={index.toString()}>
-                  {dayOfWeek}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Select onValueChange={(v: string) => setOpen(+v)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Open">{times[open]}</SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {times.map((time, index) => (
-                <SelectItem key={index} value={index.toString()}>
-                  {time}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Select onValueChange={(v: string) => setClose(+v)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Close">{times[close]}</SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {times.map((time, index) => (
-                <SelectItem key={index} value={index.toString()}>
-                  {time}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <select
+          onChange={(e) => setDay(+e.target.value)}
+          className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
+        >
+          {daysOfWeek.map((dayOfWeek, index) => (
+            <option value={index} key={index}>
+              {dayOfWeek}
+            </option>
+          ))}
+        </select>
+        <select
+          onChange={(e) => setOpen(+e.target.value)}
+          className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
+        >
+          {times.map((time, index) => (
+            <option value={index} key={index}>
+              {time}
+            </option>
+          ))}
+        </select>
+        <select
+          onChange={(e) => setClose(+e.target.value)}
+          className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
+        >
+          {times.map((time, index) => (
+            <option value={index} key={index}>
+              {time}
+            </option>
+          ))}
+        </select>
         <Button type="button" onClick={add_hours}>
           Add Hours
         </Button>
