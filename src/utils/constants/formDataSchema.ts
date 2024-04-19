@@ -14,10 +14,12 @@ export const HoursOfOperationDataSchema = z
 export const ServiceSchema = z.object({
   name: z.string().min(1, 'Service name is required.'),
   id: z.number(),
-  description: z.string().min(1, 'Service description is required.'),
-  contact: z.string(),
+  fullDescription: z.string().min(1, 'Service description is required.'),
+  contactPersonName: z.string(),
   hours: HoursOfOperationDataSchema,
-  eligibility: z.string().min(1, 'Eligibility requirements is required.'),
+  eligibilityRequirements: z
+    .string()
+    .min(1, 'Eligibility requirements is required.'),
   applicationProcess: z
     .object({
       walkIn: z.boolean(),
@@ -51,7 +53,7 @@ export const ServiceSchema = z.object({
         (data.other?.selected ?? false),
       'An application process selection is required.'
     ),
-  fees: z
+  feeCategory: z
     .object({
       none: z.boolean(),
       straight: z
@@ -123,6 +125,7 @@ export const ServiceSchema = z.object({
         (data.other?.selected ?? false),
       'A selection for required documents is required.'
     ),
+  isSeasonal: z.boolean(),
 });
 
 const VolunteerFields = z
@@ -247,6 +250,133 @@ const RecommendationFields = z
     }
   });
 
+const locationSchema = z.object({
+  confidential: z.coerce.boolean(),
+  physicalAddress: z.string().min(1, 'Required'),
+  mailingAddress: z.string(),
+  county: z.string().min(1, 'Required'),
+  city: z.string().min(1, 'Required'),
+  state: z.string().min(1, 'Required'),
+  zipCode: z.string().min(1, 'Required'),
+});
+
+const serviceAreaSchema = z
+  .object({
+    townCity: z.string(),
+    zipCodes: z.array(z.string()),
+    counties: z.array(z.string()),
+    statewide: z.boolean().optional(),
+    nationwide: z.boolean().optional(),
+    other: z.string(),
+  })
+  .refine(
+    (data) =>
+      data.townCity ||
+      data.zipCodes.length != 0 ||
+      data.counties.length != 0 ||
+      data.nationwide ||
+      data.statewide ||
+      data.other,
+    {
+      message: 'Please select at least one service area.',
+    }
+  );
+
+const fundingSourcesSchema = z
+  .object({
+    federal: z.boolean(),
+    state: z.boolean(),
+    county: z.boolean(),
+    city: z.boolean(),
+    donations: z.boolean(),
+    foundations: z.boolean(),
+    feesDues: z.boolean(),
+    unitedWay: z.boolean(),
+    other: z
+      .object({
+        selected: z.boolean(),
+        content: z.string().optional(),
+      })
+      .refine((data) => !data.selected || (data.selected && data.content), {
+        message: 'Please specify other.',
+      }),
+  })
+  .partial()
+  .refine(
+    (data) =>
+      data.federal ||
+      data.state ||
+      data.county ||
+      data.city ||
+      data.donations ||
+      data.foundations ||
+      data.feesDues ||
+      data.unitedWay ||
+      (data.other?.selected ?? false),
+    'A funding source selection is required.'
+  );
+
+const contactInfoSchema = z.object({
+  phoneNumber: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{10}$/, {
+      message: 'Must be a valid phone number.',
+    }),
+  faxNumber: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{10}$/, {
+      message: 'Must be a valid phone number.',
+    }),
+  tollFreeNumber: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{10}$/, {
+      message: 'Must be a valid phone number.',
+    }),
+  TDDTTYNumber: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{10}$/, {
+      message: 'Must be a valid phone number.',
+    }),
+  additionalNumbers: z.array(z.string()).optional(),
+  email: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
+      message: 'Must be a valid email address.',
+    }),
+  website: z
+    .string()
+    .min(1, 'Required')
+    .regex(
+      /^(https?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})+(\/[^\s]*)?$/,
+      {
+        message: 'Must be a valid web address.',
+      }
+    ),
+});
+
+const annualAgencyUpdateSchema = z.object({
+  name: z.string(),
+  title: z.string(),
+  phoneNumber: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{10}$/, {
+      message: 'Must be a valid phone number.',
+    }),
+  email: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
+      message: 'Must be a valid email address.',
+    }),
+  hideFromWebsite: z.boolean(),
+});
+
 export const FormDataSchema = z.object({
   // PRELIMINARIES
   legalName: z.string().min(1, 'Required'),
@@ -254,6 +384,22 @@ export const FormDataSchema = z.object({
   legalStatus: z.string().min(1, 'Required'),
   agencyInfo: z.string().min(1, 'Required'),
   directorName: z.string().min(1, 'Required'),
+
+  // the following must be required, currently not implement in the front end
+  // Fields with .optional will be required in the future
+  serviceArea: serviceAreaSchema,
+  fundingSources: fundingSourcesSchema,
+  location: locationSchema,
+  contactInfo: contactInfoSchema,
+  annualAgencyUpdate: annualAgencyUpdateSchema.optional(),
+  teleinterpreterLanguageService: z.boolean().optional(),
+  supportedLanguages: z
+    .array(z.union([z.literal('ASL'), z.literal('Spanish'), z.string()]))
+    .optional(),
+  supportedLanguagesWithoutNotice: z.array(z.string()).optional(),
+  accessibilityADA: z.boolean().optional(),
+  updaterContactInfo: contactInfoSchema.optional(),
+  // Up until here
 
   hours: HoursOfOperationDataSchema,
 

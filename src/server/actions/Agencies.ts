@@ -1,6 +1,5 @@
-// import AgencyInfoFormModel from '@/server/models/AgencyInfoForm';
-// import AgencyModel from '@/server/models/Agency';
-// import ServiceModel from '@/server/models/Service';
+'use server';
+
 import { Service, Agency, MongoError, AgencyInfoForm } from '@/utils/types';
 import dbConnect from '@/utils/db-connect';
 import { JSendResponse } from '@/utils/types';
@@ -10,21 +9,69 @@ import {
   AgencyModel,
   ServiceModel,
 } from '@/server/models';
+import { authenticateServerAction } from '@/utils/auth';
+
+type CurrentStatusFilters = {
+  showCompleted: boolean;
+  showNeedsReview: boolean;
+  showExpired: boolean;
+};
 
 /**
  * @brief Gets all agencies
- * @returns An array of all agencies in the "agencies" collection with fields populated
+ * @param populateServices Populates the agencies' "services" field
+ * @param searchString Filters agencies that do not have the search term present in their name or
+ * @param currentStatusFilters Filters agencies based on their current status
+ * @param compareFn Sorts the array of agencies before returning using the specified function; leave empty for no sorting
+ * @returns An array of all agencies in the "agencies" collection
  */
-export async function getAgencies(): Promise<Agency[]> {
+export async function getAgencies(
+  populateServices: boolean = true,
+  searchString?: string,
+  currentStatusFilters?: CurrentStatusFilters,
+  compareFn?: (a: Agency, b: Agency) => number
+): Promise<Agency[]> {
+  await authenticateServerAction();
   try {
     await dbConnect();
-    const agencies = await AgencyModel.find({})
-      .populate({
+
+    const findFilters = searchString
+      ? { name: new RegExp(searchString, 'i') }
+      : {};
+
+    let query = AgencyModel.find(findFilters);
+
+    if (populateServices) {
+      query = query.populate({
         path: 'info',
         populate: { path: 'services' },
-      })
-      .exec();
-    return agencies as Agency[];
+      });
+    } else {
+      query = query.populate('info');
+    }
+
+    let agencies: Agency[] = await query.exec();
+
+    if (compareFn) {
+      agencies = agencies.sort(compareFn);
+    }
+
+    if (currentStatusFilters) {
+      agencies = agencies.filter((agency) => {
+        switch (agency.currentStatus) {
+          case 'Completed':
+            return currentStatusFilters.showCompleted;
+          case 'Needs Review':
+            return currentStatusFilters.showNeedsReview;
+          case 'Expired':
+            return currentStatusFilters.showExpired;
+          default:
+            return true;
+        }
+      });
+    }
+
+    return agencies;
   } catch (error) {
     mongoErrorHandler(error as MongoError);
     return [];
@@ -44,6 +91,7 @@ export async function getPaginatedAgencies(
   page: number,
   pageSize: number
 ): Promise<Agency[]> {
+  await authenticateServerAction();
   if (page < 1) {
     throw new JSendResponse({
       status: 'fail',
@@ -126,6 +174,7 @@ export async function createService(service: Service): Promise<Service> {
  * @throws See mongoErrorHandler for common insertion errors
  */
 export async function createAgency(agency: Agency): Promise<Agency> {
+  await authenticateServerAction();
   await dbConnect();
 
   const newAgency = await AgencyModel.create(agency).catch((error) => {
@@ -154,6 +203,49 @@ export async function createAgencyInfo(
 }
 
 /**
+ * @param agencyInfo The agency form data to be created, with services array
+ * @returns New AgencyInfoForm object with attached mongo _id
+ * @throws See mongoErrorHandler for common insertion errors
+ */
+export async function createAgencyInfoWithServices(
+  agencyId: string,
+  agencyInfo: AgencyInfoForm
+): Promise<string> {
+  await dbConnect();
+  const serviceIds = [];
+  if (!agencyInfo.services) {
+    throw new JSendResponse({
+      status: 'fail',
+      data: { message: 'Services are required' },
+    });
+  }
+  for (const service of agencyInfo.services) {
+    const newService = await createService(service);
+    serviceIds.push(newService._id);
+  }
+  const updatedInfo = {
+    ...agencyInfo,
+    services: serviceIds,
+  } as unknown as AgencyInfoForm;
+
+  try {
+    const newAgencyInfo = await createAgencyInfo(updatedInfo);
+    const updatedAgency = await AgencyModel.updateOne(
+      { _id: agencyId },
+      {
+        $push: { info: newAgencyInfo._id },
+      }
+    ).catch((error) => {
+      mongoErrorHandler(error);
+    });
+    return JSON.stringify(updatedAgency);
+  } catch (error) {
+    mongoErrorHandler(error as MongoError);
+  }
+  return '';
+}
+
+/**
  * Updates an agency by ID
  * @param id The ID of the agency to update
  * @param updates The updates to apply to the agency (partial)
@@ -164,6 +256,7 @@ export async function updateAgency(
   id: string,
   updates: Partial<Agency>
 ): Promise<Agency | null> {
+  await authenticateServerAction();
   await dbConnect();
   const updatedAgency = await AgencyModel.updateOne({ _id: id }, updates).catch(
     (error) => {
@@ -196,6 +289,7 @@ export async function updateService(
   id: string,
   updates: Partial<Service>
 ): Promise<Service | null> {
+  await authenticateServerAction();
   await dbConnect();
   const updatedService = await ServiceModel.updateOne(
     { _id: id },
@@ -220,6 +314,7 @@ export async function updateService(
  * @throws 404 if no agency is found with the ID
  */
 export async function deleteAgency(id: string): Promise<Agency | null> {
+  await authenticateServerAction();
   await dbConnect();
   const deletedAgency = await AgencyModel.findByIdAndDelete(id).catch(
     (error) => {
@@ -242,6 +337,7 @@ export async function deleteAgency(id: string): Promise<Agency | null> {
  * @throws 404 if no service is found with the ID
  */
 export async function deleteService(id: string): Promise<Service | null> {
+  await authenticateServerAction();
   await dbConnect();
   const deletedService = await ServiceModel.findByIdAndDelete(id).catch(
     (error) => {
@@ -270,6 +366,7 @@ export async function approveAgency(
   newInfo: AgencyInfoForm,
   newApprovalStatus: 'Pending' | 'Approved'
 ): Promise<Agency | null> {
+  await authenticateServerAction();
   await dbConnect();
 
   const { services, ...infoWithoutServices } = newInfo;

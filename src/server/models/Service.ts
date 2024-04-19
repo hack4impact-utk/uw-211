@@ -27,6 +27,10 @@ const DaySchema = new mongoose.Schema<Day>({
 
 const ServiceSchema = new mongoose.Schema<Service>(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     fullDescription: {
       type: String,
       required: true,
@@ -85,6 +89,16 @@ const ServiceSchema = new mongoose.Schema<Service>(
       //   'Proof of Public Assistance',
       //   'Drivers License',
       // ],
+    },
+    isSeasonal: {
+      type: Boolean,
+      required: true,
+    },
+    seasonalStartDate: {
+      type: Date,
+    },
+    seasonalEndDate: {
+      type: Date,
     },
   },
   {

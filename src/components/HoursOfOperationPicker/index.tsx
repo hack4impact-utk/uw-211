@@ -147,7 +147,7 @@ export default function HoursOfOperationPicker({
           Add Hours
         </Button>
       </div>
-      <Separator className="m-2" />
+      <Separator className="my-2" />
       <div className="flex flex-col">
         {hours.map((h, index) => (
           <div key={index} className="grid grid-cols-4">

@@ -50,6 +50,7 @@ export const testAgency: Agency = {
       },
       services: [
         {
+          name: 'Testing name',
           fullDescription: 'hi this a description.',
           contactPersonName: 'Emma',
           daysOpen: [
@@ -74,6 +75,9 @@ export const testAgency: Agency = {
           applicationProcessReferralRequiredByWhom: 'No referral required',
           feeCategory: 'No Fee',
           requiredDocuments: ['State Issued I.D.'],
+          isSeasonal: true,
+          // Set seasonalStartDate 22 days in the future
+          seasonalStartDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 22),
         },
       ],
       volunteerOpportunities: false,

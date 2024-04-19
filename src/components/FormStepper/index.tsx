@@ -2,16 +2,29 @@ import { useWindowSize } from '@/utils/hooks/useWindowSize';
 import DesktopFormStepper from './DesktopFormStepper';
 import MobileFormStepper from './MobileFormStepper';
 
+interface FormStepperSubpage {
+  id: string;
+  name: string;
+  fields: Array<string>;
+}
 interface FormStepperProps {
   currentPageIndex: number;
-  formSteps: Array<{ id: string; name: string; fields: Array<string> }>;
+  currentSubpageIndex: number;
+  formSteps: Array<{
+    id: string;
+    name: string;
+    subpages: Array<FormStepperSubpage>;
+  }>;
   setCurrentStep: (step: number) => void;
+  setCurrentSubstep: (step: number) => void;
 }
 
 export default function FormStepper({
   currentPageIndex,
+  currentSubpageIndex,
   formSteps,
   setCurrentStep,
+  setCurrentSubstep,
 }: FormStepperProps) {
   const { width: screenWidth } = useWindowSize();
 
@@ -19,8 +32,10 @@ export default function FormStepper({
     return (
       <MobileFormStepper
         currentPageIndex={currentPageIndex}
+        currentSubpageIndex={currentSubpageIndex}
         formSteps={formSteps}
         setCurrentStep={setCurrentStep}
+        setCurrentSubstep={setCurrentSubstep}
       />
     );
   }
@@ -28,8 +43,10 @@ export default function FormStepper({
   return (
     <DesktopFormStepper
       currentPageIndex={currentPageIndex}
+      currentSubpageIndex={currentSubpageIndex}
       formSteps={formSteps}
       setCurrentStep={setCurrentStep}
+      setCurrentSubstep={setCurrentSubstep}
     />
   );
 }

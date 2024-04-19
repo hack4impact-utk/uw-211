@@ -1,35 +1,62 @@
-'use client';
-
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowUpDown } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import React from 'react';
 import { agencyUpdateStatus } from '@/utils/constants';
+import { Agency, DashboardParams } from '@/utils/types';
+import { getAgencies } from '@/server/actions/Agencies';
+import { AdminDashboardTableFilterCheckbox } from '@/components/AdminDashboardTable/AdminDashboardTableFilterCheckbox';
+import AdminDashboardTableSearch from '@/components/AdminDashboardTable/AdminDashboardTableSearch';
+import AdminDashboardTableHeaders from './AdminDashboardTableHeaders';
 
-export type AgencyDashboardInfo = {
-  name: string;
-  lastUpdate?: Date | undefined;
-  status: agencyUpdateStatus;
-  email: string | undefined;
-};
+interface AdminDashboardTableProps {
+  params: DashboardParams;
+}
+
+/**
+ * @brief Accesses nested properties of an object
+ * @example Can access obj.prop1.prop2 like getValueByPath(obj, "prop1.prop2")
+ * @param obj Any object
+ * @param path Path to the property as a dot-delimited string
+ * @returns The property at the specified path
+ */
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+function getValueByPath(obj: any, path: string) {
+  const keys: string[] = path.split('.');
+  let current = obj;
+  for (const key of keys) {
+    if (current[key] === undefined) {
+      return undefined;
+    }
+    current = current[key];
+  }
+  return current;
+}
+
+/**
+ * @brief Makes a comparison function that compares two agencies based on a provided field; used to sort agencies
+ * @param field A field of the Agency type (e.g. "name")
+ * @param ascending If false, reverses the sort
+ * @returns A comparison function used to sort agencies
+ */
+function makeAgencyCmpFn(
+  field: string = 'name',
+  ascending: boolean = false
+): (a: Agency, b: Agency) => number {
+  return (a: Agency, b: Agency) => {
+    const reverse: number = ascending === true ? 1 : -1;
+    const a_val = getValueByPath(a, field);
+    const b_val = getValueByPath(b, field);
+
+    if (a_val < b_val) {
+      return -1 * reverse;
+    }
+
+    if (a_val > b_val) {
+      return 1 * reverse;
+    }
+
+    return 0;
+  };
+}
 
 function statusColor(status: agencyUpdateStatus) {
   switch (status) {
@@ -44,161 +71,85 @@ function statusColor(status: agencyUpdateStatus) {
   }
 }
 
-// Column definitions for table
-const columns: ColumnDef<AgencyDashboardInfo>[] = [
-  {
-    accessorKey: 'name',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Agency
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: 'lastUpdate',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Last Update
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ getValue }) => {
-      const value = getValue() as Date;
-      return value
-        ? new Date(value).toLocaleDateString('en-US', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-          })
-        : 'Never';
-    },
-  },
-  {
-    accessorKey: 'status',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Information Status
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
-    // Overwrites every cell in column to be a <a/> link with the email, instead of just text.
-    cell: ({ row }) => (
-      <a href={`mailto:${row.original.email}`} className="hover:underline">
-        {row.original.email}
-      </a>
-    ),
-  },
-];
+export async function AdminDashboardTable({
+  params,
+}: AdminDashboardTableProps) {
+  // extract sort and filter parameters
+  const sortAscending: boolean =
+    params.sortAscending === undefined || params.sortAscending === 'true';
+  const showCompleted =
+    params.completed === undefined || params.completed === 'true';
+  const showNeedsReview =
+    params.needsReview === undefined || params.needsReview === 'true';
+  const showExpired = params.expired === undefined || params.expired === 'true';
 
-interface AdminDashboardTableProps {
-  data: AgencyDashboardInfo[];
-}
+  const currentStatusFilters = {
+    showCompleted,
+    showNeedsReview,
+    showExpired,
+  };
 
-export function AdminDashboardTable({ data }: AdminDashboardTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
-  const table = useReactTable({
-    columns,
-    data,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      columnFilters,
-    },
-  });
+  let agencies: Agency[] = [];
+  try {
+    agencies = await getAgencies(
+      false,
+      params.search,
+      currentStatusFilters,
+      makeAgencyCmpFn(params.sortField, sortAscending)
+    );
+  } catch (error) {
+    return <h1>Error loading data</h1>;
+  }
 
   return (
-    <div className="px-5">
-      {/* Search Bar for filtering by name */}
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Search for an agency..."
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('name')?.setFilterValue(event.target.value)
-          }
-          className="max-w"
+    <div>
+      <div className="flex w-full px-4 py-4">
+        <AdminDashboardTableSearch searchParams={params} />
+        <AdminDashboardTableFilterCheckbox
+          searchParams={params}
+          initialCompleted={showCompleted}
+          initialNeedsReview={showNeedsReview}
+          initialExpired={showExpired}
         />
       </div>
-
-      {/* Dynamic Table: doesn't need to be edited to add additional functionality.*/}
-      <div className="rounded-md border shadow">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row, rowIndex) => (
-                <TableRow
-                  key={row.id}
-                  className={rowIndex % 2 === 1 ? 'bg-gray-100' : ''}
-                  data-state={row.getIsSelected() && 'selected'}
+      <Table className="rounded-md border shadow">
+        <AdminDashboardTableHeaders searchParams={params} />
+        <TableBody>
+          {agencies.map((agency, index) => (
+            <TableRow
+              key={index}
+              className={index % 2 === 1 ? 'bg-gray-100' : ''}
+            >
+              <TableCell>{agency.name}</TableCell>
+              <TableCell>
+                {agency.updatedAt === undefined
+                  ? ''
+                  : agency.updatedAt.toLocaleDateString('en-us', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+              </TableCell>
+              <TableCell
+                className={
+                  agency.currentStatus
+                    ? statusColor(agency.currentStatus as agencyUpdateStatus)
+                    : ''
+                }
+              >
+                {agency.currentStatus}
+              </TableCell>
+              <TableCell>
+                <a
+                  href={`mailto:${agency.latestInfo?.updaterContactInfo.email}`}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={
-                        cell.column.id === 'status'
-                          ? statusColor(cell.getValue() as agencyUpdateStatus)
-                          : ''
-                      }
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                  {agency.latestInfo?.updaterContactInfo.email}
+                </a>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

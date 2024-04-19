@@ -85,6 +85,13 @@ describe('Agency', () => {
     expect(getAgency!.name).toEqual(agencyCopy.name);
   });
 
+  it('should confirm that the prebaked service is already expired', async () => {
+    const agencies = await getAgencies();
+    const agency = agencies[0];
+    // Service is expired because it's seasonalStartDate is within 30 days
+    expect(agency.currentStatus).toBe('Expired');
+  });
+
   it('should update the legalAgencyName field of an agency', async () => {
     // Grab previously created agency
     const agencies = await getAgencies();
@@ -134,8 +141,7 @@ describe('Agency', () => {
     // Check if the daysSinceEmailSent field is set to 0
     expect(agency.daysSinceEmailSent).toBe(0);
 
-
-    // Check if the latestInfo field is equal to the last info in the 
+    // Check if the latestInfo field is equal to the last info in the
     // original array
     expect(agency.latestInfo).toEqual(agency.info[agency.info.length - 1]);
   });
