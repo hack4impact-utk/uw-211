@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { getAgencies } from '@/server/actions/Agencies';
 import { Agency } from '@/utils/types';
-import { Newspaper } from 'lucide-react';
+import { Newspaper, Check, X } from 'lucide-react';
 
 import {
   Accordion,
@@ -77,9 +77,13 @@ export async function AdminDashboardNotifications() {
                     </TableCell>
                     <TableCell>
                       <Button className="mr-4" variant="outline">
+                        <Check className="mr-2" />
                         Approve
                       </Button>
-                      <Button variant="destructive">Deny</Button>
+                      <Button variant="destructive">
+                        <X className="mr-2" />
+                        Deny
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
