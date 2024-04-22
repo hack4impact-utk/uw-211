@@ -71,10 +71,7 @@ function statusColor(status: agencyUpdateStatus) {
       return '';
   }
 }
-
-const cachedGetAgencies = cache(async (search?: string) => {
-  return await getAgencies(false, search);
-});
+const cachedGetAgencies = cache(getAgencies);
 
 type CurrentStatusFilters = {
   showCompleted: boolean;
@@ -83,21 +80,12 @@ type CurrentStatusFilters = {
 };
 
 const getAgenciesOnPage = async (
-  search?: string,
+  agencies: Agency[],
   currentStatusFilters?: CurrentStatusFilters,
   sortField?: string,
   sortAscending?: boolean
 ): Promise<Agency[] | null> => {
   try {
-    // get agencies from database, but cache it
-    let agencies = await cachedGetAgencies(search);
-
-    // process agencies array based on search params
-    if (sortField) {
-      const sortFunction = makeAgencyCmpFn(sortField, sortAscending);
-      agencies = agencies.sort(sortFunction);
-    }
-
     if (currentStatusFilters) {
       agencies = agencies.filter((agency) => {
         switch (agency.currentStatus) {
@@ -111,6 +99,12 @@ const getAgenciesOnPage = async (
             return true;
         }
       });
+    }
+
+    // process agencies array based on search params
+    if (sortField) {
+      const sortFunction = makeAgencyCmpFn(sortField, sortAscending);
+      agencies = agencies.sort(sortFunction);
     }
 
     return agencies;
@@ -139,14 +133,15 @@ export async function AdminDashboardTable({
     showExpired,
   };
 
-  const agencies = await getAgenciesOnPage(
-    params.search,
+  const agencies = await cachedGetAgencies(false, params.search);
+  const agenciesOnPage = await getAgenciesOnPage(
+    agencies,
     currentStatusFilters,
     params.sortField,
     sortAscending
   );
 
-  if (!agencies) {
+  if (!agenciesOnPage) {
     return <div>Failed to load agencies</div>;
   }
 
@@ -164,7 +159,7 @@ export async function AdminDashboardTable({
       <Table className="rounded-md border shadow">
         <AdminDashboardTableHeaders searchParams={params} />
         <TableBody>
-          {agencies
+          {agenciesOnPage
             .slice((page - 1) * count, page * count) // pagination
             .map((agency, index) => (
               <TableRow
