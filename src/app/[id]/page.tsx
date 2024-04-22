@@ -3265,135 +3265,140 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         General
                       </h2>
                       <div className="flex w-full flex-col gap-4 md:flex-row">
-                        <div className="flex grow flex-col items-center md:flex-row">
-                          {/* Questions */}
-                          <div className="grow">
-                            {/* Legal Name */}
-                            <p className="text-base font-semibold leading-7 text-gray-900">
+                        {/* 1st Column */}
+                        <div className="flex w-full flex-col gap-2 md:w-1/3">
+                          {/* Legal Name */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                               Legal Name:
                             </p>
-
-                            {/* AKAs */}
-                            {getValues('akas') ? (
-                              <p className="text-base font-semibold leading-7 text-gray-900">
-                                Also Known As:
-                              </p>
-                            ) : (
-                              <p className="text-md leading-6 text-gray-400">
-                                Also Known As:
-                              </p>
-                            )}
-
-                            {/* Legal Status */}
-                            <p className="text-base font-semibold leading-7 text-gray-900">
-                              Legal Status:
-                            </p>
-
-                            {/* Director Name */}
-                            <p className="text-base font-semibold leading-7 text-gray-900">
-                              Director Name:
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('legalName')}
                             </p>
                           </div>
 
-                          {/* Answers */}
-                          <div className="grow leading-7">
-                            {/* Legal Name */}
-                            <p>{getValues('legalName')}</p>
-
-                            {/* AKAs */}
+                          {/* AKAs */}
+                          <div className="flex flex-col md:flex-row md:items-start">
                             {getValues('akas') ? (
-                              <p>{getValues('akas')}</p>
+                              <>
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Also Known As:
+                                </p>
+                                <p className="w-full md:w-1/2 ">
+                                  {getValues('akas')}
+                                </p>
+                              </>
                             ) : (
-                              <p className="text-md leading-6 text-gray-400">
-                                N/A
-                              </p>
+                              <>
+                                <p className="text-md w-full leading-6 text-gray-400 md:w-1/2">
+                                  Also Known As:
+                                </p>
+                                <p className="w-full text-gray-400 md:w-1/2">
+                                  N/A
+                                </p>
+                              </>
                             )}
+                          </div>
 
-                            {/* Legal Status */}
-                            <p>
+                          {/* Legal Status */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Legal Status:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
                               {getValues('legalStatus')
                                 .charAt(0)
                                 .toUpperCase() +
                                 getValues('legalStatus').slice(1)}
                             </p>
+                          </div>
 
-                            {/* Director Name */}
-                            <p>{getValues('directorName')}</p>
+                          {/* Director Name */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Director Name:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('directorName')}
+                            </p>
                           </div>
                         </div>
 
-                        <div className="flex grow flex-col items-center md:flex-row">
-                          {/* Questions */}
-                          <div className="grow">
-                            {/* Main Phone Number */}
-                            <p className="text-base font-semibold leading-7 text-gray-900">
+                        {/* Second Column */}
+                        <div className="flex w-full flex-col gap-2 md:w-1/3">
+                          {/* Main Phone Number */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                               Main Phone Number:
                             </p>
-                            {/* Fax Number */}
-                            <p className="text-base font-semibold leading-7 text-gray-900">
-                              Fax Number:
-                            </p>
-
-                            {/* Toll Free Number */}
-                            <p className="text-base font-semibold leading-7 text-gray-900">
-                              Toll Free Number:
-                            </p>
-
-                            {/* TDD/TTY Number */}
-                            <p className="text-base font-semibold leading-7 text-gray-900">
-                              TDD/TTY Number
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.phoneNumber')}
                             </p>
                           </div>
 
-                          {/* Answers */}
-                          <div className="grow leading-7">
-                            {/* Main Phone Number */}
-                            <p>{getValues('contactInfo.phoneNumber')}</p>
+                          {/* Fax Number */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Fax Number:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.faxNumber')}
+                            </p>
+                          </div>
 
-                            {/* Fax Number */}
-                            <p>{getValues('contactInfo.faxNumber')}</p>
+                          {/* Toll Free Number */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Toll Free Number:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.tollFreeNumber')}
+                            </p>
+                          </div>
 
-                            {/* Toll Free Number */}
-                            <p>{getValues('contactInfo.tollFreeNumber')}</p>
-
-                            {/* TDD/TTY Number */}
-                            <p>{getValues('contactInfo.TDDTTYNumber')}</p>
+                          {/* TDD/TTY Number */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              TDD/TTY Number:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.TDDTTYNumber')}
+                            </p>
                           </div>
                         </div>
 
-                        <div className="flex grow flex-col items-center md:flex-row">
-                          {/* Questions */}
-                          <div className="grow">
-                            {/* Additional Numbers */}
-                            <p className="text-base font-semibold leading-7 text-gray-900">
+                        {/* Third Column */}
+                        <div className="flex w-full flex-col gap-2 md:w-1/3">
+                          {/* Additional Numbers */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                               Additional Numbers:
                             </p>
-
-                            {/* email */}
-                            <p className="text-base font-semibold leading-7 text-gray-900">
-                              Email
-                            </p>
-
-                            {/* website */}
-                            <p className="text-base font-semibold leading-7 text-gray-900">
-                              Website
-                            </p>
-                          </div>
-
-                          {/* Answers */}
-                          <div className="grow leading-7">
-                            {/* TODO */}
-                            <p>
+                            <p className="w-full md:w-1/2 ">
                               <span className="bg-blue-500 text-white">
                                 TODO: Additional Numbers
                               </span>
                             </p>
+                          </div>
 
-                            {/* email */}
-                            <p>{getValues('contactInfo.email')}</p>
+                          {/* Email */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Email:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.email')}
+                            </p>
+                          </div>
 
-                            {/* website */}
-                            <p>{getValues('contactInfo.website')}</p>
+                          {/* Website */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Website:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.website')}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -3412,7 +3417,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </h2>
 
                       <div className="flex flex-col md:flex-row">
-                        <div className="grow">
+                        <div className="w-full md:w-1/2">
                           {/* Hours of Operation */}
                           <div className="mb-6">
                             {/* TODO */}
@@ -3436,94 +3441,102 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
 
                         {/* Location Information */}
-                        <div className="grow">
+                        <div className="w-full md:w-1/2">
                           <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                             Location Information
                           </h3>
 
-                          <div className="flex grow flex-col items-center md:flex-row">
-                            {/* Questions */}
-                            <div className="grow">
-                              {/* Location Confidential */}
-                              <p className="text-base font-semibold leading-7 text-gray-900">
+                          <div className="flex w-full flex-col gap-2">
+                            {/* Is the physical address confidential? */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                                 Is the physical address confidential?
                               </p>
-
-                              {/* Physical Address */}
-                              <p className="text-base font-semibold leading-7 text-gray-900">
-                                Physical Address:
-                              </p>
-
-                              {/* Mailing Address */}
-                              {getValues('location.mailingAddress') ? (
-                                <p className="text-base font-semibold leading-7 text-gray-900">
-                                  Mailing Address:
-                                </p>
-                              ) : (
-                                <p className="text-md leading-6 text-gray-400">
-                                  Mailing Address:
-                                </p>
-                              )}
-
-                              {/* Location County */}
-                              <p className="text-base font-semibold leading-7 text-gray-900">
-                                County:
-                              </p>
-
-                              {/* Location City */}
-                              <p className="text-base font-semibold leading-7 text-gray-900">
-                                City:
-                              </p>
-
-                              {/* Location State */}
-                              <p className="text-base font-semibold leading-7 text-gray-900">
-                                State:
-                              </p>
-
-                              {/* Location Zip Code */}
-                              <p className="text-base font-semibold leading-7 text-gray-900">
-                                Zip Code:
-                              </p>
-                            </div>
-
-                            {/* Answers */}
-                            <div className="grow leading-7">
-                              {/* Location Confidential */}
-                              <p className="leading-7">
+                              <p className="w-full md:w-1/2 ">
                                 {getValues('location.confidential') === false
                                   ? 'No'
                                   : 'Yes'}
                               </p>
+                            </div>
 
-                              {/* Physical Address */}
-                              <p>{getValues('location.physicalAddress')}</p>
+                            {/* Physical Address */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Physical Address:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('location.physicalAddress')}
+                              </p>
+                            </div>
 
-                              {/* Mailing Address */}
-                              {getValues('location.mailingAddress') ? (
-                                <p>{getValues('location.mailingAddress')}</p>
+                            {/* Mailing Address */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              {getValues('akas') ? (
+                                <>
+                                  <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                    Mailing Address:
+                                  </p>
+                                  <p className="w-full md:w-1/2 ">
+                                    {getValues('location.mailingAddress')}
+                                  </p>
+                                </>
                               ) : (
-                                <p className="text-md leading-6 text-gray-400">
-                                  Same as physical address
-                                </p>
+                                <>
+                                  <p className="text-md w-full leading-6 text-gray-400 md:w-1/2">
+                                    Mailing Address:
+                                  </p>
+                                  <p className="w-full text-gray-400 md:w-1/2">
+                                    Same as physical address
+                                  </p>
+                                </>
                               )}
+                            </div>
 
-                              {/* Location County */}
-                              <p>{getValues('location.county')}</p>
+                            {/* County */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                County:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('location.county')}
+                              </p>
+                            </div>
 
-                              {/* Location City */}
-                              <p>{getValues('location.city')}</p>
+                            {/* City */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                City:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                <p>{getValues('location.city')}</p>
+                              </p>
+                            </div>
 
-                              {/* Location State */}
-                              <p>{getValues('location.state')}</p>
+                            {/* State */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                State:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('location.state')}
+                              </p>
+                            </div>
 
-                              {/* Location Zip Code */}
-                              <p>{getValues('location.zipCode')}</p>
+                            {/* Zip Code */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Zip Code:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('location.zipCode')}
+                              </p>
                             </div>
                           </div>
                         </div>
                       </div>
                     </section>
 
+                    {/* Additional */}
                     <section className="mt-5">
                       <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                         Additional
