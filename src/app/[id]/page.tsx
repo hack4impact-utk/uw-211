@@ -42,7 +42,7 @@ import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
 import { formSteps } from '@/utils/constants/formSteps';
 import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
 import { zodFormToTs } from '@/utils/conversions';
-import { convertToArray } from '@/utils/convertToArray';
+import { convertToArray, convertToString } from '@/utils/stringArrays';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
@@ -3296,7 +3296,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           {/* Answers */}
-                          <div className="grow">
+                          <div className="grow leading-7">
                             {/* Legal Name */}
                             <p>{getValues('legalName')}</p>
 
@@ -3346,7 +3346,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           {/* Answers */}
-                          <div className="grow">
+                          <div className="grow leading-7">
                             {/* Main Phone Number */}
                             <p>{getValues('contactInfo.phoneNumber')}</p>
 
@@ -3381,7 +3381,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           {/* Answers */}
-                          <div className="grow">
+                          <div className="grow leading-7">
                             {/* TODO */}
                             <p>
                               <span className="bg-blue-500 text-white">
@@ -3407,11 +3407,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                     {/* Operations */}
                     <section className="mt-5">
-                      <h2 className="mb-2 text-base font-semibold leading-7 text-gray-900">
+                      <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                         Operations
                       </h2>
 
-                      <div className="flex flex-col md:w-2/3 md:flex-row">
+                      <div className="flex flex-col md:flex-row">
                         <div className="grow">
                           {/* Hours of Operation */}
                           <div className="mb-6">
@@ -3440,69 +3440,202 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                             Location Information
                           </h3>
-                          {/* Location Confidential */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
-                              Is the physical address confidential?
-                            </span>{' '}
-                            {getValues('location.confidential') === false
-                              ? 'No'
-                              : 'Yes'}
-                          </p>
 
-                          {/* Location Confidential */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
-                              Physical Address:
-                            </span>{' '}
-                            {getValues('location.physicalAddress')}
-                          </p>
+                          <div className="flex grow flex-col items-center md:flex-row">
+                            {/* Questions */}
+                            <div className="grow">
+                              {/* Location Confidential */}
+                              <p className="text-base font-semibold leading-7 text-gray-900">
+                                Is the physical address confidential?
+                              </p>
 
-                          {/* Mailing Address */}
-                          {getValues('location.mailingAddress') ? (
-                            <p>
-                              <span className="text-base font-semibold leading-7 text-gray-900">
-                                Mailing Address:
-                              </span>{' '}
-                              {getValues('location.mailingAddress')}
-                            </p>
-                          ) : (
-                            <p className="text-md leading-6 text-gray-400">
-                              Mailing Address: Same as physical address
-                            </p>
-                          )}
+                              {/* Physical Address */}
+                              <p className="text-base font-semibold leading-7 text-gray-900">
+                                Physical Address:
+                              </p>
 
-                          {/* Location County */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
-                              County:
-                            </span>{' '}
-                            {getValues('location.county')}
-                          </p>
+                              {/* Mailing Address */}
+                              {getValues('location.mailingAddress') ? (
+                                <p className="text-base font-semibold leading-7 text-gray-900">
+                                  Mailing Address:
+                                </p>
+                              ) : (
+                                <p className="text-md leading-6 text-gray-400">
+                                  Mailing Address:
+                                </p>
+                              )}
 
-                          {/* Location City */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
-                              City:
-                            </span>{' '}
-                            {getValues('location.city')}
-                          </p>
+                              {/* Location County */}
+                              <p className="text-base font-semibold leading-7 text-gray-900">
+                                County:
+                              </p>
 
-                          {/* Location State */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
-                              State:
-                            </span>{' '}
-                            {getValues('location.state')}
-                          </p>
+                              {/* Location City */}
+                              <p className="text-base font-semibold leading-7 text-gray-900">
+                                City:
+                              </p>
 
-                          {/* Location Zip Code */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
-                              Zip Code:
-                            </span>{' '}
-                            {getValues('location.zipCode')}
-                          </p>
+                              {/* Location State */}
+                              <p className="text-base font-semibold leading-7 text-gray-900">
+                                State:
+                              </p>
+
+                              {/* Location Zip Code */}
+                              <p className="text-base font-semibold leading-7 text-gray-900">
+                                Zip Code:
+                              </p>
+                            </div>
+
+                            {/* Answers */}
+                            <div className="grow leading-7">
+                              {/* Location Confidential */}
+                              <p className="leading-7">
+                                {getValues('location.confidential') === false
+                                  ? 'No'
+                                  : 'Yes'}
+                              </p>
+
+                              {/* Physical Address */}
+                              <p>{getValues('location.physicalAddress')}</p>
+
+                              {/* Mailing Address */}
+                              {getValues('location.mailingAddress') ? (
+                                <p>{getValues('location.mailingAddress')}</p>
+                              ) : (
+                                <p className="text-md leading-6 text-gray-400">
+                                  Same as physical address
+                                </p>
+                              )}
+
+                              {/* Location County */}
+                              <p>{getValues('location.county')}</p>
+
+                              {/* Location City */}
+                              <p>{getValues('location.city')}</p>
+
+                              {/* Location State */}
+                              <p>{getValues('location.state')}</p>
+
+                              {/* Location Zip Code */}
+                              <p>{getValues('location.zipCode')}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section className="mt-5">
+                      <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                        Additional
+                      </h2>
+
+                      <div className="flex flex-col md:flex-row">
+                        {/* Service Area */}
+                        <div className="md:w-1/2">
+                          <h3 className="mb-4 w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            Service Area
+                          </h3>
+
+                          <div className="flex flex-col gap-2">
+                            {/* Specific Town/City */}
+                            {getValues('serviceArea.townCity') != '' && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Specific Town/City:
+                                </p>
+                                <p className="w-full md:w-1/2 ">
+                                  {getValues('serviceArea.townCity')}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Specific Zip Codes */}
+                            {getValues('serviceArea.zipCodes').length != 0 && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Specific Zip Codes:
+                                </p>
+                                <p className="w-full md:w-1/2">
+                                  {convertToString(
+                                    getValues('serviceArea.zipCodes')
+                                  )}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Specific Counties */}
+                            {getValues('serviceArea.counties').length != 0 && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Specific Counties:
+                                </p>
+                                <p className="w-full md:w-1/2">
+                                  {convertToString(
+                                    getValues('serviceArea.counties')
+                                  )}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Statewide */}
+                            {getValues('serviceArea.statewide') && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Statewide:
+                                </p>
+                                <p className="w-full md:w-1/2 ">
+                                  {getValues('serviceArea.statewide') && 'Yes'}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Nationwide */}
+                            {getValues('serviceArea.nationwide') && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Nationwide:
+                                </p>
+                                <p className="w-full md:w-1/2 ">
+                                  {getValues('serviceArea.nationwide') && 'Yes'}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Other */}
+                            {getValues('serviceArea.other') != '' && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Other:
+                                </p>
+                                <p className="w-full md:w-1/2 ">
+                                  {getValues('serviceArea.other')}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Service Area */}
+                        <div className="md:w-1/2">
+                          <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                            Service Area
+                          </h3>
+
+                          <div className="flex grow flex-col items-center md:flex-row">
+                            {/* Questions */}
+                            <div className="grow">
+                              {/* Location Confidential */}
+                              <p className="text-base font-semibold leading-7 text-gray-900">
+                                Is the physical address confidential?
+                              </p>
+                            </div>
+
+                            {/* Answers */}
+                            <div className="grow leading-7">
+                              {/* Physical Address */}
+                              <p>{getValues('location.physicalAddress')}</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </section>
