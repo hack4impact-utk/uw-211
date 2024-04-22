@@ -298,7 +298,7 @@ const RecommendationFields = z
   });
 
 const locationSchema = z.object({
-  confidential: z.coerce.boolean({ invalid_type_error: 'invalid' }),
+  confidential: z.coerce.boolean(),
   physicalAddress: z.string().min(1, 'Required'),
   mailingAddress: z.string(),
   county: z.string().min(1, 'Required'),

@@ -1840,8 +1840,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <input
                               id="location.confidential"
                               type="radio"
-                              value=""
-                              {...register('location.confidential')}
+                              value="false"
+                              {...register('location.confidential', {
+                                setValueAs: (v) => !(v === 'false'),
+                              })}
                               autoComplete="location.confidential"
                               className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               defaultChecked
@@ -1855,7 +1857,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               id="location.confidential"
                               type="radio"
                               value="true"
-                              {...register('location.confidential')}
+                              {...register('location.confidential', {
+                                setValueAs: (v) => v === 'true',
+                              })}
                               autoComplete="location.confidential"
                               className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                             />
@@ -2569,13 +2573,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           Yes
                         </label>
                       </div>
-                    </div>
-                    <div className="mt-2 min-h-6 ">
-                      {errors.location?.confidential?.message && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors.location.confidential.message}
-                        </p>
-                      )}
                     </div>
                   </div>
                 </section>
@@ -3396,7 +3393,82 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </div>
 
                       {/* Funding Source */}
-                      {get_fundingSource()}
+                      <div>
+                        <h3 className="text-base font-semibold leading-7 text-gray-900">
+                          Funding Sources
+                        </h3>
+                        {get_fundingSource()}
+                      </div>
+
+                      {/* Location Information */}
+                      <div>
+                        <h3 className="text-base font-semibold leading-7 text-gray-900">
+                          Location Information
+                        </h3>
+                        {/* Location Confidential */}
+                        <p>
+                          <span className="text-base font-semibold leading-7 text-gray-900">
+                            Is the physical address confidential?
+                          </span>{' '}
+                          {getValues('location.confidential') === false
+                            ? 'No'
+                            : 'Yes'}
+                        </p>
+
+                        {/* Location Confidential */}
+                        <p>
+                          <span className="text-base font-semibold leading-7 text-gray-900">
+                            Physical Address:
+                          </span>{' '}
+                          {getValues('location.physicalAddress')}
+                        </p>
+
+                        {/* Mailing Address */}
+                        {getValues('location.mailingAddress') ? (
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Mailing Address:
+                            </span>{' '}
+                            {getValues('location.mailingAddress')}
+                          </p>
+                        ) : (
+                          <p className="text-md leading-6 text-gray-400">
+                            Mailing Address: Same as physical address
+                          </p>
+                        )}
+
+                        {/* Location County */}
+                        <p>
+                          <span className="text-base font-semibold leading-7 text-gray-900">
+                            County:
+                          </span>{' '}
+                          {getValues('location.county')}
+                        </p>
+
+                        {/* Location City */}
+                        <p>
+                          <span className="text-base font-semibold leading-7 text-gray-900">
+                            City:
+                          </span>{' '}
+                          {getValues('location.city')}
+                        </p>
+
+                        {/* Location State */}
+                        <p>
+                          <span className="text-base font-semibold leading-7 text-gray-900">
+                            State:
+                          </span>{' '}
+                          {getValues('location.state')}
+                        </p>
+
+                        {/* Location Zip Code */}
+                        <p>
+                          <span className="text-base font-semibold leading-7 text-gray-900">
+                            Zip Code:
+                          </span>{' '}
+                          {getValues('location.zipCode')}
+                        </p>
+                      </div>
                     </section>
                   </section>
 
