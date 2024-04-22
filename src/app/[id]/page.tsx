@@ -3265,104 +3265,136 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         General
                       </h2>
                       <div className="flex w-full flex-col gap-4 md:flex-row">
-                        <div className="grow">
-                          {/* Legal Name */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                        <div className="flex grow flex-col items-center md:flex-row">
+                          {/* Questions */}
+                          <div className="grow">
+                            {/* Legal Name */}
+                            <p className="text-base font-semibold leading-7 text-gray-900">
                               Legal Name:
-                            </span>{' '}
-                            {getValues('legalName')}
-                          </p>
+                            </p>
 
-                          {/* AKAs */}
-                          {getValues('akas') ? (
-                            <p>
-                              <span className="text-base font-semibold leading-7 text-gray-900">
+                            {/* AKAs */}
+                            {getValues('akas') ? (
+                              <p className="text-base font-semibold leading-7 text-gray-900">
                                 Also Known As:
-                              </span>{' '}
-                              {getValues('akas')}
-                            </p>
-                          ) : (
-                            <p className="text-md leading-6 text-gray-400">
-                              Also Known As: N/A
-                            </p>
-                          )}
+                              </p>
+                            ) : (
+                              <p className="text-md leading-6 text-gray-400">
+                                Also Known As:
+                              </p>
+                            )}
 
-                          {/* Legal Status */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                            {/* Legal Status */}
+                            <p className="text-base font-semibold leading-7 text-gray-900">
                               Legal Status:
-                            </span>{' '}
-                            {getValues('legalStatus').charAt(0).toUpperCase() +
-                              getValues('legalStatus').slice(1)}
-                          </p>
+                            </p>
 
-                          {/* Director Name */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                            {/* Director Name */}
+                            <p className="text-base font-semibold leading-7 text-gray-900">
                               Director Name:
-                            </span>{' '}
-                            {getValues('directorName')}
-                          </p>
+                            </p>
+                          </div>
+
+                          {/* Answers */}
+                          <div className="grow">
+                            {/* Legal Name */}
+                            <p>{getValues('legalName')}</p>
+
+                            {/* AKAs */}
+                            {getValues('akas') ? (
+                              <p>{getValues('akas')}</p>
+                            ) : (
+                              <p className="text-md leading-6 text-gray-400">
+                                N/A
+                              </p>
+                            )}
+
+                            {/* Legal Status */}
+                            <p>
+                              {getValues('legalStatus')
+                                .charAt(0)
+                                .toUpperCase() +
+                                getValues('legalStatus').slice(1)}
+                            </p>
+
+                            {/* Director Name */}
+                            <p>{getValues('directorName')}</p>
+                          </div>
                         </div>
 
-                        <div className="grow">
-                          {/* Main Phone Number */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                        <div className="flex grow flex-col items-center md:flex-row">
+                          {/* Questions */}
+                          <div className="grow">
+                            {/* Main Phone Number */}
+                            <p className="text-base font-semibold leading-7 text-gray-900">
                               Main Phone Number:
-                            </span>{' '}
-                            {getValues('contactInfo.phoneNumber')}
-                          </p>
-
-                          {/* Fax Number */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                            </p>
+                            {/* Fax Number */}
+                            <p className="text-base font-semibold leading-7 text-gray-900">
                               Fax Number:
-                            </span>{' '}
-                            {getValues('contactInfo.faxNumber')}
-                          </p>
+                            </p>
 
-                          {/* Toll Free Number */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                            {/* Toll Free Number */}
+                            <p className="text-base font-semibold leading-7 text-gray-900">
                               Toll Free Number:
-                            </span>{' '}
-                            {getValues('contactInfo.tollFreeNumber')}
-                          </p>
+                            </p>
 
-                          {/* TDD/TTY Number */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                            {/* TDD/TTY Number */}
+                            <p className="text-base font-semibold leading-7 text-gray-900">
                               TDD/TTY Number
-                            </span>{' '}
-                            {getValues('contactInfo.TDDTTYNumber')}
-                          </p>
+                            </p>
+                          </div>
+
+                          {/* Answers */}
+                          <div className="grow">
+                            {/* Main Phone Number */}
+                            <p>{getValues('contactInfo.phoneNumber')}</p>
+
+                            {/* Fax Number */}
+                            <p>{getValues('contactInfo.faxNumber')}</p>
+
+                            {/* Toll Free Number */}
+                            <p>{getValues('contactInfo.tollFreeNumber')}</p>
+
+                            {/* TDD/TTY Number */}
+                            <p>{getValues('contactInfo.TDDTTYNumber')}</p>
+                          </div>
                         </div>
 
-                        <div className="grow">
-                          {/* TODO: Additional Numbers */}
-                          <p>
-                            <span className="bg-blue-500 text-white">
-                              TODO: Additional Numbers
-                            </span>
-                          </p>
+                        <div className="flex grow flex-col items-center md:flex-row">
+                          {/* Questions */}
+                          <div className="grow">
+                            {/* Additional Numbers */}
+                            <p className="text-base font-semibold leading-7 text-gray-900">
+                              Additional Numbers:
+                            </p>
 
-                          {/* email */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                            {/* email */}
+                            <p className="text-base font-semibold leading-7 text-gray-900">
                               Email
-                            </span>{' '}
-                            {getValues('contactInfo.email')}
-                          </p>
+                            </p>
 
-                          {/* website */}
-                          <p>
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                            {/* website */}
+                            <p className="text-base font-semibold leading-7 text-gray-900">
                               Website
-                            </span>{' '}
-                            {getValues('contactInfo.website')}
-                          </p>
+                            </p>
+                          </div>
+
+                          {/* Answers */}
+                          <div className="grow">
+                            {/* TODO */}
+                            <p>
+                              <span className="bg-blue-500 text-white">
+                                TODO: Additional Numbers
+                              </span>
+                            </p>
+
+                            {/* email */}
+                            <p>{getValues('contactInfo.email')}</p>
+
+                            {/* website */}
+                            <p>{getValues('contactInfo.website')}</p>
+                          </div>
                         </div>
                       </div>
 
@@ -3379,95 +3411,99 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         Operations
                       </h2>
 
-                      {/* Hours of Operation */}
-                      <div>
-                        {/* TODO */}
-                        <h3 className="text-base font-semibold leading-7 text-gray-900">
-                          Hours of Operation
-                        </h3>
-                        <p>
-                          <span className="bg-blue-500 text-white">
-                            TODO: Hours of operation
-                          </span>
-                        </p>
-                      </div>
+                      <div className="flex flex-col md:w-2/3 md:flex-row">
+                        <div className="grow">
+                          {/* Hours of Operation */}
+                          <div className="mb-6">
+                            {/* TODO */}
+                            <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                              Hours of Operation
+                            </h3>
+                            <p>
+                              <span className="bg-blue-500 text-white">
+                                TODO: Hours of operation
+                              </span>
+                            </p>
+                          </div>
 
-                      {/* Funding Source */}
-                      <div>
-                        <h3 className="text-base font-semibold leading-7 text-gray-900">
-                          Funding Sources
-                        </h3>
-                        {get_fundingSource()}
-                      </div>
+                          {/* Funding Source */}
+                          <div>
+                            <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                              Funding Sources
+                            </h3>
+                            {get_fundingSource()}
+                          </div>
+                        </div>
 
-                      {/* Location Information */}
-                      <div>
-                        <h3 className="text-base font-semibold leading-7 text-gray-900">
-                          Location Information
-                        </h3>
-                        {/* Location Confidential */}
-                        <p>
-                          <span className="text-base font-semibold leading-7 text-gray-900">
-                            Is the physical address confidential?
-                          </span>{' '}
-                          {getValues('location.confidential') === false
-                            ? 'No'
-                            : 'Yes'}
-                        </p>
-
-                        {/* Location Confidential */}
-                        <p>
-                          <span className="text-base font-semibold leading-7 text-gray-900">
-                            Physical Address:
-                          </span>{' '}
-                          {getValues('location.physicalAddress')}
-                        </p>
-
-                        {/* Mailing Address */}
-                        {getValues('location.mailingAddress') ? (
+                        {/* Location Information */}
+                        <div className="grow">
+                          <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                            Location Information
+                          </h3>
+                          {/* Location Confidential */}
                           <p>
                             <span className="text-base font-semibold leading-7 text-gray-900">
-                              Mailing Address:
+                              Is the physical address confidential?
                             </span>{' '}
-                            {getValues('location.mailingAddress')}
+                            {getValues('location.confidential') === false
+                              ? 'No'
+                              : 'Yes'}
                           </p>
-                        ) : (
-                          <p className="text-md leading-6 text-gray-400">
-                            Mailing Address: Same as physical address
+
+                          {/* Location Confidential */}
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Physical Address:
+                            </span>{' '}
+                            {getValues('location.physicalAddress')}
                           </p>
-                        )}
 
-                        {/* Location County */}
-                        <p>
-                          <span className="text-base font-semibold leading-7 text-gray-900">
-                            County:
-                          </span>{' '}
-                          {getValues('location.county')}
-                        </p>
+                          {/* Mailing Address */}
+                          {getValues('location.mailingAddress') ? (
+                            <p>
+                              <span className="text-base font-semibold leading-7 text-gray-900">
+                                Mailing Address:
+                              </span>{' '}
+                              {getValues('location.mailingAddress')}
+                            </p>
+                          ) : (
+                            <p className="text-md leading-6 text-gray-400">
+                              Mailing Address: Same as physical address
+                            </p>
+                          )}
 
-                        {/* Location City */}
-                        <p>
-                          <span className="text-base font-semibold leading-7 text-gray-900">
-                            City:
-                          </span>{' '}
-                          {getValues('location.city')}
-                        </p>
+                          {/* Location County */}
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              County:
+                            </span>{' '}
+                            {getValues('location.county')}
+                          </p>
 
-                        {/* Location State */}
-                        <p>
-                          <span className="text-base font-semibold leading-7 text-gray-900">
-                            State:
-                          </span>{' '}
-                          {getValues('location.state')}
-                        </p>
+                          {/* Location City */}
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              City:
+                            </span>{' '}
+                            {getValues('location.city')}
+                          </p>
 
-                        {/* Location Zip Code */}
-                        <p>
-                          <span className="text-base font-semibold leading-7 text-gray-900">
-                            Zip Code:
-                          </span>{' '}
-                          {getValues('location.zipCode')}
-                        </p>
+                          {/* Location State */}
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              State:
+                            </span>{' '}
+                            {getValues('location.state')}
+                          </p>
+
+                          {/* Location Zip Code */}
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Zip Code:
+                            </span>{' '}
+                            {getValues('location.zipCode')}
+                          </p>
+                        </div>
                       </div>
                     </section>
                   </section>
