@@ -957,6 +957,55 @@ homeless men, etc.) This helps us to make appropriate referrals."
     return service_items;
   };
 
+  const get_fundingSource = () => {
+    const sources = new Map([
+      ['federal', 'Federal'],
+      ['state', 'State'],
+      ['county', 'County'],
+      ['city', 'City'],
+      ['donations', 'Donations'],
+      ['foundations', 'Foundations/Private Org.'],
+      ['feesDues', 'Fees/Dues'],
+      ['unitedWay', 'United Way'],
+      ['other', 'Other'],
+    ]);
+
+    const fundingSource = getValues('fundingSources');
+    const options: string[] = [];
+    let other: string = '';
+
+    Object.entries(fundingSource).forEach(([key, value]) => {
+      if (value && key != 'none' && key != 'other') {
+        options.push(sources.get(key)!);
+      }
+    });
+
+    if (fundingSource.other?.selected) {
+      other = String(fundingSource.other.content);
+      options.push('Other');
+    }
+
+    return (
+      <>
+        <p>
+          {options.map((item, index) => (
+            <span key={index}>
+              {item}
+              {index !== options.length - 1 && ', '}
+            </span>
+          ))}
+        </p>
+        <div className="ml-6">
+          {other != '' && (
+            <p>
+              Other: <span className="underline">{other}</span>
+            </p>
+          )}
+        </div>
+      </>
+    );
+  };
+
   const PreliminariesHeader = (data: { name: string }) => {
     return (
       <>
@@ -3345,6 +3394,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </span>
                         </p>
                       </div>
+
+                      {/* Funding Source */}
+                      {get_fundingSource()}
                     </section>
                   </section>
 
