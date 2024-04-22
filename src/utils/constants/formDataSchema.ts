@@ -370,10 +370,10 @@ const languageSupportSchema = z.object({
   other: z
     .object({
       selected: z.boolean(),
-      content: z.array(z.string()),
+      content: z.array(z.string()).optional(),
     })
     .refine(
-      (data) => !data.selected || (data.selected && data.content.length != 0),
+      (data) => !data.selected || (data.selected && data.content?.length != 0),
       {
         message: 'Please specify other.',
       }

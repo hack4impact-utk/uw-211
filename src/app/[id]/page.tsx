@@ -2449,7 +2449,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             setValueAs: (data) => convertToArray(data),
                           })}
                         />
-                        <div className="mt-2 min-h-6">
+                        <div className="mt-4 min-h-6 ">
                           {errors.languageSupport?.other?.message && (
                             <p className="mt-2 text-sm text-red-400">
                               {errors.languageSupport.other.message}
@@ -2469,15 +2469,17 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       Can any languages be provided with prior notice?
                     </label>
                     <div className="mt-2">
-                      <input
-                        type="text"
+                      <textarea
+                        // type="text"
                         id="supportedLanguagesWithoutNotice"
                         {...register('supportedLanguagesWithoutNotice', {
                           setValueAs: (data) => convertToArray(data),
                         })}
                         autoComplete="supportedLanguagesWithoutNotice"
-                        className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                      />
+                        cols={30}
+                        rows={5}
+                        className="w-full resize-none rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      ></textarea>
                     </div>
                   </div>
 
@@ -2489,7 +2491,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     >
                       Is your facility accessible to people with disabilities as
                       defined by the Americans with Disabilities Act (ADA)?
-                      <span className="ml-1 text-sm text-red-400">*</span>
                     </label>
                     <div className="flex flex-row gap-4 whitespace-nowrap">
                       <div>
@@ -3207,38 +3208,42 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   </section>
 
                   {/* Preliminaries */}
-                  <section className="flex flex-col">
-                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                  <section className="flex flex-col gap-4">
+                    <h2 className="text-base font-semibold leading-7 text-gray-900">
                       Preliminaries
                     </h2>
 
-                    <div className="flex flex-col gap-4 sm:flex-row sm:gap-12">
-                      {/* Prelim Info */}
-                      <section className="flex flex-col gap-2 sm:w-1/2">
-                        <div className="flex flex-col sm:flex-row">
-                          <p className="sm:w-1/2">
+                    {/* General */}
+                    <section>
+                      <h2 className="mb-2 text-base font-semibold leading-7 text-gray-900">
+                        General
+                      </h2>
+                      <div className="flex w-full flex-col gap-4 md:flex-row">
+                        <div className="grow">
+                          {/* Legal Name */}
+                          <p>
                             <span className="text-base font-semibold leading-7 text-gray-900">
                               Legal Name:
                             </span>{' '}
                             {getValues('legalName')}
                           </p>
 
+                          {/* AKAs */}
                           {getValues('akas') ? (
-                            <p className="sm:w-1/2">
+                            <p>
                               <span className="text-base font-semibold leading-7 text-gray-900">
                                 Also Known As:
                               </span>{' '}
                               {getValues('akas')}
                             </p>
                           ) : (
-                            <p className="text-md leading-6 text-gray-400 sm:w-1/2">
+                            <p className="text-md leading-6 text-gray-400">
                               Also Known As: N/A
                             </p>
                           )}
-                        </div>
 
-                        <div className="flex flex-col sm:flex-row">
-                          <p className="sm:w-1/2">
+                          {/* Legal Status */}
+                          <p>
                             <span className="text-base font-semibold leading-7 text-gray-900">
                               Legal Status:
                             </span>{' '}
@@ -3246,7 +3251,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               getValues('legalStatus').slice(1)}
                           </p>
 
-                          <p className="sm:w-1/2">
+                          {/* Director Name */}
+                          <p>
                             <span className="text-base font-semibold leading-7 text-gray-900">
                               Director Name:
                             </span>{' '}
@@ -3254,14 +3260,81 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </p>
                         </div>
 
-                        <p className="text-base font-semibold leading-7 text-gray-900">
-                          Brief Agency Information
-                        </p>
-                        <p>{getValues('agencyInfo')}</p>
-                      </section>
+                        <div className="grow">
+                          {/* Main Phone Number */}
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Main Phone Number:
+                            </span>{' '}
+                            {getValues('contactInfo.phoneNumber')}
+                          </p>
+
+                          {/* Fax Number */}
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Fax Number:
+                            </span>{' '}
+                            {getValues('contactInfo.faxNumber')}
+                          </p>
+
+                          {/* Toll Free Number */}
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Toll Free Number:
+                            </span>{' '}
+                            {getValues('contactInfo.tollFreeNumber')}
+                          </p>
+
+                          {/* TDD/TTY Number */}
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              TDD/TTY Number
+                            </span>{' '}
+                            {getValues('contactInfo.TDDTTYNumber')}
+                          </p>
+                        </div>
+
+                        <div className="grow">
+                          {/* TODO: Additional Numbers */}
+                          <p>
+                            <span className="bg-blue-500 text-white">
+                              TODO: Additional Numbers
+                            </span>
+                          </p>
+
+                          {/* email */}
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Email
+                            </span>{' '}
+                            {getValues('contactInfo.email')}
+                          </p>
+
+                          {/* website */}
+                          <p>
+                            <span className="text-base font-semibold leading-7 text-gray-900">
+                              Website
+                            </span>{' '}
+                            {getValues('contactInfo.website')}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Brief Agency Information */}
+                      <p className="mt-4 text-base font-semibold leading-7 text-gray-900">
+                        Brief Agency Information
+                      </p>
+                      <p>{getValues('agencyInfo')}</p>
+                    </section>
+
+                    {/* Operations */}
+                    <section className="mt-5">
+                      <h2 className="mb-2 text-base font-semibold leading-7 text-gray-900">
+                        Operations
+                      </h2>
 
                       {/* Hours of Operation */}
-                      <section className="w-1/2">
+                      <div>
                         {/* TODO */}
                         <h3 className="text-base font-semibold leading-7 text-gray-900">
                           Hours of Operation
@@ -3271,8 +3344,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             TODO: Hours of operation
                           </span>
                         </p>
-                      </section>
-                    </div>
+                      </div>
+                    </section>
                   </section>
 
                   {/* Services */}
