@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { getAgencies } from '@/server/actions/Agencies';
 import { Agency } from '@/utils/types';
-import { Newspaper, Check, X } from 'lucide-react';
+import { AlertCircle, Newspaper, Check, X } from 'lucide-react';
 
 import {
   Accordion,
@@ -38,10 +38,11 @@ export async function AdminDashboardNotifications() {
   }
 
   return (
-    <div>
+    <div className="mx-8">
       <Accordion type="single" collapsible>
-        <AccordionItem value="item-1">
+        <AccordionItem className="w-full" value="item-1">
           <AccordionTrigger>
+            <AlertCircle />
             You have {agencies.length}{' '}
             {agencies.length == 1 ? 'agency' : 'agencies'} pending approval.
           </AccordionTrigger>

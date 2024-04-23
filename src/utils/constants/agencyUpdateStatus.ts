@@ -1,5 +1,5 @@
 export enum agencyUpdateStatus {
   Completed = 'Completed',
-  NeedsReview = 'NeedsReview',
+  NeedsReview = 'Needs Review',
   Expired = 'Expired',
 }
