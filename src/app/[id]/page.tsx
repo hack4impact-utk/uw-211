@@ -1019,6 +1019,22 @@ homeless men, etc.) This helps us to make appropriate referrals."
     );
   };
 
+  const get_accessibility_langs = () => {
+    const language = getValues('languageSupport');
+    let result = '';
+
+    if (language.asl) result += 'ASL, ';
+    if (language.spanish) result += 'Spanish, ';
+    if (language.teleinterpreterLanguageService)
+      result += 'Tele-interpreter Service, ';
+    if (language.other.selected) {
+      result += convertToString(language.other.content!);
+      result += ', ';
+    }
+
+    return result.substring(0, result.length - 2);
+  };
+
   return (
     <section className="absolute inset-0 flex flex-col justify-between pl-4 pr-4 pt-24 sm:px-12 md:px-20">
       {/* Stepper */}
@@ -2519,7 +2535,8 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       htmlFor="supportedLanguagesWithoutNotice"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Can any languages be provided with prior notice?
+                      Can any languages be provided with prior notice? (Please
+                      list.)
                     </label>
                     <div className="mt-2">
                       <textarea
@@ -3404,7 +3421,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </div>
 
                       {/* Brief Agency Information */}
-                      <p className="mt-4 text-base font-semibold leading-7 text-gray-900">
+                      <p className="mt-8 text-base font-semibold leading-7 text-gray-900">
                         Brief Agency Information
                       </p>
                       <p>{getValues('agencyInfo')}</p>
@@ -3628,30 +3645,117 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
                         </div>
 
-                        {/* Service Area */}
+                        {/* Annual Agency Update */}
                         <div className="md:w-1/2">
                           <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                            Service Area
+                            Annual Agency Update
                           </h3>
 
-                          <div className="flex grow flex-col items-center md:flex-row">
-                            {/* Questions */}
-                            <div className="grow">
-                              {/* Location Confidential */}
-                              <p className="text-base font-semibold leading-7 text-gray-900">
-                                Is the physical address confidential?
+                          <div className="flex w-full flex-col gap-2">
+                            {/* Name */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Name:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('annualAgencyUpdate.name')}
                               </p>
                             </div>
 
-                            {/* Answers */}
-                            <div className="grow leading-7">
-                              {/* Physical Address */}
-                              <p>{getValues('location.physicalAddress')}</p>
+                            {/* Title */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Title:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('annualAgencyUpdate.title')}
+                              </p>
+                            </div>
+
+                            {/* Phone Number */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Phone Number:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                <p>
+                                  {getValues('annualAgencyUpdate.phoneNumber')}
+                                </p>
+                              </p>
+                            </div>
+
+                            {/* Email */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Email:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('annualAgencyUpdate.email')}
+                              </p>
+                            </div>
+
+                            {/* Would you like this information to be hidden from the website? */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-end">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Would you like this information to be hidden
+                                from the website?
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues(
+                                  'annualAgencyUpdate.hideFromWebsite'
+                                ) === false
+                                  ? 'No'
+                                  : 'Yes'}
+                              </p>
                             </div>
                           </div>
                         </div>
                       </div>
                     </section>
+                  </section>
+
+                  <section>
+                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                      Accessibility
+                    </h2>
+
+                    <div className="flex flex-col gap-4">
+                      <div>
+                        <p className="w-full text-base font-semibold leading-7 text-gray-900">
+                          In addition to English, what languages are spoken by
+                          at least one of your part-time staff?
+                        </p>
+                        <p>{get_accessibility_langs()}</p>
+                      </div>
+
+                      <div>
+                        <p className="w-full text-base font-semibold leading-7 text-gray-900">
+                          Can any languages be provided with prior notice?
+                          (Please list.)
+                        </p>
+                        <p>
+                          {getValues('supportedLanguagesWithoutNotice')
+                            .length != 0
+                            ? convertToString(
+                                getValues('supportedLanguagesWithoutNotice')
+                              )
+                            : 'No'}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-row items-center gap-4">
+                        <p className="text-base font-semibold leading-7 text-gray-900">
+                          Is your facility accessible to people with
+                          disabilities as defined by the Americans with
+                          Disabilities Act (ADA)?
+                        </p>
+                        <p>
+                          {getValues('accessibilityADA') === true
+                            ? 'Yes'
+                            : 'No'}
+                        </p>
+                      </div>
+                    </div>
                   </section>
 
                   {/* Services */}
