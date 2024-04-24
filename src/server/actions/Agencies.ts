@@ -15,20 +15,20 @@ import { authenticateServerAction } from '@/utils/auth';
  * @brief Gets all agencies
  * @param populateServices Populates the agencies' "services" field
  * @param searchString Filters agencies that do not have the search term present in their name or
- * @param compareFn Sorts the array of agencies before returning using the specified function; leave empty for no sorting
- * @returns An array of all agencies in the "agencies" collection
  */
 export async function getAgencies(
   populateServices: boolean = true,
-  searchString?: string,
-  compareFn?: (a: Agency, b: Agency) => number
+  searchString?: string
 ): Promise<Agency[]> {
   await authenticateServerAction();
   try {
     await dbConnect();
-    let query = searchString
-      ? AgencyModel.find({ name: new RegExp(searchString, 'i') })
-      : AgencyModel.find({});
+
+    const findFilters = searchString
+      ? { name: new RegExp(searchString, 'i') }
+      : {};
+
+    let query = AgencyModel.find(findFilters);
 
     if (populateServices) {
       query = query.populate({
@@ -39,11 +39,7 @@ export async function getAgencies(
       query = query.populate('info');
     }
 
-    let agencies: Agency[] = await query.exec();
-
-    if (compareFn) {
-      agencies = agencies.sort(compareFn);
-    }
+    const agencies: Agency[] = await query.exec();
 
     return agencies;
   } catch (error) {

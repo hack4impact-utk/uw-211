@@ -55,7 +55,7 @@ const StepItem = ({
       <Accordion type="single" collapsible>
         <AccordionItem value="item-1">
           <AccordionTrigger
-            className={`text-xl hover:bg-gray-400 ${
+            className={`rounded text-xl hover:bg-slate-200 ${
               index > currentPageIndex
                 ? 'pointer-events-none text-gray-400'
                 : 'text-black'
@@ -71,7 +71,7 @@ const StepItem = ({
                   setCurrentSubstep(subindex);
                 }}
                 key={`${index}.${subindex}`}
-                className={`justify-start bg-white text-left text-lg hover:bg-gray-400 ${
+                className={`justify-start bg-white text-left text-lg hover:bg-slate-200 ${
                   // have not got to this subpage && have to go to page at all
                   subindex > currentSubpageIndex && index >= currentPageIndex
                     ? 'pointer-events-none text-gray-400'
@@ -94,7 +94,7 @@ const StepItem = ({
           setCurrentStep(index);
           setCurrentSubstep(0);
         }}
-        className={`bg-white text-xl hover:bg-gray-400 ${
+        className={`hover:bg-bg-slate-200 bg-white text-xl ${
           index > currentPageIndex
             ? 'pointer-events-none text-gray-400'
             : 'text-black'
@@ -126,7 +126,7 @@ export default function MobileFormStepper({
             Navigate Form
           </SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-center gap-2">
+        <div className="flex flex-col justify-center gap-2 border-t-2 border-zinc-500">
           {formSteps.map((step, index) => {
             return (
               <StepItem

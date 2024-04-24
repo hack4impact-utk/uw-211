@@ -1,15 +1,17 @@
 import { AdminDashboardTable } from '@/components/AdminDashboardTable';
-import { Navbar } from '@/components/Navbar';
-import { dashboardParams } from '@/utils/types';
+import { AdminDashboardNotifications } from '@/components/AdminDashboardNotifications';
+import Header from '@/components/Header';
+import { DashboardParams } from '@/utils/types';
 
 export default async function Dashboard({
   searchParams,
 }: {
-  searchParams: dashboardParams;
+  searchParams: DashboardParams;
 }) {
   return (
     <div>
-      <Navbar />
+      <Header />
+      <AdminDashboardNotifications />
       <AdminDashboardTable params={searchParams} />
     </div>
   );
