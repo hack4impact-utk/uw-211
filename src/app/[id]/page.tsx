@@ -3272,13 +3272,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                   {/* Preliminaries */}
                   <section className="flex flex-col gap-4">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">
+                    <h2 className="text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
                       Preliminaries
                     </h2>
 
                     {/* General */}
-                    <section>
-                      <h2 className="mb-2 text-base font-semibold leading-7 text-gray-900">
+                    <section className="mb-2">
+                      <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                         General
                       </h2>
                       <div className="flex w-full flex-col gap-4 md:flex-row">
@@ -3427,8 +3427,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <p>{getValues('agencyInfo')}</p>
                     </section>
 
+                    <hr />
+
                     {/* Operations */}
-                    <section className="mt-5">
+                    <section className="my-2">
                       <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                         Operations
                       </h2>
@@ -3470,9 +3472,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 Is the physical address confidential?
                               </p>
                               <p className="w-full md:w-1/2 ">
-                                {getValues('location.confidential') === false
-                                  ? 'No'
-                                  : 'Yes'}
+                                {getValues(
+                                  'location.confidential'
+                                ).toString() === 'true'
+                                  ? 'Yes'
+                                  : 'No'}
                               </p>
                             </div>
 
@@ -3553,8 +3557,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </div>
                     </section>
 
+                    <hr />
+
                     {/* Additional */}
-                    <section className="mt-5">
+                    <section className="my-2">
                       <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                         Additional
                       </h2>
@@ -3703,9 +3709,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               <p className="w-full md:w-1/2 ">
                                 {getValues(
                                   'annualAgencyUpdate.hideFromWebsite'
-                                ) === false
-                                  ? 'No'
-                                  : 'Yes'}
+                                ).toString() === 'true'
+                                  ? 'Yes'
+                                  : 'No'}
                               </p>
                             </div>
                           </div>
@@ -3714,8 +3720,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     </section>
                   </section>
 
+                  <hr />
+
+                  {/* Accessibility */}
                   <section>
-                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
                       Accessibility
                     </h2>
 
@@ -3750,7 +3759,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           Disabilities Act (ADA)?
                         </p>
                         <p>
-                          {getValues('accessibilityADA') === true
+                          {getValues('accessibilityADA').toString() === 'true'
                             ? 'Yes'
                             : 'No'}
                         </p>
@@ -3758,9 +3767,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     </div>
                   </section>
 
+                  <hr />
+
                   {/* Services */}
                   <section>
-                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
                       Services
                     </h2>
 
@@ -3791,9 +3802,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     )}
                   </section>
 
+                  <hr />
+
                   {/* Opportunities */}
                   <section className="mt-8 flex flex-col gap-4 sm:mt-0">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">
+                    <h2 className="text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
                       Opportunities
                     </h2>
 
