@@ -102,8 +102,8 @@ export async function AdminDashboardTable({
   }
 
   return (
-    <div>
-      <div className="flex w-full px-4 py-4">
+    <div className="mx-8">
+      <div className="flex py-4">
         <AdminDashboardTableSearch searchParams={params} />
         <AdminDashboardTableFilterCheckbox
           searchParams={params}
