@@ -1446,7 +1446,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         <div className="mt-2">
                           <fieldset>
                             <label
-                              htmlFor="days"
+                              htmlFor="monday"
                               className="mb-2 block text-sm font-medium leading-6 text-gray-900"
                             >
                               Select day(s) of operation
@@ -1844,17 +1844,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       </h3>
                       {/* location.confidential */}
                       <div>
-                        <label
-                          htmlFor="location.confidential"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
+                        <h2 className="block text-sm font-medium leading-6 text-gray-900">
                           Is the physical address confidential?
                           <span className="ml-1 text-sm text-red-400">*</span>
-                        </label>
+                        </h2>
                         <div className="flex flex-row gap-4 whitespace-nowrap">
                           <div>
                             <input
-                              id="location.confidential"
+                              id="location.confidential1"
                               type="radio"
                               value="false"
                               {...register('location.confidential', {
@@ -1864,13 +1861,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               defaultChecked
                             />
-                            <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            <label
+                              htmlFor="location.confidential1"
+                              className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
                               No
                             </label>
                           </div>
                           <div>
                             <input
-                              id="location.confidential"
+                              id="location.confidential2"
                               type="radio"
                               value="true"
                               {...register('location.confidential', {
@@ -1879,7 +1879,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               autoComplete="location.confidential"
                               className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                             />
-                            <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            <label
+                              htmlFor="location.confidential2"
+                              className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
                               Yes
                             </label>
                           </div>
@@ -2348,18 +2351,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                       {/* annualAgencyUpdate.hideFromWebsite */}
                       <div className="flex flex-col gap-6 md:flex-row">
-                        <label
-                          htmlFor="annualAgencyUpdate.hideFromWebsite"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
+                        <h2 className="block text-sm font-medium leading-6 text-gray-900">
                           Would you like this information to be hidden from the
                           website?
                           <span className="ml-1 text-sm text-red-400">*</span>
-                        </label>
+                        </h2>
                         <div className="flex flex-row gap-4 whitespace-nowrap">
                           <div>
                             <input
-                              id="annualAgencyUpdate.hideFromWebsite"
+                              id="annualAgencyUpdate.hideFromWebsite1"
                               type="radio"
                               value=""
                               {...register(
@@ -2369,13 +2369,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               defaultChecked
                             />
-                            <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            <label
+                              htmlFor="annualAgencyUpdate.hideFromWebsite1"
+                              className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
                               No
                             </label>
                           </div>
                           <div>
                             <input
-                              id="annualAgencyUpdate.hideFromWebsite"
+                              id="annualAgencyUpdate.hideFromWebsite2"
                               type="radio"
                               value="true"
                               {...register(
@@ -2384,7 +2387,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               autoComplete="annualAgencyUpdate.hideFromWebsite"
                               className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                             />
-                            <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            <label
+                              htmlFor="annualAgencyUpdate.hideFromWebsite2"
+                              className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
                               Yes
                             </label>
                           </div>
@@ -2555,17 +2561,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                   {/* Accessibility ADA */}
                   <div className="flex flex-col gap-6 md:flex-row">
-                    <label
-                      htmlFor="accessibilityADA"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
+                    <h2 className="block text-sm font-medium leading-6 text-gray-900">
                       Is your facility accessible to people with disabilities as
                       defined by the Americans with Disabilities Act (ADA)?
-                    </label>
+                    </h2>
                     <div className="flex flex-row gap-4 whitespace-nowrap">
                       <div>
                         <input
-                          id="accessibilityADA"
+                          id="accessibilityADA1"
                           type="radio"
                           value=""
                           {...register('accessibilityADA')}
@@ -2573,20 +2576,26 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                           defaultChecked
                         />
-                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        <label
+                          htmlFor="accessibilityADA1"
+                          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
                           No
                         </label>
                       </div>
                       <div>
                         <input
-                          id="accessibilityADA"
+                          id="accessibilityADA2"
                           type="radio"
                           value="true"
                           {...register('accessibilityADA')}
                           autoComplete="accessibilityADA"
                           className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                         />
-                        <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        <label
+                          htmlFor="accessibilityADA2"
+                          className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
                           Yes
                         </label>
                       </div>
@@ -2809,7 +2818,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <div className="flex flex-row gap-4 whitespace-nowrap">
                             <div>
                               <input
-                                id="volunteers"
+                                id="volunteers1"
                                 type="radio"
                                 value="false"
                                 {...register('volunteerFields.volunteers')}
@@ -2820,13 +2829,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                 defaultChecked
                               />
-                              <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              <label
+                                htmlFor="volunteers1"
+                                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
                                 No
                               </label>
                             </div>
                             <div>
                               <input
-                                id="volunteers"
+                                id="volunteers2"
                                 type="radio"
                                 value="true"
                                 {...register('volunteerFields.volunteers')}
@@ -2836,7 +2848,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 autoComplete="volunteers"
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               />
-                              <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              <label
+                                htmlFor=""
+                                className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
                                 Yes
                               </label>
                             </div>
@@ -2857,9 +2872,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         }`}
                       >
                         <div className="mb-4">
-                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          <label
+                            htmlFor="vol_reqs"
+                            className="text-base font-semibold leading-7 text-gray-900"
+                          >
                             Who is eligible to volunteer?
-                          </h2>
+                          </label>
                           <textarea
                             id="vol_reqs"
                             {...register('volunteerFields.vol_reqs')}
@@ -2881,9 +2899,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                         <div className="flex w-full flex-col gap-6 sm:flex-row">
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            <label
+                              htmlFor="vol_cor"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
                               Volunteer Coordinator:
-                            </h2>
+                            </label>
 
                             <input
                               type="text"
@@ -2903,9 +2924,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            <label
+                              htmlFor="vol_coor_tel"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
                               Phone #:
-                            </h2>
+                            </label>
 
                             <input
                               type="tel"
@@ -2915,7 +2939,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               disabled={volunteerChecked === 'false'}
                               className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                             />
-
                             <div className="mt-2 min-h-6 ">
                               {errors.volunteerFields?.vol_coor_tel
                                 ?.message && (
@@ -2942,7 +2965,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <div className="flex flex-row gap-4 whitespace-nowrap">
                             <div>
                               <input
-                                id="donation"
+                                id="donation1"
                                 type="radio"
                                 value="false"
                                 {...register('donationFields.donation')}
@@ -2952,13 +2975,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                 defaultChecked
                               />
-                              <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              <label
+                                htmlFor="donation1"
+                                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
                                 No
                               </label>
                             </div>
                             <div>
                               <input
-                                id="donation"
+                                id="donation2"
                                 type="radio"
                                 value="true"
                                 {...register('donationFields.donation')}
@@ -2967,7 +2993,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 }}
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               />
-                              <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              <label
+                                htmlFor="donation2"
+                                className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
                                 Yes
                               </label>
                             </div>
@@ -2989,9 +3018,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       >
                         <div className="mb-2">
                           <div className="flex flex-col items-start lg:flex-row lg:items-center lg:gap-8">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            <label
+                              htmlFor="don_ex"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
                               Please list.
-                            </h2>
+                            </label>
                             <input
                               type="text"
                               {...register('donationFields.don_ex')}
@@ -3019,7 +3051,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-row gap-4 whitespace-nowrap">
                               <div>
                                 <input
-                                  id="pickup"
+                                  id="pickup1"
                                   type="radio"
                                   value="false"
                                   disabled={donationChecked === 'false'}
@@ -3030,13 +3062,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                   className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                   defaultChecked
                                 />
-                                <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                <label
+                                  htmlFor="pickup1"
+                                  className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                >
                                   No
                                 </label>
                               </div>
                               <div>
                                 <input
-                                  id="pickup"
+                                  id="pickup2"
                                   type="radio"
                                   value="true"
                                   disabled={donationChecked === 'false'}
@@ -3046,7 +3081,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                   }}
                                   className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                 />
-                                <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                <label
+                                  htmlFor="pickup2"
+                                  className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                >
                                   Yes
                                 </label>
                               </div>
@@ -3069,9 +3107,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         >
                           <div className="">
                             <div className="flex flex-row items-center gap-4">
-                              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                              <label
+                                htmlFor="pickup_loc"
+                                className="text-base font-semibold leading-7 text-gray-900"
+                              >
                                 Where?
-                              </h2>
+                              </label>
                               <input
                                 type="text"
                                 {...register('donationFields.pickup_loc')}
@@ -3092,9 +3133,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                         <div className="flex w-full flex-col gap-6 sm:flex-row">
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            <label
+                              htmlFor="don_coor"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
                               Donation Coordinator:
-                            </h2>
+                            </label>
 
                             <input
                               type="text"
@@ -3113,9 +3157,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            <label
+                              htmlFor="don_coor_tel"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
                               Phone #:
-                            </h2>
+                            </label>
 
                             <input
                               type="tel"
@@ -3206,10 +3253,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         }`}
                       >
                         <div>
-                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          <label
+                            htmlFor="recommendations_contact"
+                            className="text-base font-semibold leading-7 text-gray-900"
+                          >
                             Please provide contact information for these
                             agencies/services.
-                          </h2>
+                          </label>
                           <textarea
                             {...register(
                               'recommendationFields.recommendations_contact'
