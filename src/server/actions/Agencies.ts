@@ -11,25 +11,14 @@ import {
 } from '@/server/models';
 import { authenticateServerAction } from '@/utils/auth';
 
-type CurrentStatusFilters = {
-  showCompleted: boolean;
-  showNeedsReview: boolean;
-  showExpired: boolean;
-};
-
 /**
  * @brief Gets all agencies
  * @param populateServices Populates the agencies' "services" field
  * @param searchString Filters agencies that do not have the search term present in their name or
- * @param currentStatusFilters Filters agencies based on their current status
- * @param compareFn Sorts the array of agencies before returning using the specified function; leave empty for no sorting
- * @returns An array of all agencies in the "agencies" collection
  */
 export async function getAgencies(
   populateServices: boolean = true,
-  searchString?: string,
-  currentStatusFilters?: CurrentStatusFilters,
-  compareFn?: (a: Agency, b: Agency) => number
+  searchString?: string
 ): Promise<Agency[]> {
   await authenticateServerAction();
   try {
@@ -50,26 +39,7 @@ export async function getAgencies(
       query = query.populate('info');
     }
 
-    let agencies: Agency[] = await query.exec();
-
-    if (compareFn) {
-      agencies = agencies.sort(compareFn);
-    }
-
-    if (currentStatusFilters) {
-      agencies = agencies.filter((agency) => {
-        switch (agency.currentStatus) {
-          case 'Completed':
-            return currentStatusFilters.showCompleted;
-          case 'Needs Review':
-            return currentStatusFilters.showNeedsReview;
-          case 'Expired':
-            return currentStatusFilters.showExpired;
-          default:
-            return true;
-        }
-      });
-    }
+    const agencies: Agency[] = await query.exec();
 
     return agencies;
   } catch (error) {

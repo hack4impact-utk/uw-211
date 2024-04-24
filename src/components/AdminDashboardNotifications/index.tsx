@@ -19,16 +19,10 @@ import {
 } from '@/components/ui/accordion';
 
 export async function AdminDashboardNotifications() {
-  const currentStatusFilters = {
-    showCompleted: false,
-    showNeedsReview: true,
-    showExpired: false,
-  };
-
   let agencies: Agency[] = [];
 
   try {
-    agencies = await getAgencies(false, undefined, currentStatusFilters);
+    agencies = await getAgencies(false, undefined); // TODO: only grab pending agencies
   } catch (error) {
     return <h1>Error loading data</h1>;
   }

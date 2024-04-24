@@ -35,14 +35,14 @@ export default function AdminDashboardTableSearch({
     <form className="flex flex-1 items-center" onSubmit={handleSearch}>
       <Input
         placeholder="Search for an agency..."
-        className="max-w w-1/3 rounded-r-none focus-visible:ring-blue-500"
+        className="max-w h-[2.5rem] w-1/3 rounded-r-none focus-visible:ring-transparent"
         defaultValue={search}
         onChange={(event) => setSearch(event.target.value)}
         onKeyDown={handleKeyDown}
       />
       <button
         type="submit"
-        className="rounded-r-md border border-l-0 bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+        className="h-[2.5rem] rounded-r-md border border-l-0 bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
       >
         <Search />
       </button>

@@ -30,7 +30,7 @@ const tableHeaders = [
 
 function getSortArrow(property: string, searchParams: DashboardParams) {
   if (searchParams.sortField !== property) {
-    return <></>;
+    return <div className="ml-2 h-4 w-4" />;
   }
 
   if (searchParams.sortAscending === 'true') {
