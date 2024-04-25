@@ -109,6 +109,8 @@ function zodServiceToTs(data: Service): ServiceModel {
     name: data.name,
     fullDescription: data.fullDescription,
     contactPersonName: data.contactPersonName,
+    // NEEDS TO BE CHANGED
+    // Hours arrays can have overlapping time ranges, these should be collapsed as much as possible.
     daysOpen: data.daysOpen.map((day) => {
       return {
         day: day.day,
@@ -116,6 +118,7 @@ function zodServiceToTs(data: Service): ServiceModel {
         closeTime: day.closeTime,
       };
     }),
+    // -----------------------------------------------------------------------------------^^^^
     eligibilityRequirements: data.eligibilityRequirements,
     applicationProcess: zodApplicationToTs(data),
     applicationProcessReferralRequiredByWhom: data.applicationProcess.referral
@@ -175,6 +178,8 @@ export function zodFormToTs(data: Inputs): AgencyInfoForm {
     languages: data.supportedLanguages || [],
     languagesWithoutPriorNotice: data.supportedLanguagesWithoutNotice,
     accessibilityADA: data.accessibilityADA,
+    // NEEDS TO BE CHANGED
+    // Hours arrays can have overlapping time ranges, these should be collapsed as much as possible.
     regularHoursOpening: data.hours.open,
     regularHoursClosing: data.hours.close,
     regularDaysOpen: Object.entries(data.days)
@@ -182,6 +187,7 @@ export function zodFormToTs(data: Inputs): AgencyInfoForm {
       .filter(([_, value]) => value)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .map(([key, _]) => dayMapping[key]),
+    // -----------------------------------------------------------------------------------^^^^
     updaterContactInfo: data.updaterContactInfo || {
       phoneNumber: 'The zod schema/front end need to collect a phone number',
     },
