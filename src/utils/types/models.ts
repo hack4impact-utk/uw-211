@@ -66,17 +66,7 @@ export interface AgencyInfoForm {
   languages: ('ASL' | 'Spanish' | string)[]; // other
   languagesWithoutPriorNotice?: string[];
   accessibilityADA?: boolean;
-  regularHoursOpening?: string;
-  regularHoursClosing?: string;
-  regularDaysOpen: (
-    | 'Monday'
-    | 'Tuesday'
-    | 'Wednesday'
-    | 'Thursday'
-    | 'Friday'
-    | 'Saturday'
-    | 'Sunday'
-  )[];
+  hours: Day[];
   updaterContactInfo: ContactInfo;
   services?: Service[];
   volunteerOpportunities?: boolean;

@@ -6,25 +6,6 @@ import { z } from 'zod';
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
 
-const dayMapping: {
-  [key: string]:
-    | 'Monday'
-    | 'Tuesday'
-    | 'Wednesday'
-    | 'Thursday'
-    | 'Friday'
-    | 'Saturday'
-    | 'Sunday';
-} = {
-  monday: 'Monday',
-  tuesday: 'Tuesday',
-  wednesday: 'Wednesday',
-  thursday: 'Thursday',
-  friday: 'Friday',
-  saturday: 'Saturday',
-  sunday: 'Sunday',
-};
-
 function zodApplicationToTs(
   data: Service
 ): (
@@ -109,8 +90,6 @@ function zodServiceToTs(data: Service): ServiceModel {
     name: data.name,
     fullDescription: data.fullDescription,
     contactPersonName: data.contactPersonName,
-    // NEEDS TO BE CHANGED
-    // Hours arrays can have overlapping time ranges, these should be collapsed as much as possible.
     daysOpen: data.daysOpen.map((day) => {
       return {
         day: day.day,
@@ -118,7 +97,6 @@ function zodServiceToTs(data: Service): ServiceModel {
         closeTime: day.closeTime,
       };
     }),
-    // -----------------------------------------------------------------------------------^^^^
     eligibilityRequirements: data.eligibilityRequirements,
     applicationProcess: zodApplicationToTs(data),
     applicationProcessReferralRequiredByWhom: data.applicationProcess.referral
@@ -178,16 +156,13 @@ export function zodFormToTs(data: Inputs): AgencyInfoForm {
     languages: data.supportedLanguages || [],
     languagesWithoutPriorNotice: data.supportedLanguagesWithoutNotice,
     accessibilityADA: data.accessibilityADA,
-    // NEEDS TO BE CHANGED
-    // Hours arrays can have overlapping time ranges, these should be collapsed as much as possible.
-    regularHoursOpening: data.hours.open,
-    regularHoursClosing: data.hours.close,
-    regularDaysOpen: Object.entries(data.days)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .filter(([_, value]) => value)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .map(([key, _]) => dayMapping[key]),
-    // -----------------------------------------------------------------------------------^^^^
+    hours: data.hours.map((day) => {
+      return {
+        day: day.day,
+        openTime: day.openTime,
+        closeTime: day.closeTime,
+      };
+    }),
     updaterContactInfo: data.updaterContactInfo || {
       phoneNumber: 'The zod schema/front end need to collect a phone number',
     },
