@@ -29,8 +29,14 @@ const LocationSchema = new mongoose.Schema<Location>({
 });
 
 const ServiceAreaSchema = new mongoose.Schema<ServiceArea>({
-  locations: {
-    type: [LocationSchema],
+  townCity: {
+    type: String,
+  },
+  zipCodes: {
+    type: [String],
+  },
+  counties: {
+    type: [String],
   },
   statewide: {
     type: Boolean,

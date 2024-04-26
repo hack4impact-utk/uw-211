@@ -76,30 +76,35 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
     agency.info[agency.info.length - 1].directorNameOrTitle
   );
 
-  const townCity: string[] = [];
-  const zipCodes: string[] = [];
-  const countyCities: string[] = [];
-  if (agency.info[agency.info.length - 1].serviceArea.locations) {
-    agency.info[agency.info.length - 1].serviceArea.locations?.forEach(
-      (location) => {
-        if (location.zipCode) {
-          zipCodes.push(location.zipCode);
-        }
-        if (location.city) {
-          townCity.push(location.city);
-        }
-        if (location.county) {
-          countyCities.push(location.county);
-        }
-      }
-    );
-  }
+  let townCity: string = '';
+  let zipCodes: string[] = [];
+  let countyCities: string[] = [];
+
+  townCity = agency.info[agency.info.length - 1].serviceArea.townCity!;
+  zipCodes = agency.info[agency.info.length - 1].serviceArea.zipCodes!;
+  countyCities = agency.info[agency.info.length - 1].serviceArea.counties!;
+  // if (agency.info[agency.info.length - 1].serviceArea.locations) {
+  // agency.info[agency.info.length - 1].serviceArea.locations?.forEach(
+  //   (location) => {
+  //     if (location.zipCode) {
+  //       zipCodes.push(location.zipCode);
+  //     }
+  //     if (location.city) {
+  //       townCity.push(location.city);
+  //     }
+  //     if (location.county) {
+  //       countyCities.push(location.county);
+  //     }
+  //   }
+  // );
+  // }
 
   const townCityField = form.getTextField('Specific TownCity');
   const zipCodeField = form.getTextField('Specific Zip Codes 1');
   const countyField = form.getTextField('Specific CountyCounties 1');
 
-  townCityField.setText(townCity.join(', '));
+  // townCityField.setText(townCity.join(', '));
+  townCityField.setText(townCity);
   zipCodeField.setText(zipCodes.join(', '));
   countyField.setText(countyCities.join(', '));
 
@@ -158,7 +163,8 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
   });
 
   if (
-    agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.confidential
+    // agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.confidential
+    agency.info[agency.info.length - 1].location.confidential
   ) {
     const confidential = form.getTextField(
       'Is the physical address confidential Yes'
@@ -170,47 +176,57 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
   }
 
   const physicalAddress = form.getTextField('Physical Address');
-  physicalAddress.setText(
-    agency.info[agency.info.length - 1].serviceArea.locations?.[0]
-      ?.physicalAddress
-  );
+  physicalAddress.setText;
+  // agency.info[agency.info.length - 1].serviceArea.locations?.[0]
+  //   ?.physicalAddress
+  agency.info[agency.info.length - 1].location.physicalAddress;
 
   if (
-    agency.info[agency.info.length - 1].serviceArea.locations?.[0]
-      ?.mailingAddress
+    // agency.info[agency.info.length - 1].serviceArea.locations?.[0]
+    //   ?.mailingAddress
+    agency.info[agency.info.length - 1].location.mailingAddress
   ) {
+    // FIX: NO SUCH FIELD AS MAILING ADDRESS
     const mailingAddress = form.getTextField('Mailing Address');
     mailingAddress.setText(
-      agency.info[agency.info.length - 1].serviceArea.locations?.[0]
-        ?.mailingAddress
+      // agency.info[agency.info.length - 1].serviceArea.locations
+      agency.info[agency.info.length - 1].location.mailingAddress
     );
   }
 
-  if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.county) {
+  // if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.county) {
+  if (agency.info[agency.info.length - 1].location.county) {
     const locationCounty = form.getTextField('County_3');
     locationCounty.setText(
-      agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.county
+      // agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.county
+      agency.info[agency.info.length - 1].location.county
     );
   }
 
-  if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.city) {
+  // if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.city) {
+  if (agency.info[agency.info.length - 1].location.city) {
     const locationCity = form.getTextField('City_3');
     locationCity.setText(
-      agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.city
+      // agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.city
+      agency.info[agency.info.length - 1].location.city
     );
   }
 
-  if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.state) {
+  // if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.state) {
+  if (agency.info[agency.info.length - 1].location.state) {
     const locationState = form.getTextField('State_3');
     locationState.setText(
-      agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.state
+      // agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.state
+      agency.info[agency.info.length - 1].location.state
     );
   }
 
-  if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.zipCode) {
+  // if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.zipCode) {
+  if (agency.info[agency.info.length - 1].location.zipCode) {
     const locationZip = form.getTextField('Zip Code');
     locationZip.setText(
-      agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.zipCode
+      // agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.zipCode
+      agency.info[agency.info.length - 1].location.zipCode
     );
   }
 
