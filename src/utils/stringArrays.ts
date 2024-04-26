@@ -7,3 +7,13 @@ export const convertToArray = (input: string) => {
     return str.split(',');
   } else return [input];
 };
+
+// convert back to comma delimited string
+export const convertToString = (input: string[]) => {
+  let output = '';
+
+  for (let i = 0; i < input.length; i++) {
+    output += `${input[i]}, `;
+  }
+  return output.substring(0, output.length - 2);
+};

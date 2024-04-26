@@ -42,7 +42,7 @@ import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
 import { formSteps } from '@/utils/constants/formSteps';
 import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
 import { zodFormToTs } from '@/utils/conversions';
-import { convertToArray } from '@/utils/convertToArray';
+import { convertToArray, convertToString } from '@/utils/stringArrays';
 import Hours from '@/components/Hours';
 
 type Inputs = z.infer<typeof FormDataSchema>;
@@ -953,6 +953,55 @@ homeless men, etc.) This helps us to make appropriate referrals."
     return service_items;
   };
 
+  const get_fundingSource = () => {
+    const sources = new Map([
+      ['federal', 'Federal'],
+      ['state', 'State'],
+      ['county', 'County'],
+      ['city', 'City'],
+      ['donations', 'Donations'],
+      ['foundations', 'Foundations/Private Org.'],
+      ['feesDues', 'Fees/Dues'],
+      ['unitedWay', 'United Way'],
+      ['other', 'Other'],
+    ]);
+
+    const fundingSource = getValues('fundingSources');
+    const options: string[] = [];
+    let other: string = '';
+
+    Object.entries(fundingSource).forEach(([key, value]) => {
+      if (value && key != 'none' && key != 'other') {
+        options.push(sources.get(key)!);
+      }
+    });
+
+    if (fundingSource.other?.selected) {
+      other = String(fundingSource.other.content);
+      options.push('Other');
+    }
+
+    return (
+      <>
+        <p>
+          {options.map((item, index) => (
+            <span key={index}>
+              {item}
+              {index !== options.length - 1 && ', '}
+            </span>
+          ))}
+        </p>
+        <div className="ml-6">
+          {other != '' && (
+            <p>
+              Other: <span className="underline">{other}</span>
+            </p>
+          )}
+        </div>
+      </>
+    );
+  };
+
   const PreliminariesHeader = (data: { name: string }) => {
     return (
       <>
@@ -964,6 +1013,22 @@ homeless men, etc.) This helps us to make appropriate referrals."
         </p>
       </>
     );
+  };
+
+  const get_accessibility_langs = () => {
+    const language = getValues('languageSupport');
+    let result = '';
+
+    if (language.asl) result += 'ASL, ';
+    if (language.spanish) result += 'Spanish, ';
+    if (language.teleinterpreterLanguageService)
+      result += 'Tele-interpreter Service, ';
+    if (language.other.selected) {
+      result += convertToString(language.other.content!);
+      result += ', ';
+    }
+
+    return result.substring(0, result.length - 2);
   };
 
   return (
@@ -1366,16 +1431,17 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 />
 
                 <section className="mt-10 flex flex-col md:flex-row">
+                  {/* Left */}
                   <section className="flex w-full flex-col md:w-1/2">
                     {/* Hours of Operation */}
-                      <div>
-                        <h3 className="block text-sm font-medium leading-6 text-gray-900">
-                          Hours of Operation
-                        </h3>
-                        <div className='mr-10'>
-                          <Hours name='hours' control={control} />
-                        </div>
+                    <div>
+                      <h3 className="block text-sm font-medium leading-6 text-gray-900">
+                        Hours of Operation
+                      </h3>
+                      <div className="mr-10">
+                        <Hours name="hours" control={control} />
                       </div>
+                    </div>
 
                     {/* Funding Sources */}
                     <div className="mt-8">
@@ -1565,50 +1631,57 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     </div>
                   </section>
 
-                  {/* Location */}
-                  <div className="w-full md:w-1/2">
-                    <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
-                      Location Information
-                    </h3>
-                    {/* location.confidential */}
+                  {/* Right */}
+                  <section className="w-full md:w-1/2">
+                    {/* Location */}
                     <div>
-                      <label
-                        htmlFor="location.confidential"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Is the physical address confidential?
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="flex flex-row gap-4 whitespace-nowrap">
-                        <div>
-                          <input
-                            id="location.confidential"
-                            type="radio"
-                            value="false"
-                            {...register('location.confidential')}
-                            autoComplete="location.confidential"
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                            defaultChecked
-                          />
-                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            No
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            id="location.confidential"
-                            type="radio"
-                            value="true"
-                            {...register('location.confidential', {
-                              setValueAs: (value: string) =>
-                                value === 'true' ? true : false,
-                            })}
-                            autoComplete="location.confidential"
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                          />
-                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            Yes
-                          </label>
+                      <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
+                        Location Information
+                      </h3>
+                      {/* location.confidential */}
+                      <div>
+                        <h2 className="block text-sm font-medium leading-6 text-gray-900">
+                          Is the physical address confidential?
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </h2>
+                        <div className="flex flex-row gap-4 whitespace-nowrap">
+                          <div>
+                            <input
+                              id="location.confidential1"
+                              type="radio"
+                              value="false"
+                              {...register('location.confidential', {
+                                setValueAs: (v) => !(v === 'false'),
+                              })}
+                              autoComplete="location.confidential"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              defaultChecked
+                            />
+                            <label
+                              htmlFor="location.confidential1"
+                              className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              No
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              id="location.confidential2"
+                              type="radio"
+                              value="true"
+                              {...register('location.confidential', {
+                                setValueAs: (v) => v === 'true',
+                              })}
+                              autoComplete="location.confidential"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <label
+                              htmlFor="location.confidential2"
+                              className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              Yes
+                            </label>
+                          </div>
                         </div>
                         <div className="mt-2 min-h-6 ">
                           {errors.location?.confidential?.message && (
@@ -1618,168 +1691,172 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           )}
                         </div>
                       </div>
-                    </div>
 
-                    {/* location.physicalAddress */}
-                    <div className="w-full">
-                      <label
-                        htmlFor="location.physicalAddress"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Physical Address
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          id="location.physicalAddress"
-                          {...register('location.physicalAddress')}
-                          autoComplete="location.physicalAddress"
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.location?.physicalAddress?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.location.physicalAddress.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {/* location.mailingAddress */}
-                    <div className="w-full">
-                      <label
-                        htmlFor="location.mailingAddress"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Mailing Address (Only list if different from Physical.)
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          id="location.mailingAddress"
-                          {...register('location.mailingAddress')}
-                          autoComplete="location.mailingAddress"
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.location?.mailingAddress?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.location.mailingAddress.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {/* location.county */}
-                    <div className="w-full">
-                      <label
-                        htmlFor="location.county"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        County
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          id="location.county"
-                          {...register('location.county')}
-                          autoComplete="location.county"
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.location?.county?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.location.county.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-2 md:flex-row md:gap-4">
-                      {/* location.city */}
-                      <div className="w-full sm:w-1/2 md:w-3/6">
+                      {/* location.physicalAddress */}
+                      <div className="w-full">
                         <label
-                          htmlFor="location.city"
+                          htmlFor="location.physicalAddress"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          City
+                          Physical Address
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
                           <input
                             type="text"
-                            id="location.city"
-                            {...register('location.city')}
-                            autoComplete="location.city"
+                            id="location.physicalAddress"
+                            {...register('location.physicalAddress')}
+                            autoComplete="location.physicalAddress"
                             className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
-                            {errors.location?.city?.message && (
+                            {errors.location?.physicalAddress?.message && (
                               <p className="mt-2 text-sm text-red-400">
-                                {errors.location.city.message}
+                                {errors.location.physicalAddress.message}
                               </p>
                             )}
                           </div>
                         </div>
                       </div>
 
-                      {/* location.state */}
-                      <div className="w-full sm:w-1/2 md:w-1/6">
+                      {/* location.mailingAddress */}
+                      <div className="w-full">
                         <label
-                          htmlFor="location.state"
+                          htmlFor="location.mailingAddress"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          State
-                          <span className="ml-1 text-sm text-red-400">*</span>
+                          Mailing Address (Only list if different from
+                          Physical.)
                         </label>
                         <div className="mt-2">
                           <input
                             type="text"
-                            id="location.state"
-                            {...register('location.state')}
-                            autoComplete="location.state"
+                            id="location.mailingAddress"
+                            {...register('location.mailingAddress')}
+                            autoComplete="location.mailingAddress"
                             className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
-                            {errors.location?.state?.message && (
+                            {errors.location?.mailingAddress?.message && (
                               <p className="mt-2 text-sm text-red-400">
-                                {errors.location.state.message}
+                                {errors.location.mailingAddress.message}
                               </p>
                             )}
                           </div>
                         </div>
                       </div>
 
-                      {/* location.zipCode */}
-                      <div className="w-full sm:w-1/2 md:w-2/6">
+                      {/* location.county */}
+                      <div className="w-full">
                         <label
-                          htmlFor="location.zipCode"
+                          htmlFor="location.county"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Zip Code
+                          County
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
                           <input
                             type="text"
-                            id="location.zipCode"
-                            {...register('location.zipCode')}
-                            autoComplete="location.zipCode"
+                            id="location.county"
+                            {...register('location.county')}
+                            autoComplete="location.county"
                             className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
-                            {errors.location?.zipCode?.message && (
+                            {errors.location?.county?.message && (
                               <p className="mt-2 text-sm text-red-400">
-                                {errors.location.zipCode.message}
+                                {errors.location.county.message}
                               </p>
                             )}
                           </div>
                         </div>
                       </div>
+
+                      <div className="flex flex-col gap-2 md:flex-row md:gap-4">
+                        {/* location.city */}
+                        <div className="w-full sm:w-1/2 md:w-3/6">
+                          <label
+                            htmlFor="location.city"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            City
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="location.city"
+                              {...register('location.city')}
+                              autoComplete="location.city"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.location?.city?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.location.city.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* location.state */}
+                        <div className="w-full sm:w-1/2 md:w-1/6">
+                          <label
+                            htmlFor="location.state"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            State
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="location.state"
+                              {...register('location.state')}
+                              autoComplete="location.state"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.location?.state?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.location.state.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* location.zipCode */}
+                        <div className="w-full sm:w-1/2 md:w-2/6">
+                          <label
+                            htmlFor="location.zipCode"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Zip Code
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="location.zipCode"
+                              {...register('location.zipCode')}
+                              autoComplete="location.zipCode"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.location?.zipCode?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.location.zipCode.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </section>
                 </section>
               </motion.div>
             )}
@@ -1798,16 +1875,23 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   name={steps[currentStep].subpages[currentSubstep].name}
                 />
 
-                <section className="mt-10 flex flex-col md:flex-row">
-                  <section>
+                <section className="mt-10 flex w-full flex-col gap-4 md:flex-row">
+                  {/* Left */}
+                  <section className="w-full md:w-1/2">
                     {/* Service Area */}
                     <div>
-                      <div className="flex flex-col gap-4">
-                        <h3 className="mb-4 block text-sm font-medium leading-6 text-gray-900">
+                      <div className="mb-4">
+                        <h3 className="block text-sm font-medium leading-6 text-gray-900">
                           Service Area
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </h3>
+                        <p className="mt-1 text-sm leading-6 text-gray-600">
+                          Choose the description that best reflects your service
+                          area.
+                        </p>
+                      </div>
 
+                      <div className="flex flex-col gap-8">
                         {/* serviceArea.townCity */}
                         <div>
                           <label
@@ -1870,62 +1954,251 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
 
                         {/* Region */}
-                        <div className="flex flex-col items-center gap-4 md:flex-row">
-                          {/* serviceArea.statewide */}
-                          <div className="space-x-2">
-                            <input
-                              type="checkbox"
-                              id="serviceArea.statewide"
-                              className="form-checkbox"
-                              {...register('serviceArea.statewide')}
-                            />
-                            <label
-                              htmlFor="serviceArea.statewide"
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Statewide
-                            </label>
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                          <div className="flex flex-row gap-4">
+                            {/* serviceArea.statewide */}
+                            <div className="space-x-2">
+                              <input
+                                type="checkbox"
+                                id="serviceArea.statewide"
+                                className="form-checkbox"
+                                {...register('serviceArea.statewide')}
+                              />
+                              <label
+                                htmlFor="serviceArea.statewide"
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                Statewide
+                              </label>
+                            </div>
+
+                            {/* serviceArea.nationwide */}
+                            <div className="space-x-2">
+                              <input
+                                type="checkbox"
+                                id="serviceArea.nationwide"
+                                className="form-checkbox"
+                                {...register('serviceArea.nationwide')}
+                              />
+                              <label
+                                htmlFor="serviceArea.nationwide"
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                Nationwide
+                              </label>
+                            </div>
                           </div>
 
-                          {/* serviceArea.nationwide */}
-                          <div className="space-x-2">
-                            <input
-                              type="checkbox"
-                              id="serviceArea.nationwide"
-                              className="form-checkbox"
-                              {...register('serviceArea.nationwide')}
-                            />
+                          {/* other */}
+                          <div className="flex flex-row items-center gap-4">
                             <label
-                              htmlFor="serviceArea.nationwide"
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              htmlFor="serviceArea.other"
+                              className="block text-sm font-medium leading-6 text-gray-900"
                             >
-                              Nationwide
+                              Other
                             </label>
-                          </div>
-
-                          <label
-                            htmlFor="serviceArea.other"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Other
-                          </label>
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              id="serviceArea.other"
-                              {...register('serviceArea.other')}
-                              autoComplete="serviceArea.other"
-                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                            />
+                            <div className="mt-2">
+                              <input
+                                type="text"
+                                id="serviceArea.other"
+                                {...register('serviceArea.other')}
+                                autoComplete="serviceArea.other"
+                                className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Error */}
-                      <div className="mt-2 min-h-6 ">
+                      <div className="mt-4 min-h-6 ">
                         {errors.serviceArea?.message && (
                           <p className="mt-2 text-sm text-red-400">
                             {errors.serviceArea.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Right */}
+                  <section className="w-full md:w-1/2">
+                    {/* Annual Agency Update */}
+                    <div>
+                      <div className="mb-4">
+                        <h3 className="block text-sm font-medium leading-6 text-gray-900">
+                          Annual Agency Update
+                        </h3>
+                        <p className="mt-1 text-sm leading-6 text-gray-600">
+                          Provide a person we can contact for our annual
+                          information update.
+                        </p>
+                      </div>
+
+                      <div className="flex flex-row gap-2 md:gap-4">
+                        {/* annualAgencyUpdate.name */}
+                        <div className="w-2/3">
+                          <label
+                            htmlFor="annualAgencyUpdate.name"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Name
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="annualAgencyUpdate.name"
+                              {...register('annualAgencyUpdate.name')}
+                              autoComplete="annualAgencyUpdate.name"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                          <div className="mt-2 min-h-6 ">
+                            {errors.annualAgencyUpdate?.name?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.annualAgencyUpdate.name.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* annualAgencyUpdate.title */}
+                        <div className="w-1/3">
+                          <label
+                            htmlFor="annualAgencyUpdate.title"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Title
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="annualAgencyUpdate.title"
+                              {...register('annualAgencyUpdate.title')}
+                              autoComplete="annualAgencyUpdate.title"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                          <div className="mt-2 min-h-6 ">
+                            {errors.annualAgencyUpdate?.title?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.annualAgencyUpdate.title.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* annualAgencyUpdate.phoneNumber */}
+                      <div>
+                        <label
+                          htmlFor="annualAgencyUpdate.phoneNumber"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Phone Number
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="annualAgencyUpdate.phoneNumber"
+                            {...register('annualAgencyUpdate.phoneNumber')}
+                            autoComplete="annualAgencyUpdate.phoneNumber"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+                        <div className="mt-2 min-h-6 ">
+                          {errors.annualAgencyUpdate?.phoneNumber?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.annualAgencyUpdate.phoneNumber.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* annualAgencyUpdate.email */}
+                      <div>
+                        <label
+                          htmlFor="annualAgencyUpdate.email"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Email
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="annualAgencyUpdate.email"
+                            {...register('annualAgencyUpdate.email')}
+                            autoComplete="annualAgencyUpdate.email"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+                        <div className="mt-2 min-h-6 ">
+                          {errors.annualAgencyUpdate?.email?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.annualAgencyUpdate.email.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* annualAgencyUpdate.hideFromWebsite */}
+                      <div className="flex flex-col gap-6 md:flex-row">
+                        <h2 className="block text-sm font-medium leading-6 text-gray-900">
+                          Would you like this information to be hidden from the
+                          website?
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </h2>
+                        <div className="flex flex-row gap-4 whitespace-nowrap">
+                          <div>
+                            <input
+                              id="annualAgencyUpdate.hideFromWebsite1"
+                              type="radio"
+                              value=""
+                              {...register(
+                                'annualAgencyUpdate.hideFromWebsite'
+                              )}
+                              autoComplete="annualAgencyUpdate.hideFromWebsite"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              defaultChecked
+                            />
+                            <label
+                              htmlFor="annualAgencyUpdate.hideFromWebsite1"
+                              className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              No
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              id="annualAgencyUpdate.hideFromWebsite2"
+                              type="radio"
+                              value="true"
+                              {...register(
+                                'annualAgencyUpdate.hideFromWebsite'
+                              )}
+                              autoComplete="annualAgencyUpdate.hideFromWebsite"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <label
+                              htmlFor="annualAgencyUpdate.hideFromWebsite2"
+                              className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              Yes
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* errors */}
+                      <div className="mt-2 min-h-6 ">
+                        {errors.annualAgencyUpdate?.hideFromWebsite
+                          ?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.annualAgencyUpdate.hideFromWebsite.message}
                           </p>
                         )}
                       </div>
@@ -1961,12 +2234,170 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   Accessibility
                 </h2>
 
-                <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
-                  <p>
-                    Teleinterpreter Language Service, Supported Languages,
-                    Supported Languages Without Notice, Accessibility ADA
-                  </p>
-                </div>
+                <section className="mt-10 flex flex-col gap-4">
+                  {/* Language Support */}
+                  <div>
+                    <p className="block text-sm font-medium leading-6 text-gray-900">
+                      In addition to English, what languages are spoken by at
+                      least one of your part-time staff?
+                    </p>
+
+                    <div className="flex flex-col gap-8 md:flex-row">
+                      {/* ASL */}
+                      <div className="space-x-2">
+                        <input
+                          type="checkbox"
+                          id="languageSupport.asl"
+                          className="form-checkbox"
+                          {...register('languageSupport.asl')}
+                        />
+                        <label
+                          htmlFor="languageSupport.asl"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          American Sign
+                        </label>
+                      </div>
+
+                      {/* Spanish */}
+                      <div className="space-x-2">
+                        <input
+                          type="checkbox"
+                          id="languageSupport.spanish"
+                          className="form-checkbox"
+                          {...register('languageSupport.spanish')}
+                        />
+                        <label
+                          htmlFor="languageSupport.spanish"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Spanish
+                        </label>
+                      </div>
+
+                      {/* Tele-interpreter Service */}
+                      <div className="space-x-2">
+                        <input
+                          type="checkbox"
+                          id="languageSupport.teleinterpreterLanguageService"
+                          className="form-checkbox"
+                          {...register(
+                            'languageSupport.teleinterpreterLanguageService'
+                          )}
+                        />
+                        <label
+                          htmlFor="languageSupport.teleinterpreterLanguageService"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Tele-interpreter Service
+                        </label>
+                      </div>
+
+                      {/* Other */}
+                      <div>
+                        <div className="space-x-2">
+                          <input
+                            type="checkbox"
+                            id="languageSupport.other"
+                            className="form-checkbox"
+                            {...register('languageSupport.other.selected')}
+                          />
+                          <label
+                            htmlFor="languageSupport.other"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            Other
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    {watch('languageSupport.other.selected') && (
+                      <div className="mt-4">
+                        <input
+                          className="h-8 w-1/3 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          placeholder="Please specify."
+                          {...register('languageSupport.other.content', {
+                            setValueAs: (data) => convertToArray(data),
+                          })}
+                        />
+                        <div className="mt-4 min-h-6 ">
+                          {errors.languageSupport?.other?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.languageSupport.other.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Supported Languages Without Notice */}
+                  <div>
+                    <label
+                      htmlFor="supportedLanguagesWithoutNotice"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Can any languages be provided with prior notice? (Please
+                      list.)
+                    </label>
+                    <div className="mt-2">
+                      <textarea
+                        // type="text"
+                        id="supportedLanguagesWithoutNotice"
+                        {...register('supportedLanguagesWithoutNotice', {
+                          setValueAs: (data) => convertToArray(data),
+                        })}
+                        autoComplete="supportedLanguagesWithoutNotice"
+                        cols={30}
+                        rows={5}
+                        className="w-full resize-none rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  {/* Accessibility ADA */}
+                  <div className="flex flex-col gap-6 md:flex-row">
+                    <h2 className="block text-sm font-medium leading-6 text-gray-900">
+                      Is your facility accessible to people with disabilities as
+                      defined by the Americans with Disabilities Act (ADA)?
+                    </h2>
+                    <div className="flex flex-row gap-4 whitespace-nowrap">
+                      <div>
+                        <input
+                          id="accessibilityADA1"
+                          type="radio"
+                          value=""
+                          {...register('accessibilityADA')}
+                          autoComplete="accessibilityADA"
+                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          defaultChecked
+                        />
+                        <label
+                          htmlFor="accessibilityADA1"
+                          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          No
+                        </label>
+                      </div>
+                      <div>
+                        <input
+                          id="accessibilityADA2"
+                          type="radio"
+                          value="true"
+                          {...register('accessibilityADA')}
+                          autoComplete="accessibilityADA"
+                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                        />
+                        <label
+                          htmlFor="accessibilityADA2"
+                          className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          Yes
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </section>
               </motion.div>
             )}
           </motion.div>
@@ -2183,7 +2614,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <div className="flex flex-row gap-4 whitespace-nowrap">
                             <div>
                               <input
-                                id="volunteers"
+                                id="volunteers1"
                                 type="radio"
                                 value="false"
                                 {...register('volunteerFields.volunteers')}
@@ -2194,13 +2625,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                 defaultChecked
                               />
-                              <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              <label
+                                htmlFor="volunteers1"
+                                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
                                 No
                               </label>
                             </div>
                             <div>
                               <input
-                                id="volunteers"
+                                id="volunteers2"
                                 type="radio"
                                 value="true"
                                 {...register('volunteerFields.volunteers')}
@@ -2210,7 +2644,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 autoComplete="volunteers"
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               />
-                              <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              <label
+                                htmlFor=""
+                                className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
                                 Yes
                               </label>
                             </div>
@@ -2231,9 +2668,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         }`}
                       >
                         <div className="mb-4">
-                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          <label
+                            htmlFor="vol_reqs"
+                            className="text-base font-semibold leading-7 text-gray-900"
+                          >
                             Who is eligible to volunteer?
-                          </h2>
+                          </label>
                           <textarea
                             id="vol_reqs"
                             {...register('volunteerFields.vol_reqs')}
@@ -2255,9 +2695,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                         <div className="flex w-full flex-col gap-6 sm:flex-row">
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            <label
+                              htmlFor="vol_cor"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
                               Volunteer Coordinator:
-                            </h2>
+                            </label>
 
                             <input
                               type="text"
@@ -2277,9 +2720,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            <label
+                              htmlFor="vol_coor_tel"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
                               Phone #:
-                            </h2>
+                            </label>
 
                             <input
                               type="tel"
@@ -2289,7 +2735,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               disabled={volunteerChecked === 'false'}
                               className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                             />
-
                             <div className="mt-2 min-h-6 ">
                               {errors.volunteerFields?.vol_coor_tel
                                 ?.message && (
@@ -2316,7 +2761,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <div className="flex flex-row gap-4 whitespace-nowrap">
                             <div>
                               <input
-                                id="donation"
+                                id="donation1"
                                 type="radio"
                                 value="false"
                                 {...register('donationFields.donation')}
@@ -2326,13 +2771,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                 defaultChecked
                               />
-                              <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              <label
+                                htmlFor="donation1"
+                                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
                                 No
                               </label>
                             </div>
                             <div>
                               <input
-                                id="donation"
+                                id="donation2"
                                 type="radio"
                                 value="true"
                                 {...register('donationFields.donation')}
@@ -2341,7 +2789,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 }}
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               />
-                              <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                              <label
+                                htmlFor="donation2"
+                                className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
                                 Yes
                               </label>
                             </div>
@@ -2363,9 +2814,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       >
                         <div className="mb-2">
                           <div className="flex flex-col items-start lg:flex-row lg:items-center lg:gap-8">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            <label
+                              htmlFor="don_ex"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
                               Please list.
-                            </h2>
+                            </label>
                             <input
                               type="text"
                               {...register('donationFields.don_ex')}
@@ -2393,7 +2847,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-row gap-4 whitespace-nowrap">
                               <div>
                                 <input
-                                  id="pickup"
+                                  id="pickup1"
                                   type="radio"
                                   value="false"
                                   disabled={donationChecked === 'false'}
@@ -2404,13 +2858,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                   className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                   defaultChecked
                                 />
-                                <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                <label
+                                  htmlFor="pickup1"
+                                  className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                >
                                   No
                                 </label>
                               </div>
                               <div>
                                 <input
-                                  id="pickup"
+                                  id="pickup2"
                                   type="radio"
                                   value="true"
                                   disabled={donationChecked === 'false'}
@@ -2420,7 +2877,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                   }}
                                   className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                 />
-                                <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                <label
+                                  htmlFor="pickup2"
+                                  className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                >
                                   Yes
                                 </label>
                               </div>
@@ -2443,9 +2903,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         >
                           <div className="">
                             <div className="flex flex-row items-center gap-4">
-                              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                              <label
+                                htmlFor="pickup_loc"
+                                className="text-base font-semibold leading-7 text-gray-900"
+                              >
                                 Where?
-                              </h2>
+                              </label>
                               <input
                                 type="text"
                                 {...register('donationFields.pickup_loc')}
@@ -2466,9 +2929,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                         <div className="flex w-full flex-col gap-6 sm:flex-row">
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            <label
+                              htmlFor="don_coor"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
                               Donation Coordinator:
-                            </h2>
+                            </label>
 
                             <input
                               type="text"
@@ -2487,9 +2953,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
+                            <label
+                              htmlFor="don_coor_tel"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
                               Phone #:
-                            </h2>
+                            </label>
 
                             <input
                               type="tel"
@@ -2580,10 +3049,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         }`}
                       >
                         <div>
-                          <h2 className="text-base font-semibold leading-7 text-gray-900">
+                          <label
+                            htmlFor="recommendations_contact"
+                            className="text-base font-semibold leading-7 text-gray-900"
+                          >
                             Please provide contact information for these
                             agencies/services.
-                          </h2>
+                          </label>
                           <textarea
                             {...register(
                               'recommendationFields.recommendations_contact'
@@ -2592,7 +3064,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             cols={30}
                             rows={10}
                             disabled={recommendationChecked === 'false'}
-                            placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
+                            placeholder="List type of volunteer work, age, training, background checks, other requirements for your volunteers"
                             className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           ></textarea>
                           <div className="mt-2 min-h-6 ">
@@ -2645,77 +3117,507 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   </section>
 
                   {/* Preliminaries */}
-                  <section className="flex flex-col">
-                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                  <section className="flex flex-col gap-4">
+                    <h2 className="text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
                       Preliminaries
                     </h2>
 
-                    <div className="flex flex-col gap-4 sm:flex-row sm:gap-12">
-                      {/* Prelim Info */}
-                      <section className="flex flex-col gap-2 sm:w-1/2">
-                        <div className="flex flex-col sm:flex-row">
-                          <p className="sm:w-1/2">
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                    {/* General */}
+                    <section className="mb-2">
+                      <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                        General
+                      </h2>
+                      <div className="flex w-full flex-col gap-4 md:flex-row">
+                        {/* 1st Column */}
+                        <div className="flex w-full flex-col gap-2 md:w-1/3">
+                          {/* Legal Name */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                               Legal Name:
-                            </span>{' '}
-                            {getValues('legalName')}
-                          </p>
-
-                          {getValues('akas') ? (
-                            <p className="sm:w-1/2">
-                              <span className="text-base font-semibold leading-7 text-gray-900">
-                                Also Known As:
-                              </span>{' '}
-                              {getValues('akas')}
                             </p>
-                          ) : (
-                            <p className="text-md leading-6 text-gray-400 sm:w-1/2">
-                              Also Known As: N/A
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('legalName')}
                             </p>
-                          )}
-                        </div>
+                          </div>
 
-                        <div className="flex flex-col sm:flex-row">
-                          <p className="sm:w-1/2">
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                          {/* AKAs */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            {getValues('akas') ? (
+                              <>
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Also Known As:
+                                </p>
+                                <p className="w-full md:w-1/2 ">
+                                  {getValues('akas')}
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-md w-full leading-6 text-gray-400 md:w-1/2">
+                                  Also Known As:
+                                </p>
+                                <p className="w-full text-gray-400 md:w-1/2">
+                                  N/A
+                                </p>
+                              </>
+                            )}
+                          </div>
+
+                          {/* Legal Status */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                               Legal Status:
-                            </span>{' '}
-                            {getValues('legalStatus').charAt(0).toUpperCase() +
-                              getValues('legalStatus').slice(1)}
-                          </p>
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('legalStatus')
+                                .charAt(0)
+                                .toUpperCase() +
+                                getValues('legalStatus').slice(1)}
+                            </p>
+                          </div>
 
-                          <p className="sm:w-1/2">
-                            <span className="text-base font-semibold leading-7 text-gray-900">
+                          {/* Director Name */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                               Director Name:
-                            </span>{' '}
-                            {getValues('directorName')}
-                          </p>
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('directorName')}
+                            </p>
+                          </div>
                         </div>
 
-                        <p className="text-base font-semibold leading-7 text-gray-900">
-                          Brief Agency Information
-                        </p>
-                        <p>{getValues('agencyInfo')}</p>
-                      </section>
+                        {/* Second Column */}
+                        <div className="flex w-full flex-col gap-2 md:w-1/3">
+                          {/* Main Phone Number */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Main Phone Number:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.phoneNumber')}
+                            </p>
+                          </div>
 
-                      {/* Hours of Operation */}
-                      <section className="w-1/2">
-                        {/* TODO */}
-                        <h3 className="text-base font-semibold leading-7 text-gray-900">
-                          Hours of Operation
-                        </h3>
-                        <p>
-                          <span className="bg-blue-500 text-white">
-                            TODO: Hours of operation
-                          </span>
+                          {/* Fax Number */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Fax Number:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.faxNumber')}
+                            </p>
+                          </div>
+
+                          {/* Toll Free Number */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Toll Free Number:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.tollFreeNumber')}
+                            </p>
+                          </div>
+
+                          {/* TDD/TTY Number */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              TDD/TTY Number:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.TDDTTYNumber')}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Third Column */}
+                        <div className="flex w-full flex-col gap-2 md:w-1/3">
+                          {/* Additional Numbers */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Additional Numbers:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              <span className="bg-blue-500 text-white">
+                                TODO: Additional Numbers
+                              </span>
+                            </p>
+                          </div>
+
+                          {/* Email */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Email:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.email')}
+                            </p>
+                          </div>
+
+                          {/* Website */}
+                          <div className="flex flex-col md:flex-row md:items-start">
+                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              Website:
+                            </p>
+                            <p className="w-full md:w-1/2 ">
+                              {getValues('contactInfo.website')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Brief Agency Information */}
+                      <p className="mt-8 text-base font-semibold leading-7 text-gray-900">
+                        Brief Agency Information
+                      </p>
+                      <p>{getValues('agencyInfo')}</p>
+                    </section>
+
+                    <hr />
+
+                    {/* Operations */}
+                    <section className="my-2">
+                      <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                        Operations
+                      </h2>
+
+                      <div className="flex flex-col md:flex-row">
+                        <div className="w-full md:w-1/2">
+                          {/* Hours of Operation */}
+                          <div className="mb-6">
+                            {/* TODO */}
+                            <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                              Hours of Operation
+                            </h3>
+                            <p>
+                              <span className="bg-blue-500 text-white">
+                                TODO: Hours of operation
+                              </span>
+                            </p>
+                          </div>
+
+                          {/* Funding Source */}
+                          <div>
+                            <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                              Funding Sources
+                            </h3>
+                            {get_fundingSource()}
+                          </div>
+                        </div>
+
+                        {/* Location Information */}
+                        <div className="w-full md:w-1/2">
+                          <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                            Location Information
+                          </h3>
+
+                          <div className="flex w-full flex-col gap-2">
+                            {/* Is the physical address confidential? */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Is the physical address confidential?
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues(
+                                  'location.confidential'
+                                ).toString() === 'true'
+                                  ? 'Yes'
+                                  : 'No'}
+                              </p>
+                            </div>
+
+                            {/* Physical Address */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Physical Address:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('location.physicalAddress')}
+                              </p>
+                            </div>
+
+                            {/* Mailing Address */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              {getValues('akas') ? (
+                                <>
+                                  <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                    Mailing Address:
+                                  </p>
+                                  <p className="w-full md:w-1/2 ">
+                                    {getValues('location.mailingAddress')}
+                                  </p>
+                                </>
+                              ) : (
+                                <>
+                                  <p className="text-md w-full leading-6 text-gray-400 md:w-1/2">
+                                    Mailing Address:
+                                  </p>
+                                  <p className="w-full text-gray-400 md:w-1/2">
+                                    Same as physical address
+                                  </p>
+                                </>
+                              )}
+                            </div>
+
+                            {/* County */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                County:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('location.county')}
+                              </p>
+                            </div>
+
+                            {/* City */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                City:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                <p>{getValues('location.city')}</p>
+                              </p>
+                            </div>
+
+                            {/* State */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                State:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('location.state')}
+                              </p>
+                            </div>
+
+                            {/* Zip Code */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Zip Code:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('location.zipCode')}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
+                    <hr />
+
+                    {/* Additional */}
+                    <section className="my-2">
+                      <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                        Additional
+                      </h2>
+
+                      <div className="flex flex-col md:flex-row">
+                        {/* Service Area */}
+                        <div className="md:w-1/2">
+                          <h3 className="mb-4 w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            Service Area
+                          </h3>
+
+                          <div className="flex flex-col gap-2">
+                            {/* Specific Town/City */}
+                            {getValues('serviceArea.townCity') != '' && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Specific Town/City:
+                                </p>
+                                <p className="w-full md:w-1/2 ">
+                                  {getValues('serviceArea.townCity')}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Specific Zip Codes */}
+                            {getValues('serviceArea.zipCodes').length != 0 && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Specific Zip Codes:
+                                </p>
+                                <p className="w-full md:w-1/2">
+                                  {convertToString(
+                                    getValues('serviceArea.zipCodes')
+                                  )}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Specific Counties */}
+                            {getValues('serviceArea.counties').length != 0 && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Specific Counties:
+                                </p>
+                                <p className="w-full md:w-1/2">
+                                  {convertToString(
+                                    getValues('serviceArea.counties')
+                                  )}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Statewide */}
+                            {getValues('serviceArea.statewide') && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Statewide:
+                                </p>
+                                <p className="w-full md:w-1/2 ">
+                                  {getValues('serviceArea.statewide') && 'Yes'}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Nationwide */}
+                            {getValues('serviceArea.nationwide') && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Nationwide:
+                                </p>
+                                <p className="w-full md:w-1/2 ">
+                                  {getValues('serviceArea.nationwide') && 'Yes'}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Other */}
+                            {getValues('serviceArea.other') != '' && (
+                              <div className="flex flex-col md:flex-row md:items-start">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  Other:
+                                </p>
+                                <p className="w-full md:w-1/2 ">
+                                  {getValues('serviceArea.other')}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Annual Agency Update */}
+                        <div className="md:w-1/2">
+                          <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                            Annual Agency Update
+                          </h3>
+
+                          <div className="flex w-full flex-col gap-2">
+                            {/* Name */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Name:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('annualAgencyUpdate.name')}
+                              </p>
+                            </div>
+
+                            {/* Title */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Title:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('annualAgencyUpdate.title')}
+                              </p>
+                            </div>
+
+                            {/* Phone Number */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Phone Number:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                <p>
+                                  {getValues('annualAgencyUpdate.phoneNumber')}
+                                </p>
+                              </p>
+                            </div>
+
+                            {/* Email */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Email:
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues('annualAgencyUpdate.email')}
+                              </p>
+                            </div>
+
+                            {/* Would you like this information to be hidden from the website? */}
+                            <div className="flex flex-col gap-16 md:flex-row md:items-end">
+                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                Would you like this information to be hidden
+                                from the website?
+                              </p>
+                              <p className="w-full md:w-1/2 ">
+                                {getValues(
+                                  'annualAgencyUpdate.hideFromWebsite'
+                                ).toString() === 'true'
+                                  ? 'Yes'
+                                  : 'No'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                  </section>
+
+                  <hr />
+
+                  {/* Accessibility */}
+                  <section>
+                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
+                      Accessibility
+                    </h2>
+
+                    <div className="flex flex-col gap-4">
+                      <div>
+                        <p className="w-full text-base font-semibold leading-7 text-gray-900">
+                          In addition to English, what languages are spoken by
+                          at least one of your part-time staff?
                         </p>
-                      </section>
+                        <p>{get_accessibility_langs()}</p>
+                      </div>
+
+                      <div>
+                        <p className="w-full text-base font-semibold leading-7 text-gray-900">
+                          Can any languages be provided with prior notice?
+                          (Please list.)
+                        </p>
+                        <p>
+                          {getValues('supportedLanguagesWithoutNotice')
+                            .length != 0
+                            ? convertToString(
+                                getValues('supportedLanguagesWithoutNotice')
+                              )
+                            : 'No'}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-row items-center gap-4">
+                        <p className="text-base font-semibold leading-7 text-gray-900">
+                          Is your facility accessible to people with
+                          disabilities as defined by the Americans with
+                          Disabilities Act (ADA)?
+                        </p>
+                        <p>
+                          {getValues('accessibilityADA').toString() === 'true'
+                            ? 'Yes'
+                            : 'No'}
+                        </p>
+                      </div>
                     </div>
                   </section>
 
+                  <hr />
+
                   {/* Services */}
                   <section>
-                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
                       Services
                     </h2>
 
@@ -2746,9 +3648,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     )}
                   </section>
 
+                  <hr />
+
                   {/* Opportunities */}
                   <section className="mt-8 flex flex-col gap-4 sm:mt-0">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">
+                    <h2 className="text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
                       Opportunities
                     </h2>
 

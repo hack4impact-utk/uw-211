@@ -10,16 +10,9 @@ export const testAgency: Agency = {
         'Non-profit organization providing community services.',
       directorNameOrTitle: 'bob',
       serviceArea: {
-        locations: [
-          {
-            confidential: false,
-            physicalAddress: '123 Main St',
-            county: 'Knox',
-            city: 'Knoxville',
-            state: 'Tennessee',
-            zipCode: '37996',
-          },
-        ],
+        townCity: 'Knoxville',
+        zipCodes: ['37916'],
+        counties: ['Knox'],
         statewide: true,
         nationwide: false,
       },

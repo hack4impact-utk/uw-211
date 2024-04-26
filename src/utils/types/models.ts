@@ -9,7 +9,9 @@ export interface Location {
 }
 
 export interface ServiceArea {
-  locations?: Location[];
+  townCity?: string;
+  zipCodes?: string[];
+  counties?: string[];
   statewide?: boolean;
   nationwide?: boolean;
   other?: string;

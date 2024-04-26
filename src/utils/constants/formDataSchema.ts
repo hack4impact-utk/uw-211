@@ -320,6 +320,23 @@ const fundingSourcesSchema = z
     'A funding source selection is required.'
   );
 
+const languageSupportSchema = z.object({
+  asl: z.boolean(),
+  spanish: z.boolean(),
+  teleinterpreterLanguageService: z.boolean(),
+  other: z
+    .object({
+      selected: z.boolean(),
+      content: z.array(z.string()).optional(),
+    })
+    .refine(
+      (data) => !data.selected || (data.selected && data.content?.length != 0),
+      {
+        message: 'Please specify other.',
+      }
+    ),
+});
+
 const contactInfoSchema = z.object({
   phoneNumber: z
     .string()
@@ -364,8 +381,8 @@ const contactInfoSchema = z.object({
 });
 
 const annualAgencyUpdateSchema = z.object({
-  name: z.string(),
-  title: z.string(),
+  name: z.string().min(1, 'Required'),
+  title: z.string().min(1, 'Required'),
   phoneNumber: z
     .string()
     .min(1, 'Required')
@@ -378,35 +395,37 @@ const annualAgencyUpdateSchema = z.object({
     .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
       message: 'Must be a valid email address.',
     }),
-  hideFromWebsite: z.boolean(),
+  hideFromWebsite: z.coerce.boolean({ invalid_type_error: 'invalid' }),
 });
 
 export const FormDataSchema = z.object({
   // PRELIMINARIES
+
+  // General
   legalName: z.string().min(1, 'Required'),
   akas: z.string(),
   legalStatus: z.string().min(1, 'Required'),
   agencyInfo: z.string().min(1, 'Required'),
   directorName: z.string().min(1, 'Required'),
-
-  // the following must be required, currently not implement in the front end
-  // Fields with .optional will be required in the future
-  serviceArea: serviceAreaSchema,
-  fundingSources: fundingSourcesSchema,
-  location: locationSchema,
   contactInfo: contactInfoSchema,
-  annualAgencyUpdate: annualAgencyUpdateSchema.optional(),
-  teleinterpreterLanguageService: z.boolean().optional(),
-  supportedLanguages: z
-    .array(z.union([z.literal('ASL'), z.literal('Spanish'), z.string()]))
-    .optional(),
-  supportedLanguagesWithoutNotice: z.array(z.string()).optional(),
-  accessibilityADA: z.boolean().optional(),
-  updaterContactInfo: contactInfoSchema.optional(),
   // Up until here
 
   hours: z.array(DaySchema).min(1, 'Hours of operation is required.'),
-  
+
+  // Operations
+  location: locationSchema,
+  fundingSources: fundingSourcesSchema,
+
+  // Additional
+  serviceArea: serviceAreaSchema,
+  annualAgencyUpdate: annualAgencyUpdateSchema,
+  updaterContactInfo: contactInfoSchema.optional(),
+
+  // Accessibility
+  languageSupport: languageSupportSchema,
+  supportedLanguagesWithoutNotice: z.array(z.string()),
+  accessibilityADA: z.coerce.boolean({ invalid_type_error: 'invalid' }),
+
   // SERVICES
   services: z.array(ServiceSchema),
 

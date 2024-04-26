@@ -137,6 +137,22 @@ function zodFundingToTs(data: Inputs): AgencyInfoForm['fundingSources'] {
   return funding;
 }
 
+function zodLanguagesToTs(data: Inputs): AgencyInfoForm['languages'] {
+  const languages: AgencyInfoForm['languages'] = [];
+
+  if (data.languageSupport.asl) languages.push('ASL');
+  if (data.languageSupport.spanish) languages.push('Spanish');
+  if (
+    data.languageSupport.other?.selected &&
+    data.languageSupport.other.content
+  ) {
+    data.languageSupport.other.content.forEach((element) => {
+      languages.push(element);
+    });
+  }
+  return languages;
+}
+
 export function zodFormToTs(data: Inputs): AgencyInfoForm {
   const agencyInfo: AgencyInfoForm = {
     legalAgencyName: data.legalName,
@@ -152,8 +168,9 @@ export function zodFormToTs(data: Inputs): AgencyInfoForm {
     contactInfo: data.contactInfo || {
       phoneNumber: 'The zod schema/front end need to collect a phone number',
     },
-    languageTeleInterpreterService: data.teleinterpreterLanguageService,
-    languages: data.supportedLanguages || [],
+    languageTeleInterpreterService:
+      data.languageSupport.teleinterpreterLanguageService,
+    languages: zodLanguagesToTs(data) || [],
     languagesWithoutPriorNotice: data.supportedLanguagesWithoutNotice,
     accessibilityADA: data.accessibilityADA,
     hours: data.hours.map((day) => {
