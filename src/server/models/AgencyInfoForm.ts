@@ -4,8 +4,32 @@ import {
   ServiceArea,
   ContactInfo,
   AgencyInfoForm,
+  Day,
 } from '@/utils/types/';
-import { DaySchema } from '@/utils/constants/formDataSchema'; // Probably move to separate file in the future
+
+const DaySchema = new mongoose.Schema<Day>({
+  day: {
+    type: String,
+    enum: [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ],
+    required: true,
+  },
+  openTime: {
+    type: String,
+    required: true,
+  },
+  closeTime: {
+    type: String,
+    required: true,
+  },
+});
 
 const LocationSchema = new mongoose.Schema<Location>({
   confidential: {
