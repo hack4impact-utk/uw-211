@@ -324,22 +324,24 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
     ada.setText('X');
   }
 
-  if (agency.info[agency.info.length - 1].regularHoursOpening) {
-    const hours = form.getTextField('Regular Office Hours');
-    hours.setText(agency.info[agency.info.length - 1].regularHoursOpening);
-  }
+  // FIX THIS ---------------------------------------------------------------------
+  // if (agency.info[agency.info.length - 1].regularHoursOpening) {
+  //   const hours = form.getTextField('Regular Office Hours');
+  //   hours.setText(agency.info[agency.info.length - 1].regularHoursOpening);
+  // }
 
-  if (agency.info[agency.info.length - 1].regularHoursClosing) {
-    const hours = form.getTextField('am  pm to');
-    hours.setText(agency.info[agency.info.length - 1].regularHoursClosing);
-  }
+  // if (agency.info[agency.info.length - 1].regularHoursClosing) {
+  //   const hours = form.getTextField('am  pm to');
+  //   hours.setText(agency.info[agency.info.length - 1].regularHoursClosing);
+  // }
 
-  const regularDaysOpen: string[] = [];
-  agency.info[agency.info.length - 1].regularDaysOpen.forEach((day) => {
-    regularDaysOpen.push(day);
-  });
-  const daysOpen = form.getTextField('am  pm Days Mon Tue Wed Thu Fri Sat Sun');
-  daysOpen.setText(regularDaysOpen.join(', '));
+  // const regularDaysOpen: string[] = [];
+  // agency.info[agency.info.length - 1].regularDaysOpen.forEach((day) => {
+  //   regularDaysOpen.push(day);
+  // });
+  // const daysOpen = form.getTextField('am  pm Days Mon Tue Wed Thu Fri Sat Sun');
+  // daysOpen.setText(regularDaysOpen.join(', '));
+  // FIX THIS ----------------------------------------------------------------^^^^^
 
   if (agency.info[agency.info.length - 1].updaterContactInfo.name) {
     const updaterName = form.getTextField(
