@@ -52,7 +52,7 @@ const steps = formSteps;
 
 export default function Form({ params }: { params: { id: string } }) {
   const [previousStep, setPreviousStep] = useState(-1);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(0);
   const [currentSubstep, setCurrentSubstep] = useState(0);
   const [previousSubstep, setPreviousSubstep] = useState(-1);
   const delta = currentStep - previousStep;

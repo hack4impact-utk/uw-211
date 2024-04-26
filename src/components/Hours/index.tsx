@@ -28,9 +28,12 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
 
   const [hours, setHours] = useState((field.value as Hours[]) || []);
 
+  const default_open = '9:00 AM';
+  const default_close = '5:00 PM';
+
   const [day, setDay] = useState<Day>('Monday');
-  const [open, setOpen] = useState<string>('12:00 AM');
-  const [close, setClose] = useState<string>('12:00 AM');
+  const [open, setOpen] = useState<string>(default_open);
+  const [close, setClose] = useState<string>(default_close);
 
   const [hover, setHover] = useState<boolean>(false);
 
@@ -166,6 +169,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
         </select>
         <select
           onChange={(e) => setOpen(e.target.value)}
+          value={default_open}
           className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
         >
           {times.map((time, index) => (
@@ -176,6 +180,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
         </select>
         <select
           onChange={(e) => setClose(e.target.value)}
+          value={default_close}
           className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
         >
           {times.map((time, index) => (
@@ -189,7 +194,11 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
         </Button>
       </div>
       <Separator className="my-2" />
-      <ScrollArea className="relative h-40" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+      <ScrollArea
+        className="relative h-40"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
         <div className="flex flex-col">
           {hours.map((h, index) => (
             <div key={index} className="grid grid-cols-4">

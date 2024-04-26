@@ -5,6 +5,7 @@ import {
   ContactInfo,
   AgencyInfoForm,
 } from '@/utils/types/';
+import { DaySchema } from '@/utils/constants/formDataSchema'; // Probably move to separate file in the future
 
 const LocationSchema = new mongoose.Schema<Location>({
   confidential: {
@@ -132,25 +133,7 @@ const AgencyInfoFormSchema = new mongoose.Schema<AgencyInfoForm>(
     accessibilityADA: {
       type: Boolean,
     },
-    regularHoursOpening: {
-      type: String,
-    },
-    regularHoursClosing: {
-      type: String,
-    },
-    regularDaysOpen: {
-      type: [String], // Consider better way to represent this
-      enum: [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday',
-      ],
-      required: true,
-    },
+    hours: [DaySchema],
     updaterContactInfo: {
       type: ContactInfoSchema,
       required: true,
