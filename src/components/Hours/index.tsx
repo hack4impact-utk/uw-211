@@ -54,7 +54,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
     return times;
   })();
 
-  const daysOfWeek = [
+  const daysOfWeek: Day[] = [
     'Monday',
     'Tuesday',
     'Wednesday',
@@ -146,6 +146,13 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
     setHours(updatedHours);
 
     field.onChange(updatedHours);
+
+    // set day to next day
+    const currentIndex = daysOfWeek.indexOf(day);
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < daysOfWeek.length) {
+      setDay(daysOfWeek[nextIndex]);
+    }
   };
 
   const delete_hours = (id: number) => {
@@ -159,6 +166,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
       <div className="flex flex-row space-x-2">
         <select
           onChange={(e) => setDay(e.target.value as Day)}
+          value={day}
           className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
         >
           {daysOfWeek.map((dayOfWeek, index) => (
@@ -169,7 +177,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
         </select>
         <select
           onChange={(e) => setOpen(e.target.value)}
-          value={default_open}
+          value={open}
           className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
         >
           {times.map((time, index) => (
@@ -180,7 +188,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
         </select>
         <select
           onChange={(e) => setClose(e.target.value)}
-          value={default_close}
+          value={close}
           className="block h-10 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 md:w-2/3 xl:w-full"
         >
           {times.map((time, index) => (
