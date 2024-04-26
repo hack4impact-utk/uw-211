@@ -28,12 +28,12 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
 
   const [hours, setHours] = useState((field.value as Hours[]) || []);
 
-  const default_open = '9:00 AM';
-  const default_close = '5:00 PM';
+  // const default_open = '9:00 AM';
+  // const default_close = '5:00 PM';
 
   const [day, setDay] = useState<Day>('Monday');
-  const [open, setOpen] = useState<string>(default_open);
-  const [close, setClose] = useState<string>(default_close);
+  const [open, setOpen] = useState<string>('9:00 AM');
+  const [close, setClose] = useState<string>('5:00 PM');
 
   const [hover, setHover] = useState<boolean>(false);
 
