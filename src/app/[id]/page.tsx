@@ -1146,14 +1146,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             className="block h-8 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                           >
                             <option value="">Please Select One</option>
-                            <option value="federal">Federal</option>
-                            <option value="state">State</option>
-                            <option value="county">County</option>
-                            <option value="city">City</option>
-                            <option value="non-profit">Non-profit</option>
+                            <option value="Federal">Federal</option>
+                            <option value="State">State</option>
+                            <option value="County">County</option>
+                            <option value="City">City</option>
+                            <option value="Non-profit">Non-profit</option>
                             <option value="501(c)3">501(c)3</option>
+                            <option value="Faith-based">Faith-based</option>
                             <option value="For profit">For profit</option>
-                            <option value="other">Other</option>
+                            <option value="Other">Other</option>
                           </select>
                           <div className="mt-2 min-h-6 ">
                             {errors.legalStatus?.message && (
