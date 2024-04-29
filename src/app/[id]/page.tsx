@@ -109,6 +109,7 @@ export default function Form({ params }: { params: { id: string } }) {
         setCurrentSubstep(0);
         setPreviousSubstep(-1);
       }
+      window.scrollTo(0, 0);
     }
   };
 
