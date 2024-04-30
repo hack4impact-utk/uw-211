@@ -116,7 +116,18 @@ export const testAgency: Agency = {
         faxNumber: '555-555-5556',
         tollFreeNumber: '1-800-123-4567',
         TDDTTYNumber: '555-555-5557',
-        additionalNumbers: ['555-555-5558', '555-555-5559'],
+        additionalNumbers: [
+          {
+            id: 12345,
+            label: 'first',
+            number: '555-555-5558',
+          },
+          {
+            id: 12345,
+            label: 'second',
+            number: '555-555-5559',
+          },
+        ],
         email: 'info@coolservice.org',
         website: 'https://www.coolservice.org',
       },

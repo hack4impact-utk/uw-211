@@ -24,7 +24,11 @@ export interface ContactInfo {
   faxNumber?: string;
   tollFreeNumber?: string;
   TDDTTYNumber?: string;
-  additionalNumbers?: string[];
+  additionalNumbers?: {
+    id: number;
+    label: string;
+    number: string;
+  }[];
   email?: string;
   website?: string;
   hideFromWebsite?: boolean;

@@ -44,6 +44,7 @@ import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
 import { zodFormToTs } from '@/utils/conversions';
 import { convertToArray, convertToString } from '@/utils/stringArrays';
 import Hours from '@/components/Hours';
+import AdditionalNumbers from '@/components/AdditionalNumbers';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
@@ -1349,11 +1350,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
 
-                      <div>
-                        <span className="bg-blue-500 text-white">
-                          TODO: Additional Numbers
-                        </span>
-                      </div>
+                      <AdditionalNumbers />
 
                       {/* contactInfo.email */}
                       <div>

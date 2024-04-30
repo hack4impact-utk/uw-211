@@ -337,7 +337,13 @@ const languageSupportSchema = z.object({
     ),
 });
 
-const contactInfoSchema = z.object({
+export const additionalNumbersSchema = z.object({
+  id: z.number(),
+  label: z.string(),
+  number: z.string(),
+});
+
+export const contactInfoSchema = z.object({
   phoneNumber: z
     .string()
     .min(1, 'Required')
@@ -362,7 +368,7 @@ const contactInfoSchema = z.object({
     .regex(/^[0-9]{10}$/, {
       message: 'Must be a valid phone number.',
     }),
-  additionalNumbers: z.array(z.string()).optional(),
+  additionalNumbers: z.array(additionalNumbersSchema).optional(),
   email: z
     .string()
     .min(1, 'Required')
