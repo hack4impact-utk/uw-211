@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, HTMLAttributes } from 'react';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
 import {
@@ -43,9 +43,11 @@ import { formSteps } from '@/utils/constants/formSteps';
 import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
 import { zodFormToTs } from '@/utils/conversions';
 import { convertToArray } from '@/utils/convertToArray';
+import { useRouter } from 'next/navigation';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
+interface IconProps extends HTMLAttributes<SVGElement> {}
 
 const steps = formSteps;
 
@@ -57,12 +59,33 @@ export default function Form({ params }: { params: { id: string } }) {
   const delta = currentStep - previousStep;
   const subdelta = currentSubstep - previousSubstep;
 
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const Icons = {
+    spinner: (props: IconProps) => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        {...props}
+      >
+        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+      </svg>
+    ),
+  };
+
   const {
     register,
     handleSubmit,
     getValues,
     setValue,
-    reset,
     trigger,
     watch,
     formState: { errors, isDirty },
@@ -76,10 +99,17 @@ export default function Form({ params }: { params: { id: string } }) {
   useBeforeUnload(isDirty);
   const { width: screenWidth } = useWindowSize();
 
-  const processForm: SubmitHandler<Inputs> = (data) => {
-    const validatedInfo = zodFormToTs(data);
-    createAgencyInfoWithServices(params.id, validatedInfo);
-    reset();
+  const processForm: SubmitHandler<Inputs> = async (data) => {
+    try {
+      setIsLoading(true);
+      const validatedInfo = zodFormToTs(data);
+      await createAgencyInfoWithServices(params.id, validatedInfo);
+      setIsLoading(false);
+
+      router.push('/complete');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   type FieldName = keyof Inputs;
@@ -3122,7 +3152,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     </section>
                   </section>
                 </div>
-                <Button type="submit">Click to Submit</Button>
+
+                <Button type="submit" className="h-10 w-36">
+                  {isLoading ? (
+                    <Icons.spinner className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <p>Click to Submit</p>
+                  )}
+                </Button>
               </motion.div>
             )}
           </motion.div>
