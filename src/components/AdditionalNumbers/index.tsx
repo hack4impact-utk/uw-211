@@ -1,19 +1,38 @@
 import { z } from 'zod';
 import {
-  // FormDataSchema,
+  FormDataSchema,
   additionalNumbersSchema,
 } from '@/utils/constants/formDataSchema';
-// import { UseControllerProps, useController } from 'react-hook-form';
+import { UseControllerProps, useController } from 'react-hook-form';
 import { Button } from '../ui/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type AdditionalNumbers = z.infer<typeof additionalNumbersSchema>;
+type FormData = z.infer<typeof FormDataSchema>;
 
-export default function AdditionalNumbers() {
-  const [numbers, setNumbers] = useState<AdditionalNumbers[]>([]); // update to use controller
+export default function AdditionalNumbers({
+  name,
+  control,
+}: UseControllerProps<FormData>) {
+  const {
+    field,
+    fieldState: { error },
+  } = useController({
+    name,
+    control,
+  });
+
+  const [numbers, setNumbers] = useState(
+    (field.value as AdditionalNumbers[]) || []
+  );
+
   const [hover, setHover] = useState<boolean>(false);
   const label = document.getElementById('label') as HTMLInputElement;
   const number = document.getElementById('number') as HTMLInputElement;
+
+  useEffect(() => {
+    setNumbers((field.value as AdditionalNumbers[]) || []);
+  }, [field.value]);
 
   const addNumber = () => {
     if (label?.value != '' && number?.value != '') {
@@ -22,6 +41,36 @@ export default function AdditionalNumbers() {
         label: label?.value,
         number: number?.value,
       };
+
+      // stop duplicate entries
+      if (
+        numbers.find(
+          (a) => a.label == new_number.label || a.number == new_number.number
+        )
+      ) {
+        control?.setError(name, {
+          type: 'custom',
+          message: 'Cannot add duplicate labels or numbers.',
+        });
+        return;
+      }
+
+      // Invalid number
+      if (new_number.number.length != 10 || !/^\d+$/.test(new_number.number)) {
+        control?.setError(name, {
+          type: 'custom',
+          message: 'Please enter valid phone number.',
+        });
+        return;
+      }
+
+      // Reset errors
+      if (error?.type == 'custom') {
+        control?.setError(name, {
+          type: 'clear',
+          message: '',
+        });
+      }
 
       setNumbers((prevState) => [...prevState, new_number]);
       label.value = '';
@@ -32,7 +81,7 @@ export default function AdditionalNumbers() {
   const deleteNumber = (id: number) => {
     const updatedNumbers = numbers.filter((n) => n.id !== id);
     setNumbers(updatedNumbers);
-    // field.onChange(updatedNumbers);  // controller
+    field.onChange(updatedNumbers);
   };
 
   return (
@@ -81,6 +130,10 @@ export default function AdditionalNumbers() {
           ))}
         </div>
       </div>
+
+      {error?.message && (
+        <p className="mt-2 text-sm text-red-400">{error?.message}</p>
+      )}
     </div>
   );
 }

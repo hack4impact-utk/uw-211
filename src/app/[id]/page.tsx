@@ -1350,7 +1350,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
 
-                      <AdditionalNumbers />
+                      <AdditionalNumbers
+                        name="contactInfo.additionalNumbers"
+                        control={control}
+                      />
 
                       {/* contactInfo.email */}
                       <div>
