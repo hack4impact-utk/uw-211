@@ -44,6 +44,8 @@ import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
 import { zodFormToTs } from '@/utils/conversions';
 import { convertToArray, convertToString } from '@/utils/stringArrays';
 import Hours from '@/components/Hours';
+import { useRouter } from 'next/navigation';
+import Spinner from '@/components/Spinner';
 import AdditionalNumbers from '@/components/AdditionalNumbers';
 
 type Inputs = z.infer<typeof FormDataSchema>;
@@ -59,13 +61,15 @@ export default function Form({ params }: { params: { id: string } }) {
   const delta = currentStep - previousStep;
   const subdelta = currentSubstep - previousSubstep;
 
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const {
     control,
     register,
     handleSubmit,
     getValues,
     setValue,
-    reset,
     trigger,
     watch,
     formState: { errors, isDirty },
@@ -79,10 +83,17 @@ export default function Form({ params }: { params: { id: string } }) {
   useBeforeUnload(isDirty);
   const { width: screenWidth } = useWindowSize();
 
-  const processForm: SubmitHandler<Inputs> = (data) => {
-    const validatedInfo = zodFormToTs(data);
-    createAgencyInfoWithServices(params.id, validatedInfo);
-    reset();
+  const processForm: SubmitHandler<Inputs> = async (data) => {
+    try {
+      setIsLoading(true);
+      const validatedInfo = zodFormToTs(data);
+      await createAgencyInfoWithServices(params.id, validatedInfo);
+      setIsLoading(false);
+
+      router.push('/complete');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   type FieldName = keyof Inputs;
@@ -3840,7 +3851,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     </section>
                   </section>
                 </div>
-                <Button type="submit">Click to Submit</Button>
+
+                <Button type="submit" className="h-10 w-36">
+                  {isLoading ? (
+                    <Spinner className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <p>Click to Submit</p>
+                  )}
+                </Button>
               </motion.div>
             )}
           </motion.div>
