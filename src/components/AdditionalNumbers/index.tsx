@@ -35,47 +35,59 @@ export default function AdditionalNumbers({
   }, [field.value]);
 
   const addNumber = () => {
-    if (label?.value != '' && number?.value != '') {
-      const new_number = {
-        id: Date.now(),
-        label: label?.value,
-        number: number?.value,
-      };
+    const new_number = {
+      id: Date.now(),
+      label: label?.value,
+      number: number?.value,
+    };
 
-      // stop duplicate entries
-      if (
-        numbers.find(
-          (a) => a.label == new_number.label || a.number == new_number.number
-        )
-      ) {
-        control?.setError(name, {
-          type: 'custom',
-          message: 'Cannot add duplicate labels or numbers.',
-        });
-        return;
-      }
-
-      // Invalid number
-      if (new_number.number.length != 10 || !/^\d+$/.test(new_number.number)) {
-        control?.setError(name, {
-          type: 'custom',
-          message: 'Please enter valid phone number.',
-        });
-        return;
-      }
-
-      // Reset errors
-      if (error?.type == 'custom') {
-        control?.setError(name, {
-          type: 'clear',
-          message: '',
-        });
-      }
-
-      setNumbers((prevState) => [...prevState, new_number]);
-      label.value = '';
-      number.value = '';
+    // check for both fields
+    if (label?.value === '' || number?.value === '') {
+      control?.setError(name, {
+        type: 'custom',
+        message: 'Must have a label and number for each additional number.',
+      });
+      return;
     }
+
+    // stop duplicate entries
+    if (
+      numbers.find(
+        (a) => a.label == new_number.label || a.number == new_number.number
+      )
+    ) {
+      control?.setError(name, {
+        type: 'custom',
+        message: 'Cannot add duplicate labels or numbers.',
+      });
+      return;
+    }
+
+    // Invalid number
+    if (new_number.number.length != 10 || !/^\d+$/.test(new_number.number)) {
+      control?.setError(name, {
+        type: 'custom',
+        message: 'Please enter valid phone number.',
+      });
+      return;
+    }
+
+    // Reset errors
+    if (error?.type == 'custom') {
+      control?.setError(name, {
+        type: 'clear',
+        message: '',
+      });
+    }
+
+    const newState = numbers.concat(new_number);
+    // setNumbers((prevState) => [...prevState, new_number]);
+    setNumbers(newState);
+
+    field.onChange(newState);
+
+    label.value = '';
+    number.value = '';
   };
 
   const deleteNumber = (id: number) => {
