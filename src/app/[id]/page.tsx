@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, HTMLAttributes } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
 import {
@@ -45,10 +45,10 @@ import { zodFormToTs } from '@/utils/conversions';
 import { convertToArray, convertToString } from '@/utils/stringArrays';
 import Hours from '@/components/Hours';
 import { useRouter } from 'next/navigation';
+import Spinner from '@/components/Spinner';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
-interface IconProps extends HTMLAttributes<SVGElement> {}
 
 const steps = formSteps;
 
@@ -62,25 +62,6 @@ export default function Form({ params }: { params: { id: string } }) {
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const Icons = {
-    spinner: (props: IconProps) => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        {...props}
-      >
-        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-      </svg>
-    ),
-  };
 
   const {
     control,
@@ -3857,7 +3838,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                 <Button type="submit" className="h-10 w-36">
                   {isLoading ? (
-                    <Icons.spinner className="h-4 w-4 animate-spin" />
+                    <Spinner className="h-4 w-4 animate-spin" />
                   ) : (
                     <p>Click to Submit</p>
                   )}
