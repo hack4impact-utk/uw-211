@@ -46,6 +46,7 @@ import { convertToArray, convertToString } from '@/utils/stringArrays';
 import Hours from '@/components/Hours';
 import { useRouter } from 'next/navigation';
 import Spinner from '@/components/Spinner';
+import AdditionalNumbers from '@/components/AdditionalNumbers';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
@@ -1360,11 +1361,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
 
-                      <div>
-                        <span className="bg-blue-500 text-white">
-                          TODO: Additional Numbers
-                        </span>
-                      </div>
+                      <AdditionalNumbers
+                        name="contactInfo.additionalNumbers"
+                        control={control}
+                      />
 
                       {/* contactInfo.email */}
                       <div>
@@ -3246,16 +3246,32 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         {/* Third Column */}
                         <div className="flex w-full flex-col gap-2 md:w-1/3">
                           {/* Additional Numbers */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              Additional Numbers:
+                          <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            Additional Numbers
+                          </p>
+
+                          {getValues('contactInfo.additionalNumbers') ===
+                          undefined ? (
+                            <p className="leading-6 text-gray-400">
+                              No additional numbers listed
                             </p>
-                            <p className="w-full md:w-1/2 ">
-                              <span className="bg-blue-500 text-white">
-                                TODO: Additional Numbers
-                              </span>
-                            </p>
-                          </div>
+                          ) : (
+                            <div className="max-h-24 w-full overflow-y-auto md:w-1/2 ">
+                              {getValues('contactInfo.additionalNumbers')?.map(
+                                (n, index) => (
+                                  <div
+                                    key={index}
+                                    className="ml-2 grid grid-cols-2"
+                                  >
+                                    <p className="text-base font-medium leading-7 text-gray-900">
+                                      {n.label}:
+                                    </p>
+                                    <p>{n.number}</p>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          )}
 
                           {/* Email */}
                           <div className="flex flex-col md:flex-row md:items-start">
