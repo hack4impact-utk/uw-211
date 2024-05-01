@@ -9,11 +9,7 @@ import { Service } from '@/utils/types';
 export async function generatePdf(agencyId: string): Promise<Uint8Array> {
   const agency = await getAgencyById(agencyId);
   // https://vercel.com/guides/how-can-i-use-files-in-serverless-functions
-
-  const pdfPath =
-    process.env.NODE_ENV === 'production'
-      ? path.join('public', 'base_form.pdf')
-      : path.join(process.cwd(), 'public', 'base_form.pdf');
+  const pdfPath = path.join(process.cwd(), 'public', 'base_form.pdf');
   const data = fs.readFileSync(pdfPath);
 
   const pdfDoc = await PDFDocument.load(data);
