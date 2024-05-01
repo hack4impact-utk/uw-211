@@ -39,7 +39,7 @@ export default async function Complete() {
 
       <main className="flex h-screen w-screen flex-col items-center justify-center">
         <div className="flex flex-col items-center justify-center gap-8">
-          <Check className="w-1/2 fill-blue-700 md:w-3/4" />
+          <Check className="w-1/2 fill-[#0253AA] md:w-3/4" />
           <h1 className="text-3xl font-bold">Thank You!</h1>
           <p className="text-center text-lg">
             Your submission has been received. <br />
