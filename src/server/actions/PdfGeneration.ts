@@ -1,3 +1,5 @@
+'use server';
+
 import { PDFDocument, PDFForm } from 'pdf-lib';
 import { getAgencyById } from './Agencies';
 import fs from 'fs';
