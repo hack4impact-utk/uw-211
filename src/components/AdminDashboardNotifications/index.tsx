@@ -17,7 +17,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import PdfButton from '../PdfButton';
+import PdfButton from '@/components/PdfButton';
 
 export async function AdminDashboardNotifications() {
   let agencies: Agency[] = [];
