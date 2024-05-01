@@ -43,6 +43,7 @@ import { formSteps } from '@/utils/constants/formSteps';
 import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
 import { zodFormToTs } from '@/utils/conversions';
 import { convertToArray, convertToString } from '@/utils/stringArrays';
+import { AgencyInfoForm } from '@/utils/types';
 import Hours from '@/components/Hours';
 
 type Inputs = z.infer<typeof FormDataSchema>;
@@ -70,10 +71,52 @@ export default function Form({ params }: { params: { id: string } }) {
     formState: { errors, isDirty },
   } = useForm<Inputs>({
     resolver: zodResolver(FormDataSchema),
-    defaultValues: {
-      services: [],
-    },
+    defaultValues: { services: [] },
   });
+
+  const [latestInfo, setlatestInfo] = useState([]);
+
+  const getlatestInfo = async () => {
+    try {
+      const res: Response = await fetch(`api/agencies/${params.id}`, {
+        cache: 'no-store',
+      });
+      const body = await res.json();
+      setlatestInfo(body.data.agency.latestInfo);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getlatestInfo();
+  }, []);
+
+  // TODO: fix hours of operation still needing input even when autofilled
+  useEffect(() => {
+    if (latestInfo) {
+      const info = latestInfo as unknown as AgencyInfoForm;
+      reset({
+        legalName: info.legalAgencyName,
+        akas: info.alsoKnownAs?.[0],
+        legalStatus: info.legalOrganizationalStatus?.[0],
+        directorName: info.directorNameOrTitle,
+        agencyInfo: info.briefAgencyDescription,
+        contactInfo: info.contactInfo,
+        hours: info.hours,
+        location: info.location,
+        // fundingSources: info.fundingSources, TODO: fix fundingSources
+        serviceArea: info.serviceArea,
+        annualAgencyUpdate: info.updaterContactInfo,
+        // updaterContactInfo: info.updaterContactInfo,
+        // languageSupport: info.languages,
+        supportedLanguagesWithoutNotice: info.languagesWithoutPriorNotice,
+        accessibilityADA: info.accessibilityADA,
+        // services: info.services,
+        services: [],
+      });
+    }
+  }, [latestInfo]);
 
   useBeforeUnload(isDirty);
   const { width: screenWidth } = useWindowSize();
