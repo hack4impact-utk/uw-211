@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { getAgencies } from '@/server/actions/Agencies';
 import { Agency } from '@/utils/types';
-import { AlertCircle, Newspaper, Check, X } from 'lucide-react';
+import { AlertCircle, Check, X } from 'lucide-react';
 
 import {
   Accordion,
@@ -17,6 +17,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import PdfButton from '@/components/PdfButton';
 
 export async function AdminDashboardNotifications() {
   let agencies: Agency[] = [];
@@ -65,10 +66,7 @@ export async function AdminDashboardNotifications() {
                       })}
                     </TableCell>
                     <TableCell>
-                      <Button variant="outline">
-                        <Newspaper className="mr-2" />
-                        View form
-                      </Button>
+                      <PdfButton agencyId={agency._id?.toString()} />
                     </TableCell>
                     <TableCell>
                       <Button className="mr-4" variant="outline">

@@ -1,3 +1,5 @@
+'use server';
+
 import { PDFDocument, PDFForm } from 'pdf-lib';
 import { getAgencyById } from './Agencies';
 import fs from 'fs';
@@ -25,36 +27,36 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
     (status) => {
       switch (status) {
         case 'Federal':
-          const federal = form.getRadioGroup('Federal');
-          federal.select('Yes');
+          const federal = form.getTextField('Federal');
+          federal.setText('X');
           break;
         case 'State':
-          const state = form.getRadioGroup('State');
-          state.select('Yes');
+          const state = form.getTextField('State');
+          state.setText('X');
           break;
         case 'County':
-          const county = form.getRadioGroup('County');
-          county.select('Yes');
+          const county = form.getTextField('County');
+          county.setText('X');
           break;
         case 'City':
-          const City = form.getRadioGroup('City');
-          City.select('Yes');
+          const city = form.getTextField('City');
+          city.setText('X');
           break;
-        case 'Non-Profit':
-          const nonProfit = form.getRadioGroup('NonProfit');
-          nonProfit.select('Yes');
+        case 'Non-profit':
+          const nonProfit = form.getTextField('NonProfit');
+          nonProfit.setText('X');
           break;
         case '501(c)3':
-          const c3 = form.getRadioGroup('501c3');
-          c3.select('Yes');
+          const c3 = form.getTextField('501c3');
+          c3.setText('X');
           break;
         case 'Faith-based':
-          const faithBased = form.getRadioGroup('Faithbased');
-          faithBased.select('Yes');
+          const faithBased = form.getTextField('Faithbased');
+          faithBased.setText('X');
           break;
         case 'For profit':
-          const forProfit = form.getRadioGroup('For profit');
-          forProfit.select('Yes');
+          const forProfit = form.getTextField('For profit');
+          forProfit.setText('X');
           break;
         default:
           const other = form.getTextField('Other');
@@ -176,18 +178,20 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
   }
 
   const physicalAddress = form.getTextField('Physical Address');
-  physicalAddress.setText;
+  physicalAddress.setText(
+    agency.info[agency.info.length - 1].location.physicalAddress
+  );
   // agency.info[agency.info.length - 1].serviceArea.locations?.[0]
   //   ?.physicalAddress
-  agency.info[agency.info.length - 1].location.physicalAddress;
 
   if (
     // agency.info[agency.info.length - 1].serviceArea.locations?.[0]
     //   ?.mailingAddress
     agency.info[agency.info.length - 1].location.mailingAddress
   ) {
-    // FIX: NO SUCH FIELD AS MAILING ADDRESS
-    const mailingAddress = form.getTextField('Mailing Address');
+    const mailingAddress = form.getTextField(
+      'Mailing Address Only list if different from Physical'
+    );
     mailingAddress.setText(
       // agency.info[agency.info.length - 1].serviceArea.locations
       agency.info[agency.info.length - 1].location.mailingAddress
@@ -269,11 +273,24 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
 
   if (agency.info[agency.info.length - 1].contactInfo.additionalNumbers) {
     const additionalNumbers = form.getTextField('Alternate Numbers');
-    additionalNumbers.setText(
-      agency.info[agency.info.length - 1].contactInfo.additionalNumbers?.join(
-        ', '
-      )
-    );
+    const additional_numbers = [];
+    const num_obj =
+      agency.info[agency.info.length - 1].contactInfo.additionalNumbers!;
+    for (let i = 0; i < num_obj.length; i++) {
+      additional_numbers.push(`${num_obj[i].label}: ${num_obj[i].number}`);
+    }
+
+    additionalNumbers.setText(additional_numbers.join(', '));
+  }
+
+  if (agency.info[agency.info.length - 1].contactInfo.email) {
+    const email = form.getTextField('Email Address');
+    email.setText(agency.info[agency.info.length - 1].contactInfo.email);
+  }
+
+  if (agency.info[agency.info.length - 1].contactInfo.website) {
+    const website = form.getTextField('Website');
+    website.setText(agency.info[agency.info.length - 1].contactInfo.website);
   }
 
   if (agency.info[agency.info.length - 1].languages.includes('ASL')) {
@@ -342,6 +359,20 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
   // const daysOpen = form.getTextField('am  pm Days Mon Tue Wed Thu Fri Sat Sun');
   // daysOpen.setText(regularDaysOpen.join(', '));
   // FIX THIS ----------------------------------------------------------------^^^^^
+
+  let hoursText: string = '';
+  const hours = form.getTextField('am  pm Days Mon Tue Wed Thu Fri Sat Sun');
+  for (let i = 0; i < agency.info[agency.info.length - 1].hours.length; i++) {
+    const hoursOfOperation = agency.info[agency.info.length - 1].hours[i];
+    hoursText +=
+      hoursOfOperation.day +
+      ': ' +
+      hoursOfOperation.openTime +
+      '-' +
+      hoursOfOperation.closeTime +
+      ', ';
+  }
+  hours.setText(hoursText);
 
   if (agency.info[agency.info.length - 1].updaterContactInfo.name) {
     const updaterName = form.getTextField(
@@ -460,7 +491,7 @@ function fillService(service: Service, form: PDFForm, num: number) {
   );
   eligibilityRequirements.setText(service.eligibilityRequirements);
 
-  if (service.applicationProcess.includes('Walkin')) {
+  if (service.applicationProcess.includes('Walk-in')) {
     const walkin = form.getTextField(`Walkin${prefixes[num]}`);
     walkin.setText('X');
   }
@@ -542,6 +573,10 @@ function fillService(service: Service, form: PDFForm, num: number) {
 
   service.requiredDocuments.forEach((document) => {
     switch (document) {
+      case 'No Documents':
+        const noDocuments = form.getTextField(`No Documents${prefixes[num]}`);
+        noDocuments.setText('X');
+        break;
       case 'State Issued I.D.':
         const stateId = form.getTextField(`State Issued ID${prefixes[num]}`);
         stateId.setText('X');
