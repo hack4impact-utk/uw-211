@@ -1,3 +1,5 @@
+'use server';
+
 import { PDFDocument, PDFForm } from 'pdf-lib';
 import { getAgencyById } from './Agencies';
 import fs from 'fs';
@@ -25,36 +27,36 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
     (status) => {
       switch (status) {
         case 'Federal':
-          const federal = form.getRadioGroup('Federal');
-          federal.select('Yes');
+          const federal = form.getTextField('Federal');
+          federal.setText('X');
           break;
         case 'State':
-          const state = form.getRadioGroup('State');
-          state.select('Yes');
+          const state = form.getTextField('State');
+          state.setText('X');
           break;
         case 'County':
-          const county = form.getRadioGroup('County');
-          county.select('Yes');
+          const county = form.getTextField('County');
+          county.setText('X');
           break;
         case 'City':
-          const City = form.getRadioGroup('City');
-          City.select('Yes');
+          const city = form.getTextField('City');
+          city.setText('X');
           break;
         case 'Non-profit':
-          const nonProfit = form.getRadioGroup('NonProfit');
-          nonProfit.select('Yes');
+          const nonProfit = form.getTextField('NonProfit');
+          nonProfit.setText('X');
           break;
         case '501(c)3':
-          const c3 = form.getRadioGroup('501c3');
-          c3.select('Yes');
+          const c3 = form.getTextField('501c3');
+          c3.setText('X');
           break;
         case 'Faith-based':
-          const faithBased = form.getRadioGroup('Faithbased');
-          faithBased.select('Yes');
+          const faithBased = form.getTextField('Faithbased');
+          faithBased.setText('X');
           break;
         case 'For profit':
-          const forProfit = form.getRadioGroup('For profit');
-          forProfit.select('Yes');
+          const forProfit = form.getTextField('For profit');
+          forProfit.setText('X');
           break;
         default:
           const other = form.getTextField('Other');
@@ -274,7 +276,7 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
     const additional_numbers = [];
     const num_obj =
       agency.info[agency.info.length - 1].contactInfo.additionalNumbers!;
-    for (let i = 0; i < num_obj.length - 1; i++) {
+    for (let i = 0; i < num_obj.length; i++) {
       additional_numbers.push(`${num_obj[i].label}: ${num_obj[i].number}`);
     }
 
