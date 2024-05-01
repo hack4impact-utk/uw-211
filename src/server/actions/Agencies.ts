@@ -375,6 +375,37 @@ export async function approveAgency(
   const agency = await AgencyModel.findById(id).exec();
   return agency as Agency;
 }
+
+/**
+ *
+ * @param id The ID of the agencyInfoForm to reject
+ * @returns The updated agency
+ * @throws 404 if no agency is found with the ID
+ */
+export async function rejectAgency(id: string): Promise<AgencyInfoForm | null> {
+  await authenticateServerAction();
+  await dbConnect();
+
+  // Set the latency agencyInfoForm to rejected
+  const updatedAgency = await AgencyInfoFormModel.updateOne(
+    { _id: id },
+    {
+      $set: { approved: false },
+    }
+  ).catch((error) => {
+    mongoErrorHandler(error);
+  });
+
+  if (updatedAgency!.modifiedCount === 0) {
+    throw new JSendResponse({
+      status: 'fail',
+      data: { message: 'AgencyInfoForm not found' },
+    });
+  }
+
+  return updatedAgency as unknown as AgencyInfoForm;
+}
+
 /**
  * Handles common MongoDB insertion errors and throws an appropriate ApiError.
  * @param error - The error object returned by MongoDB.
