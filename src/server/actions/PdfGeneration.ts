@@ -271,11 +271,14 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
 
   if (agency.info[agency.info.length - 1].contactInfo.additionalNumbers) {
     const additionalNumbers = form.getTextField('Alternate Numbers');
-    additionalNumbers.setText(
-      agency.info[agency.info.length - 1].contactInfo.additionalNumbers?.join(
-        ', '
-      )
-    );
+    const additional_numbers = [];
+    const num_obj =
+      agency.info[agency.info.length - 1].contactInfo.additionalNumbers!;
+    for (let i = 0; i < num_obj.length - 1; i++) {
+      additional_numbers.push(`${num_obj[i].label}: ${num_obj[i].number}`);
+    }
+
+    additionalNumbers.setText(additional_numbers.join(', '));
   }
 
   if (agency.info[agency.info.length - 1].contactInfo.email) {
