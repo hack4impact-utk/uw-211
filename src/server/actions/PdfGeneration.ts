@@ -40,7 +40,7 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
           const City = form.getRadioGroup('City');
           City.select('Yes');
           break;
-        case 'Non-Profit':
+        case 'Non-profit':
           const nonProfit = form.getRadioGroup('NonProfit');
           nonProfit.select('Yes');
           break;
@@ -76,30 +76,35 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
     agency.info[agency.info.length - 1].directorNameOrTitle
   );
 
-  const townCity: string[] = [];
-  const zipCodes: string[] = [];
-  const countyCities: string[] = [];
-  if (agency.info[agency.info.length - 1].serviceArea.locations) {
-    agency.info[agency.info.length - 1].serviceArea.locations?.forEach(
-      (location) => {
-        if (location.zipCode) {
-          zipCodes.push(location.zipCode);
-        }
-        if (location.city) {
-          townCity.push(location.city);
-        }
-        if (location.county) {
-          countyCities.push(location.county);
-        }
-      }
-    );
-  }
+  let townCity: string = '';
+  let zipCodes: string[] = [];
+  let countyCities: string[] = [];
+
+  townCity = agency.info[agency.info.length - 1].serviceArea.townCity!;
+  zipCodes = agency.info[agency.info.length - 1].serviceArea.zipCodes!;
+  countyCities = agency.info[agency.info.length - 1].serviceArea.counties!;
+  // if (agency.info[agency.info.length - 1].serviceArea.locations) {
+  // agency.info[agency.info.length - 1].serviceArea.locations?.forEach(
+  //   (location) => {
+  //     if (location.zipCode) {
+  //       zipCodes.push(location.zipCode);
+  //     }
+  //     if (location.city) {
+  //       townCity.push(location.city);
+  //     }
+  //     if (location.county) {
+  //       countyCities.push(location.county);
+  //     }
+  //   }
+  // );
+  // }
 
   const townCityField = form.getTextField('Specific TownCity');
   const zipCodeField = form.getTextField('Specific Zip Codes 1');
   const countyField = form.getTextField('Specific CountyCounties 1');
 
-  townCityField.setText(townCity.join(', '));
+  // townCityField.setText(townCity.join(', '));
+  townCityField.setText(townCity);
   zipCodeField.setText(zipCodes.join(', '));
   countyField.setText(countyCities.join(', '));
 
@@ -158,7 +163,8 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
   });
 
   if (
-    agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.confidential
+    // agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.confidential
+    agency.info[agency.info.length - 1].location.confidential
   ) {
     const confidential = form.getTextField(
       'Is the physical address confidential Yes'
@@ -171,46 +177,58 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
 
   const physicalAddress = form.getTextField('Physical Address');
   physicalAddress.setText(
-    agency.info[agency.info.length - 1].serviceArea.locations?.[0]
-      ?.physicalAddress
+    agency.info[agency.info.length - 1].location.physicalAddress
   );
+  // agency.info[agency.info.length - 1].serviceArea.locations?.[0]
+  //   ?.physicalAddress
 
   if (
-    agency.info[agency.info.length - 1].serviceArea.locations?.[0]
-      ?.mailingAddress
+    // agency.info[agency.info.length - 1].serviceArea.locations?.[0]
+    //   ?.mailingAddress
+    agency.info[agency.info.length - 1].location.mailingAddress
   ) {
-    const mailingAddress = form.getTextField('Mailing Address');
+    const mailingAddress = form.getTextField(
+      'Mailing Address Only list if different from Physical'
+    );
     mailingAddress.setText(
-      agency.info[agency.info.length - 1].serviceArea.locations?.[0]
-        ?.mailingAddress
+      // agency.info[agency.info.length - 1].serviceArea.locations
+      agency.info[agency.info.length - 1].location.mailingAddress
     );
   }
 
-  if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.county) {
+  // if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.county) {
+  if (agency.info[agency.info.length - 1].location.county) {
     const locationCounty = form.getTextField('County_3');
     locationCounty.setText(
-      agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.county
+      // agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.county
+      agency.info[agency.info.length - 1].location.county
     );
   }
 
-  if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.city) {
+  // if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.city) {
+  if (agency.info[agency.info.length - 1].location.city) {
     const locationCity = form.getTextField('City_3');
     locationCity.setText(
-      agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.city
+      // agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.city
+      agency.info[agency.info.length - 1].location.city
     );
   }
 
-  if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.state) {
+  // if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.state) {
+  if (agency.info[agency.info.length - 1].location.state) {
     const locationState = form.getTextField('State_3');
     locationState.setText(
-      agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.state
+      // agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.state
+      agency.info[agency.info.length - 1].location.state
     );
   }
 
-  if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.zipCode) {
+  // if (agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.zipCode) {
+  if (agency.info[agency.info.length - 1].location.zipCode) {
     const locationZip = form.getTextField('Zip Code');
     locationZip.setText(
-      agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.zipCode
+      // agency.info[agency.info.length - 1].serviceArea.locations?.[0]?.zipCode
+      agency.info[agency.info.length - 1].location.zipCode
     );
   }
 
@@ -258,6 +276,16 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
         ', '
       )
     );
+  }
+
+  if (agency.info[agency.info.length - 1].contactInfo.email) {
+    const email = form.getTextField('Email Address');
+    email.setText(agency.info[agency.info.length - 1].contactInfo.email);
+  }
+
+  if (agency.info[agency.info.length - 1].contactInfo.website) {
+    const website = form.getTextField('Website');
+    website.setText(agency.info[agency.info.length - 1].contactInfo.website);
   }
 
   if (agency.info[agency.info.length - 1].languages.includes('ASL')) {
@@ -308,22 +336,38 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
     ada.setText('X');
   }
 
-  if (agency.info[agency.info.length - 1].regularHoursOpening) {
-    const hours = form.getTextField('Regular Office Hours');
-    hours.setText(agency.info[agency.info.length - 1].regularHoursOpening);
-  }
+  // FIX THIS ---------------------------------------------------------------------
+  // if (agency.info[agency.info.length - 1].regularHoursOpening) {
+  //   const hours = form.getTextField('Regular Office Hours');
+  //   hours.setText(agency.info[agency.info.length - 1].regularHoursOpening);
+  // }
 
-  if (agency.info[agency.info.length - 1].regularHoursClosing) {
-    const hours = form.getTextField('am  pm to');
-    hours.setText(agency.info[agency.info.length - 1].regularHoursClosing);
-  }
+  // if (agency.info[agency.info.length - 1].regularHoursClosing) {
+  //   const hours = form.getTextField('am  pm to');
+  //   hours.setText(agency.info[agency.info.length - 1].regularHoursClosing);
+  // }
 
-  const regularDaysOpen: string[] = [];
-  agency.info[agency.info.length - 1].regularDaysOpen.forEach((day) => {
-    regularDaysOpen.push(day);
-  });
-  const daysOpen = form.getTextField('am  pm Days Mon Tue Wed Thu Fri Sat Sun');
-  daysOpen.setText(regularDaysOpen.join(', '));
+  // const regularDaysOpen: string[] = [];
+  // agency.info[agency.info.length - 1].regularDaysOpen.forEach((day) => {
+  //   regularDaysOpen.push(day);
+  // });
+  // const daysOpen = form.getTextField('am  pm Days Mon Tue Wed Thu Fri Sat Sun');
+  // daysOpen.setText(regularDaysOpen.join(', '));
+  // FIX THIS ----------------------------------------------------------------^^^^^
+
+  let hoursText: string = '';
+  const hours = form.getTextField('am  pm Days Mon Tue Wed Thu Fri Sat Sun');
+  for (let i = 0; i < agency.info[agency.info.length - 1].hours.length; i++) {
+    const hoursOfOperation = agency.info[agency.info.length - 1].hours[i];
+    hoursText +=
+      hoursOfOperation.day +
+      ': ' +
+      hoursOfOperation.openTime +
+      '-' +
+      hoursOfOperation.closeTime +
+      ', ';
+  }
+  hours.setText(hoursText);
 
   if (agency.info[agency.info.length - 1].updaterContactInfo.name) {
     const updaterName = form.getTextField(
@@ -442,7 +486,7 @@ function fillService(service: Service, form: PDFForm, num: number) {
   );
   eligibilityRequirements.setText(service.eligibilityRequirements);
 
-  if (service.applicationProcess.includes('Walkin')) {
+  if (service.applicationProcess.includes('Walk-in')) {
     const walkin = form.getTextField(`Walkin${prefixes[num]}`);
     walkin.setText('X');
   }
@@ -524,6 +568,10 @@ function fillService(service: Service, form: PDFForm, num: number) {
 
   service.requiredDocuments.forEach((document) => {
     switch (document) {
+      case 'No Documents':
+        const noDocuments = form.getTextField(`No Documents${prefixes[num]}`);
+        noDocuments.setText('X');
+        break;
       case 'State Issued I.D.':
         const stateId = form.getTextField(`State Issued ID${prefixes[num]}`);
         stateId.setText('X');

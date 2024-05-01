@@ -4,7 +4,32 @@ import {
   ServiceArea,
   ContactInfo,
   AgencyInfoForm,
+  Day,
 } from '@/utils/types/';
+
+const DaySchema = new mongoose.Schema<Day>({
+  day: {
+    type: String,
+    enum: [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ],
+    required: true,
+  },
+  openTime: {
+    type: String,
+    required: true,
+  },
+  closeTime: {
+    type: String,
+    required: true,
+  },
+});
 
 const LocationSchema = new mongoose.Schema<Location>({
   confidential: {
@@ -29,8 +54,14 @@ const LocationSchema = new mongoose.Schema<Location>({
 });
 
 const ServiceAreaSchema = new mongoose.Schema<ServiceArea>({
-  locations: {
-    type: [LocationSchema],
+  townCity: {
+    type: String,
+  },
+  zipCodes: {
+    type: [String],
+  },
+  counties: {
+    type: [String],
   },
   statewide: {
     type: Boolean,
@@ -126,25 +157,7 @@ const AgencyInfoFormSchema = new mongoose.Schema<AgencyInfoForm>(
     accessibilityADA: {
       type: Boolean,
     },
-    regularHoursOpening: {
-      type: String,
-    },
-    regularHoursClosing: {
-      type: String,
-    },
-    regularDaysOpen: {
-      type: [String], // Consider better way to represent this
-      enum: [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday',
-      ],
-      required: true,
-    },
+    hours: [DaySchema],
     updaterContactInfo: {
       type: ContactInfoSchema,
       required: true,

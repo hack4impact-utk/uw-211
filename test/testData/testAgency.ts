@@ -10,16 +10,9 @@ export const testAgency: Agency = {
         'Non-profit organization providing community services.',
       directorNameOrTitle: 'bob',
       serviceArea: {
-        locations: [
-          {
-            confidential: false,
-            physicalAddress: '123 Main St',
-            county: 'Knox',
-            city: 'Knoxville',
-            state: 'Tennessee',
-            zipCode: '37996',
-          },
-        ],
+        townCity: 'Knoxville',
+        zipCodes: ['37916'],
+        counties: ['Knox'],
         statewide: true,
         nationwide: false,
       },
@@ -36,9 +29,33 @@ export const testAgency: Agency = {
       languages: ['Spanish', 'ASL'],
       languagesWithoutPriorNotice: ['French', 'Russian'],
       accessibilityADA: true,
-      regularHoursOpening: '9:00 AM',
-      regularHoursClosing: '5:00 PM',
-      regularDaysOpen: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      hours: [
+        {
+          day: 'Monday',
+          openTime: '9:00 AM',
+          closeTime: '5:00 PM',
+        },
+        {
+          day: 'Tuesday',
+          openTime: '9:00 AM',
+          closeTime: '5:00 PM',
+        },
+        {
+          day: 'Wednesday',
+          openTime: '9:00 AM',
+          closeTime: '5:00 PM',
+        },
+        {
+          day: 'Thursday',
+          openTime: '9:00 AM',
+          closeTime: '5:00 PM',
+        },
+        {
+          day: 'Friday',
+          openTime: '9:00 AM',
+          closeTime: '5:00 PM',
+        },
+      ],
       updaterContactInfo: {
         name: 'Billy',
         title: 'Guy',
