@@ -10,8 +10,18 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select';
+import { useRouter, usePathname } from '@/utils/navigation';
+import { useLocale } from 'next-intl';
 
 export default function Header({ className }: { className?: string }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const locale = useLocale();
+
+  const changeLanguage = (nextLocale: string) => {
+    router.replace(pathname, { locale: nextLocale });
+  };
+
   return (
     <header
       className={`top-0 z-50 flex w-full border-b-2 border-[#1e57a1] bg-orange-500 pb-2 pt-2 ${className}`}
@@ -27,7 +37,10 @@ export default function Header({ className }: { className?: string }) {
       </div>
       <div className="flex flex-1 items-center justify-end">
         <div className="pr-4">
-          <Select defaultValue="english">
+          <Select
+            defaultValue={locale}
+            onValueChange={(nextLocale) => changeLanguage(nextLocale)}
+          >
             <SelectTrigger className="w-[65px] md:w-[180px]">
               <SelectValue
                 placeholder="Select a language"
@@ -36,7 +49,7 @@ export default function Header({ className }: { className?: string }) {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="english">
+                <SelectItem value="en-US">
                   <div className="flex items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -165,7 +178,7 @@ export default function Header({ className }: { className?: string }) {
                     <div className="hidden md:visible md:flex">English</div>
                   </div>
                 </SelectItem>
-                <SelectItem value="espanol">
+                <SelectItem value="es-US">
                   <div className="flex items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

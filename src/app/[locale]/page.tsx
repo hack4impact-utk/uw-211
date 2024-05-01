@@ -1,6 +1,7 @@
 import WelcomePage from '@/components/WelcomePage';
 import { getAgencyById } from '@/server/actions/Agencies';
 import { Agency } from '@/utils/types';
+import { getTranslations } from 'next-intl/server';
 
 async function getAgency(id: string): Promise<Agency | undefined> {
   try {
@@ -15,6 +16,8 @@ export default async function Home({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const t = await getTranslations('Landing');
+
   // extract id query parameter
   let id = searchParams.id;
 
@@ -28,7 +31,7 @@ export default async function Home({
 
   return (
     <>
-      <WelcomePage id={id} agency={agency}></WelcomePage>
+      <WelcomePage id={id} agency={agency} t={t}></WelcomePage>
     </>
   );
 }

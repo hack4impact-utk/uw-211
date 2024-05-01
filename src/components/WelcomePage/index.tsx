@@ -9,9 +9,11 @@ import Image from 'next/image';
 interface WelcomePageProps {
   id?: string;
   agency?: Agency;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: any;
 }
 
-function WelcomePageBody({ id, agency }: WelcomePageProps) {
+function WelcomePageBody({ id, agency, t }: WelcomePageProps) {
   if (agency) {
     return (
       <>
@@ -49,7 +51,7 @@ function WelcomePageBody({ id, agency }: WelcomePageProps) {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold">Oops!</h1>
+      <h1 className="text-3xl font-bold">{t('hello')}</h1>
       <p className="mb-2 mt-4 text-gray-700">
         It seems the form link you have been provided is invalid. Please reach
         out to us via email at{' '}
@@ -69,7 +71,7 @@ function WelcomePageBody({ id, agency }: WelcomePageProps) {
     </div>
   );
 }
-function WelcomePage({ id, agency }: WelcomePageProps) {
+function WelcomePage({ id, agency, t }: WelcomePageProps) {
   return (
     <>
       <Header className="fixed" />
@@ -88,7 +90,7 @@ function WelcomePage({ id, agency }: WelcomePageProps) {
                   height="200"
                 />
               </div>
-              <WelcomePageBody id={id} agency={agency} />
+              <WelcomePageBody id={id} agency={agency} t={t} />
             </div>
           </div>
         </div>
