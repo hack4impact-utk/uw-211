@@ -12,14 +12,16 @@ import {
 } from '@/components/ui/select';
 import { useRouter, usePathname } from '@/utils/navigation';
 import { useLocale } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 
 export default function Header({ className }: { className?: string }) {
   const router = useRouter();
   const pathname = usePathname();
   const locale = useLocale();
+  const searchParams = useSearchParams();
 
   const changeLanguage = (nextLocale: string) => {
-    router.replace(pathname, { locale: nextLocale });
+    router.replace(pathname + '?' + searchParams, { locale: nextLocale });
   };
 
   return (
