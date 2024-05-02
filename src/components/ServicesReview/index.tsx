@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { z } from 'zod';
 import { ServiceSchema } from '@/utils/constants/formDataSchema';
+import { HoursReview } from '../HoursReview';
 
 type Service = z.infer<typeof ServiceSchema>;
 
@@ -208,9 +209,12 @@ export function ServicesReview(service: Service) {
             )}
           </div>
 
-          {/* TODO */}
           <div>
-            <span className="bg-blue-500 text-white">TODO: Hours</span>
+            <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+              Hours of Operation
+            </h3>
+
+            <HoursReview hours={service.daysOpen} />
           </div>
 
           <div>

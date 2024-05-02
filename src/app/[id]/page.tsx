@@ -47,6 +47,7 @@ import Hours from '@/components/Hours';
 import { useRouter } from 'next/navigation';
 import Spinner from '@/components/Spinner';
 import AdditionalNumbers from '@/components/AdditionalNumbers';
+import { HoursReview } from '@/components/HoursReview';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
@@ -3312,15 +3313,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         <div className="w-full md:w-1/2">
                           {/* Hours of Operation */}
                           <div className="mb-6">
-                            {/* TODO */}
                             <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                               Hours of Operation
                             </h3>
-                            <p>
-                              <span className="bg-blue-500 text-white">
-                                TODO: Hours of operation
-                              </span>
-                            </p>
+
+                            <HoursReview hours={getValues('hours')} />
                           </div>
 
                           {/* Funding Source */}
