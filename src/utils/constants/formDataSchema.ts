@@ -261,7 +261,12 @@ const locationSchema = z.object({
   county: z.string().min(1, 'Required'),
   city: z.string().min(1, 'Required'),
   state: z.string().min(1, 'Required'),
-  zipCode: z.string().min(1, 'Required'),
+  zipCode: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{5}$/, {
+      message: 'Must be a valid zip code.',
+    }),
 });
 
 const serviceAreaSchema = z
@@ -352,10 +357,16 @@ export const contactInfoSchema = z.object({
     }),
   faxNumber: z
     .string()
-    .min(1, 'Required')
-    .regex(/^[0-9]{10}$/, {
-      message: 'Must be a valid phone number.',
-    }),
+    .optional()
+    .refine(
+      (value) => {
+        const regex = /^[0-9]{10}$/;
+        return !value || regex.test(value);
+      },
+      {
+        message: 'Must be a valid phone number.',
+      }
+    ),
   tollFreeNumber: z
     .string()
     .min(1, 'Required')
@@ -377,9 +388,13 @@ export const contactInfoSchema = z.object({
     }),
   website: z
     .string()
-    .min(1, 'Required')
-    .regex(
-      /^(https?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})+(\/[^\s]*)?$/,
+    .optional()
+    .refine(
+      (value) => {
+        const regex =
+          /^(https?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})+(\/[^\s]*)?$/;
+        return !value || regex.test(value);
+      },
       {
         message: 'Must be a valid web address.',
       }
