@@ -37,8 +37,8 @@
         "agencyInfo": "Brief Agency Information",
         "phone": "Main Phone Number",
         "fax": "Fax Number",
-        "toll-free": "Toll Free Number",
-        "tdd-tty": "TDD/TTY Number",
+        "tollFree": "Toll Free Number",
+        "tddTty": "TDD/TTY Number",
         "email": "Email",
         "website": "Website"
       },
@@ -77,7 +77,7 @@
         "serviceArea": {
           "title": "Service Area",
           "description": "Choose the description that best reflects your service area.",
-          "town-city": "Specific Town/City",
+          "townCity": "Specific Town/City",
           "zip": "Specific Zip Code(s)",
           "county": "Specific County/Counties",
           "state": "Statewide",
@@ -232,5 +232,23 @@
       "yes": "Yes",
       "no": "No"
     }
+  },
+  "Components": {
+    "additionalNumbers": {
+      "title": "Additional Numbers",
+      "button": "Add Number",
+      "label": "Label",
+      "number": "Number",
+      "remove": "Remove",
+      "warnings": {
+        "incomplete": "Must have a label and number for each additional number.",
+        "duplicate": "Cannot add duplicate labels or numbers.",
+        "validPhone": "Please enter valid phone number."
+      }
+    }
+  },
+  "Footer": {
+    "terms": "Terms and Conditions",
+    "privacy": "Privacy Policy"
   }
 }

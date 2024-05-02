@@ -1,6 +1,9 @@
 import { Facebook, Instagram, Linkedin } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function Footer({ className }: { className?: string }) {
+  const t = useTranslations('Footer');
+
   return (
     <footer className={`w-full ${className}`}>
       <ul className="flex items-center justify-center gap-4 text-xs">
@@ -10,7 +13,7 @@ export default function Footer({ className }: { className?: string }) {
             target="_blank"
             aria-label="Terms and Conditions"
           >
-            Terms and Conditions
+            {t('terms')}
           </a>
         </li>
         <li>
@@ -19,7 +22,7 @@ export default function Footer({ className }: { className?: string }) {
             target="_blank"
             aria-label="Privacy Policy"
           >
-            Privacy Policy
+            {t('privacy')}
           </a>
         </li>
         <li>

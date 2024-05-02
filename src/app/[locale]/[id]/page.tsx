@@ -974,6 +974,22 @@ export default function Form({ params }: { params: { id: string } }) {
     return service_items;
   };
 
+  const get_legal_status = () => {
+    const legal_statuses = new Map([
+      ['Federal', t('preliminaries.general.legalStatus.options.federal')],
+      ['State', t('preliminaries.general.legalStatus.options.state')],
+      ['County', t('preliminaries.general.legalStatus.options.county')],
+      ['City', t('preliminaries.general.legalStatus.options.city')],
+      ['Non-profit', t('preliminaries.general.legalStatus.options.nonprofit')],
+      ['501(c)3', t('preliminaries.general.legalStatus.options.501c3')],
+      ['Faith-based', t('preliminaries.general.legalStatus.options.faith')],
+      ['For profit', t('preliminaries.general.legalStatus.options.profit')],
+      ['Other', t('preliminaries.general.legalStatus.options.other')],
+    ]);
+
+    return legal_statuses.get(getValues('legalStatus'));
+  };
+
   const get_fundingSource = () => {
     const sources = new Map([
       ['federal', t('preliminaries.operations.funding.options.federal')],
@@ -1361,7 +1377,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             htmlFor="contactInfo.tollFreeNumber"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            {t('preliminaries.general.toll-free')}
+                            {t('preliminaries.general.tollFree')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
 
@@ -1391,7 +1407,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             htmlFor="contactInfo.TDDTTYNumber"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            {t('preliminaries.general.tdd-tty')}
+                            {t('preliminaries.general.tddTty')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
                           <div className="mt-2">
@@ -1993,9 +2009,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             htmlFor="serviceArea.townCity"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            {t(
-                              'preliminaries.additional.serviceArea.town-city'
-                            )}
+                            {t('preliminaries.additional.serviceArea.townCity')}
                           </label>
                           <div className="mt-2">
                             <input
@@ -3287,10 +3301,7 @@ export default function Form({ params }: { params: { id: string } }) {
                                 ':'}
                             </p>
                             <p className="w-full md:w-1/2 ">
-                              {getValues('legalStatus')
-                                .charAt(0)
-                                .toUpperCase() +
-                                getValues('legalStatus').slice(1)}
+                              {get_legal_status()}
                             </p>
                           </div>
 
@@ -3330,7 +3341,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           {/* Toll Free Number */}
                           <div className="flex flex-col md:flex-row md:items-start">
                             <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              {t('preliminaries.general.toll-free') + ':'}
+                              {t('preliminaries.general.tollFree') + ':'}
                             </p>
                             <p className="w-full md:w-1/2 ">
                               {getValues('contactInfo.tollFreeNumber')}
@@ -3340,7 +3351,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           {/* TDD/TTY Number */}
                           <div className="flex flex-col md:flex-row md:items-start">
                             <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              {t('preliminaries.general.tdd-tty') + ':'}
+                              {t('preliminaries.general.tddTty') + ':'}
                             </p>
                             <p className="w-full md:w-1/2 ">
                               {getValues('contactInfo.TDDTTYNumber')}
@@ -3570,7 +3581,7 @@ export default function Form({ params }: { params: { id: string } }) {
                               <div className="flex flex-col md:flex-row md:items-start">
                                 <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                                   {t(
-                                    'preliminaries.additional.serviceArea.town-city'
+                                    'preliminaries.additional.serviceArea.townCity'
                                   ) + ':'}
                                 </p>
                                 <p className="w-full md:w-1/2 ">

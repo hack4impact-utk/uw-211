@@ -37,8 +37,8 @@
         "agencyInfo": "Breve información de la Agencia",
         "phone": "Teléfono principal",
         "fax": "Número de fax",
-        "toll-free": "Número gratuito",
-        "tdd-tty": "Número TDD/TTY",
+        "tollFree": "Número gratuito",
+        "tddTty": "Número TDD/TTY",
         "email": "Correo electrónico",
         "website": "Sitio web"
       },
@@ -77,7 +77,7 @@
         "serviceArea": {
           "title": "Área de servicio",
           "description": "Elija la descripción que mejor refleje su área de servicio.",
-          "town-city": "Ciudad específica",
+          "townCity": "Ciudad específica",
           "zip": "Código(s) postal(es) específico(s)",
           "county": "Condado/Condados específicos",
           "state": "En todo el Estado",
@@ -232,5 +232,23 @@
       "yes": "Sí",
       "no": "No"
     }
+  },
+  "Components": {
+    "additionalNumbers": {
+      "title": "Números adicionales",
+      "button": "Añadir número",
+      "label": "Etiqueta",
+      "number": "Número",
+      "remove": "Eliminar",
+      "warnings": {
+        "incomplete": "Debe tener una etiqueta y un número para cada número adicional.",
+        "duplicate": "No se pueden añadir etiquetas o números duplicados.",
+        "validPhone": "Por favor, introduzca un número de teléfono válido."
+      }
+    }
+  },
+  "Footer": {
+    "terms": "Condiciones Generales",
+    "privacy": "Política de Privacidad"
   }
 }
