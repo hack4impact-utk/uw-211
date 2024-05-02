@@ -3915,7 +3915,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 {isLoading ? (
                   <Spinner className="h-4 w-4 animate-spin" />
                 ) : (
-                  <p>Click to Submit</p>
+                  <span>Click to Submit</span>
                 )}
               </Button>
             ) : (
