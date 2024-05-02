@@ -26,7 +26,7 @@ export default function Header({ className }: { className?: string }) {
         />
       </div>
       <div className="flex flex-1 items-center justify-end">
-        <div className="pr-4">
+        <div className="pr-8">
           <Select defaultValue="english">
             <SelectTrigger className="w-[65px] md:w-[180px]">
               <SelectValue
