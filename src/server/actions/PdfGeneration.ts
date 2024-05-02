@@ -27,7 +27,9 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
     (status) => {
       switch (status) {
         case 'Federal':
-          const federal = form.getTextField('Federal');
+          const federal = form.getTextField(
+            '1 Legal Organizational Status Federal'
+          );
           federal.setText('X');
           break;
         case 'State':

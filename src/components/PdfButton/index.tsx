@@ -3,7 +3,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Newspaper } from 'lucide-react';
-import { generatePdf } from '@/server/actions/PdfGeneration';
 
 interface PdfButtonProps {
   agencyId: string | undefined;
@@ -15,7 +14,9 @@ const PdfButton: React.FC<PdfButtonProps> = ({ agencyId }) => {
       return;
     }
 
-    const pdfBytes = await generatePdf(id);
+    const pdfBytes = await fetch(`/api/pdf/${id}`).then((res) =>
+      res.arrayBuffer()
+    );
 
     const blob = new Blob([pdfBytes], {
       type: 'application/pdf;charset=utf-8',
