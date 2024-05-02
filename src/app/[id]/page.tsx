@@ -89,9 +89,11 @@ export default function Form({ params }: { params: { id: string } }) {
       setIsLoading(true);
       const validatedInfo = zodFormToTs(data);
       await createAgencyInfoWithServices(params.id, validatedInfo);
-      setIsLoading(false);
-
       router.push('/complete');
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 5000);
     } catch (error) {
       console.error(error);
     }
@@ -3413,7 +3415,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 City:
                               </p>
                               <p className="w-1/2 md:w-1/3">
-                                <p>{getValues('location.city')}</p>
+                                {getValues('location.city')}
                               </p>
                             </div>
 
@@ -3568,9 +3570,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 Phone Number:
                               </p>
                               <p className="w-1/2 md:w-1/3">
-                                <p>
-                                  {getValues('annualAgencyUpdate.phoneNumber')}
-                                </p>
+                                {getValues('annualAgencyUpdate.phoneNumber')}
                               </p>
                             </div>
 
@@ -3922,7 +3922,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
             {currentStep === steps.length - 1 &&
             currentSubstep === steps[steps.length - 1].subpages.length - 1 ? (
-              <Button type="submit" className="w-36">
+              <Button type="submit" className="w-36" disabled={isLoading}>
                 {isLoading ? (
                   <Spinner className="h-4 w-4 animate-spin" />
                 ) : (
