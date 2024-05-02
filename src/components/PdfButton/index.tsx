@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Newspaper } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { useState } from 'react';
 import Spinner from '@/components/Spinner';
 
@@ -43,8 +43,8 @@ const PdfButton: React.FC<PdfButtonProps> = ({ agencyId }) => {
           <Spinner className="h-4 w-4 animate-spin" />
         </div>
       ) : (
-        <div className="flex">
-          <Newspaper className="mr-2" />
+        <div className="flex items-center">
+          <FileText className="mr-2" />
           View form
         </div>
       )}
