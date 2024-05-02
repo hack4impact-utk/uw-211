@@ -61,13 +61,7 @@
         },
         "location": {
           "title": "Información sobre la ubicación",
-          "confidential": {
-            "title": "¿Es confidencial la dirección física?",
-            "options": {
-              "yes": "Sí",
-              "no": "No"
-            }
-          },
+          "confidential": "¿Es confidencial la dirección física?",
           "address": {
             "physical": "Dirección física",
             "mailing": "Dirección postal (Indíquela sólo si es diferente de la dirección física.)",
@@ -97,13 +91,7 @@
           "contactTitle": "Título",
           "phone": "Número de teléfono",
           "email": "Correo electrónico",
-          "confidential": {
-            "title": "¿Desea que esta información se oculte en el sitio web?",
-            "options": {
-              "yes": "Sí",
-              "no": "No"
-            }
-          }
+          "confidential": "¿Desea que esta información se oculte en el sitio web?"
         }
       },
       "accessibility": {
@@ -118,13 +106,7 @@
           },
           "priorNotice": "¿Se puede facilitar alguna lengua con previo aviso? (Enumere.)"
         },
-        "ada": {
-          "title": "¿Son sus instalaciones accesibles para las personas con discapacidad, según la definición de la Ley de Estadounidenses con Discapacidad (ADA)?",
-          "options": {
-            "yes": "Sí",
-            "no": "No"
-          }
-        }
+        "ada": "¿Son sus instalaciones accesibles para las personas con discapacidad, según la definición de la Ley de Estadounidenses con Discapacidad (ADA)?"
       }
     },
     "services": {
@@ -207,44 +189,28 @@
       "title": "Oportunidades",
       "acceptVolunteers": {
         "title": "¿Acepta su organización voluntarios?",
-        "options": {
-          "yes": "Sí",
-          "no": "No"
-        },
         "eligibility": {
           "title": "¿Quién puede ser voluntario?",
           "description": "Enumere el tipo de trabajo voluntario, la edad, la formación, la comprobación de antecedentes y otros requisitos para sus voluntarios.",
-          "coordinator": "Coordinador de voluntarios:",
+          "coordinator": "Coordinador de voluntarios",
           "phone": "Número de teléfono"
         }
       },
       "acceptDonations": {
         "title": "¿Acepta su organización donaciones no monetarias continuas en apoyo de programas o servicios?",
-        "options": {
-          "yes": "Sí",
-          "no": "No"
-        },
         "list": {
           "title": "Por favor, indique.",
           "description": "Ejemplo: comida para mascotas, ropa, electrodomésticos, muebles"
         },
         "pickup": {
           "title": "¿Ofrecen servicio de recogida?",
-          "options": {
-            "yes": "Sí",
-            "no": "No"
-          },
           "where": "¿Dónde?"
         },
-        "coordinator": "Coordinador de donaciones:",
+        "coordinator": "Coordinador de donaciones",
         "phone": "Número de teléfono"
       },
       "other": {
         "title": "¿Hay otros organismos o servicios que le hayan sido útiles y que recomendaría incluir en nuestra base de datos de recursos?",
-        "options": {
-          "yes": "Sí",
-          "no": "No"
-        },
         "contactInformation": "Por favor, facilite información de contacto de estas agencias/servicios."
       }
     },
@@ -257,10 +223,14 @@
         "none": "No hay números adicionales."
       },
       "mailing": {
-        "title": "Dirección postal:",
+        "title": "Dirección postal",
         "none": "Igual que la dirección física."
-      }
+      },
+      "no-services": "No hay servicios."
     },
-    "no-services": "No hay servicios."
+    "options": {
+      "yes": "Sí",
+      "no": "No"
+    }
   }
 }

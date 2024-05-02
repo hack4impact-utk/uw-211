@@ -451,7 +451,7 @@ export default function Form({ params }: { params: { id: string } }) {
               htmlFor="referral"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              {t('services.referralRequired.title')}
+              {t('services.applicationProcess.referralRequired.title')}
             </label>
             {watch(
               `services.${serviceIdx}.applicationProcess.referral.required`
@@ -459,7 +459,9 @@ export default function Form({ params }: { params: { id: string } }) {
               <>
                 <Input
                   className="m-2"
-                  placeholder={t('services.referralRequired.description')}
+                  placeholder={t(
+                    'services.applicationProcess.referralRequired.description'
+                  )}
                   {...register(
                     `services.${serviceIdx}.applicationProcess.referral.content`
                   )}
@@ -589,7 +591,7 @@ export default function Form({ params }: { params: { id: string } }) {
               htmlFor="medicaid_tenncare"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              {t('services.fees.medicaid_tenncare')}
+              {t('services.fees.medicaidTenncare')}
             </label>
           </div>
 
@@ -1724,9 +1726,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       {/* location.confidential */}
                       <div>
                         <h2 className="block text-sm font-medium leading-6 text-gray-900">
-                          {t(
-                            'preliminaries.operations.location.confidential.title'
-                          )}
+                          {t('preliminaries.operations.location.confidential')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </h2>
                         <div className="flex flex-row gap-4 whitespace-nowrap">
@@ -1746,9 +1746,7 @@ export default function Form({ params }: { params: { id: string } }) {
                               htmlFor="location.confidential1"
                               className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                             >
-                              {t(
-                                'preliminaries.operations.location.confidential.options.no'
-                              )}
+                              {t('options.no')}
                             </label>
                           </div>
                           <div>
@@ -1766,9 +1764,7 @@ export default function Form({ params }: { params: { id: string } }) {
                               htmlFor="location.confidential2"
                               className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                             >
-                              {t(
-                                'preliminaries.operations.location.confidential.options.yes'
-                              )}
+                              {t('options.yes')}
                             </label>
                           </div>
                         </div>
@@ -2257,7 +2253,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       <div className="flex flex-col gap-6 md:flex-row">
                         <h2 className="block text-sm font-medium leading-6 text-gray-900">
                           {t(
-                            'preliminaries.additional.agencyUpdate.confidential.title'
+                            'preliminaries.additional.agencyUpdate.confidential'
                           )}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </h2>
@@ -2278,9 +2274,7 @@ export default function Form({ params }: { params: { id: string } }) {
                               htmlFor="annualAgencyUpdate.hideFromWebsite1"
                               className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                             >
-                              {t(
-                                'preliminaries.additional.agencyUpdate.confidential.options.no'
-                              )}
+                              {t('options.no')}
                             </label>
                           </div>
                           <div>
@@ -2298,9 +2292,7 @@ export default function Form({ params }: { params: { id: string } }) {
                               htmlFor="annualAgencyUpdate.hideFromWebsite2"
                               className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                             >
-                              {t(
-                                'preliminaries.additional.agencyUpdate.confidential.options.yes'
-                              )}
+                              {t('options.yes')}
                             </label>
                           </div>
                         </div>
@@ -2477,7 +2469,7 @@ export default function Form({ params }: { params: { id: string } }) {
                   {/* Accessibility ADA */}
                   <div className="flex flex-col gap-6 md:flex-row">
                     <h2 className="block text-sm font-medium leading-6 text-gray-900">
-                      {t('preliminaries.accessibility.ada.title')}
+                      {t('preliminaries.accessibility.ada')}
                     </h2>
                     <div className="flex flex-row gap-4 whitespace-nowrap">
                       <div>
@@ -2494,7 +2486,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           htmlFor="accessibilityADA1"
                           className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                         >
-                          {t('preliminaries.accessibility.ada.options.no')}
+                          {t('options.no')}
                         </label>
                       </div>
                       <div>
@@ -2510,7 +2502,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           htmlFor="accessibilityADA2"
                           className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                         >
-                          {t('preliminaries.accessibility.ada.options.yes')}
+                          {t('options.yes')}
                         </label>
                       </div>
                     </div>
@@ -2747,7 +2739,7 @@ export default function Form({ params }: { params: { id: string } }) {
                                 htmlFor="volunteers1"
                                 className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                               >
-                                {t('opportunities.acceptVolunteers.options.no')}
+                                {t('options.no')}
                               </label>
                             </div>
                             <div>
@@ -2766,9 +2758,7 @@ export default function Form({ params }: { params: { id: string } }) {
                                 htmlFor=""
                                 className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                               >
-                                {t(
-                                  'opportunities.acceptVolunteers.options.yes'
-                                )}
+                                {t('options.yes')}
                               </label>
                             </div>
                           </div>
@@ -2792,7 +2782,9 @@ export default function Form({ params }: { params: { id: string } }) {
                             htmlFor="vol_reqs"
                             className="text-base font-semibold leading-7 text-gray-900"
                           >
-                            {t('opportunities.eligibility.title')}
+                            {t(
+                              'opportunities.acceptVolunteers.eligibility.title'
+                            )}
                           </label>
                           <textarea
                             id="vol_reqs"
@@ -2802,7 +2794,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             rows={10}
                             disabled={volunteerChecked === 'false'}
                             placeholder={t(
-                              'opportunities.eligibility.description'
+                              'opportunities.acceptVolunteers.eligibility.description'
                             )}
                             className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           ></textarea>
@@ -2821,7 +2813,9 @@ export default function Form({ params }: { params: { id: string } }) {
                               htmlFor="vol_cor"
                               className="text-base font-semibold leading-7 text-gray-900"
                             >
-                              {t('opportunities.eligibility.coordinator')}
+                              {t(
+                                'opportunities.acceptVolunteers.eligibility.coordinator'
+                              )}
                             </label>
 
                             <input
@@ -2846,7 +2840,9 @@ export default function Form({ params }: { params: { id: string } }) {
                               htmlFor="vol_coor_tel"
                               className="text-base font-semibold leading-7 text-gray-900"
                             >
-                              {t('opportunities.eligibility.phone')}
+                              {t(
+                                'opportunities.acceptVolunteers.eligibility.phone'
+                              )}
                             </label>
 
                             <input
@@ -2896,9 +2892,7 @@ export default function Form({ params }: { params: { id: string } }) {
                                 htmlFor="donation1"
                                 className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                               >
-                                {t(
-                                  'opportunities.acceptDonations.title.options.no'
-                                )}
+                                {t('options.no')}
                               </label>
                             </div>
                             <div>
@@ -2916,7 +2910,7 @@ export default function Form({ params }: { params: { id: string } }) {
                                 htmlFor="donation2"
                                 className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                               >
-                                {t('opportunities.acceptDonations.options.yes')}
+                                {t('options.yes')}
                               </label>
                             </div>
                           </div>
@@ -2987,9 +2981,7 @@ export default function Form({ params }: { params: { id: string } }) {
                                   htmlFor="pickup1"
                                   className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                                 >
-                                  {t(
-                                    'opportunities.acceptDonations.pickup.options.no'
-                                  )}
+                                  {t('options.no')}
                                 </label>
                               </div>
                               <div>
@@ -3008,9 +3000,7 @@ export default function Form({ params }: { params: { id: string } }) {
                                   htmlFor="pickup2"
                                   className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                                 >
-                                  {t(
-                                    'opportunities.acceptDonations.pickup.options.yes'
-                                  )}
+                                  {t('options.yes')}
                                 </label>
                               </div>
                             </div>
@@ -3137,7 +3127,7 @@ export default function Form({ params }: { params: { id: string } }) {
                                 defaultChecked
                               />
                               <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                {t('opportunities.other.options.no')}
+                                {t('options.no')}
                               </label>
                             </div>
                             <div>
@@ -3154,7 +3144,7 @@ export default function Form({ params }: { params: { id: string } }) {
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               />
                               <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                {t('opportunities.other.options.yes')}
+                                {t('options.yes')}
                               </label>
                             </div>
                           </div>
@@ -3460,19 +3450,15 @@ export default function Form({ params }: { params: { id: string } }) {
                             <div className="flex flex-col gap-16 md:flex-row md:items-start">
                               <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                                 {t(
-                                  'preliminaries.operations.location.confidential.title'
+                                  'preliminaries.operations.location.confidential'
                                 )}
                               </p>
                               <p className="w-full md:w-1/2 ">
                                 {getValues(
                                   'location.confidential'
                                 ).toString() === 'true'
-                                  ? t(
-                                      'preliminaries.operations.location.confidential.options.yes'
-                                    )
-                                  : t(
-                                      'preliminaries.operations.location.confidential.options.no'
-                                    )}
+                                  ? t('options.yes')
+                                  : t('options.no')}
                               </p>
                             </div>
 
@@ -3502,7 +3488,7 @@ export default function Form({ params }: { params: { id: string } }) {
                               ) : (
                                 <>
                                   <p className="text-md w-full leading-6 text-gray-400 md:w-1/2">
-                                    {t('review.mailing.title')}
+                                    {t('review.mailing.title') + ':'}
                                   </p>
                                   <p className="w-full text-gray-400 md:w-1/2">
                                     {t('review.mailing.none')}
@@ -3730,19 +3716,15 @@ export default function Form({ params }: { params: { id: string } }) {
                             <div className="flex flex-col gap-16 md:flex-row md:items-end">
                               <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                                 {t(
-                                  'preliminaries.additional.agencyUpdate.confidential.title'
+                                  'preliminaries.additional.agencyUpdate.confidential'
                                 )}
                               </p>
                               <p className="w-full md:w-1/2 ">
                                 {getValues(
                                   'annualAgencyUpdate.hideFromWebsite'
                                 ).toString() === 'true'
-                                  ? t(
-                                      'preliminaries.additional.agencyUpdate.confidential.options.yes'
-                                    )
-                                  : t(
-                                      'preliminaries.additional.agencyUpdate.confidential.options.no'
-                                    )}
+                                  ? t('options.yes')
+                                  : t('options.no')}
                               </p>
                             </div>
                           </div>
@@ -3785,12 +3767,12 @@ export default function Form({ params }: { params: { id: string } }) {
 
                       <div className="flex flex-row items-center gap-4">
                         <p className="text-base font-semibold leading-7 text-gray-900">
-                          {t('preliminaries.accessibility.ada.title')}
+                          {t('preliminaries.accessibility.ada')}
                         </p>
                         <p>
                           {getValues('accessibilityADA').toString() === 'true'
-                            ? t('preliminaries.accessibility.ada.options.yes')
-                            : t('preliminaries.accessibility.ada.options.no')}
+                            ? t('options.yes')
+                            : t('options.no')}
                         </p>
                       </div>
                     </div>
@@ -3849,8 +3831,8 @@ export default function Form({ params }: { params: { id: string } }) {
 
                           <p className="sm:w-1/2">
                             {getValues('volunteerFields.volunteers') == 'true'
-                              ? t('opportunities.acceptVolunteers.options.yes')
-                              : t('opportunities.acceptVolunteers.options.no')}
+                              ? t('options.yes')
+                              : t('options.no')}
                           </p>
                         </div>
 
@@ -3907,8 +3889,8 @@ export default function Form({ params }: { params: { id: string } }) {
 
                           <p className="sm:w-1/2">
                             {getValues('donationFields.donation') == 'true'
-                              ? t('opportunities.acceptDonations.options.yes')
-                              : t('opportunities.acceptDonations.options.no')}
+                              ? t('options.yes')
+                              : t('options.no')}
                           </p>
                         </div>
 
@@ -3935,12 +3917,8 @@ export default function Form({ params }: { params: { id: string } }) {
 
                               <p className="sm:w-1/2">
                                 {getValues('donationFields.pickup') == 'true'
-                                  ? t(
-                                      'opportunities.acceptDonations.pickup.options.yes'
-                                    )
-                                  : t(
-                                      'opportunities.acceptDonations.pickup.options.no'
-                                    )}
+                                  ? t('options.yes')
+                                  : t('options.no')}
                               </p>
                             </div>
 
@@ -3991,8 +3969,8 @@ export default function Form({ params }: { params: { id: string } }) {
                           <p className="sm:w-1/2">
                             {getValues('recommendationFields.recommendation') ==
                             'true'
-                              ? t('opportunities.other.options.yes')
-                              : t('opportunities.other.options.no')}
+                              ? t('options.yes')
+                              : t('options.no')}
                           </p>
                         </div>
 

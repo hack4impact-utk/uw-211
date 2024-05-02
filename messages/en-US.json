@@ -61,13 +61,7 @@
         },
         "location": {
           "title": "Location Information",
-          "confidential": {
-            "title": "Is the physical address confidential?",
-            "options": {
-              "yes": "Yes",
-              "no": "No"
-            }
-          },
+          "confidential": "Is the physical address confidential?",
           "address": {
             "physical": "Physical Address",
             "mailing": "Mailing Address (Only list if different from physical.)",
@@ -97,13 +91,7 @@
           "contactTitle": "Title",
           "phone": "Phone Number",
           "email": "Email",
-          "confidential": {
-            "title": "Would you like this information to be hidden from the website?",
-            "options": {
-              "yes": "Yes",
-              "no": "No"
-            }
-          }
+          "confidential": "Would you like this information to be hidden from the website?"
         }
       },
       "accessibility": {
@@ -118,13 +106,7 @@
           },
           "priorNotice": "Can any languages be provided with prior notice? (Please list.)"
         },
-        "ada": {
-          "title": "Is your facility accessible to people with disabilities as defined by the Americans with Disabilities Act (ADA)?",
-          "options": {
-            "yes": "Yes",
-            "no": "No"
-          }
-        }
+        "ada": "Is your facility accessible to people with disabilities as defined by the Americans with Disabilities Act (ADA)?"
       }
     },
     "services": {
@@ -207,44 +189,28 @@
       "title": "Opportunities",
       "acceptVolunteers": {
         "title": "Does your organization accept volunteers?",
-        "options": {
-          "yes": "Yes",
-          "no": "No"
-        },
         "eligibility": {
           "title": "Who is eligible to volunteer?",
           "description": "List type of volunteer work, age, training, background checks, and other requirements for your volunteers.",
-          "coordinator": "Volunteer Coordinator:",
+          "coordinator": "Volunteer Coordinator",
           "phone": "Phone Number"
         }
       },
       "acceptDonations": {
         "title": "Does your organization accept ongoing, non-monetary donations in support of programs or services?",
-        "options": {
-          "yes": "Yes",
-          "no": "No"
-        },
         "list": {
           "title": "Please list.",
           "description": "Example: pet food, clothing, appliances, furniture"
         },
         "pickup": {
           "title": "Do you provide pick-up service?",
-          "options": {
-            "yes": "Yes",
-            "no": "No"
-          },
           "where": "Where?"
         },
-        "coordinator": "Donation Coordinator:",
+        "coordinator": "Donation Coordinator",
         "phone": "Phone Number"
       },
       "other": {
         "title": "Are there other agencies or services that have been helpful that you would recommend to be included in our resource database?",
-        "options": {
-          "yes": "Yes",
-          "no": "No"
-        },
         "contactInformation": "Please provide contact information for these agencies/services."
       }
     },
@@ -257,10 +223,14 @@
         "none": "No additional numbers listed."
       },
       "mailing": {
-        "title": "Mailing Address:",
+        "title": "Mailing Address",
         "none": "Same as physical address."
       },
       "no-services": "No services listed."
+    },
+    "options": {
+      "yes": "Yes",
+      "no": "No"
     }
   }
 }
