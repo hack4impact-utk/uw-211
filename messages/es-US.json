@@ -1,5 +1,266 @@
 {
   "Landing": {
-    "hello": "Hola!"
+    "valid": {
+      "welcome": "¡Bienvenido, <bold>{org}</bold>!",
+      "instructions": "La cumplimentación de este formulario es un paso valioso para poner en contacto a las personas con los recursos de la zona de Greater Knoxville. Para obtener más información sobre nuestros servicios, visite nuestro <link>sitio web</link>.",
+      "button": "¡Empezar!"
+    },
+    "invalid": {
+      "welcome": "¡Uy!",
+      "instructions": "Parece que el enlace al formulario que se le ha proporcionado no es válido. Póngase en contacto con nosotros por correo electrónico en <email>respecialist@oconnorcenter.org</email> o por teléfono en el <phone>(865) 523-1329</phone> para recibir un enlace válido para su organización. Sentimos las molestias que esto haya podido causar."
+    }
+  },
+  "Form": {
+    "preliminaries": {
+      "title": "Preliminares",
+      "description": "Conozcamos su agencia...",
+      "general": {
+        "title": "General",
+        "name": "Nombre legal de la agencia",
+        "aka": "También conocido como",
+        "legalStatus": {
+          "title": "Estatus legal de la organización",
+          "options": {
+            "empty": "Seleccione una opción",
+            "federal": "Federal",
+            "state": "Estado",
+            "county": "Condado",
+            "city": "Ciudad",
+            "nonprofit": "Sin ánimo de lucro",
+            "501c3": "501(c)3",
+            "faith": "Basado en la fe",
+            "profit": "Con ánimo de lucro",
+            "other": "Otros"
+          }
+        },
+        "director": "Director Nombre/Titulo",
+        "agencyInfo": "Breve información de la Agencia",
+        "phone": "Teléfono principal",
+        "fax": "Número de fax",
+        "toll-free": "Número gratuito",
+        "tdd-tty": "Número TDD/TTY",
+        "email": "Correo electrónico",
+        "website": "Sitio web"
+      },
+      "operations": {
+        "title": "Operaciones",
+        "hours": "Horario de atención al público",
+        "funding": {
+          "title": "Fuentes de financiación",
+          "options": {
+            "federal": "Federal",
+            "state": "Estado",
+            "county": "Condado",
+            "city": "Ciudad",
+            "donations": "Donaciones",
+            "foundations": "Fundaciones/Organizaciones privadas",
+            "fees": "Tasas/Cuotas",
+            "unitedWay": "United Way",
+            "other": "Otros"
+          }
+        },
+        "location": {
+          "title": "Información sobre la ubicación",
+          "confidential": {
+            "title": "¿Es confidencial la dirección física?",
+            "options": {
+              "yes": "Sí",
+              "no": "No"
+            }
+          },
+          "address": {
+            "physical": "Dirección física",
+            "mailing": "Dirección postal (Indíquela sólo si es diferente de la dirección física.)",
+            "county": "Condado",
+            "city": "Ciudad",
+            "state": "Estado",
+            "zip": "Código postal"
+          }
+        }
+      },
+      "additional": {
+        "title": "Adicional",
+        "serviceArea": {
+          "title": "Área de servicio",
+          "description": "Elija la descripción que mejor refleje su área de servicio.",
+          "town-city": "Ciudad específica",
+          "zip": "Código(s) postal(es) específico(s)",
+          "county": "Condado/Condados específicos",
+          "state": "En todo el Estado",
+          "nation": "En todo el país",
+          "other": "Otros"
+        },
+        "agencyUpdate": {
+          "title": "Actualización anual de la Agencia",
+          "description": "Facilite una persona de contacto para la actualización anual de la información.",
+          "name": "Nombre",
+          "contactTitle": "Título",
+          "phone": "Número de teléfono",
+          "email": "Correo electrónico",
+          "confidential": {
+            "title": "¿Desea que esta información se oculte en el sitio web?",
+            "options": {
+              "yes": "Sí",
+              "no": "No"
+            }
+          }
+        }
+      },
+      "accessibility": {
+        "title": "Accesibilidad",
+        "languages": {
+          "title": "Además del inglés, ¿qué idiomas habla al menos uno de sus empleados a tiempo parcial?",
+          "options": {
+            "asl": "Signo americano",
+            "spanish": "Español",
+            "tele": "Servicio de teleinterpretación",
+            "other": "Otros"
+          },
+          "priorNotice": "¿Se puede facilitar alguna lengua con previo aviso? (Enumere.)"
+        },
+        "ada": {
+          "title": "¿Son sus instalaciones accesibles para las personas con discapacidad, según la definición de la Ley de Estadounidenses con Discapacidad (ADA)?",
+          "options": {
+            "yes": "Sí",
+            "no": "No"
+          }
+        }
+      }
+    },
+    "services": {
+      "title": "Servicios",
+      "ui": {
+        "instructions": {
+          "desktop": "Añada o seleccione un servicio para empezar.",
+          "mobile": "Para empezar, abra la lista de servicios."
+        },
+        "mobileList": "Lista de servicios",
+        "addService": "Añadir servicio"
+      },
+      "name": {
+        "title": "Nombre",
+        "placeholder": "Nuevo servicio #{number}"
+      },
+      "description": "Descripción completa",
+      "contact": {
+        "title": "Persona de contacto",
+        "description": "Sólo añada la persona de contacto si es diferente del Director o si las personas de contacto difieren según el servicio."
+      },
+      "hours": "Horas",
+      "eligibility": {
+        "title": "Proceso de elegibilidad",
+        "description": "¿Quién puede optar a este servicio? ¿A qué población va dirigido el servicio? Está bien restringir los servicios a determinadas poblaciones en función de su sexo; situación familiar, discapacidad, edad, situaciones personales, etc. (por ejemplo, mujeres maltratadas con hijos, personas con discapacidad visual, hombres sin hogar, etc.) Esto nos ayuda a realizar las derivaciones adecuadas."
+      },
+      "applicationProcess": {
+        "title": "Proceso de solicitud",
+        "description": "¿Cómo se solicita este servicio?",
+        "walkIn": "Sin cita previa",
+        "telephone": "Teléfono",
+        "appointment": "Llame para concertar una cita",
+        "online": "Solicitar en línea",
+        "other": {
+          "title": "Otros",
+          "description": "Por favor, especifíquelo."
+        },
+        "referralRequired": {
+          "title": "Remisión obligatoria",
+          "description": "¿Por quién?"
+        }
+      },
+      "fees": {
+        "title": "Tarifas",
+        "description": "¿Cobran los particulares por sus servicios? ¿Cuál es su estructura de tarifas?",
+        "noFees": "Sin tasas",
+        "straight": {
+          "title": "Tasa directa",
+          "description": "Por favor, especifíquelo."
+        },
+        "slidingScale": "Tarifa variable",
+        "medicaidTenncare": "Medicaid/TennCare",
+        "medicare": "Medicare",
+        "private": "Seguro privado"
+      },
+      "requiredDocuments": {
+        "title": "Documentos necesarios",
+        "description": "¿Qué hay que llevar para presentar la solicitud?",
+        "noDocuments": "Sin documentos",
+        "stateId": "Documento de identidad expedido por el Estado",
+        "ssn": "Tarjeta de la Seguridad Social",
+        "proofOfResidence": "Prueba de residencia",
+        "proofOfIncome": "Prueba de ingresos",
+        "birthCertificate": "Partida de nacimiento",
+        "medicalRecords": "Historiales médicos",
+        "psychRecords": "Registros psiquiátricos",
+        "proofOfNeed": "Comprobante de necesidad",
+        "utilityBill": "Factura de servicios públicos",
+        "utilityCutoffNotice": "Aviso de corte de suministro",
+        "proofOfCitizenship": "Prueba de ciudadanía",
+        "proofOfPublicAssistance": "Prueba de asistencia pública",
+        "driversLicense": "Permiso de conducir",
+        "other": {
+          "title": "Otros",
+          "description": "Por favor, especifíquelo."
+        }
+      }
+    },
+    "opportunities": {
+      "title": "Oportunidades",
+      "acceptVolunteers": {
+        "title": "¿Acepta su organización voluntarios?",
+        "options": {
+          "yes": "Sí",
+          "no": "No"
+        },
+        "eligibility": {
+          "title": "¿Quién puede ser voluntario?",
+          "description": "Enumere el tipo de trabajo voluntario, la edad, la formación, la comprobación de antecedentes y otros requisitos para sus voluntarios.",
+          "coordinator": "Coordinador de voluntarios:",
+          "phone": "Número de teléfono"
+        }
+      },
+      "acceptDonations": {
+        "title": "¿Acepta su organización donaciones no monetarias continuas en apoyo de programas o servicios?",
+        "options": {
+          "yes": "Sí",
+          "no": "No"
+        },
+        "list": {
+          "title": "Por favor, indique.",
+          "description": "Ejemplo: comida para mascotas, ropa, electrodomésticos, muebles"
+        },
+        "pickup": {
+          "title": "¿Ofrecen servicio de recogida?",
+          "options": {
+            "yes": "Sí",
+            "no": "No"
+          },
+          "where": "¿Dónde?"
+        },
+        "coordinator": "Coordinador de donaciones:",
+        "phone": "Número de teléfono"
+      },
+      "other": {
+        "title": "¿Hay otros organismos o servicios que le hayan sido útiles y que recomendaría incluir en nuestra base de datos de recursos?",
+        "options": {
+          "yes": "Sí",
+          "no": "No"
+        },
+        "contactInformation": "Por favor, facilite información de contacto de estas agencias/servicios."
+      }
+    },
+    "review": {
+      "title": "Revisión",
+      "description": "Revise sus selecciones y envíelas.",
+      "button": "Pulse para enviar",
+      "additional": {
+        "title": "Números adicionales",
+        "none": "No hay números adicionales."
+      },
+      "mailing": {
+        "title": "Dirección postal:",
+        "none": "Igual que la dirección física."
+      }
+    },
+    "no-services": "No hay servicios."
   }
 }

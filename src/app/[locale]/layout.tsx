@@ -1,5 +1,6 @@
 import ClientSessionProvider from '@/components/ClientSessionProvider';
 import './globals.css';
+import { NextIntlClientProvider, useMessages } from 'next-intl';
 
 export const metadata = {
   title: 'United Way 211',
@@ -31,10 +32,14 @@ export default function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
+  const messages = useMessages();
+
   return (
     <html lang={locale}>
       <body className="w-screen overflow-x-hidden">
-        <ClientSessionProvider>{children}</ClientSessionProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ClientSessionProvider>{children}</ClientSessionProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
