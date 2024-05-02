@@ -19,7 +19,11 @@ export default async function SignIn() {
         <div className="w-full flex-1"></div>
         <div className="flex w-full flex-1 flex-col items-center justify-center">
           <div className="inline-block">
-            <Link href="/" className="flex items-center text-lg font-medium">
+            <Link
+              href="https://www.211.org/"
+              target="_blank"
+              className="flex items-center text-lg font-medium"
+            >
               <Image
                 src="/img/unitedway211.png"
                 alt="United Way 211"
@@ -56,14 +60,18 @@ export default async function SignIn() {
             <p className="px-8 text-center text-sm text-[#cccccc]">
               By clicking continue, you agree to our{' '}
               <Link
-                href="/terms"
+                href="https://uwgk.org/wpautoterms/terms-and-conditions/"
+                target="_blank"
+                aria-label="Terms of Service"
                 className="underline underline-offset-4 hover:text-primary"
               >
                 Terms of Service
               </Link>{' '}
               and{' '}
               <Link
-                href="/privacy"
+                href="https://uwgk.org/wpautoterms/privacy-policy/"
+                target="_blank"
+                aria-label="Privacy Policy"
                 className="underline underline-offset-4 hover:text-primary"
               >
                 Privacy Policy
