@@ -107,10 +107,6 @@ export default function Form({ params }: { params: { id: string } }) {
     if (!output) return;
 
     if (currentStep < steps.length) {
-      // if (currentStep + currentSubstep === steps.length + subpage_length - 1) {
-      //   await handleSubmit(processForm)();
-      // }
-
       if (currentSubstep < subpage_length) {
         // if there are more subpages in current page
         setPreviousSubstep(currentSubstep);
@@ -3165,12 +3161,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               </>
                             ) : (
                               <>
-                                <p className="text-md w-full leading-6 text-gray-400 md:w-1/2">
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
                                   Also Known As:
                                 </p>
-                                <p className="w-full text-gray-400 md:w-1/2">
-                                  N/A
-                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
                               </>
                             )}
                           </div>
@@ -3211,12 +3205,23 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                           {/* Fax Number */}
                           <div className="flex flex-row items-start">
-                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
-                              Fax Number:
-                            </p>
-                            <p className="w-1/2">
-                              {getValues('contactInfo.faxNumber')}
-                            </p>
+                            {getValues('contactInfo.faxNumber') ? (
+                              <>
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  Fax Number:
+                                </p>
+                                <p className="w-1/2">
+                                  {getValues('contactInfo.faxNumber')}
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
+                                  Fax Number:
+                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
+                              </>
+                            )}
                           </div>
 
                           {/* Toll Free Number */}
@@ -3253,12 +3258,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               No additional numbers listed
                             </p>
                           ) : (
-                            <div className="max-h-24 w-full overflow-y-auto md:w-1/2 ">
+                            <div className="max-h-24 w-full overflow-y-auto">
                               {getValues('contactInfo.additionalNumbers')?.map(
                                 (n, index) => (
                                   <div
                                     key={index}
-                                    className="ml-2 grid grid-cols-2"
+                                    className="ml-4 grid w-3/4 grid-cols-2 items-center"
                                   >
                                     <p className="text-base font-medium leading-7 text-gray-900">
                                       {n.label}:
@@ -3282,12 +3287,23 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                           {/* Website */}
                           <div className="flex flex-row items-start">
-                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
-                              Website:
-                            </p>
-                            <p className="w-1/2">
-                              {getValues('contactInfo.website')}
-                            </p>
+                            {getValues('contactInfo.website') ? (
+                              <>
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  Website:
+                                </p>
+                                <p className="w-1/2">
+                                  {getValues('contactInfo.website')}
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
+                                  Website:
+                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -3906,11 +3922,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
             {currentStep === steps.length - 1 &&
             currentSubstep === steps[steps.length - 1].subpages.length - 1 ? (
-              <Button type="submit" className="h-8 w-36">
+              <Button type="submit" className="w-36">
                 {isLoading ? (
                   <Spinner className="h-4 w-4 animate-spin" />
                 ) : (
-                  <span>Click to Submit</span>
+                  <span>Submit</span>
                 )}
               </Button>
             ) : (
