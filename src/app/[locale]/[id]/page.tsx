@@ -962,13 +962,13 @@ export default function Form({ params }: { params: { id: string } }) {
     ) {
       service_items = services.map((service: Service, index: number) => (
         <CarouselItem className="lg:basis-1/2" key={index}>
-          {ServicesReview(service)}
+          {<ServicesReview service={service} />}
         </CarouselItem>
       ));
     } else {
       service_items = services.map((service: Service, index: number) => (
         <div className="w-full lg:w-1/2" key={index}>
-          {ServicesReview(service)}
+          {<ServicesReview service={service} />}
         </div>
       ));
     }

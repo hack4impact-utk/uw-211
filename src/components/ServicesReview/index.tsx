@@ -1,45 +1,53 @@
+'use client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { z } from 'zod';
 import { ServiceSchema } from '@/utils/constants/formDataSchema';
 import { HoursReview } from '../HoursReview';
+import { useTranslations } from 'next-intl';
 
 type Service = z.infer<typeof ServiceSchema>;
+interface ServicesReviewProps {
+  service: Service;
+}
 
-export function ServicesReview(service: Service) {
+export function ServicesReview({ service }: ServicesReviewProps) {
+  const t = useTranslations('Form.services');
+  const t2 = useTranslations('Components.servicesReview');
+
   const app_process = new Map([
-    ['walkIn', 'Walk-in'],
-    ['telephone', 'Telephone'],
-    ['appointment', 'Call to Schedule an Appointment'],
-    ['online', 'Apply Online'],
-    ['other', 'Other'],
-    ['referral', 'Referral'],
+    ['walkIn', t('applicationProcess.walkIn')],
+    ['telephone', t('applicationProcess.telephone')],
+    ['appointment', t('applicationProcess.appointment')],
+    ['online', t('applicationProcess.online')],
+    ['other', t('applicationProcess.other.title')],
+    ['referral', t2('referral')],
   ]);
 
   const fees = new Map([
-    ['none', 'No Fees'],
-    ['straight', 'Straight Fee'],
-    ['slidingScale', 'Sliding Scale Fee'],
-    ['medicaid_tenncare', 'Medicaid/TennCare'],
-    ['medicare', 'Medicare'],
-    ['private', 'Private Insurance'],
+    ['none', t('fees.noFees')],
+    ['straight', t('fees.straight.title')],
+    ['slidingScale', t('fees.slidingScale')],
+    ['medicaid_tenncare', t('medicaidTenncare')],
+    ['medicare', t('fees.medicare')],
+    ['private', t('fees.private')],
   ]);
 
   const required_documents = new Map([
-    ['none', 'No Documents'],
-    ['proofOfResidence', 'Proof of Residence'],
-    ['medicalRecords', 'Medical Records'],
-    ['utilityBill', 'Utility Bill'],
-    ['proofOfPublicAssistance', 'Proof of Public Assistance'],
-    ['stateId', 'State Issued ID'],
-    ['proofOfIncome', 'Proof of Income'],
-    ['psychRecords', 'Psych Records'],
-    ['utilityCutoffNotice', 'Utility Cutoff Notice'],
-    ['driversLicense', "Driver's License"],
-    ['ssn', 'Social Security Card'],
-    ['birthCertificate', 'Birth Certificate'],
-    ['proofOfNeed', 'Proof of Need'],
-    ['proofOfCitizenship', 'Proof of Citizenship'],
-    ['other', 'Other'],
+    ['none', t('requiredDocuments.noDocuments')],
+    ['proofOfResidence', t('requiredDocuments.proofOfResidence')],
+    ['medicalRecords', t('requiredDocuments.medicalRecords')],
+    ['utilityBill', t('requiredDocuments.utilityBill')],
+    ['proofOfPublicAssistance', t('requiredDocuments.proofOfPublicAssistance')],
+    ['stateId', t('requiredDocuments.stateId')],
+    ['proofOfIncome', t('requiredDocuments.proofOfIncome')],
+    ['psychRecords', t('requiredDocuments.psychRecords')],
+    ['utilityCutoffNotice', t('requiredDocuments.utilityCutoffNotice')],
+    ['driversLicense', t('requiredDocuments.driversLicense')],
+    ['ssn', t('requiredDocuments.ssn')],
+    ['birthCertificate', t('requiredDocuments.birthCertificate')],
+    ['proofOfNeed', t('requiredDocuments.proofOfNeed')],
+    ['proofOfCitizenship', t('requiredDocuments.proofOfCitizenship')],
+    ['other', t('requiredDocuments.other.title')],
   ]);
 
   const get_app_process = () => {
@@ -56,12 +64,12 @@ export function ServicesReview(service: Service) {
 
     if (applicationProcess.other?.selected) {
       other = String(applicationProcess.other.content);
-      options.push('Other');
+      options.push(t('applicationProcess.other.title'));
     }
 
     if (applicationProcess.referral?.required) {
       referral = String(applicationProcess.referral.content);
-      options.push('Referral');
+      options.push(t2('referral'));
     }
 
     return (
@@ -77,12 +85,13 @@ export function ServicesReview(service: Service) {
         <div className="ml-6">
           {other != '' && (
             <p>
-              Other: <span className="underline">{other}</span>
+              {t('applicationProcess.other.title')}:{' '}
+              <span className="underline">{other}</span>
             </p>
           )}
           {referral != '' && (
             <p>
-              Referral: <span className="underline">{referral}</span>
+              {t2('referral')}: <span className="underline">{referral}</span>
             </p>
           )}
         </div>
@@ -104,7 +113,7 @@ export function ServicesReview(service: Service) {
 
       if (fees_array.straight?.selected) {
         straight_fee = String(fees_array.straight.content);
-        options.push('Straight Fee');
+        options.push(t('fees.straight.title'));
       }
 
       return (
@@ -121,14 +130,15 @@ export function ServicesReview(service: Service) {
           <div className="ml-6">
             {straight_fee != '' && (
               <p>
-                Straight Fee: <span className="underline">{straight_fee}</span>
+                {t('fees.straight.title')}:{' '}
+                <span className="underline">{straight_fee}</span>
               </p>
             )}
           </div>
         </>
       );
     } else {
-      return <p>No fees required.</p>;
+      return <p>{t2('noFees')}</p>;
     }
   };
 
@@ -146,7 +156,7 @@ export function ServicesReview(service: Service) {
 
       if (req_docs.other?.selected) {
         other = String(req_docs.other.content);
-        options.push('Other');
+        options.push(t('requiredDocuments.other.title'));
       }
 
       return (
@@ -162,14 +172,15 @@ export function ServicesReview(service: Service) {
           <div className="ml-6">
             {other != '' && (
               <p>
-                Other: <span className="underline">{other}</span>
+                {t('requiredDocuments.other.title')}:{' '}
+                <span className="underline">{other}</span>
               </p>
             )}
           </div>
         </>
       );
     } else {
-      return <p>No documents required.</p>;
+      return <p>{t2('noDocuments')}</p>;
     }
   };
 
@@ -182,7 +193,7 @@ export function ServicesReview(service: Service) {
         <section className="flex flex-col gap-4">
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
-              Description
+              {t2('description')}
             </h3>
             <p>{service.fullDescription}</p>
           </div>
@@ -191,18 +202,17 @@ export function ServicesReview(service: Service) {
             {service.contactPersonName == '' ? (
               <>
                 <h3 className="text-base font-semibold leading-7 text-gray-400">
-                  Contact Person
+                  {t('contact.title')}
                 </h3>
 
                 <p className="text-md leading-6 text-gray-400">
-                  Contact does not differ from agency director or between
-                  services.
+                  {t2('noContact')}
                 </p>
               </>
             ) : (
               <>
                 <h3 className="text-base font-semibold leading-7 text-gray-900">
-                  Contact Person
+                  {t('contact.title')}
                 </h3>
                 <p>{service.contactPersonName}</p>
               </>
@@ -211,7 +221,7 @@ export function ServicesReview(service: Service) {
 
           <div>
             <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-              Hours of Operation
+              {t2('hours')}
             </h3>
 
             <HoursReview hours={service.daysOpen} />
@@ -219,29 +229,28 @@ export function ServicesReview(service: Service) {
 
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
-              How would someone apply for this service?
+              {t('eligibility.title')}
             </h3>
             <p>{service.eligibilityRequirements}</p>
           </div>
 
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
-              How would someone apply for this service?
+              {t('applicationProcess.description')}
             </h3>
             {get_app_process()}
           </div>
 
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
-              Are individuals charged for your services? What is your fee
-              structure?
+              {t('fees.description')}
             </h3>
             {get_fees()}
           </div>
 
           <div>
             <h3 className="text-base font-semibold leading-7 text-gray-900">
-              What would someone need to bring when applying?
+              {t('requiredDocuments.description')}
             </h3>
             {get_req_docs()}
           </div>

@@ -262,6 +262,14 @@
         "duplicate": "No se pueden añadir horas duplicadas.",
         "invalidTime": "Intervalo de tiempo no válido."
       }
+    },
+    "servicesReview": {
+      "referral": "Remisión",
+      "noFees": "No hay que pagar tasas.",
+      "noDocuments": "No se requieren documentos.",
+      "description": "Descripción",
+      "noContact": "El contacto no difiere del directorio de agencias ni entre servicios.",
+      "hours": "Horario de atención al público"
     }
   },
   "Complete": {
