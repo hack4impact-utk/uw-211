@@ -93,21 +93,21 @@
           "email": "Correo electrónico",
           "confidential": "¿Desea que esta información se oculte en el sitio web?"
         }
-      },
-      "accessibility": {
-        "title": "Accesibilidad",
-        "languages": {
-          "title": "Además del inglés, ¿qué idiomas habla al menos uno de sus empleados a tiempo parcial?",
-          "options": {
-            "asl": "Signo americano",
-            "spanish": "Español",
-            "tele": "Servicio de teleinterpretación",
-            "other": "Otros"
-          },
-          "priorNotice": "¿Se puede facilitar alguna lengua con previo aviso? (Enumere.)"
-        },
-        "ada": "¿Son sus instalaciones accesibles para las personas con discapacidad, según la definición de la Ley de Estadounidenses con Discapacidad (ADA)?"
       }
+    },
+    "accessibility": {
+      "title": "Accesibilidad",
+      "languages": {
+        "title": "Además del inglés, ¿qué idiomas habla al menos uno de sus empleados a tiempo parcial?",
+        "options": {
+          "asl": "Signo americano",
+          "spanish": "Español",
+          "tele": "Servicio de teleinterpretación",
+          "other": "Otros"
+        },
+        "priorNotice": "¿Se puede facilitar alguna lengua con previo aviso? (Enumere.)"
+      },
+      "ada": "¿Son sus instalaciones accesibles para las personas con discapacidad, según la definición de la Ley de Estadounidenses con Discapacidad (ADA)?"
     },
     "services": {
       "title": "Servicios",
@@ -270,6 +270,9 @@
       "description": "Descripción",
       "noContact": "El contacto no difiere del directorio de agencias ni entre servicios.",
       "hours": "Horario de atención al público"
+    },
+    "formStepper": {
+      "mobileTitle": "Formulario de navegación"
     }
   },
   "Complete": {

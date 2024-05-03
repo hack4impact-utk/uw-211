@@ -39,6 +39,7 @@ interface MobileFormStepperProps {
   }>;
   setCurrentStep: (step: number) => void;
   setCurrentSubstep: (step: number) => void;
+  title: string;
 }
 
 const StepItem = ({
@@ -112,19 +113,18 @@ export default function MobileFormStepper({
   formSteps,
   setCurrentStep,
   setCurrentSubstep,
+  title,
 }: MobileFormStepperProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" className="w-max p-4">
-          Navigate Form
+          {title}
         </Button>
       </SheetTrigger>
       <SheetContent className="z-50">
         <SheetHeader className="pb-2 text-3xl">
-          <SheetTitle className="text-center text-2xl">
-            Navigate Form
-          </SheetTitle>
+          <SheetTitle className="text-center text-2xl">{title}</SheetTitle>
         </SheetHeader>
         <div className="flex flex-col justify-center gap-2 border-t-2 border-zinc-500">
           {formSteps.map((step, index) => {

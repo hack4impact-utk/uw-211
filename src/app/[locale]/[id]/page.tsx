@@ -1063,13 +1063,11 @@ export default function Form({ params }: { params: { id: string } }) {
     const language = getValues('languageSupport');
     let result = '';
 
-    if (language.asl)
-      result += t('preliminaries.accessibility.languages.options.asl') + ', ';
+    if (language.asl) result += t('accessibility.languages.options.asl') + ', ';
     if (language.spanish)
-      result +=
-        t('preliminaries.accessibility.languages.options.spanish') + ', ';
+      result += t('accessibility.languages.options.spanish') + ', ';
     if (language.teleinterpreterLanguageService)
-      result += t('preliminaries.accessibility.languages.options.tele') + ', ';
+      result += t('accessibility.languages.options.tele') + ', ';
     if (language.other.selected) {
       result += convertToString(language.other.content!);
       result += ', ';
@@ -2353,14 +2351,14 @@ export default function Form({ params }: { params: { id: string } }) {
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  {t('preliminaries.accessibility.title')}
+                  {t('accessibility.title')}
                 </h2>
 
                 <section className="mt-10 flex flex-col gap-4">
                   {/* Language Support */}
                   <div>
                     <p className="block text-sm font-medium leading-6 text-gray-900">
-                      {t('preliminaries.accessibility.languages.title')}
+                      {t('accessibility.languages.title')}
                     </p>
 
                     <div className="flex flex-col gap-8 md:flex-row">
@@ -2376,9 +2374,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           htmlFor="languageSupport.asl"
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          {t(
-                            'preliminaries.accessibility.languages.options.asl'
-                          )}
+                          {t('accessibility.languages.options.asl')}
                         </label>
                       </div>
 
@@ -2394,9 +2390,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           htmlFor="languageSupport.spanish"
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          {t(
-                            'preliminaries.accessibility.languages.options.spanish'
-                          )}
+                          {t('accessibility.languages.options.spanish')}
                         </label>
                       </div>
 
@@ -2414,9 +2408,7 @@ export default function Form({ params }: { params: { id: string } }) {
                           htmlFor="languageSupport.teleinterpreterLanguageService"
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          {t(
-                            'preliminaries.accessibility.languages.options.tele'
-                          )}
+                          {t('accessibility.languages.options.tele')}
                         </label>
                       </div>
 
@@ -2433,9 +2425,7 @@ export default function Form({ params }: { params: { id: string } }) {
                             htmlFor="languageSupport.other"
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                           >
-                            {t(
-                              'preliminaries.accessibility.languages.options.other'
-                            )}
+                            {t('accessibility.languages.options.other')}
                           </label>
                         </div>
                       </div>
@@ -2466,7 +2456,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       htmlFor="supportedLanguagesWithoutNotice"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      {t('preliminaries.accessibility.languages.priorNotice')}
+                      {t('accessibility.languages.priorNotice')}
                     </label>
                     <div className="mt-2">
                       <textarea
@@ -2486,7 +2476,7 @@ export default function Form({ params }: { params: { id: string } }) {
                   {/* Accessibility ADA */}
                   <div className="flex flex-col gap-6 md:flex-row">
                     <h2 className="block text-sm font-medium leading-6 text-gray-900">
-                      {t('preliminaries.accessibility.ada')}
+                      {t('accessibility.ada')}
                     </h2>
                     <div className="flex flex-row gap-4 whitespace-nowrap">
                       <div>
@@ -3760,22 +3750,20 @@ export default function Form({ params }: { params: { id: string } }) {
                   {/* Accessibility */}
                   <section>
                     <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
-                      {t('preliminaries.accessibility.title')}
+                      {t('accessibility.title')}
                     </h2>
 
                     <div className="flex flex-col gap-4">
                       <div>
                         <p className="w-full text-base font-semibold leading-7 text-gray-900">
-                          {t('preliminaries.accessibility.languages.title')}
+                          {t('accessibility.languages.title')}
                         </p>
                         <p>{get_accessibility_langs()}</p>
                       </div>
 
                       <div>
                         <p className="w-full text-base font-semibold leading-7 text-gray-900">
-                          {t(
-                            'preliminaries.accessibility.languages.priorNotice'
-                          )}
+                          {t('accessibility.languages.priorNotice')}
                         </p>
                         <p>
                           {getValues('supportedLanguagesWithoutNotice')
@@ -3789,7 +3777,7 @@ export default function Form({ params }: { params: { id: string } }) {
 
                       <div className="flex flex-col md:flex-row md:items-center md:gap-4">
                         <p className="text-base font-semibold leading-7 text-gray-900">
-                          {t('preliminaries.accessibility.ada')}
+                          {t('accessibility.ada')}
                         </p>
                         <p>
                           {getValues('accessibilityADA').toString() === 'true'

@@ -93,21 +93,21 @@
           "email": "Email",
           "confidential": "Would you like this information to be hidden from the website?"
         }
-      },
-      "accessibility": {
-        "title": "Accessibility",
-        "languages": {
-          "title": "In addition to English, what languages are spoken by at lease on of your part-time staff?",
-          "options": {
-            "asl": "American Sign",
-            "spanish": "Spanish",
-            "tele": "Tele-interpreter Service",
-            "other": "Other"
-          },
-          "priorNotice": "Can any languages be provided with prior notice? (Please list.)"
-        },
-        "ada": "Is your facility accessible to people with disabilities as defined by the Americans with Disabilities Act (ADA)?"
       }
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "languages": {
+        "title": "In addition to English, what languages are spoken by at lease on of your part-time staff?",
+        "options": {
+          "asl": "American Sign",
+          "spanish": "Spanish",
+          "tele": "Tele-interpreter Service",
+          "other": "Other"
+        },
+        "priorNotice": "Can any languages be provided with prior notice? (Please list.)"
+      },
+      "ada": "Is your facility accessible to people with disabilities as defined by the Americans with Disabilities Act (ADA)?"
     },
     "services": {
       "title": "Services",
@@ -270,6 +270,9 @@
       "description": "Description",
       "noContact": "Contact does not differ from agency directory or between services.",
       "hours": "Hours of Operation"
+    },
+    "formStepper": {
+      "mobileTitle": "Navigate Form"
     }
   },
   "Complete": {
