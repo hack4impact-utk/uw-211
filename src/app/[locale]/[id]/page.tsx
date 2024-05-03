@@ -47,6 +47,7 @@ import Hours from '@/components/Hours';
 import { useRouter } from 'next/navigation';
 import Spinner from '@/components/Spinner';
 import AdditionalNumbers from '@/components/AdditionalNumbers';
+import { HoursReview } from '@/components/HoursReview';
 import { useTranslations } from 'next-intl';
 
 type Inputs = z.infer<typeof FormDataSchema>;
@@ -91,9 +92,11 @@ export default function Form({ params }: { params: { id: string } }) {
       setIsLoading(true);
       const validatedInfo = zodFormToTs(data);
       await createAgencyInfoWithServices(params.id, validatedInfo);
-      setIsLoading(false);
-
       router.push('/complete');
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 5000);
     } catch (error) {
       console.error(error);
     }
@@ -109,10 +112,6 @@ export default function Form({ params }: { params: { id: string } }) {
     if (!output) return;
 
     if (currentStep < steps.length) {
-      if (currentStep + currentSubstep === steps.length + subpage_length - 1) {
-        await handleSubmit(processForm)();
-      }
-
       if (currentSubstep < subpage_length) {
         // if there are more subpages in current page
         setPreviousSubstep(currentSubstep);
@@ -957,7 +956,10 @@ export default function Form({ params }: { params: { id: string } }) {
 
     let service_items = [];
 
-    if (screenWidth < 720 || services.length > 2) {
+    if (
+      (screenWidth < 720 && getValues('services').length > 1) ||
+      getValues('services').length > 2
+    ) {
       service_items = services.map((service: Service, index: number) => (
         <CarouselItem className="lg:basis-1/2" key={index}>
           {ServicesReview(service)}
@@ -1073,7 +1075,8 @@ export default function Form({ params }: { params: { id: string } }) {
       result += ', ';
     }
 
-    return result.substring(0, result.length - 2);
+    if (result === '') return 'None';
+    else return result.substring(0, result.length - 2);
   };
 
   return (
@@ -1088,7 +1091,7 @@ export default function Form({ params }: { params: { id: string } }) {
       />
 
       {/* Form */}
-      <form className="py-6" onSubmit={handleSubmit(processForm)}>
+      <form className="pt-6" onSubmit={handleSubmit(processForm)}>
         {/* Preliminaries */}
         {currentStep === 0 && (
           <motion.div
@@ -3262,98 +3265,99 @@ export default function Form({ params }: { params: { id: string } }) {
                         {/* 1st Column */}
                         <div className="flex w-full flex-col gap-2 md:w-1/3">
                           {/* Legal Name */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                               {t('preliminaries.general.name') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
-                              {getValues('legalName')}
-                            </p>
+                            <p className="w-1/2">{getValues('legalName')}</p>
                           </div>
 
                           {/* AKAs */}
-                          <div className="flex flex-col md:flex-row md:items-start">
+                          <div className="flex flex-row items-start">
                             {getValues('akas') ? (
                               <>
-                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                                   {t('preliminaries.general.aka') + ':'}
                                 </p>
-                                <p className="w-full md:w-1/2 ">
-                                  {getValues('akas')}
-                                </p>
+                                <p className="w-1/2">{getValues('akas')}</p>
                               </>
                             ) : (
                               <>
-                                <p className="text-md w-full leading-6 text-gray-400 md:w-1/2">
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
                                   {t('preliminaries.general.aka') + ':'}
                                 </p>
-                                <p className="w-full text-gray-400 md:w-1/2">
-                                  N/A
-                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
                               </>
                             )}
                           </div>
 
                           {/* Legal Status */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                               {t('preliminaries.general.legalStatus.title') +
                                 ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
-                              {get_legal_status()}
-                            </p>
+                            <p className="w-1/2">{get_legal_status()}</p>
                           </div>
 
                           {/* Director Name */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                               {t('preliminaries.general.director') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
-                              {getValues('directorName')}
-                            </p>
+                            <p className="w-1/2">{getValues('directorName')}</p>
                           </div>
                         </div>
 
                         {/* Second Column */}
                         <div className="flex w-full flex-col gap-2 md:w-1/3">
                           {/* Main Phone Number */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                               {t('preliminaries.general.phone') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
+                            <p className="w-1/2">
                               {getValues('contactInfo.phoneNumber')}
                             </p>
                           </div>
 
                           {/* Fax Number */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              {t('preliminaries.general.fax') + ':'}
-                            </p>
-                            <p className="w-full md:w-1/2 ">
-                              {getValues('contactInfo.faxNumber')}
-                            </p>
+                          <div className="flex flex-row items-start">
+                            {getValues('contactInfo.faxNumber') ? (
+                              <>
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t('preliminaries.general.fax') + ':'}
+                                </p>
+                                <p className="w-1/2">
+                                  {getValues('contactInfo.faxNumber')}
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
+                                  {t('preliminaries.general.fax') + ':'}
+                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
+                              </>
+                            )}
                           </div>
 
                           {/* Toll Free Number */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                               {t('preliminaries.general.tollFree') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
+                            <p className="w-1/2">
                               {getValues('contactInfo.tollFreeNumber')}
                             </p>
                           </div>
 
                           {/* TDD/TTY Number */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                               {t('preliminaries.general.tddTty') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
+                            <p className="w-1/2">
                               {getValues('contactInfo.TDDTTYNumber')}
                             </p>
                           </div>
@@ -3362,7 +3366,7 @@ export default function Form({ params }: { params: { id: string } }) {
                         {/* Third Column */}
                         <div className="flex w-full flex-col gap-2 md:w-1/3">
                           {/* Additional Numbers */}
-                          <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                          <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                             {t('review.additional.title')}
                           </p>
 
@@ -3372,12 +3376,12 @@ export default function Form({ params }: { params: { id: string } }) {
                               {t('review.additional.none')}
                             </p>
                           ) : (
-                            <div className="max-h-24 w-full overflow-y-auto md:w-1/2 ">
+                            <div className="max-h-24 w-full overflow-y-auto">
                               {getValues('contactInfo.additionalNumbers')?.map(
                                 (n, index) => (
                                   <div
                                     key={index}
-                                    className="ml-2 grid grid-cols-2"
+                                    className="ml-4 grid w-3/4 grid-cols-2 items-center"
                                   >
                                     <p className="text-base font-medium leading-7 text-gray-900">
                                       {n.label}:
@@ -3390,23 +3394,34 @@ export default function Form({ params }: { params: { id: string } }) {
                           )}
 
                           {/* Email */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                               {t('preliminaries.general.email') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
+                            <p className="w-1/2">
                               {getValues('contactInfo.email')}
                             </p>
                           </div>
 
                           {/* Website */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              {t('preliminaries.general.website') + ':'}
-                            </p>
-                            <p className="w-full md:w-1/2 ">
-                              {getValues('contactInfo.website')}
-                            </p>
+                          <div className="flex flex-row items-start">
+                            {getValues('contactInfo.website') ? (
+                              <>
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t('preliminaries.general.website') + ':'}
+                                </p>
+                                <p className="w-1/2">
+                                  {getValues('contactInfo.website')}
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
+                                  {t('preliminaries.general.website') + ':'}
+                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -3430,15 +3445,11 @@ export default function Form({ params }: { params: { id: string } }) {
                         <div className="w-full md:w-1/2">
                           {/* Hours of Operation */}
                           <div className="mb-6">
-                            {/* TODO */}
                             <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                               {t('preliminaries.operations.hours')}
                             </h3>
-                            <p>
-                              <span className="bg-blue-500 text-white">
-                                TODO: Hours of operation
-                              </span>
-                            </p>
+
+                            <HoursReview hours={getValues('hours')} />
                           </div>
 
                           {/* Funding Source */}
@@ -3458,13 +3469,13 @@ export default function Form({ params }: { params: { id: string } }) {
 
                           <div className="flex w-full flex-col gap-2">
                             {/* Is the physical address confidential? */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
                                 {t(
                                   'preliminaries.operations.location.confidential'
                                 )}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues(
                                   'location.confidential'
                                 ).toString() === 'true'
@@ -3474,34 +3485,34 @@ export default function Form({ params }: { params: { id: string } }) {
                             </div>
 
                             {/* Physical Address */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
                                 {t(
                                   'preliminaries.operations.location.address.physical'
                                 ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
-                                {t('review.mailing.title')}
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('location.physicalAddress')}
                               </p>
                             </div>
 
                             {/* Mailing Address */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
+                            <div className="flex flex-row items-start gap-4">
                               {getValues('akas') ? (
                                 <>
-                                  <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
                                     {t('review.mailing.title')}
                                   </p>
-                                  <p className="w-full md:w-1/2 ">
+                                  <p className="w-1/2 md:w-1/3">
                                     {getValues('location.mailingAddress')}
                                   </p>
                                 </>
                               ) : (
                                 <>
-                                  <p className="text-md w-full leading-6 text-gray-400 md:w-1/2">
+                                  <p className="text-md w-1/2 leading-6 text-gray-400 md:w-2/3">
                                     {t('review.mailing.title') + ':'}
                                   </p>
-                                  <p className="w-full text-gray-400 md:w-1/2">
+                                  <p className="w-1/2 text-gray-400 md:w-1/3">
                                     {t('review.mailing.none')}
                                   </p>
                                 </>
@@ -3509,49 +3520,49 @@ export default function Form({ params }: { params: { id: string } }) {
                             </div>
 
                             {/* County */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
                                 {t(
                                   'preliminaries.operations.location.address.county'
                                 ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('location.county')}
                               </p>
                             </div>
 
                             {/* City */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
                                 {t(
                                   'preliminaries.operations.location.address.city'
                                 ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
-                                <p>{getValues('location.city')}</p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('location.city')}
                               </p>
                             </div>
 
                             {/* State */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
                                 {t(
                                   'preliminaries.operations.location.address.state'
                                 ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('location.state')}
                               </p>
                             </div>
 
                             {/* Zip Code */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
                                 {t(
                                   'preliminaries.operations.location.address.zip'
                                 ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('location.zipCode')}
                               </p>
                             </div>
@@ -3571,20 +3582,20 @@ export default function Form({ params }: { params: { id: string } }) {
                       <div className="flex flex-col md:flex-row">
                         {/* Service Area */}
                         <div className="md:w-1/2">
-                          <h3 className="mb-4 w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                          <h3 className="mb-4 w-1/2 text-base font-semibold leading-7 text-gray-900">
                             {t('preliminaries.additional.serviceArea.title')}
                           </h3>
 
-                          <div className="flex flex-col gap-2">
+                          <div className="flex flex-col gap-4">
                             {/* Specific Town/City */}
                             {getValues('serviceArea.townCity') != '' && (
-                              <div className="flex flex-col md:flex-row md:items-start">
+                              <div className="flex flex-col items-start gap-2 md:flex-row md:gap-0">
                                 <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                                   {t(
                                     'preliminaries.additional.serviceArea.townCity'
                                   ) + ':'}
                                 </p>
-                                <p className="w-full md:w-1/2 ">
+                                <p className="w-full md:w-1/2">
                                   {getValues('serviceArea.townCity')}
                                 </p>
                               </div>
@@ -3592,7 +3603,7 @@ export default function Form({ params }: { params: { id: string } }) {
 
                             {/* Specific Zip Codes */}
                             {getValues('serviceArea.zipCodes').length != 0 && (
-                              <div className="flex flex-col md:flex-row md:items-start">
+                              <div className="flex flex-col items-start gap-2 md:flex-row md:gap-0">
                                 <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                                   {t(
                                     'preliminaries.additional.serviceArea.zip'
@@ -3608,7 +3619,7 @@ export default function Form({ params }: { params: { id: string } }) {
 
                             {/* Specific Counties */}
                             {getValues('serviceArea.counties').length != 0 && (
-                              <div className="flex flex-col md:flex-row md:items-start">
+                              <div className="flex flex-col items-start gap-2 md:flex-row md:gap-0">
                                 <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
                                   {t(
                                     'preliminaries.additional.serviceArea.county'
@@ -3624,13 +3635,13 @@ export default function Form({ params }: { params: { id: string } }) {
 
                             {/* Statewide */}
                             {getValues('serviceArea.statewide') && (
-                              <div className="flex flex-col md:flex-row md:items-start">
-                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              <div className="flex flex-row items-start">
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                                   {t(
                                     'preliminaries.additional.serviceArea.state'
                                   ) + ':'}
                                 </p>
-                                <p className="w-full md:w-1/2 ">
+                                <p className="w-1/2">
                                   {getValues('serviceArea.statewide') && 'Yes'}
                                 </p>
                               </div>
@@ -3638,13 +3649,13 @@ export default function Form({ params }: { params: { id: string } }) {
 
                             {/* Nationwide */}
                             {getValues('serviceArea.nationwide') && (
-                              <div className="flex flex-col md:flex-row md:items-start">
-                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              <div className="flex flex-row items-start">
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                                   {t(
                                     'preliminaries.additional.serviceArea.nation'
                                   ) + ':'}
                                 </p>
-                                <p className="w-full md:w-1/2 ">
+                                <p className="w-1/2">
                                   {getValues('serviceArea.nationwide') && 'Yes'}
                                 </p>
                               </div>
@@ -3652,13 +3663,13 @@ export default function Form({ params }: { params: { id: string } }) {
 
                             {/* Other */}
                             {getValues('serviceArea.other') != '' && (
-                              <div className="flex flex-col md:flex-row md:items-start">
-                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                              <div className="flex flex-row items-start">
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
                                   {t(
                                     'preliminaries.additional.serviceArea.other'
                                   ) + ':'}
                                 </p>
-                                <p className="w-full md:w-1/2 ">
+                                <p className="w-1/2">
                                   {getValues('serviceArea.other')}
                                 </p>
                               </div>
@@ -3667,70 +3678,70 @@ export default function Form({ params }: { params: { id: string } }) {
                         </div>
 
                         {/* Annual Agency Update */}
-                        <div className="md:w-1/2">
+                        <div className="mt-8 md:mt-0 md:w-1/2">
                           <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
                             {t('preliminaries.additional.agencyUpdate.title')}
                           </h3>
 
                           <div className="flex w-full flex-col gap-2">
                             {/* Name */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
                                 {t(
                                   'preliminaries.additional.agencyUpdate.name'
                                 ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('annualAgencyUpdate.name')}
                               </p>
                             </div>
 
                             {/* Title */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
                                 {t(
                                   'preliminaries.additional.agencyUpdate.contactTitle'
                                 ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('annualAgencyUpdate.title')}
                               </p>
                             </div>
 
                             {/* Phone Number */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
                                 {t(
                                   'preliminaries.additional.agencyUpdate.phone'
                                 ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
-                                <p>
-                                  {getValues('annualAgencyUpdate.phoneNumber')}
-                                </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('annualAgencyUpdate.phoneNumber')}
                               </p>
                             </div>
 
                             {/* Email */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
                                 {t(
                                   'preliminaries.additional.agencyUpdate.email'
                                 ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('annualAgencyUpdate.email')}
                               </p>
                             </div>
 
                             {/* Would you like this information to be hidden from the website? */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-end">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                {t(
-                                  'preliminaries.additional.agencyUpdate.confidential'
-                                )}
-                              </p>
-                              <p className="w-full md:w-1/2 ">
+                            <div className="flex flex-row items-end gap-4">
+                              <div className="w-1/2 md:w-2/3">
+                                <p className="w-3/4 text-base font-semibold leading-7 text-gray-900">
+                                  {t(
+                                    'preliminaries.additional.agencyUpdate.confidential'
+                                  )}
+                                </p>
+                              </div>
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues(
                                   'annualAgencyUpdate.hideFromWebsite'
                                 ).toString() === 'true'
@@ -3776,7 +3787,7 @@ export default function Form({ params }: { params: { id: string } }) {
                         </p>
                       </div>
 
-                      <div className="flex flex-row items-center gap-4">
+                      <div className="flex flex-col md:flex-row md:items-center md:gap-4">
                         <p className="text-base font-semibold leading-7 text-gray-900">
                           {t('preliminaries.accessibility.ada')}
                         </p>
@@ -3797,7 +3808,13 @@ export default function Form({ params }: { params: { id: string } }) {
                       {t('services.title')}
                     </h2>
 
-                    {screenWidth < 720 || getValues('services').length > 2 ? (
+                    {getValues('services').length === 0 ? (
+                      <p className="text-md leading-6 text-gray-400">
+                        No services listed.
+                      </p>
+                    ) : (screenWidth < 720 &&
+                        getValues('services').length > 1) ||
+                      getValues('services').length > 2 ? (
                       <Carousel
                         opts={{
                           align: 'start',
@@ -3813,7 +3830,29 @@ export default function Form({ params }: { params: { id: string } }) {
                           type="button"
                         />
                       </Carousel>
-                    ) : getValues('services').length == 0 ? (
+                    ) : (
+                      <div className="flex w-full flex-col gap-4 md:flex-row">
+                        {get_services()}
+                      </div>
+                    )}
+
+                    {/* {screenWidth < 720 && getValues('services').length > 2 ? (
+                      <Carousel
+                        opts={{
+                          align: 'start',
+                        }}
+                      >
+                        <CarouselContent>{get_services()}</CarouselContent>
+                        <CarouselNext
+                          className="right-1/3 top-full mt-8 sm:-right-12 sm:top-1/2 sm:-translate-y-1/2"
+                          type="button"
+                        />
+                        <CarouselPrevious
+                          className="left-1/3 top-full mt-8 sm:-left-12 sm:top-1/2 sm:-translate-y-1/2"
+                          type="button"
+                        />
+                      </Carousel>
+                    ) : getValues('services').length === 0 ? (
                       <p className="text-md leading-6 text-gray-400">
                         {t('review.no-services')}
                       </p>
@@ -3821,7 +3860,7 @@ export default function Form({ params }: { params: { id: string } }) {
                       <div className="flex w-full flex-col gap-4 md:flex-row">
                         {get_services()}
                       </div>
-                    )}
+                    )} */}
                   </section>
 
                   <hr />
@@ -4004,70 +4043,74 @@ export default function Form({ params }: { params: { id: string } }) {
                     </section>
                   </section>
                 </div>
-
-                <Button type="submit" className="h-10 w-36">
-                  {isLoading ? (
-                    <Spinner className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <p>{t('review.button')}</p>
-                  )}
-                </Button>
               </motion.div>
             )}
           </motion.div>
         )}
-      </form>
 
-      {/* Navigation */}
-      <div className="mt-8 pt-5">
-        <div className="flex justify-between">
-          <button
-            type="button"
-            onClick={prev}
-            disabled={currentStep === 0 && currentSubstep == 0}
-            className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
+        {/* Navigation */}
+        <div className="mt-24 pt-5">
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={prev}
+              disabled={currentStep === 0 && currentSubstep == 0}
+              className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5L8.25 12l7.5-7.5"
-              />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={next}
-            disabled={
-              currentStep === steps.length - 1 &&
-              currentSubstep === steps[currentStep].subpages.length
-            }
-            className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8.25 4.5l7.5 7.5-7.5 7.5"
-              />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="h-6 w-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 19.5L8.25 12l7.5-7.5"
+                />
+              </svg>
+            </button>
+
+            {currentStep === steps.length - 1 &&
+            currentSubstep === steps[steps.length - 1].subpages.length - 1 ? (
+              <Button type="submit" className="w-36" disabled={isLoading}>
+                {isLoading ? (
+                  <Spinner className="h-4 w-4 animate-spin" />
+                ) : (
+                  <span>{t('review.button')}</span>
+                )}
+              </Button>
+            ) : (
+              <button
+                type="button"
+                onClick={next}
+                disabled={
+                  currentStep === steps.length - 1 &&
+                  currentSubstep === steps[steps.length - 1].subpages.length - 1
+                }
+                className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="h-6 w-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      </form>
       <Footer className="pb-2 pt-6" />
     </section>
   );

@@ -42,7 +42,7 @@ export default function AdminDashboardTableSearch({
       />
       <button
         type="submit"
-        className="h-[2.5rem] rounded-r-md border border-l-0 bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+        className="h-[2.5rem] rounded-r-md border border-l-0 bg-[#0253AA] px-4 py-2 font-bold text-white hover:bg-blue-700"
       >
         <Search />
       </button>

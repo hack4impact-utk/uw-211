@@ -37,18 +37,20 @@ export async function AdminDashboardNotifications() {
       <Accordion type="single" collapsible>
         <AccordionItem className="w-full" value="item-1">
           <AccordionTrigger>
-            <AlertCircle />
-            You have {agencies.length}{' '}
-            {agencies.length == 1 ? 'agency' : 'agencies'} pending approval.
+            <AlertCircle className="mr-2" />
+            <p>
+              You have {agencies.length}{' '}
+              {agencies.length == 1 ? 'agency' : 'agencies'} pending approval.
+            </p>
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className="mt-6">
             <Table className="rounded-md border text-left shadow">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Agency Pending Approval</TableHead>
+                  <TableHead>Agency Name</TableHead>
                   <TableHead>Date Submitted</TableHead>
-                  <TableHead>Information Form</TableHead>
-                  <TableHead>Action</TableHead>
+                  <TableHead>PDF Form</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

@@ -36,9 +36,7 @@ export default async function Complete() {
 
   return (
     <>
-      <header>
-        <Header className="fixed top-0" />
-      </header>
+      <Header className="fixed top-0" />
 
       <main className="flex h-screen w-screen flex-col items-center justify-center">
         <div className="flex flex-col items-center justify-center gap-8">
@@ -51,9 +49,7 @@ export default async function Complete() {
         </div>
       </main>
 
-      <footer>
-        <Footer className="fixed bottom-3 py-2" />
-      </footer>
+      <Footer className="fixed bottom-3 py-2" />
     </>
   );
 }

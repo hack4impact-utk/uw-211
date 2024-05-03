@@ -9,6 +9,9 @@ import { Service } from '@/utils/types';
 export async function generatePdf(agencyId: string): Promise<Uint8Array> {
   const agency = await getAgencyById(agencyId);
   // https://vercel.com/guides/how-can-i-use-files-in-serverless-functions
+  // ALERT: DO NOT TRY TO USE SERVER ACTION DIRECTLY FROM CLIENT
+  // UNRESOLVED ISSUE WITH HOW VERCEL HANDLES BUNDLING IN PRODUCTION
+  // https://github.com/vercel/next.js/discussions/58512
   const pdfPath = path.join(process.cwd(), 'public', 'base_form.pdf');
   const data = fs.readFileSync(pdfPath);
 
@@ -27,7 +30,9 @@ export async function generatePdf(agencyId: string): Promise<Uint8Array> {
     (status) => {
       switch (status) {
         case 'Federal':
-          const federal = form.getTextField('Federal');
+          const federal = form.getTextField(
+            '1 Legal Organizational Status Federal'
+          );
           federal.setText('X');
           break;
         case 'State':
