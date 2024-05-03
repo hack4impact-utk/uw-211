@@ -4,9 +4,12 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import { getServerSession } from 'next-auth/next';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
+import { getTranslations } from 'next-intl/server';
+import { Chunks } from '@/i18n';
 
 export default async function SignIn() {
   const session = await getServerSession(authOptions);
+  const t = await getTranslations('SignIn');
 
   if (session && session.user) {
     redirect('/dashboard');
@@ -37,12 +40,11 @@ export default async function SignIn() {
         <div className="flex w-full flex-1 flex-col">
           <blockquote className="mt-auto space-y-2 p-8">
             <p className="text-lg text-black">
-              &ldquo;United Way of Greater Knoxville is driving change in our
-              community by uniting people, businesses, and organizations.
-              Together, we&apos;re creating a more equitable Knoxville where we
-              have stable housing, financial security, quality early care and
-              education, access to food, and more.{' '}
-              <b>Join us and answer the call.</b>&rdquo;
+              &ldquo;
+              {t.rich('quote', {
+                b: (chunks: Chunks) => <b>{chunks}</b>,
+              })}
+              &rdquo;
             </p>
           </blockquote>
         </div>
@@ -53,30 +55,33 @@ export default async function SignIn() {
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="text-center">
               <h1 className="text-2xl font-semibold tracking-tight text-white">
-                Sign in
+                {t('title')}
               </h1>
             </div>
             <SignInForm />
             <p className="px-8 text-center text-sm text-[#cccccc]">
-              By clicking continue, you agree to our{' '}
-              <Link
-                href="https://uwgk.org/wpautoterms/terms-and-conditions/"
-                target="_blank"
-                aria-label="Terms of Service"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Terms of Service
-              </Link>{' '}
-              and{' '}
-              <Link
-                href="https://uwgk.org/wpautoterms/privacy-policy/"
-                target="_blank"
-                aria-label="Privacy Policy"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Privacy Policy
-              </Link>
-              .
+              {t.rich('disclaimer', {
+                tos: (chunks: Chunks) => (
+                  <Link
+                    href="https://uwgk.org/wpautoterms/terms-and-conditions/"
+                    target="_blank"
+                    aria-label="Terms of Service"
+                    className="underline underline-offset-4 hover:text-primary"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+                pp: (chunks: Chunks) => (
+                  <Link
+                    href="https://uwgk.org/wpautoterms/privacy-policy/"
+                    target="_blank"
+                    aria-label="Privacy Policy"
+                    className="underline underline-offset-4 hover:text-primary"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </p>
           </div>
         </div>

@@ -3498,10 +3498,10 @@ export default function Form({ params }: { params: { id: string } }) {
 
                             {/* Mailing Address */}
                             <div className="flex flex-row items-start gap-4">
-                              {getValues('akas') ? (
+                              {getValues('location.mailingAddress') ? (
                                 <>
                                   <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
-                                    {t('review.mailing.title')}
+                                    {t('review.mailing.title') + ':'}
                                   </p>
                                   <p className="w-1/2 md:w-1/3">
                                     {getValues('location.mailingAddress')}
