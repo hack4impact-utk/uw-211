@@ -7,6 +7,7 @@ import { AdminDashboardTableFilterCheckbox } from '@/components/AdminDashboardTa
 import AdminDashboardTableSearch from '@/components/AdminDashboardTable/AdminDashboardTableSearch';
 import AdminDashboardTableHeaders from './AdminDashboardTableHeaders';
 import AdminDashboardTablePaginationControls from './AdminDashboardTablePaginationControls';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 interface AdminDashboardTableProps {
   params: DashboardParams;
@@ -116,6 +117,9 @@ const getAgenciesOnPage = async (
 export async function AdminDashboardTable({
   params,
 }: AdminDashboardTableProps) {
+  const locale = await getLocale();
+  const t = await getTranslations('Components.adminDashboardTable');
+
   // extract sort and filter parameters
   const sortAscending: boolean =
     params.sortAscending === undefined || params.sortAscending === 'true';
@@ -142,12 +146,22 @@ export async function AdminDashboardTable({
   );
 
   if (!agenciesOnPage) {
-    return <div>Failed to load agencies</div>;
+    return <div>{t('error')}</div>;
   }
+
+  const translateAgencyStatus = (status: string | undefined) => {
+    const statuses = new Map([
+      ['Completed', t('currentStatus.completed')],
+      ['Needs Review', t('currentStatus.needsReview')],
+      ['Expired', t('currentStatus.expired')],
+    ]);
+
+    return statuses.get(status || '');
+  };
 
   return (
     <div className="mx-8">
-      <h1 className="text-l font-bold">Agencies Overview</h1>
+      <h1 className="text-l font-bold">{t('title')}</h1>
 
       <div className="flex py-4">
         <AdminDashboardTableSearch searchParams={params} />
@@ -172,7 +186,7 @@ export async function AdminDashboardTable({
                 <TableCell>
                   {agency.updatedAt === undefined
                     ? ''
-                    : agency.updatedAt.toLocaleDateString('en-us', {
+                    : agency.updatedAt.toLocaleDateString(locale, {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric',
@@ -185,7 +199,7 @@ export async function AdminDashboardTable({
                       : ''
                   }
                 >
-                  {agency.currentStatus}
+                  {translateAgencyStatus(agency.currentStatus)}
                 </TableCell>
                 <TableCell>
                   <a

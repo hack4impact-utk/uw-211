@@ -286,15 +286,36 @@
     },
     "adminDashboardNotifications": {
       "error": "Error al cargar los datos",
-      "notification": "Tiene {number, plural, =0 {0 agencias pendientes} =1 {1 agencia pendiente} other {# agencias pendientes}} de aprobación.",
+      "notification": "Tiene {number, plural, =1 {1 agencia pendiente} other {# agencias pendientes}} de aprobación.",
       "tableHeader": {
         "name": "Nombre de la Agencia",
-        "date": "Fecha de envío",
+        "date": "Fecha de Envío",
         "pdf": "Formulario PDF"
       },
       "options": {
         "approve": "Aprobar",
         "deny": "Denegar"
+      }
+    },
+    "adminDashboardTable": {
+      "error": "Error al cargar agencias",
+      "title": "Panorama de las Agencias",
+      "currentStatus": {
+        "completed": "Completado",
+        "needsReview": "Revisión de Necesidades",
+        "expired": "Caducado"
+      },
+      "search": "Búsqueda y agencia...",
+      "pagination": "Mostrar {number} artículos",
+      "tableHeader": {
+        "name": "Nombre de la Agencia",
+        "date": "Última Actualización",
+        "status": "Situación Actual",
+        "email": "Correo Electrónico del Actualizador"
+      },
+      "filter": {
+        "status": "Estado",
+        "button": "Filtro"
       }
     }
   },

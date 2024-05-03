@@ -286,7 +286,7 @@
     },
     "adminDashboardNotifications": {
       "error": "Error loading data",
-      "notification": "You have {number, plural, =0 {0 agencies} =1 {1 agency} other {# agencies}} pending approval.",
+      "notification": "You have {number, plural, =1 {1 agency} other {# agencies}} pending approval.",
       "tableHeader": {
         "name": "Agency Name",
         "date": "Date Submitted",
@@ -295,6 +295,27 @@
       "options": {
         "approve": "Approve",
         "deny": "Deny"
+      }
+    },
+    "adminDashboardTable": {
+      "error": "Failed to load agencies",
+      "title": "Agencies Overview",
+      "currentStatus": {
+        "completed": "Completed",
+        "needsReview": "Needs Review",
+        "expired": "Expired"
+      },
+      "search": "Search for and agency...",
+      "pagination": "Show {number, plural, =1 {1 item} other {# items}}",
+      "tableHeader": {
+        "name": "Agency Name",
+        "date": "Last Update",
+        "status": "Current Status",
+        "email": "Updater Email"
+      },
+      "filter": {
+        "status": "Status",
+        "button": "Filter"
       }
     }
   },
