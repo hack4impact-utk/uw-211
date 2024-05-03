@@ -280,6 +280,9 @@
       "dashboard": "Dashboard",
       "resources": "Resources",
       "about": "About"
+    },
+    "pdfButton": {
+      "button": "View form"
     }
   },
   "Complete": {
