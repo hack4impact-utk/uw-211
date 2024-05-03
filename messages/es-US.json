@@ -273,6 +273,13 @@
     },
     "formStepper": {
       "mobileTitle": "Formulario de navegación"
+    },
+    "navBar": {
+      "menu": "Menú",
+      "home": "Inicio",
+      "dashboard": "Tablero",
+      "resources": "Recursos",
+      "about": "Acerca de"
     }
   },
   "Complete": {

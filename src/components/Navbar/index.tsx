@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import uw211Logo from '@/../public/img/unitedway211.png';
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(true);
@@ -24,6 +25,8 @@ export function Navbar() {
     // Cleanup function to remove the event listener
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
+  const t = useTranslations('Components.navBar');
 
   return (
     <header className="border-b-2 border-black bg-orange-500 px-5 antialiased">
@@ -46,7 +49,7 @@ export function Navbar() {
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <title>Menu</title>
+                <title>{t('menu')}</title>
                 <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
               </svg>
             </button>
@@ -58,25 +61,25 @@ export function Navbar() {
                   className="mt-4 block text-[#393a3d] md:mr-8 md:mt-0 md:inline-block"
                   href="/"
                 >
-                  Home
+                  {t('home')}
                 </Link>
                 <Link
                   className="mt-4 block text-[#393a3d] md:mr-8 md:mt-0 md:inline-block"
                   href="/dashboard"
                 >
-                  Dashboard
+                  {t('dashboard')}
                 </Link>
                 <Link
                   className="mt-4 block text-[#393a3d] md:mr-8 md:mt-0 md:inline-block"
                   href="/"
                 >
-                  Resources
+                  {t('resources')}
                 </Link>
                 <Link
                   className="mt-4 block text-[#393a3d] md:mt-0 md:inline-block"
                   href="/"
                 >
-                  About
+                  {t('about')}
                 </Link>
               </div>
               <div>

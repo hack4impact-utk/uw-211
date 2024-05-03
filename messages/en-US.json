@@ -273,6 +273,13 @@
     },
     "formStepper": {
       "mobileTitle": "Navigate Form"
+    },
+    "navBar": {
+      "menu": "Menu",
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "resources": "Resources",
+      "about": "About"
     }
   },
   "Complete": {
