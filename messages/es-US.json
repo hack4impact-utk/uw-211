@@ -283,6 +283,19 @@
     },
     "pdfButton": {
       "button": "Ver formulario"
+    },
+    "adminDashboardNotifications": {
+      "error": "Error al cargar los datos",
+      "notification": "Tiene {number, plural, =0 {0 agencias pendientes} =1 {1 agencia pendiente} other {# agencias pendientes}} de aprobación.",
+      "tableHeader": {
+        "name": "Nombre de la Agencia",
+        "date": "Fecha de envío",
+        "pdf": "Formulario PDF"
+      },
+      "options": {
+        "approve": "Aprobar",
+        "deny": "Denegar"
+      }
     }
   },
   "Complete": {

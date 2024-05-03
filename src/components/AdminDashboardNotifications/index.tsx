@@ -18,14 +18,18 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import PdfButton from '@/components/PdfButton';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 export async function AdminDashboardNotifications() {
+  const t = await getTranslations('Components.adminDashboardNotifications');
+  const locale = await getLocale();
+
   let agencies: Agency[] = [];
 
   try {
     agencies = await getAgencies(false, undefined); // TODO: only grab pending agencies
   } catch (error) {
-    return <h1>Error loading data</h1>;
+    return <h1>{t('error')}</h1>;
   }
 
   if (agencies.length <= 0) {
@@ -38,18 +42,15 @@ export async function AdminDashboardNotifications() {
         <AccordionItem className="w-full" value="item-1">
           <AccordionTrigger>
             <AlertCircle className="mr-2" />
-            <p>
-              You have {agencies.length}{' '}
-              {agencies.length == 1 ? 'agency' : 'agencies'} pending approval.
-            </p>
+            <p>{t('notification', { number: agencies.length })}</p>
           </AccordionTrigger>
           <AccordionContent className="mt-6">
             <Table className="rounded-md border text-left shadow">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Agency Name</TableHead>
-                  <TableHead>Date Submitted</TableHead>
-                  <TableHead>PDF Form</TableHead>
+                  <TableHead>{t('tableHeader.name')}</TableHead>
+                  <TableHead>{t('tableHeader.date')}</TableHead>
+                  <TableHead>{t('tableHeader.pdf')}</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
@@ -61,7 +62,7 @@ export async function AdminDashboardNotifications() {
                   >
                     <TableCell>{agency.name}</TableCell>
                     <TableCell>
-                      {agency.updatedAt?.toLocaleDateString('en-us', {
+                      {agency.updatedAt?.toLocaleDateString(locale, {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric',
@@ -73,11 +74,11 @@ export async function AdminDashboardNotifications() {
                     <TableCell>
                       <Button className="mr-4" variant="outline">
                         <Check className="mr-2" />
-                        Approve
+                        {t('options.approve')}
                       </Button>
                       <Button variant="destructive">
                         <X className="mr-2" />
-                        Deny
+                        {t('options.deny')}
                       </Button>
                     </TableCell>
                   </TableRow>

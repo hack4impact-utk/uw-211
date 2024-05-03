@@ -283,6 +283,19 @@
     },
     "pdfButton": {
       "button": "View form"
+    },
+    "adminDashboardNotifications": {
+      "error": "Error loading data",
+      "notification": "You have {number, plural, =0 {0 agencies} =1 {1 agency} other {# agencies}} pending approval.",
+      "tableHeader": {
+        "name": "Agency Name",
+        "date": "Date Submitted",
+        "pdf": "PDF Form"
+      },
+      "options": {
+        "approve": "Approve",
+        "deny": "Deny"
+      }
     }
   },
   "Complete": {
