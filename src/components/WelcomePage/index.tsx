@@ -6,15 +6,16 @@ import Footer from '@/components/Footer';
 import uwLogo from '@/../public/img/UWGK_Logo.png';
 import Image from 'next/image';
 import { Chunks } from '@/i18n';
+import { useTranslations } from 'next-intl';
 
 interface WelcomePageProps {
   id?: string;
   agency?: Agency;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  t: any;
 }
 
-function WelcomePageBody({ id, agency, t }: WelcomePageProps) {
+function WelcomePageBody({ id, agency }: WelcomePageProps) {
+  const t = useTranslations('Landing');
+
   if (agency) {
     return (
       <>
@@ -77,7 +78,7 @@ function WelcomePageBody({ id, agency, t }: WelcomePageProps) {
     </div>
   );
 }
-function WelcomePage({ id, agency, t }: WelcomePageProps) {
+function WelcomePage({ id, agency }: WelcomePageProps) {
   return (
     <>
       <Header className="fixed" />
@@ -96,7 +97,7 @@ function WelcomePage({ id, agency, t }: WelcomePageProps) {
                   height="200"
                 />
               </div>
-              <WelcomePageBody id={id} agency={agency} t={t} />
+              <WelcomePageBody id={id} agency={agency} />
             </div>
           </div>
         </div>

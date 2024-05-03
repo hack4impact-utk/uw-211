@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { FormDataSchema, DaySchema } from '@/utils/constants/formDataSchema';
 import { UseControllerProps, useController } from 'react-hook-form';
 import { ScrollArea } from '../ui/scroll-area';
+import { useTranslations } from 'next-intl';
 
 type Hours = z.infer<typeof DaySchema>;
 type FormData = z.infer<typeof FormDataSchema>;
@@ -25,6 +26,8 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
     name,
     control,
   });
+
+  const t = useTranslations('Components.hours');
 
   const [hours, setHours] = useState((field.value as Hours[]) || []);
 
@@ -50,6 +53,20 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
     times.push(`12:00 AM`);
     return times;
   })();
+
+  const getDayOfWeek = (d: string) => {
+    const daysMap = new Map([
+      ['Monday', t('days.monday')],
+      ['Tuesday', t('days.tuesday')],
+      ['Wednesday', t('days.wednesday')],
+      ['Thursday', t('days.thursday')],
+      ['Friday', t('days.friday')],
+      ['Saturday', t('days.saturday')],
+      ['Sunday', t('days.sunday')],
+    ]);
+
+    return daysMap.get(d);
+  };
 
   const daysOfWeek: Day[] = [
     'Monday',
@@ -112,7 +129,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
     ) {
       control?.setError(name, {
         type: 'custom',
-        message: 'Cannot add duplicate hours.',
+        message: t('warnings.duplicate'),
       });
       return;
     }
@@ -126,7 +143,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
     if (openIndex >= closeIndex && !isFullDay) {
       control?.setError(name, {
         type: 'custom',
-        message: 'Invalid time range.',
+        message: t('warnings.invalid'),
       });
       return;
     }
@@ -168,7 +185,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
         >
           {daysOfWeek.map((dayOfWeek, index) => (
             <option value={dayOfWeek} key={index}>
-              {dayOfWeek}
+              {getDayOfWeek(dayOfWeek)}
             </option>
           ))}
         </select>
@@ -195,7 +212,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
           ))}
         </select>
         <Button type="button" onClick={add_hours}>
-          Add Hours
+          {t('add')}
         </Button>
       </div>
       <Separator className="my-2" />
@@ -207,7 +224,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
         <div className="flex flex-col">
           {hours.map((h, index) => (
             <div key={index} className="grid grid-cols-4">
-              <p>{h.day}</p>
+              <p>{getDayOfWeek(h.day)}</p>
               <p>{h.openTime}</p>
               <p>{h.closeTime}</p>
               <Button
@@ -216,7 +233,7 @@ export default function Hours({ name, control }: UseControllerProps<FormData>) {
                 variant="link"
                 onClick={() => delete_hours(h.id)}
               >
-                Remove
+                {t('remove')}
               </Button>
             </div>
           ))}

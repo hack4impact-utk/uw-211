@@ -245,7 +245,29 @@
         "duplicate": "Cannot add duplicate labels or numbers.",
         "validPhone": "Please enter valid phone number."
       }
+    },
+    "hours": {
+      "add": "Add Hours",
+      "remove": "Remove",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      },
+      "warnings": {
+        "duplicate": "Cannot add duplicate hours.",
+        "invalidTime": "Invalid time range."
+      }
     }
+  },
+  "Complete": {
+    "thankYou": "Thank You!",
+    "received": "Your submission has been received.",
+    "close": "You can now safely close the page."
   },
   "Footer": {
     "terms": "Terms and Conditions",
