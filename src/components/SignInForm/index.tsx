@@ -1,10 +1,12 @@
 'use client';
 
-import { HTMLAttributes, SyntheticEvent, useState } from 'react';
+import { HTMLAttributes, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import Spinner from '@/components/Spinner';
+import { useTranslations } from 'next-intl';
 
 interface SignInFormProps extends HTMLAttributes<HTMLDivElement> {}
 interface IconProps extends HTMLAttributes<SVGElement> {}
@@ -30,34 +32,17 @@ const Icons = {
       ></path>
     </svg>
   ),
-  spinner: (props: IconProps) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-    </svg>
-  ),
 };
 
-export default function SignInForm({ className, ...props }: SignInFormProps) {
+export default function SignInForm({ className }: SignInFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  async function onClick(event: SyntheticEvent) {
-    event.preventDefault();
+  const t = useTranslations('SignIn');
 
+  async function attemptAuth() {
     setIsLoading(true);
     signIn('azure-ad');
-    setIsLoading(false);
     router.push('/dashboard');
 
     setTimeout(() => {
@@ -66,14 +51,20 @@ export default function SignInForm({ className, ...props }: SignInFormProps) {
   }
 
   return (
-    <div className={cn('grid gap-6', className)} {...props}>
-      <Button variant="outline" onClick={onClick} disabled={isLoading}>
+    <div className={cn('grid gap-6', className)}>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={attemptAuth}
+        disabled={isLoading}
+      >
         {isLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          <Spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (
-          <Icons.microsoft className="mr-2 h-4 w-4" />
-        )}{' '}
-        Sign in with Microsoft
+          <>
+            <Icons.microsoft className="mr-2 h-4 w-4" /> {t('button')}
+          </>
+        )}
       </Button>
     </div>
   );

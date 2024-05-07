@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Filter } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 type AdminDashboardTableFilterCheckboxProps = {
   showCompleted: boolean;
@@ -29,6 +30,8 @@ export function AdminDashboardTableFilterCheckbox({
   setShowNeedsReview,
   setShowExpired,
 }: AdminDashboardTableFilterCheckboxProps) {
+  const t = useTranslations('Components.adminDashboardTable');
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -37,7 +40,7 @@ export function AdminDashboardTableFilterCheckbox({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Status</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('filter.status')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
           checked={showCompleted}
@@ -46,7 +49,7 @@ export function AdminDashboardTableFilterCheckbox({
             setShowCompleted((prev: boolean) => !prev);
           }}
         >
-          Completed
+          {t('currentStatus.completed')}
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={showNeedsReview}
@@ -55,7 +58,7 @@ export function AdminDashboardTableFilterCheckbox({
             setShowNeedsReview((prev: boolean) => !prev);
           }}
         >
-          Needs Review
+          {t('currentStatus.needsReview')}
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={showExpired}
@@ -64,7 +67,7 @@ export function AdminDashboardTableFilterCheckbox({
             setShowExpired((prev: boolean) => !prev);
           }}
         >
-          Expired
+          {t('currentStatus.expired')}
         </DropdownMenuCheckboxItem>
       </DropdownMenuContent>
     </DropdownMenu>

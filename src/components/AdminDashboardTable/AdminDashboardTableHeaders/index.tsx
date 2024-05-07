@@ -2,6 +2,7 @@
 
 import { TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ArrowUp, ArrowDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction } from 'react';
 
 type AdminDashboardTableHeadersProps = {
@@ -10,25 +11,6 @@ type AdminDashboardTableHeadersProps = {
   setSortField: Dispatch<SetStateAction<string>>;
   setSortAscending: Dispatch<SetStateAction<boolean>>;
 };
-
-const tableHeaders = [
-  {
-    name: 'Agency Name',
-    property: 'name',
-  },
-  {
-    name: 'Last Update',
-    property: 'updatedAt',
-  },
-  {
-    name: 'Status',
-    property: 'currentStatus',
-  },
-  {
-    name: 'Updater Email',
-    property: 'latestInfo.updaterContactInfo.email',
-  },
-];
 
 function getSortArrow(
   property: string,
@@ -52,6 +34,27 @@ export default function AdminDashboardTableHeaders({
   setSortField,
   setSortAscending,
 }: AdminDashboardTableHeadersProps) {
+  const t = useTranslations('Components.adminDashboardTable.tableHeader');
+
+  const tableHeaders = [
+    {
+      name: t('name'),
+      property: 'name',
+    },
+    {
+      name: t('date'),
+      property: 'updatedAt',
+    },
+    {
+      name: t('status'),
+      property: 'currentStatus',
+    },
+    {
+      name: t('email'),
+      property: 'latestInfo.updaterContactInfo.email',
+    },
+  ];
+
   const handleSort = (property: string) => {
     setSortField(property);
 

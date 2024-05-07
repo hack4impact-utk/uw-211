@@ -9,17 +9,17 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Agency } from '@/utils/types';
-import { AlertCircle, Newspaper, Check, X } from 'lucide-react';
-
+import { AlertCircle, Check, X } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import Link from 'next/link';
+import PdfButton from '@/components/PdfButton';
 import { approveAgency } from '@/server/actions/Agencies';
 import { toast } from 'sonner';
+import { useTranslations, useLocale } from 'next-intl';
 
 type AdminDashboardNotificationsProps = {
   agencies: Agency[];
@@ -28,6 +28,9 @@ type AdminDashboardNotificationsProps = {
 export function AdminDashboardNotifications({
   agencies,
 }: AdminDashboardNotificationsProps) {
+  const t = useTranslations('Components.adminDashboardNotifications');
+  const locale = useLocale();
+
   // deserialize JSON date string as Date object
   for (const agency of agencies) {
     agency.updatedAt = new Date(agency.updatedAt as unknown as string);
@@ -50,9 +53,8 @@ export function AdminDashboardNotifications({
 
     try {
       await approveAgency(agency._id, agency.latestInfo, 'Approved');
-      toast.success('Agency approved');
     } catch (error) {
-      toast.error('Failed to approve agency');
+      toast.error(t('error'));
     }
   };
 
@@ -65,18 +67,17 @@ export function AdminDashboardNotifications({
       <Accordion type="single" collapsible>
         <AccordionItem className="w-full" value="item-1">
           <AccordionTrigger>
-            <AlertCircle />
-            You have {agencies.length}{' '}
-            {agencies.length == 1 ? 'agency' : 'agencies'} pending approval.
+            <AlertCircle className="mr-2" />
+            <p>{t('notification', { number: agencies.length })}</p>
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className="mt-6">
             <Table className="mt-2 rounded-md border text-left shadow">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Agency Pending Approval</TableHead>
-                  <TableHead>Date Submitted</TableHead>
-                  <TableHead>Information Form</TableHead>
-                  <TableHead>Action</TableHead>
+                  <TableHead>{t('tableHeader.name')}</TableHead>
+                  <TableHead>{t('tableHeader.date')}</TableHead>
+                  <TableHead>{t('tableHeader.pdf')}</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -87,19 +88,14 @@ export function AdminDashboardNotifications({
                   >
                     <TableCell>{agency.name}</TableCell>
                     <TableCell>
-                      {agency.updatedAt?.toLocaleDateString('en-us', {
+                      {agency.updatedAt?.toLocaleDateString(locale, {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric',
                       })}
                     </TableCell>
                     <TableCell>
-                      <Link href={`/api/pdf/${agency._id}`} target="_blank">
-                        <Button variant="outline">
-                          <Newspaper className="mr-2" />
-                          View form
-                        </Button>
-                      </Link>
+                      <PdfButton agencyId={agency._id?.toString()} />
                     </TableCell>
                     <TableCell>
                       <Button
@@ -108,7 +104,7 @@ export function AdminDashboardNotifications({
                         onClick={() => handleApprove(agency)}
                       >
                         <Check className="mr-2" />
-                        Approve
+                        {t('options.approve')}
                       </Button>
 
                       <Button
@@ -116,7 +112,7 @@ export function AdminDashboardNotifications({
                         onClick={() => handleReject(agency)}
                       >
                         <X className="mr-2" />
-                        Deny
+                        {t('options.deny')}
                       </Button>
                     </TableCell>
                   </TableRow>

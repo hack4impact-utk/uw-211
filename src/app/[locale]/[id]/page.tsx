@@ -42,7 +42,13 @@ import { useBeforeUnload } from '@/utils/hooks/useBeforeUnload';
 import { formSteps } from '@/utils/constants/formSteps';
 import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
 import { zodFormToTs } from '@/utils/conversions';
-import { convertToArray } from '@/utils/convertToArray';
+import { convertToArray, convertToString } from '@/utils/stringArrays';
+import Hours from '@/components/Hours';
+import { useRouter } from 'next/navigation';
+import Spinner from '@/components/Spinner';
+import AdditionalNumbers from '@/components/AdditionalNumbers';
+import { HoursReview } from '@/components/HoursReview';
+import { useTranslations } from 'next-intl';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
@@ -50,6 +56,8 @@ type Service = z.infer<typeof ServiceSchema>;
 const steps = formSteps;
 
 export default function Form({ params }: { params: { id: string } }) {
+  const t = useTranslations('Form');
+
   const [previousStep, setPreviousStep] = useState(-1);
   const [currentStep, setCurrentStep] = useState(0);
   const [currentSubstep, setCurrentSubstep] = useState(0);
@@ -57,12 +65,15 @@ export default function Form({ params }: { params: { id: string } }) {
   const delta = currentStep - previousStep;
   const subdelta = currentSubstep - previousSubstep;
 
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const {
+    control,
     register,
     handleSubmit,
     getValues,
     setValue,
-    reset,
     trigger,
     watch,
     formState: { errors, isDirty },
@@ -76,10 +87,19 @@ export default function Form({ params }: { params: { id: string } }) {
   useBeforeUnload(isDirty);
   const { width: screenWidth } = useWindowSize();
 
-  const processForm: SubmitHandler<Inputs> = (data) => {
-    const validatedInfo = zodFormToTs(data);
-    createAgencyInfoWithServices(params.id, validatedInfo);
-    reset();
+  const processForm: SubmitHandler<Inputs> = async (data) => {
+    try {
+      setIsLoading(true);
+      const validatedInfo = zodFormToTs(data);
+      await createAgencyInfoWithServices(params.id, validatedInfo);
+      router.push('/complete');
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 5000);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   type FieldName = keyof Inputs;
@@ -92,10 +112,6 @@ export default function Form({ params }: { params: { id: string } }) {
     if (!output) return;
 
     if (currentStep < steps.length) {
-      if (currentStep + currentSubstep === steps.length + subpage_length - 1) {
-        await handleSubmit(processForm)();
-      }
-
       if (currentSubstep < subpage_length) {
         // if there are more subpages in current page
         setPreviousSubstep(currentSubstep);
@@ -107,6 +123,7 @@ export default function Form({ params }: { params: { id: string } }) {
         setCurrentSubstep(0);
         setPreviousSubstep(-1);
       }
+      window.scrollTo(0, 0);
     }
   };
 
@@ -127,11 +144,6 @@ export default function Form({ params }: { params: { id: string } }) {
     }
   };
 
-  const [isMondayChecked, setMondayChecked] = useState(false);
-  const [isTuesdayChecked, setTuesdayChecked] = useState(false);
-  const [isWednesdayChecked, setWednesdayChecked] = useState(false);
-  const [isThursdayChecked, setThursdayChecked] = useState(false);
-  const [isFridayChecked, setFridayChecked] = useState(false);
   const [volunteerChecked, setVolunteerChecked] = useState('false');
   const [donationChecked, setDonationChecked] = useState('false');
   const [pickupChecked, setPickupChecked] = useState('false');
@@ -145,7 +157,9 @@ export default function Form({ params }: { params: { id: string } }) {
   const add_service = () => {
     const idx = getValues('services').length;
     const new_service: Service = {
-      name: `New Service #${getValues('services').length + 1}`,
+      name: t('services.name.placeholder', {
+        number: getValues('services').length + 1,
+      }),
       id: Date.now(),
       contactPersonName: '',
       daysOpen: [],
@@ -223,7 +237,7 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="name"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Name
+          {t('services.name.title')}
         </label>
         <Input
           id="name"
@@ -242,7 +256,7 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="description"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Full Description
+          {t('services.description')}
         </label>
         <Textarea
           id="description"
@@ -261,39 +275,35 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="contact"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Contact Person
+          {t('services.contact.title')}
         </label>
         <Input
           id="contact"
           className="mb-2"
-          placeholder="Only add contact person if different from Director or if contact persons differ by service."
+          placeholder={t('services.contact.description')}
           {...register(`services.${serviceIdx}.contactPersonName`)}
         />
 
-        {/* hours here eventually */}
         <label
           htmlFor="hours"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Hours
+          {t('services.hours')}
         </label>
-        <div className="mb-2">
-          <p className="text-sm leading-6 text-gray-600">TBD...</p>
+        <div className="mb-4 ml-2">
+          <Hours name={`services.${serviceIdx}.daysOpen`} control={control} />
         </div>
 
         <label
           htmlFor="eligibility"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Eligibility Requirements
+          {t('services.eligibility.title')}
         </label>
         <Textarea
           id="eligibility"
           className="mb-2"
-          placeholder="Who is eligible for this service? Who is the population the service is trying to serve?
-It is okay to restrict services to certain populations based on gender; family status, disability,
-age, personal situations, etc. (i.e. battered women with children, people with visual impairments,
-homeless men, etc.) This helps us to make appropriate referrals."
+          placeholder={t('services.eligibility.description')}
           {...register(`services.${serviceIdx}.eligibilityRequirements`)}
         />
         <div className="mt-2 min-h-6 ">
@@ -310,10 +320,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
           htmlFor="applicationProcess"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Application Process
+          {t('services.applicationProcess.title')}
         </label>
         <p className="text-sm leading-6 text-gray-600">
-          How would someone apply for this service?
+          {t('services.applicationProcess.description')}
         </p>
         <div id="applicationProcess" className="mb-2 ml-2 flex flex-col">
           <div className="space-x-2">
@@ -327,7 +337,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="walkIn"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Walk-in
+              {t('services.applicationProcess.walkIn')}
             </label>
           </div>
 
@@ -344,7 +354,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="telephone"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Telephone
+              {t('services.applicationProcess.telephone')}
             </label>
           </div>
 
@@ -361,7 +371,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="appointment"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Call to Schedule an Appointment
+              {t('services.applicationProcess.appointment')}
             </label>
           </div>
 
@@ -376,7 +386,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="online"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Apply Online
+              {t('services.applicationProcess.online')}
             </label>
           </div>
 
@@ -393,7 +403,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="applicationProcessOther"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Other
+              {t('services.applicationProcess.other.title')}
             </label>
             {watch(
               `services.${serviceIdx}.applicationProcess.other.selected`
@@ -401,7 +411,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
               <>
                 <Input
                   className="m-2"
-                  placeholder="Please specify."
+                  placeholder={t(
+                    'services.applicationProcess.other.description'
+                  )}
                   {...register(
                     `services.${serviceIdx}.applicationProcess.other.content`
                   )}
@@ -438,7 +450,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="referral"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Referral Required
+              {t('services.applicationProcess.referralRequired.title')}
             </label>
             {watch(
               `services.${serviceIdx}.applicationProcess.referral.required`
@@ -446,7 +458,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
               <>
                 <Input
                   className="m-2"
-                  placeholder="By whom?"
+                  placeholder={t(
+                    'services.applicationProcess.referralRequired.description'
+                  )}
                   {...register(
                     `services.${serviceIdx}.applicationProcess.referral.content`
                   )}
@@ -482,10 +496,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
           htmlFor="fees"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Fees
+          {t('services.fees.title')}
         </label>
         <p className="text-sm leading-6 text-gray-600">
-          Are individuals charged for your services? What is your fee structure?
+          {t('services.fees.description')}
         </p>
         <div id="fees" className="mb-2 ml-2 flex flex-col">
           <div className="space-x-2">
@@ -499,7 +513,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="noFees"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              No Fees
+              {t('services.fees.noFees')}
             </label>
           </div>
 
@@ -517,13 +531,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="straight"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Straight Fee
+              {t('services.fees.straight.title')}
             </label>
             {watch(`services.${serviceIdx}.feeCategory.straight.selected`) ? (
               <>
                 <Input
                   className="m-2"
-                  placeholder="Please specify."
+                  placeholder={t('services.fees.straight.description')}
                   {...register(
                     `services.${serviceIdx}.feeCategory.straight.content`
                   )}
@@ -558,7 +572,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="sliding"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Sliding Scale Fee
+              {t('services.fees.slidingScale')}
             </label>
           </div>
 
@@ -576,7 +590,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="medicaid_tenncare"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Medicaid/TennCare
+              {t('services.fees.medicaidTenncare')}
             </label>
           </div>
 
@@ -592,7 +606,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="medicare"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Medicare
+              {t('services.fees.medicare')}
             </label>
           </div>
 
@@ -608,7 +622,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="private"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Private Insurance
+              {t('services.fees.private')}
             </label>
           </div>
         </div>
@@ -626,10 +640,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
           htmlFor="requiredDocuments"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Required Documents
+          {t('services.requiredDocuments.title')}
         </label>
         <p className="text-sm leading-6 text-gray-600">
-          What would someone need to bring when applying?
+          {t('services.requiredDocuments.description')}
         </p>
         <div id="requiredDocuments" className="mb-2 ml-2 grid grid-cols-3">
           <div className="space-x-2">
@@ -643,7 +657,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="noDocuments"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              No Documents
+              {t('services.requiredDocuments.noDocuments')}
             </label>
           </div>
 
@@ -659,7 +673,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="stateId"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              State Issued ID
+              {t('services.requiredDocuments.stateId')}
             </label>
           </div>
 
@@ -675,7 +689,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="ssn"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Social Security Card
+              {t('services.requiredDocuments.ssn')}
             </label>
           </div>
 
@@ -693,7 +707,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfResidence"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Residence
+              {t('services.requiredDocuments.proofOfResidence')}
             </label>
           </div>
 
@@ -711,7 +725,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfIncome"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Income
+              {t('services.requiredDocuments.proofOfIncome')}
             </label>
           </div>
 
@@ -729,7 +743,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="birthCertificate"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Birth Certificate
+              {t('services.requiredDocuments.birthCertificate')}
             </label>
           </div>
 
@@ -747,7 +761,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="medicalRecords"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Medical Records
+              {t('services.requiredDocuments.medicalRecords')}
             </label>
           </div>
 
@@ -765,7 +779,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="psychRecords"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Psych Records
+              {t('services.requiredDocuments.psychRecords')}
             </label>
           </div>
 
@@ -783,7 +797,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfNeed"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Need
+              {t('services.requiredDocuments.proofOfNeed')}
             </label>
           </div>
 
@@ -801,7 +815,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="utilityBill"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Utility Bill
+              {t('services.requiredDocuments.utilityBill')}
             </label>
           </div>
 
@@ -819,7 +833,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="utilityCutoffNotice"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Utility Cutoff Notice
+              {t('services.requiredDocuments.utilityCutoffNotice')}
             </label>
           </div>
 
@@ -837,7 +851,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfCitizenship"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Citizenship
+              {t('services.requiredDocuments.proofOfCitizenship')}
             </label>
           </div>
 
@@ -855,7 +869,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfPublicAssistance"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Public Assistance
+              {t('services.requiredDocuments.proofOfPublicAssistance')}
             </label>
           </div>
 
@@ -873,7 +887,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="driversLicense"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Driver&apos;s License
+              {t('services.requiredDocuments.driversLicense')}
             </label>
           </div>
 
@@ -891,7 +905,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="requiredDocumentsOther"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Other
+              {t('services.requiredDocuments.other.title')}
             </label>
             {watch(
               `services.${serviceIdx}.requiredDocuments.other.selected`
@@ -899,7 +913,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
               <>
                 <Input
                   className="m-2"
-                  placeholder="Please specify."
+                  placeholder={t(
+                    'services.requiredDocuments.other.description'
+                  )}
                   {...register(
                     `services.${serviceIdx}.requiredDocuments.other.content`
                   )}
@@ -940,16 +956,19 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
     let service_items = [];
 
-    if (screenWidth < 720 || services.length > 2) {
+    if (
+      (screenWidth < 720 && getValues('services').length > 1) ||
+      getValues('services').length > 2
+    ) {
       service_items = services.map((service: Service, index: number) => (
         <CarouselItem className="lg:basis-1/2" key={index}>
-          {ServicesReview(service)}
+          {<ServicesReview service={service} />}
         </CarouselItem>
       ));
     } else {
       service_items = services.map((service: Service, index: number) => (
         <div className="w-full lg:w-1/2" key={index}>
-          {ServicesReview(service)}
+          {<ServicesReview service={service} />}
         </div>
       ));
     }
@@ -957,17 +976,105 @@ homeless men, etc.) This helps us to make appropriate referrals."
     return service_items;
   };
 
+  const get_legal_status = () => {
+    const legal_statuses = new Map([
+      ['Federal', t('preliminaries.general.legalStatus.options.federal')],
+      ['State', t('preliminaries.general.legalStatus.options.state')],
+      ['County', t('preliminaries.general.legalStatus.options.county')],
+      ['City', t('preliminaries.general.legalStatus.options.city')],
+      ['Non-profit', t('preliminaries.general.legalStatus.options.nonprofit')],
+      ['501(c)3', t('preliminaries.general.legalStatus.options.501c3')],
+      ['Faith-based', t('preliminaries.general.legalStatus.options.faith')],
+      ['For profit', t('preliminaries.general.legalStatus.options.profit')],
+      ['Other', t('preliminaries.general.legalStatus.options.other')],
+    ]);
+
+    return legal_statuses.get(getValues('legalStatus'));
+  };
+
+  const get_fundingSource = () => {
+    const sources = new Map([
+      ['federal', t('preliminaries.operations.funding.options.federal')],
+      ['state', t('preliminaries.operations.funding.options.state')],
+      ['county', t('preliminaries.operations.funding.options.county')],
+      ['city', t('preliminaries.operations.funding.options.city')],
+      ['donations', t('preliminaries.operations.funding.options.donations')],
+      [
+        'foundations',
+        t('preliminaries.operations.funding.options.foundations'),
+      ],
+      ['feesDues', t('preliminaries.operations.funding.options.fees')],
+      ['unitedWay', t('preliminaries.operations.funding.options.unitedWay')],
+      ['other', t('preliminaries.operations.funding.options.other')],
+    ]);
+
+    const fundingSource = getValues('fundingSources');
+    const options: string[] = [];
+    let other: string = '';
+
+    Object.entries(fundingSource).forEach(([key, value]) => {
+      if (value && key != 'none' && key != 'other') {
+        options.push(sources.get(key)!);
+      }
+    });
+
+    if (fundingSource.other?.selected) {
+      other = String(fundingSource.other.content);
+      options.push(
+        t('services.preliminaries.operations.funding.options.other')
+      );
+    }
+
+    return (
+      <>
+        <p>
+          {options.map((item, index) => (
+            <span key={index}>
+              {item}
+              {index !== options.length - 1 && ', '}
+            </span>
+          ))}
+        </p>
+        <div className="ml-6">
+          {other != '' && (
+            <p>
+              Other: <span className="underline">{other}</span>
+            </p>
+          )}
+        </div>
+      </>
+    );
+  };
+
   const PreliminariesHeader = (data: { name: string }) => {
     return (
       <>
         <h2 className="text-base font-semibold leading-7 text-gray-900">
-          Preliminaries - {data.name}
+          {t('preliminaries.title')} - {data.name}
         </h2>
         <p className="mt-1 text-sm leading-6 text-gray-600">
-          Let&apos;s get to know your agency...
+          {t('preliminaries.description')}
         </p>
       </>
     );
+  };
+
+  const get_accessibility_langs = () => {
+    const language = getValues('languageSupport');
+    let result = '';
+
+    if (language.asl) result += t('accessibility.languages.options.asl') + ', ';
+    if (language.spanish)
+      result += t('accessibility.languages.options.spanish') + ', ';
+    if (language.teleinterpreterLanguageService)
+      result += t('accessibility.languages.options.tele') + ', ';
+    if (language.other.selected) {
+      result += convertToString(language.other.content!);
+      result += ', ';
+    }
+
+    if (result === '') return 'None';
+    else return result.substring(0, result.length - 2);
   };
 
   return (
@@ -982,7 +1089,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
       />
 
       {/* Form */}
-      <form className="py-6" onSubmit={handleSubmit(processForm)}>
+      <form className="pt-6" onSubmit={handleSubmit(processForm)}>
         {/* Preliminaries */}
         {currentStep === 0 && (
           <motion.div
@@ -1003,9 +1110,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
-                <PreliminariesHeader
-                  name={steps[currentStep].subpages[currentSubstep].name}
-                />
+                <PreliminariesHeader name={t('preliminaries.general.title')} />
 
                 <section className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
                   {/* left section */}
@@ -1017,7 +1122,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="legalName"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Legal Agency Name
+                          {t('preliminaries.general.name')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -1044,7 +1149,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="akas"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Also known as
+                          {t('preliminaries.general.aka')}
                         </label>
                         <div className="mt-2">
                           <input
@@ -1072,7 +1177,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="legalStatus"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Legal Organizational Status
+                          {t('preliminaries.general.legalStatus.title')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -1083,15 +1188,56 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             autoComplete="legalStatus"
                             className="block h-8 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                           >
-                            <option value="">Please Select One</option>
-                            <option value="federal">Federal</option>
-                            <option value="state">State</option>
-                            <option value="county">County</option>
-                            <option value="city">City</option>
-                            <option value="non-profit">Non-profit</option>
-                            <option value="501(c)3">501(c)3</option>
-                            <option value="For profit">For profit</option>
-                            <option value="other">Other</option>
+                            <option value="">
+                              {t(
+                                'preliminaries.general.legalStatus.options.empty'
+                              )}
+                            </option>
+                            <option value="Federal">
+                              {t(
+                                'preliminaries.general.legalStatus.options.federal'
+                              )}
+                            </option>
+                            <option value="State">
+                              {t(
+                                'preliminaries.general.legalStatus.options.state'
+                              )}
+                            </option>
+                            <option value="County">
+                              {t(
+                                'preliminaries.general.legalStatus.options.county'
+                              )}
+                            </option>
+                            <option value="City">
+                              {t(
+                                'preliminaries.general.legalStatus.options.city'
+                              )}
+                            </option>
+                            <option value="Non-profit">
+                              {t(
+                                'preliminaries.general.legalStatus.options.nonprofit'
+                              )}
+                            </option>
+                            <option value="501(c)3">
+                              {t(
+                                'preliminaries.general.legalStatus.options.501c3'
+                              )}
+                            </option>
+                            <option value="Faith-based">
+                              {t(
+                                'preliminaries.general.legalStatus.options.faith'
+                              )}
+                            </option>
+                            <option value="For profit">
+                              {t(
+                                'preliminaries.general.legalStatus.options.profit'
+                              )}
+                            </option>
+                            <option value="Other">
+                              {t(
+                                'preliminaries.general.legalStatus.options.other'
+                              )}
+                            </option>
                           </select>
                           <div className="mt-2 min-h-6 ">
                             {errors.legalStatus?.message && (
@@ -1109,7 +1255,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="directorName"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Director Name/Title
+                          {t('preliminaries.general.director')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -1137,7 +1283,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         htmlFor="agencyInfo"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Brief Agency Information
+                        {t('preliminaries.general.agencyInfo')}
                         <span className="ml-1 text-sm text-red-400">*</span>
                       </label>
                       <div className="mt-2">
@@ -1170,7 +1316,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="contactInfo.phoneNumber"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Main Phone Number
+                            {t('preliminaries.general.phone')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
 
@@ -1200,7 +1346,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="contactInfo.faxNumber"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Fax Number
+                            {t('preliminaries.general.fax')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
 
@@ -1232,7 +1378,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="contactInfo.tollFreeNumber"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Toll Free Number
+                            {t('preliminaries.general.tollFree')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
 
@@ -1262,7 +1408,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="contactInfo.TDDTTYNumber"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            TDD/TTY Number
+                            {t('preliminaries.general.tddTty')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
                           <div className="mt-2">
@@ -1286,11 +1432,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
 
-                      <div>
-                        <span className="bg-blue-500 text-white">
-                          TODO: Additional Numbers
-                        </span>
-                      </div>
+                      <AdditionalNumbers
+                        name="contactInfo.additionalNumbers"
+                        control={control}
+                      />
 
                       {/* contactInfo.email */}
                       <div>
@@ -1298,7 +1443,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="contactInfo.email"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Email
+                          {t('preliminaries.general.email')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
 
@@ -1328,7 +1473,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="contactInfo.website"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Website
+                          {t('preliminaries.general.website')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -1366,225 +1511,26 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <PreliminariesHeader
-                  name={steps[currentStep].subpages[currentSubstep].name}
+                  name={t('preliminaries.operations.title')}
                 />
 
                 <section className="mt-10 flex flex-col md:flex-row">
+                  {/* Left */}
                   <section className="flex w-full flex-col md:w-1/2">
                     {/* Hours of Operation */}
                     <div>
-                      <div>
-                        <h3 className="block text-sm font-medium leading-6 text-gray-900">
-                          Hours of Operation
-                        </h3>
-                        <div className="mt-2">
-                          <fieldset>
-                            <label
-                              htmlFor="days"
-                              className="mb-2 block text-sm font-medium leading-6 text-gray-900"
-                            >
-                              Select day(s) of operation
-                              <span className="ml-1 text-sm text-red-400">
-                                *
-                              </span>
-                            </label>
-
-                            <div className="flex flex-col gap-4 sm:flex-row sm:gap-2">
-                              <div className="flex flex-row gap-2">
-                                {/* Monday */}
-                                <label>
-                                  <input
-                                    type="checkbox"
-                                    id="monday"
-                                    className="form-checkbox hidden"
-                                    checked={isMondayChecked}
-                                    {...register('days.monday', {
-                                      onChange: () => {
-                                        setMondayChecked(!isMondayChecked);
-                                      },
-                                    })}
-                                  />
-                                  <span
-                                    className={
-                                      isMondayChecked
-                                        ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                        : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                                    }
-                                  >
-                                    Monday
-                                  </span>
-                                </label>
-
-                                {/* Tuesday */}
-                                <label>
-                                  <input
-                                    type="checkbox"
-                                    id="tuesday"
-                                    className="form-checkbox hidden"
-                                    checked={isTuesdayChecked}
-                                    {...register('days.tuesday', {
-                                      onChange: () => {
-                                        setTuesdayChecked(!isTuesdayChecked);
-                                      },
-                                    })}
-                                  />
-                                  <span
-                                    className={
-                                      isTuesdayChecked
-                                        ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                        : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                                    }
-                                  >
-                                    Tuesday
-                                  </span>
-                                </label>
-
-                                {/* Wednesday */}
-                                <label>
-                                  <input
-                                    type="checkbox"
-                                    id="wednesday"
-                                    className="form-checkbox hidden"
-                                    checked={isWednesdayChecked}
-                                    {...register('days.wednesday', {
-                                      onChange: () => {
-                                        setWednesdayChecked(
-                                          !isWednesdayChecked
-                                        );
-                                      },
-                                    })}
-                                  />
-                                  <span
-                                    className={
-                                      isWednesdayChecked
-                                        ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                        : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                                    }
-                                  >
-                                    Wednesday
-                                  </span>
-                                </label>
-                              </div>
-
-                              <div className="flex flex-row gap-2">
-                                {/* Thursday */}
-                                <label>
-                                  <input
-                                    type="checkbox"
-                                    id="thursday"
-                                    className="form-checkbox hidden"
-                                    checked={isThursdayChecked}
-                                    {...register('days.thursday', {
-                                      onChange: () => {
-                                        setThursdayChecked(!isThursdayChecked);
-                                      },
-                                    })}
-                                  />
-                                  <span
-                                    className={
-                                      isThursdayChecked
-                                        ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                        : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                                    }
-                                  >
-                                    Thursday
-                                  </span>
-                                </label>
-
-                                {/* Friday */}
-                                <label>
-                                  <input
-                                    type="checkbox"
-                                    className="form-checkbox hidden"
-                                    id="friday"
-                                    checked={isFridayChecked}
-                                    {...register('days.friday', {
-                                      onChange: () => {
-                                        setFridayChecked(!isFridayChecked);
-                                      },
-                                    })}
-                                  />
-                                  <span
-                                    className={
-                                      isFridayChecked
-                                        ? 'w-18 rounded-sm bg-sky-600 px-2 py-1 text-white'
-                                        : 'w-18 rounded-sm bg-slate-200 px-2 py-1  text-gray-900'
-                                    }
-                                  >
-                                    Friday
-                                  </span>
-                                </label>
-                              </div>
-                            </div>
-                            <div className="mt-2 min-h-6 ">
-                              {errors.days?.message && (
-                                <p className="mt-2 text-sm text-red-400">
-                                  {errors.days.message}
-                                </p>
-                              )}
-                            </div>
-                          </fieldset>
-                        </div>
-                      </div>
-
-                      {/* Open/Close */}
-                      <div className="flex w-full flex-row items-center gap-4 md:w-5/6">
-                        {/* Open */}
-                        <div>
-                          <label
-                            htmlFor="open"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Open
-                            <span className="ml-1 text-sm text-red-400">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            id="open"
-                            {...register('hours.open')}
-                            autoComplete="open"
-                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                          />
-                          <div className="mt-2 min-h-6 ">
-                            {errors.hours?.open?.message && (
-                              <p className="mt-2 text-sm text-red-400">
-                                {errors.hours.open.message}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <p className="mt-4">to</p>
-                        {/* Close */}
-                        <div>
-                          <label
-                            htmlFor="close"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Close
-                            <span className="ml-1 text-sm text-red-400">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            id="close"
-                            {...register('hours.close')}
-                            autoComplete="close"
-                            className="block h-10 w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6"
-                          />
-                          <div className="mt-2 min-h-6 ">
-                            {errors.hours?.close?.message && (
-                              <p className="mt-2 text-sm text-red-400">
-                                {errors.hours.close.message}
-                              </p>
-                            )}
-                          </div>
-                        </div>
+                      <h3 className="block text-sm font-medium leading-6 text-gray-900">
+                        {t('preliminaries.operations.hours')}
+                      </h3>
+                      <div className="mr-10">
+                        <Hours name="hours" control={control} />
                       </div>
                     </div>
 
                     {/* Funding Sources */}
                     <div className="mt-8">
                       <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
-                        Funding Sources
+                        {t('preliminaries.operations.funding.title')}
                         <span className="ml-1 text-sm text-red-400">*</span>
                       </h3>
 
@@ -1603,7 +1549,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.federal"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              Federal
+                              {t(
+                                'preliminaries.operations.funding.options.federal'
+                              )}
                             </label>
                           </div>
 
@@ -1619,7 +1567,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.state"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              State
+                              {t(
+                                'preliminaries.operations.funding.options.state'
+                              )}
                             </label>
                           </div>
 
@@ -1635,7 +1585,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.county"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              County
+                              {t(
+                                'preliminaries.operations.funding.options.county'
+                              )}
                             </label>
                           </div>
 
@@ -1651,7 +1603,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.city"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              City
+                              {t(
+                                'preliminaries.operations.funding.options.city'
+                              )}
                             </label>
                           </div>
 
@@ -1667,7 +1621,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.donations"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              Donations
+                              {t(
+                                'preliminaries.operations.funding.options.donations'
+                              )}
                             </label>
                           </div>
                         </section>
@@ -1686,7 +1642,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.foundations"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              Foundations/Private Org.
+                              {t(
+                                'preliminaries.operations.funding.options.foundations'
+                              )}
                             </label>
                           </div>
 
@@ -1702,7 +1660,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.feesDues"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              Fees/Dues
+                              {t(
+                                'preliminaries.operations.funding.options.fees'
+                              )}
                             </label>
                           </div>
 
@@ -1718,7 +1678,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.unitedWay"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              United Way
+                              {t(
+                                'preliminaries.operations.funding.options.unitedWay'
+                              )}
                             </label>
                           </div>
 
@@ -1734,7 +1696,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.other"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              Other
+                              {t(
+                                'preliminaries.operations.funding.options.other'
+                              )}
                             </label>
                             {watch('fundingSources.other.selected') ? (
                               <>
@@ -1769,50 +1733,57 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     </div>
                   </section>
 
-                  {/* Location */}
-                  <div className="w-full md:w-1/2">
-                    <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
-                      Location Information
-                    </h3>
-                    {/* location.confidential */}
+                  {/* Right */}
+                  <section className="w-full md:w-1/2">
+                    {/* Location */}
                     <div>
-                      <label
-                        htmlFor="location.confidential"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Is the physical address confidential?
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="flex flex-row gap-4 whitespace-nowrap">
-                        <div>
-                          <input
-                            id="location.confidential"
-                            type="radio"
-                            value="false"
-                            {...register('location.confidential')}
-                            autoComplete="location.confidential"
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                            defaultChecked
-                          />
-                          <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            No
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            id="location.confidential"
-                            type="radio"
-                            value="true"
-                            {...register('location.confidential', {
-                              setValueAs: (value: string) =>
-                                value === 'true' ? true : false,
-                            })}
-                            autoComplete="location.confidential"
-                            className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                          />
-                          <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            Yes
-                          </label>
+                      <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
+                        {t('preliminaries.operations.location.title')}
+                      </h3>
+                      {/* location.confidential */}
+                      <div>
+                        <h2 className="block text-sm font-medium leading-6 text-gray-900">
+                          {t('preliminaries.operations.location.confidential')}
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </h2>
+                        <div className="flex flex-row gap-4 whitespace-nowrap">
+                          <div>
+                            <input
+                              id="location.confidential1"
+                              type="radio"
+                              value="false"
+                              {...register('location.confidential', {
+                                setValueAs: (v) => !(v === 'false'),
+                              })}
+                              autoComplete="location.confidential"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              defaultChecked
+                            />
+                            <label
+                              htmlFor="location.confidential1"
+                              className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              {t('options.no')}
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              id="location.confidential2"
+                              type="radio"
+                              value="true"
+                              {...register('location.confidential', {
+                                setValueAs: (v) => v === 'true',
+                              })}
+                              autoComplete="location.confidential"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <label
+                              htmlFor="location.confidential2"
+                              className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              {t('options.yes')}
+                            </label>
+                          </div>
                         </div>
                         <div className="mt-2 min-h-6 ">
                           {errors.location?.confidential?.message && (
@@ -1822,168 +1793,181 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           )}
                         </div>
                       </div>
-                    </div>
 
-                    {/* location.physicalAddress */}
-                    <div className="w-full">
-                      <label
-                        htmlFor="location.physicalAddress"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Physical Address
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          id="location.physicalAddress"
-                          {...register('location.physicalAddress')}
-                          autoComplete="location.physicalAddress"
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.location?.physicalAddress?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.location.physicalAddress.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {/* location.mailingAddress */}
-                    <div className="w-full">
-                      <label
-                        htmlFor="location.mailingAddress"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Mailing Address (Only list if different from Physical.)
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          id="location.mailingAddress"
-                          {...register('location.mailingAddress')}
-                          autoComplete="location.mailingAddress"
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.location?.mailingAddress?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.location.mailingAddress.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {/* location.county */}
-                    <div className="w-full">
-                      <label
-                        htmlFor="location.county"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        County
-                        <span className="ml-1 text-sm text-red-400">*</span>
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          id="location.county"
-                          {...register('location.county')}
-                          autoComplete="location.county"
-                          className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                        />
-                        <div className="mt-2 min-h-6 ">
-                          {errors.location?.county?.message && (
-                            <p className="mt-2 text-sm text-red-400">
-                              {errors.location.county.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-2 md:flex-row md:gap-4">
-                      {/* location.city */}
-                      <div className="w-full sm:w-1/2 md:w-3/6">
+                      {/* location.physicalAddress */}
+                      <div className="w-full">
                         <label
-                          htmlFor="location.city"
+                          htmlFor="location.physicalAddress"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          City
+                          {t(
+                            'preliminaries.operations.location.address.physical'
+                          )}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
                           <input
                             type="text"
-                            id="location.city"
-                            {...register('location.city')}
-                            autoComplete="location.city"
+                            id="location.physicalAddress"
+                            {...register('location.physicalAddress')}
+                            autoComplete="location.physicalAddress"
                             className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
-                            {errors.location?.city?.message && (
+                            {errors.location?.physicalAddress?.message && (
                               <p className="mt-2 text-sm text-red-400">
-                                {errors.location.city.message}
+                                {errors.location.physicalAddress.message}
                               </p>
                             )}
                           </div>
                         </div>
                       </div>
 
-                      {/* location.state */}
-                      <div className="w-full sm:w-1/2 md:w-1/6">
+                      {/* location.mailingAddress */}
+                      <div className="w-full">
                         <label
-                          htmlFor="location.state"
+                          htmlFor="location.mailingAddress"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          State
-                          <span className="ml-1 text-sm text-red-400">*</span>
+                          {t(
+                            'preliminaries.operations.location.address.mailing'
+                          )}
                         </label>
                         <div className="mt-2">
                           <input
                             type="text"
-                            id="location.state"
-                            {...register('location.state')}
-                            autoComplete="location.state"
+                            id="location.mailingAddress"
+                            {...register('location.mailingAddress')}
+                            autoComplete="location.mailingAddress"
                             className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
-                            {errors.location?.state?.message && (
+                            {errors.location?.mailingAddress?.message && (
                               <p className="mt-2 text-sm text-red-400">
-                                {errors.location.state.message}
+                                {errors.location.mailingAddress.message}
                               </p>
                             )}
                           </div>
                         </div>
                       </div>
 
-                      {/* location.zipCode */}
-                      <div className="w-full sm:w-1/2 md:w-2/6">
+                      {/* location.county */}
+                      <div className="w-full">
                         <label
-                          htmlFor="location.zipCode"
+                          htmlFor="location.county"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Zip Code
+                          {t(
+                            'preliminaries.operations.location.address.county'
+                          )}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
                           <input
                             type="text"
-                            id="location.zipCode"
-                            {...register('location.zipCode')}
-                            autoComplete="location.zipCode"
+                            id="location.county"
+                            {...register('location.county')}
+                            autoComplete="location.county"
                             className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           />
                           <div className="mt-2 min-h-6 ">
-                            {errors.location?.zipCode?.message && (
+                            {errors.location?.county?.message && (
                               <p className="mt-2 text-sm text-red-400">
-                                {errors.location.zipCode.message}
+                                {errors.location.county.message}
                               </p>
                             )}
                           </div>
                         </div>
                       </div>
+
+                      <div className="flex flex-col gap-2 md:flex-row md:gap-4">
+                        {/* location.city */}
+                        <div className="w-full sm:w-1/2 md:w-3/6">
+                          <label
+                            htmlFor="location.city"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            {t(
+                              'preliminaries.operations.location.address.city'
+                            )}
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="location.city"
+                              {...register('location.city')}
+                              autoComplete="location.city"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.location?.city?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.location.city.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* location.state */}
+                        <div className="w-full sm:w-1/2 md:w-1/6">
+                          <label
+                            htmlFor="location.state"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            {t(
+                              'preliminaries.operations.location.address.state'
+                            )}
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="location.state"
+                              {...register('location.state')}
+                              autoComplete="location.state"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.location?.state?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.location.state.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* location.zipCode */}
+                        <div className="w-full sm:w-1/2 md:w-2/6">
+                          <label
+                            htmlFor="location.zipCode"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            {t('preliminaries.operations.location.address.zip')}
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="location.zipCode"
+                              {...register('location.zipCode')}
+                              autoComplete="location.zipCode"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                            <div className="mt-2 min-h-6 ">
+                              {errors.location?.zipCode?.message && (
+                                <p className="mt-2 text-sm text-red-400">
+                                  {errors.location.zipCode.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </section>
                 </section>
               </motion.div>
             )}
@@ -1999,26 +1983,34 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <PreliminariesHeader
-                  name={steps[currentStep].subpages[currentSubstep].name}
+                  name={t('preliminaries.additional.title')}
                 />
 
-                <section className="mt-10 flex flex-col md:flex-row">
-                  <section>
+                <section className="mt-10 flex w-full flex-col gap-4 md:flex-row">
+                  {/* Left */}
+                  <section className="w-full md:w-1/2">
                     {/* Service Area */}
                     <div>
-                      <div className="flex flex-col gap-4">
-                        <h3 className="mb-4 block text-sm font-medium leading-6 text-gray-900">
-                          Service Area
+                      <div className="mb-4">
+                        <h3 className="block text-sm font-medium leading-6 text-gray-900">
+                          {t('preliminaries.additional.serviceArea.title')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </h3>
+                        <p className="mt-1 text-sm leading-6 text-gray-600">
+                          {t(
+                            'preliminaries.additional.serviceArea.description'
+                          )}
+                        </p>
+                      </div>
 
+                      <div className="flex flex-col gap-8">
                         {/* serviceArea.townCity */}
                         <div>
                           <label
                             htmlFor="serviceArea.townCity"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Specific Town/City
+                            {t('preliminaries.additional.serviceArea.townCity')}
                           </label>
                           <div className="mt-2">
                             <input
@@ -2037,7 +2029,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="serviceArea.zipCodes"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Specific Zip Code(s)
+                            {t('preliminaries.additional.serviceArea.zip')}
                           </label>
                           <div className="mt-2">
                             <input
@@ -2058,7 +2050,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="serviceArea.counties"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Specific County/Counties
+                            {t('preliminaries.additional.serviceArea.county')}
                           </label>
                           <div className="mt-2">
                             <input
@@ -2074,62 +2066,259 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
 
                         {/* Region */}
-                        <div className="flex flex-col items-center gap-4 md:flex-row">
-                          {/* serviceArea.statewide */}
-                          <div className="space-x-2">
-                            <input
-                              type="checkbox"
-                              id="serviceArea.statewide"
-                              className="form-checkbox"
-                              {...register('serviceArea.statewide')}
-                            />
-                            <label
-                              htmlFor="serviceArea.statewide"
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Statewide
-                            </label>
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                          <div className="flex flex-row gap-4">
+                            {/* serviceArea.statewide */}
+                            <div className="space-x-2">
+                              <input
+                                type="checkbox"
+                                id="serviceArea.statewide"
+                                className="form-checkbox"
+                                {...register('serviceArea.statewide')}
+                              />
+                              <label
+                                htmlFor="serviceArea.statewide"
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                {t(
+                                  'preliminaries.additional.serviceArea.state'
+                                )}
+                              </label>
+                            </div>
+
+                            {/* serviceArea.nationwide */}
+                            <div className="space-x-2">
+                              <input
+                                type="checkbox"
+                                id="serviceArea.nationwide"
+                                className="form-checkbox"
+                                {...register('serviceArea.nationwide')}
+                              />
+                              <label
+                                htmlFor="serviceArea.nationwide"
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                {t(
+                                  'preliminaries.additional.serviceArea.nation'
+                                )}
+                              </label>
+                            </div>
                           </div>
 
-                          {/* serviceArea.nationwide */}
-                          <div className="space-x-2">
-                            <input
-                              type="checkbox"
-                              id="serviceArea.nationwide"
-                              className="form-checkbox"
-                              {...register('serviceArea.nationwide')}
-                            />
+                          {/* other */}
+                          <div className="flex flex-row items-center gap-4">
                             <label
-                              htmlFor="serviceArea.nationwide"
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              htmlFor="serviceArea.other"
+                              className="block text-sm font-medium leading-6 text-gray-900"
                             >
-                              Nationwide
+                              {t('preliminaries.additional.serviceArea.other')}
                             </label>
-                          </div>
-
-                          <label
-                            htmlFor="serviceArea.other"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Other
-                          </label>
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              id="serviceArea.other"
-                              {...register('serviceArea.other')}
-                              autoComplete="serviceArea.other"
-                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
-                            />
+                            <div className="mt-2">
+                              <input
+                                type="text"
+                                id="serviceArea.other"
+                                {...register('serviceArea.other')}
+                                autoComplete="serviceArea.other"
+                                className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Error */}
-                      <div className="mt-2 min-h-6 ">
+                      <div className="mt-4 min-h-6 ">
                         {errors.serviceArea?.message && (
                           <p className="mt-2 text-sm text-red-400">
                             {errors.serviceArea.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Right */}
+                  <section className="w-full md:w-1/2">
+                    {/* Annual Agency Update */}
+                    <div>
+                      <div className="mb-4">
+                        <h3 className="block text-sm font-medium leading-6 text-gray-900">
+                          {t('preliminaries.additional.agencyUpdate.title')}
+                        </h3>
+                        <p className="mt-1 text-sm leading-6 text-gray-600">
+                          {t(
+                            'preliminaries.additional.agencyUpdate.description'
+                          )}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-row gap-2 md:gap-4">
+                        {/* annualAgencyUpdate.name */}
+                        <div className="w-2/3">
+                          <label
+                            htmlFor="annualAgencyUpdate.name"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            {t('preliminaries.additional.agencyUpdate.name')}
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="annualAgencyUpdate.name"
+                              {...register('annualAgencyUpdate.name')}
+                              autoComplete="annualAgencyUpdate.name"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                          <div className="mt-2 min-h-6 ">
+                            {errors.annualAgencyUpdate?.name?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.annualAgencyUpdate.name.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* annualAgencyUpdate.title */}
+                        <div className="w-1/3">
+                          <label
+                            htmlFor="annualAgencyUpdate.title"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            {t(
+                              'preliminaries.additional.agencyUpdate.contactTitle'
+                            )}
+                            <span className="ml-1 text-sm text-red-400">*</span>
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="annualAgencyUpdate.title"
+                              {...register('annualAgencyUpdate.title')}
+                              autoComplete="annualAgencyUpdate.title"
+                              className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                          <div className="mt-2 min-h-6 ">
+                            {errors.annualAgencyUpdate?.title?.message && (
+                              <p className="mt-2 text-sm text-red-400">
+                                {errors.annualAgencyUpdate.title.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* annualAgencyUpdate.phoneNumber */}
+                      <div>
+                        <label
+                          htmlFor="annualAgencyUpdate.phoneNumber"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          {t('preliminaries.additional.agencyUpdate.phone')}
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="annualAgencyUpdate.phoneNumber"
+                            {...register('annualAgencyUpdate.phoneNumber')}
+                            autoComplete="annualAgencyUpdate.phoneNumber"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+                        <div className="mt-2 min-h-6 ">
+                          {errors.annualAgencyUpdate?.phoneNumber?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.annualAgencyUpdate.phoneNumber.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* annualAgencyUpdate.email */}
+                      <div>
+                        <label
+                          htmlFor="annualAgencyUpdate.email"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          {t('preliminaries.additional.agencyUpdate.email')}
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            id="annualAgencyUpdate.email"
+                            {...register('annualAgencyUpdate.email')}
+                            autoComplete="annualAgencyUpdate.email"
+                            className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+                        <div className="mt-2 min-h-6 ">
+                          {errors.annualAgencyUpdate?.email?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.annualAgencyUpdate.email.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* annualAgencyUpdate.hideFromWebsite */}
+                      <div className="flex flex-col gap-6 md:flex-row">
+                        <h2 className="block text-sm font-medium leading-6 text-gray-900">
+                          {t(
+                            'preliminaries.additional.agencyUpdate.confidential'
+                          )}
+                          <span className="ml-1 text-sm text-red-400">*</span>
+                        </h2>
+                        <div className="flex flex-row gap-4 whitespace-nowrap">
+                          <div>
+                            <input
+                              id="annualAgencyUpdate.hideFromWebsite1"
+                              type="radio"
+                              value=""
+                              {...register(
+                                'annualAgencyUpdate.hideFromWebsite'
+                              )}
+                              autoComplete="annualAgencyUpdate.hideFromWebsite"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                              defaultChecked
+                            />
+                            <label
+                              htmlFor="annualAgencyUpdate.hideFromWebsite1"
+                              className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              {t('options.no')}
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              id="annualAgencyUpdate.hideFromWebsite2"
+                              type="radio"
+                              value="true"
+                              {...register(
+                                'annualAgencyUpdate.hideFromWebsite'
+                              )}
+                              autoComplete="annualAgencyUpdate.hideFromWebsite"
+                              className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <label
+                              htmlFor="annualAgencyUpdate.hideFromWebsite2"
+                              className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              {t('options.yes')}
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* errors */}
+                      <div className="mt-2 min-h-6 ">
+                        {errors.annualAgencyUpdate?.hideFromWebsite
+                          ?.message && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.annualAgencyUpdate.hideFromWebsite.message}
                           </p>
                         )}
                       </div>
@@ -2162,15 +2351,170 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Accessibility
+                  {t('accessibility.title')}
                 </h2>
 
-                <div className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
-                  <p>
-                    Teleinterpreter Language Service, Supported Languages,
-                    Supported Languages Without Notice, Accessibility ADA
-                  </p>
-                </div>
+                <section className="mt-10 flex flex-col gap-4">
+                  {/* Language Support */}
+                  <div>
+                    <p className="block text-sm font-medium leading-6 text-gray-900">
+                      {t('accessibility.languages.title')}
+                    </p>
+
+                    <div className="flex flex-col gap-8 md:flex-row">
+                      {/* ASL */}
+                      <div className="space-x-2">
+                        <input
+                          type="checkbox"
+                          id="languageSupport.asl"
+                          className="form-checkbox"
+                          {...register('languageSupport.asl')}
+                        />
+                        <label
+                          htmlFor="languageSupport.asl"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {t('accessibility.languages.options.asl')}
+                        </label>
+                      </div>
+
+                      {/* Spanish */}
+                      <div className="space-x-2">
+                        <input
+                          type="checkbox"
+                          id="languageSupport.spanish"
+                          className="form-checkbox"
+                          {...register('languageSupport.spanish')}
+                        />
+                        <label
+                          htmlFor="languageSupport.spanish"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {t('accessibility.languages.options.spanish')}
+                        </label>
+                      </div>
+
+                      {/* Tele-interpreter Service */}
+                      <div className="space-x-2">
+                        <input
+                          type="checkbox"
+                          id="languageSupport.teleinterpreterLanguageService"
+                          className="form-checkbox"
+                          {...register(
+                            'languageSupport.teleinterpreterLanguageService'
+                          )}
+                        />
+                        <label
+                          htmlFor="languageSupport.teleinterpreterLanguageService"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {t('accessibility.languages.options.tele')}
+                        </label>
+                      </div>
+
+                      {/* Other */}
+                      <div>
+                        <div className="space-x-2">
+                          <input
+                            type="checkbox"
+                            id="languageSupport.other"
+                            className="form-checkbox"
+                            {...register('languageSupport.other.selected')}
+                          />
+                          <label
+                            htmlFor="languageSupport.other"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {t('accessibility.languages.options.other')}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    {watch('languageSupport.other.selected') && (
+                      <div className="mt-4">
+                        <input
+                          className="h-8 w-1/3 rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
+                          placeholder="Please specify."
+                          {...register('languageSupport.other.content', {
+                            setValueAs: (data) => convertToArray(data),
+                          })}
+                        />
+                        <div className="mt-4 min-h-6 ">
+                          {errors.languageSupport?.other?.message && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors.languageSupport.other.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Supported Languages Without Notice */}
+                  <div>
+                    <label
+                      htmlFor="supportedLanguagesWithoutNotice"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      {t('accessibility.languages.priorNotice')}
+                    </label>
+                    <div className="mt-2">
+                      <textarea
+                        // type="text"
+                        id="supportedLanguagesWithoutNotice"
+                        {...register('supportedLanguagesWithoutNotice', {
+                          setValueAs: (data) => convertToArray(data),
+                        })}
+                        autoComplete="supportedLanguagesWithoutNotice"
+                        cols={30}
+                        rows={5}
+                        className="w-full resize-none rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  {/* Accessibility ADA */}
+                  <div className="flex flex-col gap-6 md:flex-row">
+                    <h2 className="block text-sm font-medium leading-6 text-gray-900">
+                      {t('accessibility.ada')}
+                    </h2>
+                    <div className="flex flex-row gap-4 whitespace-nowrap">
+                      <div>
+                        <input
+                          id="accessibilityADA1"
+                          type="radio"
+                          value=""
+                          {...register('accessibilityADA')}
+                          autoComplete="accessibilityADA"
+                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                          defaultChecked
+                        />
+                        <label
+                          htmlFor="accessibilityADA1"
+                          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          {t('options.no')}
+                        </label>
+                      </div>
+                      <div>
+                        <input
+                          id="accessibilityADA2"
+                          type="radio"
+                          value="true"
+                          {...register('accessibilityADA')}
+                          autoComplete="accessibilityADA"
+                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                        />
+                        <label
+                          htmlFor="accessibilityADA2"
+                          className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          {t('options.yes')}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </section>
               </motion.div>
             )}
           </motion.div>
@@ -2197,7 +2541,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Services
+                  {t('services.title')}
                 </h2>
                 {screenWidth >= 1100 ? (
                   <ResizablePanelGroup
@@ -2254,7 +2598,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           type="button"
                         >
                           <Plus size={16} className="mr-2" />
-                          Add Service
+                          {t('services.ui.addService')}
                         </Button>
                       </div>
                     </ResizablePanel>
@@ -2263,7 +2607,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       {serviceIdx === -1 ? (
                         <div className="flex h-full items-center justify-center">
                           <p className="text-sm text-gray-600">
-                            Add or select a service to begin.
+                            {t('services.ui.instructions.desktop')}
                           </p>
                         </div>
                       ) : (
@@ -2283,13 +2627,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           className="mx-4"
                           type="button"
                         >
-                          Services List
+                          {t('services.ui.mobileList')}
                         </Button>
                       </SheetTrigger>
                       <SheetContent className="z-50">
                         <SheetHeader className="pb-2 text-3xl">
                           <SheetTitle className="text-center text-2xl">
-                            Services List
+                            {t('services.ui.mobileList')}
                           </SheetTitle>
                         </SheetHeader>
                         <div className="flex flex-col justify-center gap-2">
@@ -2300,7 +2644,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             type="button"
                           >
                             <Plus size={16} className="mr-2" />
-                            Add Service
+                            {t('services.ui.addService')}
                           </Button>
                           <Separator className="my-2" />
                           {getValues('services').map(
@@ -2342,7 +2686,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {serviceIdx === -1 ? (
                       <div className="flex h-full items-center justify-center p-5">
                         <p className="text-sm text-gray-600">
-                          Open the services list to begin.
+                          {t('services.ui.instructions.mobile')}
                         </p>
                       </div>
                     ) : (
@@ -2380,14 +2724,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <div className="mb-2 flex flex-col">
                         <div className="flex flex-col lg:flex-row lg:gap-12">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Does your organization accept volunteers?
+                            {t('opportunities.acceptVolunteers.title')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </h2>
                           {/* radio button */}
                           <div className="flex flex-row gap-4 whitespace-nowrap">
                             <div>
                               <input
-                                id="volunteers"
+                                id="volunteers1"
                                 type="radio"
                                 value="false"
                                 {...register('volunteerFields.volunteers')}
@@ -2398,13 +2742,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                 defaultChecked
                               />
-                              <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                No
+                              <label
+                                htmlFor="volunteers1"
+                                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
+                                {t('options.no')}
                               </label>
                             </div>
                             <div>
                               <input
-                                id="volunteers"
+                                id="volunteers2"
                                 type="radio"
                                 value="true"
                                 {...register('volunteerFields.volunteers')}
@@ -2414,8 +2761,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 autoComplete="volunteers"
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               />
-                              <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                Yes
+                              <label
+                                htmlFor=""
+                                className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
+                                {t('options.yes')}
                               </label>
                             </div>
                           </div>
@@ -2435,9 +2785,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         }`}
                       >
                         <div className="mb-4">
-                          <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Who is eligible to volunteer?
-                          </h2>
+                          <label
+                            htmlFor="vol_reqs"
+                            className="text-base font-semibold leading-7 text-gray-900"
+                          >
+                            {t(
+                              'opportunities.acceptVolunteers.eligibility.title'
+                            )}
+                          </label>
                           <textarea
                             id="vol_reqs"
                             {...register('volunteerFields.vol_reqs')}
@@ -2445,7 +2800,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             cols={30}
                             rows={10}
                             disabled={volunteerChecked === 'false'}
-                            placeholder="List type of volunteer work, age, training, background checks, other requirements for your volunteers"
+                            placeholder={t(
+                              'opportunities.acceptVolunteers.eligibility.description'
+                            )}
                             className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           ></textarea>
                           <div className="mt-2 min-h-6 ">
@@ -2459,9 +2816,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                         <div className="flex w-full flex-col gap-6 sm:flex-row">
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
-                              Volunteer Coordinator:
-                            </h2>
+                            <label
+                              htmlFor="vol_cor"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
+                              {t(
+                                'opportunities.acceptVolunteers.eligibility.coordinator'
+                              )}
+                            </label>
 
                             <input
                               type="text"
@@ -2481,9 +2843,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
-                              Phone #:
-                            </h2>
+                            <label
+                              htmlFor="vol_coor_tel"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
+                              {t(
+                                'opportunities.acceptVolunteers.eligibility.phone'
+                              )}
+                            </label>
 
                             <input
                               type="tel"
@@ -2493,7 +2860,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               disabled={volunteerChecked === 'false'}
                               className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                             />
-
                             <div className="mt-2 min-h-6 ">
                               {errors.volunteerFields?.vol_coor_tel
                                 ?.message && (
@@ -2512,15 +2878,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <div className="mb-2 flex flex-col">
                         <div className="flex flex-col gap-4 lg:flex-row">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Does your organization accept ongoing, non-monetary
-                            donations in support of programs or services?
+                            {t('opportunities.acceptDonations.title')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </h2>
                           {/* radio button */}
                           <div className="flex flex-row gap-4 whitespace-nowrap">
                             <div>
                               <input
-                                id="donation"
+                                id="donation1"
                                 type="radio"
                                 value="false"
                                 {...register('donationFields.donation')}
@@ -2530,13 +2895,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                 defaultChecked
                               />
-                              <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                No
+                              <label
+                                htmlFor="donation1"
+                                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
+                                {t('options.no')}
                               </label>
                             </div>
                             <div>
                               <input
-                                id="donation"
+                                id="donation2"
                                 type="radio"
                                 value="true"
                                 {...register('donationFields.donation')}
@@ -2545,8 +2913,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 }}
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               />
-                              <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                Yes
+                              <label
+                                htmlFor="donation2"
+                                className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
+                                {t('options.yes')}
                               </label>
                             </div>
                           </div>
@@ -2567,14 +2938,19 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       >
                         <div className="mb-2">
                           <div className="flex flex-col items-start lg:flex-row lg:items-center lg:gap-8">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
-                              Please list.
-                            </h2>
+                            <label
+                              htmlFor="don_ex"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
+                              {t('opportunities.acceptDonations.list.title')}
+                            </label>
                             <input
                               type="text"
                               {...register('donationFields.don_ex')}
                               id="don_ex"
-                              placeholder="Example: pet food, clothing, appliances, furniture"
+                              placeholder={t(
+                                'opportunities.acceptDonations.list.description'
+                              )}
                               disabled={donationChecked === 'false'}
                               className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 lg:w-2/3"
                             ></input>
@@ -2592,12 +2968,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           {/* radio button */}
                           <div className="mb-1 flex flex-col gap-4 sm:flex-row sm:gap-12">
                             <h2 className="text-base font-semibold leading-7 text-gray-900">
-                              Do you provide pick-up service?
+                              {t('opportunities.acceptDonations.pickup.title')}
                             </h2>
                             <div className="flex flex-row gap-4 whitespace-nowrap">
                               <div>
                                 <input
-                                  id="pickup"
+                                  id="pickup1"
                                   type="radio"
                                   value="false"
                                   disabled={donationChecked === 'false'}
@@ -2608,13 +2984,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                   className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                   defaultChecked
                                 />
-                                <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                  No
+                                <label
+                                  htmlFor="pickup1"
+                                  className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                >
+                                  {t('options.no')}
                                 </label>
                               </div>
                               <div>
                                 <input
-                                  id="pickup"
+                                  id="pickup2"
                                   type="radio"
                                   value="true"
                                   disabled={donationChecked === 'false'}
@@ -2624,8 +3003,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                   }}
                                   className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                 />
-                                <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                  Yes
+                                <label
+                                  htmlFor="pickup2"
+                                  className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                >
+                                  {t('options.yes')}
                                 </label>
                               </div>
                             </div>
@@ -2647,9 +3029,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         >
                           <div className="">
                             <div className="flex flex-row items-center gap-4">
-                              <h2 className="text-base font-semibold leading-7 text-gray-900">
-                                Where?
-                              </h2>
+                              <label
+                                htmlFor="pickup_loc"
+                                className="text-base font-semibold leading-7 text-gray-900"
+                              >
+                                {t(
+                                  'opportunities.acceptDonations.pickup.where'
+                                )}
+                              </label>
                               <input
                                 type="text"
                                 {...register('donationFields.pickup_loc')}
@@ -2670,9 +3057,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                         <div className="flex w-full flex-col gap-6 sm:flex-row">
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
-                              Donation Coordinator:
-                            </h2>
+                            <label
+                              htmlFor="don_coor"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
+                              {t('opportunities.acceptDonations.coordinator')}
+                            </label>
 
                             <input
                               type="text"
@@ -2691,9 +3081,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           </div>
 
                           <div className="w-full sm:w-1/2">
-                            <h2 className="text-base font-semibold leading-7 text-gray-900">
-                              Phone #:
-                            </h2>
+                            <label
+                              htmlFor="don_coor_tel"
+                              className="text-base font-semibold leading-7 text-gray-900"
+                            >
+                              {t('opportunities.acceptDonations.phone')}
+                            </label>
 
                             <input
                               type="tel"
@@ -2721,9 +3114,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <div className="mb-4 flex flex-col">
                         <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Are there other agencies or services that have been
-                            helpful that you would recommend to be included in
-                            our resource database?
+                            {t('opportunities.other.title')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </h2>
                           {/* radio button */}
@@ -2743,7 +3134,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 defaultChecked
                               />
                               <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                No
+                                {t('options.no')}
                               </label>
                             </div>
                             <div>
@@ -2760,7 +3151,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               />
                               <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                Yes
+                                {t('options.yes')}
                               </label>
                             </div>
                           </div>
@@ -2784,10 +3175,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         }`}
                       >
                         <div>
-                          <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Please provide contact information for these
-                            agencies/services.
-                          </h2>
+                          <label
+                            htmlFor="recommendations_contact"
+                            className="text-base font-semibold leading-7 text-gray-900"
+                          >
+                            {t('opportunities.other.contactInformation')}
+                          </label>
                           <textarea
                             {...register(
                               'recommendationFields.recommendations_contact'
@@ -2796,7 +3189,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             cols={30}
                             rows={10}
                             disabled={recommendationChecked === 'false'}
-                            placeholder="List type of volunteer work, age, traning, background checks, other requirements for your volunteers"
                             className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           ></textarea>
                           <div className="mt-2 min-h-6 ">
@@ -2841,89 +3233,576 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   {/* Header */}
                   <section>
                     <h2 className="text-base font-semibold leading-7 text-gray-900">
-                      Review
+                      {t('review.title')}
                     </h2>
                     <p className="mt-1 text-sm leading-6 text-gray-600">
-                      Please review your selections and submit.
+                      {t('review.description')}
                     </p>
                   </section>
 
                   {/* Preliminaries */}
-                  <section className="flex flex-col">
-                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                      Preliminaries
+                  <section className="flex flex-col gap-4">
+                    <h2 className="text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
+                      {t('preliminaries.title')}
                     </h2>
 
-                    <div className="flex flex-col gap-4 sm:flex-row sm:gap-12">
-                      {/* Prelim Info */}
-                      <section className="flex flex-col gap-2 sm:w-1/2">
-                        <div className="flex flex-col sm:flex-row">
-                          <p className="sm:w-1/2">
-                            <span className="text-base font-semibold leading-7 text-gray-900">
-                              Legal Name:
-                            </span>{' '}
-                            {getValues('legalName')}
+                    {/* General */}
+                    <section className="mb-2">
+                      <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                        {t('preliminaries.general.title')}
+                      </h2>
+                      <div className="flex w-full flex-col gap-4 md:flex-row">
+                        {/* 1st Column */}
+                        <div className="flex w-full flex-col gap-2 md:w-1/3">
+                          {/* Legal Name */}
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.name') + ':'}
+                            </p>
+                            <p className="w-1/2">{getValues('legalName')}</p>
+                          </div>
+
+                          {/* AKAs */}
+                          <div className="flex flex-row items-start">
+                            {getValues('akas') ? (
+                              <>
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t('preliminaries.general.aka') + ':'}
+                                </p>
+                                <p className="w-1/2">{getValues('akas')}</p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
+                                  {t('preliminaries.general.aka') + ':'}
+                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
+                              </>
+                            )}
+                          </div>
+
+                          {/* Legal Status */}
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.legalStatus.title') +
+                                ':'}
+                            </p>
+                            <p className="w-1/2">{get_legal_status()}</p>
+                          </div>
+
+                          {/* Director Name */}
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.director') + ':'}
+                            </p>
+                            <p className="w-1/2">{getValues('directorName')}</p>
+                          </div>
+                        </div>
+
+                        {/* Second Column */}
+                        <div className="flex w-full flex-col gap-2 md:w-1/3">
+                          {/* Main Phone Number */}
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.phone') + ':'}
+                            </p>
+                            <p className="w-1/2">
+                              {getValues('contactInfo.phoneNumber')}
+                            </p>
+                          </div>
+
+                          {/* Fax Number */}
+                          <div className="flex flex-row items-start">
+                            {getValues('contactInfo.faxNumber') ? (
+                              <>
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t('preliminaries.general.fax') + ':'}
+                                </p>
+                                <p className="w-1/2">
+                                  {getValues('contactInfo.faxNumber')}
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
+                                  {t('preliminaries.general.fax') + ':'}
+                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
+                              </>
+                            )}
+                          </div>
+
+                          {/* Toll Free Number */}
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.tollFree') + ':'}
+                            </p>
+                            <p className="w-1/2">
+                              {getValues('contactInfo.tollFreeNumber')}
+                            </p>
+                          </div>
+
+                          {/* TDD/TTY Number */}
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.tddTty') + ':'}
+                            </p>
+                            <p className="w-1/2">
+                              {getValues('contactInfo.TDDTTYNumber')}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Third Column */}
+                        <div className="flex w-full flex-col gap-2 md:w-1/3">
+                          {/* Additional Numbers */}
+                          <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                            {t('review.additional.title')}
                           </p>
 
-                          {getValues('akas') ? (
-                            <p className="sm:w-1/2">
-                              <span className="text-base font-semibold leading-7 text-gray-900">
-                                Also Known As:
-                              </span>{' '}
-                              {getValues('akas')}
+                          {getValues('contactInfo.additionalNumbers') ===
+                          undefined ? (
+                            <p className="leading-6 text-gray-400">
+                              {t('review.additional.none')}
                             </p>
                           ) : (
-                            <p className="text-md leading-6 text-gray-400 sm:w-1/2">
-                              Also Known As: N/A
-                            </p>
+                            <div className="max-h-24 w-full overflow-y-auto">
+                              {getValues('contactInfo.additionalNumbers')?.map(
+                                (n, index) => (
+                                  <div
+                                    key={index}
+                                    className="ml-4 grid w-3/4 grid-cols-2 items-center"
+                                  >
+                                    <p className="text-base font-medium leading-7 text-gray-900">
+                                      {n.label}:
+                                    </p>
+                                    <p>{n.number}</p>
+                                  </div>
+                                )
+                              )}
+                            </div>
                           )}
+
+                          {/* Email */}
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.email') + ':'}
+                            </p>
+                            <p className="w-1/2">
+                              {getValues('contactInfo.email')}
+                            </p>
+                          </div>
+
+                          {/* Website */}
+                          <div className="flex flex-row items-start">
+                            {getValues('contactInfo.website') ? (
+                              <>
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t('preliminaries.general.website') + ':'}
+                                </p>
+                                <p className="w-1/2">
+                                  {getValues('contactInfo.website')}
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
+                                  {t('preliminaries.general.website') + ':'}
+                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Brief Agency Information */}
+                      <p className="mt-8 text-base font-semibold leading-7 text-gray-900">
+                        {t('preliminaries.general.agencyInfo') + ':'}
+                      </p>
+                      <p>{getValues('agencyInfo')}</p>
+                    </section>
+
+                    <hr />
+
+                    {/* Operations */}
+                    <section className="my-2">
+                      <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                        {t('preliminaries.operations.title')}
+                      </h2>
+
+                      <div className="flex flex-col md:flex-row">
+                        <div className="w-full md:w-1/2">
+                          {/* Hours of Operation */}
+                          <div className="mb-6">
+                            <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.operations.hours')}
+                            </h3>
+
+                            <HoursReview hours={getValues('hours')} />
+                          </div>
+
+                          {/* Funding Source */}
+                          <div>
+                            <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.operations.funding.title')}
+                            </h3>
+                            {get_fundingSource()}
+                          </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row">
-                          <p className="sm:w-1/2">
-                            <span className="text-base font-semibold leading-7 text-gray-900">
-                              Legal Status:
-                            </span>{' '}
-                            {getValues('legalStatus').charAt(0).toUpperCase() +
-                              getValues('legalStatus').slice(1)}
-                          </p>
+                        {/* Location Information */}
+                        <div className="w-full md:w-1/2">
+                          <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                            {t('preliminaries.operations.location.title')}
+                          </h3>
 
-                          <p className="sm:w-1/2">
-                            <span className="text-base font-semibold leading-7 text-gray-900">
-                              Director Name:
-                            </span>{' '}
-                            {getValues('directorName')}
-                          </p>
+                          <div className="flex w-full flex-col gap-2">
+                            {/* Is the physical address confidential? */}
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.confidential'
+                                )}
+                              </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues(
+                                  'location.confidential'
+                                ).toString() === 'true'
+                                  ? t('options.yes')
+                                  : t('options.no')}
+                              </p>
+                            </div>
+
+                            {/* Physical Address */}
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.address.physical'
+                                ) + ':'}
+                              </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('location.physicalAddress')}
+                              </p>
+                            </div>
+
+                            {/* Mailing Address */}
+                            <div className="flex flex-row items-start gap-4">
+                              {getValues('location.mailingAddress') ? (
+                                <>
+                                  <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                    {t('review.mailing.title') + ':'}
+                                  </p>
+                                  <p className="w-1/2 md:w-1/3">
+                                    {getValues('location.mailingAddress')}
+                                  </p>
+                                </>
+                              ) : (
+                                <>
+                                  <p className="text-md w-1/2 leading-6 text-gray-400 md:w-2/3">
+                                    {t('review.mailing.title') + ':'}
+                                  </p>
+                                  <p className="w-1/2 text-gray-400 md:w-1/3">
+                                    {t('review.mailing.none')}
+                                  </p>
+                                </>
+                              )}
+                            </div>
+
+                            {/* County */}
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.address.county'
+                                ) + ':'}
+                              </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('location.county')}
+                              </p>
+                            </div>
+
+                            {/* City */}
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.address.city'
+                                ) + ':'}
+                              </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('location.city')}
+                              </p>
+                            </div>
+
+                            {/* State */}
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.address.state'
+                                ) + ':'}
+                              </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('location.state')}
+                              </p>
+                            </div>
+
+                            {/* Zip Code */}
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.address.zip'
+                                ) + ':'}
+                              </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('location.zipCode')}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
+                    <hr />
+
+                    {/* Additional */}
+                    <section className="my-2">
+                      <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                        {t('preliminaries.additional.title')}
+                      </h2>
+
+                      <div className="flex flex-col md:flex-row">
+                        {/* Service Area */}
+                        <div className="md:w-1/2">
+                          <h3 className="mb-4 w-1/2 text-base font-semibold leading-7 text-gray-900">
+                            {t('preliminaries.additional.serviceArea.title')}
+                          </h3>
+
+                          <div className="flex flex-col gap-4">
+                            {/* Specific Town/City */}
+                            {getValues('serviceArea.townCity') != '' && (
+                              <div className="flex flex-col items-start gap-2 md:flex-row md:gap-0">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  {t(
+                                    'preliminaries.additional.serviceArea.townCity'
+                                  ) + ':'}
+                                </p>
+                                <p className="w-full md:w-1/2">
+                                  {getValues('serviceArea.townCity')}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Specific Zip Codes */}
+                            {getValues('serviceArea.zipCodes').length != 0 && (
+                              <div className="flex flex-col items-start gap-2 md:flex-row md:gap-0">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  {t(
+                                    'preliminaries.additional.serviceArea.zip'
+                                  ) + ':'}
+                                </p>
+                                <p className="w-full md:w-1/2">
+                                  {convertToString(
+                                    getValues('serviceArea.zipCodes')
+                                  )}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Specific Counties */}
+                            {getValues('serviceArea.counties').length != 0 && (
+                              <div className="flex flex-col items-start gap-2 md:flex-row md:gap-0">
+                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
+                                  {t(
+                                    'preliminaries.additional.serviceArea.county'
+                                  ) + ':'}
+                                </p>
+                                <p className="w-full md:w-1/2">
+                                  {convertToString(
+                                    getValues('serviceArea.counties')
+                                  )}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Statewide */}
+                            {getValues('serviceArea.statewide') && (
+                              <div className="flex flex-row items-start">
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t(
+                                    'preliminaries.additional.serviceArea.state'
+                                  ) + ':'}
+                                </p>
+                                <p className="w-1/2">
+                                  {getValues('serviceArea.statewide') && 'Yes'}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Nationwide */}
+                            {getValues('serviceArea.nationwide') && (
+                              <div className="flex flex-row items-start">
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t(
+                                    'preliminaries.additional.serviceArea.nation'
+                                  ) + ':'}
+                                </p>
+                                <p className="w-1/2">
+                                  {getValues('serviceArea.nationwide') && 'Yes'}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Other */}
+                            {getValues('serviceArea.other') != '' && (
+                              <div className="flex flex-row items-start">
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t(
+                                    'preliminaries.additional.serviceArea.other'
+                                  ) + ':'}
+                                </p>
+                                <p className="w-1/2">
+                                  {getValues('serviceArea.other')}
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         </div>
 
-                        <p className="text-base font-semibold leading-7 text-gray-900">
-                          Brief Agency Information
+                        {/* Annual Agency Update */}
+                        <div className="mt-8 md:mt-0 md:w-1/2">
+                          <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
+                            {t('preliminaries.additional.agencyUpdate.title')}
+                          </h3>
+
+                          <div className="flex w-full flex-col gap-2">
+                            {/* Name */}
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.additional.agencyUpdate.name'
+                                ) + ':'}
+                              </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('annualAgencyUpdate.name')}
+                              </p>
+                            </div>
+
+                            {/* Title */}
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.additional.agencyUpdate.contactTitle'
+                                ) + ':'}
+                              </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('annualAgencyUpdate.title')}
+                              </p>
+                            </div>
+
+                            {/* Phone Number */}
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.additional.agencyUpdate.phone'
+                                ) + ':'}
+                              </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('annualAgencyUpdate.phoneNumber')}
+                              </p>
+                            </div>
+
+                            {/* Email */}
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.additional.agencyUpdate.email'
+                                ) + ':'}
+                              </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('annualAgencyUpdate.email')}
+                              </p>
+                            </div>
+
+                            {/* Would you like this information to be hidden from the website? */}
+                            <div className="flex flex-row items-end gap-4">
+                              <div className="w-1/2 md:w-2/3">
+                                <p className="w-3/4 text-base font-semibold leading-7 text-gray-900">
+                                  {t(
+                                    'preliminaries.additional.agencyUpdate.confidential'
+                                  )}
+                                </p>
+                              </div>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues(
+                                  'annualAgencyUpdate.hideFromWebsite'
+                                ).toString() === 'true'
+                                  ? t('options.yes')
+                                  : t('options.no')}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                  </section>
+
+                  <hr />
+
+                  {/* Accessibility */}
+                  <section>
+                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
+                      {t('accessibility.title')}
+                    </h2>
+
+                    <div className="flex flex-col gap-4">
+                      <div>
+                        <p className="w-full text-base font-semibold leading-7 text-gray-900">
+                          {t('accessibility.languages.title')}
                         </p>
-                        <p>{getValues('agencyInfo')}</p>
-                      </section>
+                        <p>{get_accessibility_langs()}</p>
+                      </div>
 
-                      {/* Hours of Operation */}
-                      <section className="w-1/2">
-                        {/* TODO */}
-                        <h3 className="text-base font-semibold leading-7 text-gray-900">
-                          Hours of Operation
-                        </h3>
+                      <div>
+                        <p className="w-full text-base font-semibold leading-7 text-gray-900">
+                          {t('accessibility.languages.priorNotice')}
+                        </p>
                         <p>
-                          <span className="bg-blue-500 text-white">
-                            TODO: Hours of operation
-                          </span>
+                          {getValues('supportedLanguagesWithoutNotice')
+                            .length != 0
+                            ? convertToString(
+                                getValues('supportedLanguagesWithoutNotice')
+                              )
+                            : 'No'}
                         </p>
-                      </section>
+                      </div>
+
+                      <div className="flex flex-col md:flex-row md:items-center md:gap-4">
+                        <p className="text-base font-semibold leading-7 text-gray-900">
+                          {t('accessibility.ada')}
+                        </p>
+                        <p>
+                          {getValues('accessibilityADA').toString() === 'true'
+                            ? t('options.yes')
+                            : t('options.no')}
+                        </p>
+                      </div>
                     </div>
                   </section>
 
+                  <hr />
+
                   {/* Services */}
                   <section>
-                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                      Services
+                    <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
+                      {t('services.title')}
                     </h2>
 
-                    {screenWidth < 720 || getValues('services').length > 2 ? (
+                    {getValues('services').length === 0 ? (
+                      <p className="text-md leading-6 text-gray-400">
+                        No services listed.
+                      </p>
+                    ) : (screenWidth < 720 &&
+                        getValues('services').length > 1) ||
+                      getValues('services').length > 2 ? (
                       <Carousel
                         opts={{
                           align: 'start',
@@ -2939,21 +3818,45 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           type="button"
                         />
                       </Carousel>
-                    ) : getValues('services').length == 0 ? (
-                      <p className="text-md leading-6 text-gray-400">
-                        No services listed.
-                      </p>
                     ) : (
                       <div className="flex w-full flex-col gap-4 md:flex-row">
                         {get_services()}
                       </div>
                     )}
+
+                    {/* {screenWidth < 720 && getValues('services').length > 2 ? (
+                      <Carousel
+                        opts={{
+                          align: 'start',
+                        }}
+                      >
+                        <CarouselContent>{get_services()}</CarouselContent>
+                        <CarouselNext
+                          className="right-1/3 top-full mt-8 sm:-right-12 sm:top-1/2 sm:-translate-y-1/2"
+                          type="button"
+                        />
+                        <CarouselPrevious
+                          className="left-1/3 top-full mt-8 sm:-left-12 sm:top-1/2 sm:-translate-y-1/2"
+                          type="button"
+                        />
+                      </Carousel>
+                    ) : getValues('services').length === 0 ? (
+                      <p className="text-md leading-6 text-gray-400">
+                        {t('review.no-services')}
+                      </p>
+                    ) : (
+                      <div className="flex w-full flex-col gap-4 md:flex-row">
+                        {get_services()}
+                      </div>
+                    )} */}
                   </section>
+
+                  <hr />
 
                   {/* Opportunities */}
                   <section className="mt-8 flex flex-col gap-4 sm:mt-0">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">
-                      Opportunities
+                    <h2 className="text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
+                      {t('opportunities.title')}
                     </h2>
 
                     <section className="flex flex-col gap-8">
@@ -2961,13 +3864,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <section>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
                           <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            Does your organization accept volunteers?
+                            {t('opportunities.acceptVolunteers.title')}
                           </p>
 
                           <p className="sm:w-1/2">
                             {getValues('volunteerFields.volunteers') == 'true'
-                              ? 'Yes'
-                              : 'No'}
+                              ? t('options.yes')
+                              : t('options.no')}
                           </p>
                         </div>
 
@@ -2976,7 +3879,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Who is eligible to volunteer?
+                                {t(
+                                  'opportunities.acceptVolunteers.eligibility.title'
+                                )}
                               </p>
 
                               <p className="sm:w-1/2">
@@ -2987,7 +3892,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Volunteer Coordinator
+                                {t(
+                                  'opportunities.acceptVolunteers.eligibility.coordinator'
+                                )}
                               </p>
 
                               <p className="sm:w-1/2">
@@ -2998,7 +3905,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Phone #
+                                {t(
+                                  'opportunities.acceptVolunteers.eligibility.phone'
+                                )}
                               </p>
 
                               <p className="sm:w-1/2">
@@ -3013,14 +3922,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <section>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
                           <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            Does your organization accept ongoing, non-monetary
-                            donations in support of programs or services?
+                            {t('opportunities.acceptDonations.title')}
                           </p>
 
                           <p className="sm:w-1/2">
                             {getValues('donationFields.donation') == 'true'
-                              ? 'Yes'
-                              : 'No'}
+                              ? t('options.yes')
+                              : t('options.no')}
                           </p>
                         </div>
 
@@ -3029,7 +3937,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Please list.
+                                {t('opportunities.acceptDonations.list.title')}
                               </p>
 
                               <p className="sm:w-1/2">
@@ -3040,20 +3948,24 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Do you provide pick-up service?
+                                {t(
+                                  'opportunities.acceptDonations.pickup.title'
+                                )}
                               </p>
 
                               <p className="sm:w-1/2">
                                 {getValues('donationFields.pickup') == 'true'
-                                  ? 'Yes'
-                                  : 'No'}
+                                  ? t('options.yes')
+                                  : t('options.no')}
                               </p>
                             </div>
 
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="ml-6 mr-1" />
-                                Where?
+                                {t(
+                                  'opportunities.acceptDonations.pickup.where'
+                                )}
                               </p>
 
                               <p className="ml-6 flex sm:ml-0 sm:w-1/2">
@@ -3064,7 +3976,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Donation Coordinator
+                                {t('opportunities.acceptDonations.coordinator')}
                               </p>
 
                               <p className="sm:w-1/2">
@@ -3075,7 +3987,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Phone #
+                                {t('opportunities.acceptDonations.phone')}
                               </p>
                               <p className="sm:w-1/2">
                                 {getValues('donationFields.don_coor_tel')}
@@ -3089,16 +4001,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <section>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
                           <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            Are there other agencies or services that have been
-                            helpful that you would recommend to be included in
-                            our resource database?
+                            {t('opportunities.other.title')}
                           </p>
 
                           <p className="sm:w-1/2">
                             {getValues('recommendationFields.recommendation') ==
                             'true'
-                              ? 'Yes'
-                              : 'No'}
+                              ? t('options.yes')
+                              : t('options.no')}
                           </p>
                         </div>
 
@@ -3107,8 +4017,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <div className="flex flex-col sm:flex-row sm:gap-16">
                             <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                               <CornerDownRight className="mr-1" />
-                              Please provide contact information for these
-                              agencies/services.
+                              {t('opportunities.other.contactInformation')}
                             </p>
 
                             <p className="sm:w-1/2">
@@ -3122,63 +4031,74 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     </section>
                   </section>
                 </div>
-                <Button type="submit">Click to Submit</Button>
               </motion.div>
             )}
           </motion.div>
         )}
-      </form>
 
-      {/* Navigation */}
-      <div className="mt-8 pt-5">
-        <div className="flex justify-between">
-          <button
-            type="button"
-            onClick={prev}
-            disabled={currentStep === 0 && currentSubstep == 0}
-            className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
+        {/* Navigation */}
+        <div className="mt-24 pt-5">
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={prev}
+              disabled={currentStep === 0 && currentSubstep == 0}
+              className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5L8.25 12l7.5-7.5"
-              />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={next}
-            disabled={
-              currentStep === steps.length - 1 &&
-              currentSubstep === steps[currentStep].subpages.length
-            }
-            className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8.25 4.5l7.5 7.5-7.5 7.5"
-              />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="h-6 w-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 19.5L8.25 12l7.5-7.5"
+                />
+              </svg>
+            </button>
+
+            {currentStep === steps.length - 1 &&
+            currentSubstep === steps[steps.length - 1].subpages.length - 1 ? (
+              <Button type="submit" className="w-36" disabled={isLoading}>
+                {isLoading ? (
+                  <Spinner className="h-4 w-4 animate-spin" />
+                ) : (
+                  <span>{t('review.button')}</span>
+                )}
+              </Button>
+            ) : (
+              <button
+                type="button"
+                onClick={next}
+                disabled={
+                  currentStep === steps.length - 1 &&
+                  currentSubstep === steps[steps.length - 1].subpages.length - 1
+                }
+                className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="h-6 w-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      </form>
       <Footer className="pb-2 pt-6" />
     </section>
   );

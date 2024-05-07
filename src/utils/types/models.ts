@@ -9,7 +9,9 @@ export interface Location {
 }
 
 export interface ServiceArea {
-  locations?: Location[];
+  townCity?: string;
+  zipCodes?: string[];
+  counties?: string[];
   statewide?: boolean;
   nationwide?: boolean;
   other?: string;
@@ -22,7 +24,11 @@ export interface ContactInfo {
   faxNumber?: string;
   tollFreeNumber?: string;
   TDDTTYNumber?: string;
-  additionalNumbers?: string[];
+  additionalNumbers?: {
+    id: number;
+    label: string;
+    number: string;
+  }[];
   email?: string;
   website?: string;
   hideFromWebsite?: boolean;
@@ -66,17 +72,7 @@ export interface AgencyInfoForm {
   languages: ('ASL' | 'Spanish' | string)[]; // other
   languagesWithoutPriorNotice?: string[];
   accessibilityADA?: boolean;
-  regularHoursOpening?: string;
-  regularHoursClosing?: string;
-  regularDaysOpen: (
-    | 'Monday'
-    | 'Tuesday'
-    | 'Wednesday'
-    | 'Thursday'
-    | 'Friday'
-    | 'Saturday'
-    | 'Sunday'
-  )[];
+  hours: Day[];
   updaterContactInfo: ContactInfo;
   services?: Service[];
   volunteerOpportunities?: boolean;

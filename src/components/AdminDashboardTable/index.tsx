@@ -8,7 +8,8 @@ import { AdminDashboardTableFilterCheckbox } from '@/components/AdminDashboardTa
 import AdminDashboardTableSearch from '@/components/AdminDashboardTable/AdminDashboardTableSearch';
 import AdminDashboardTableHeaders from './AdminDashboardTableHeaders';
 import AdminDashboardTablePaginationControls from './AdminDashboardTablePaginationControls';
-import { DashboardSearchParams } from '@/app/dashboard/page';
+import { DashboardSearchParams } from '@/app/[locale]/dashboard/page';
+import { useTranslations } from 'next-intl';
 
 interface AdminDashboardTableProps {
   searchParams: DashboardSearchParams;
@@ -112,6 +113,8 @@ export function AdminDashboardTable({
   searchParams,
   agencies,
 }: AdminDashboardTableProps) {
+  const t = useTranslations('Components.adminDashboardTable');
+
   const [sortAscending, setSortAscending] = useState<boolean>(false);
   const [sortField, setSortField] = useState<string>('');
   const [showCompleted, setShowCompleted] = useState<boolean>(true);
@@ -136,8 +139,24 @@ export function AdminDashboardTable({
     sortAscending
   );
 
+  if (!agenciesOnPage) {
+    return <div>{t('error')}</div>;
+  }
+
+  const translateAgencyStatus = (status: string | undefined) => {
+    const statuses = new Map([
+      ['Completed', t('currentStatus.completed')],
+      ['Needs Review', t('currentStatus.needsReview')],
+      ['Expired', t('currentStatus.expired')],
+    ]);
+
+    return statuses.get(status || '');
+  };
+
   return (
     <div className="mx-8">
+      <h1 className="text-l font-bold">{t('title')}</h1>
+
       <div className="flex py-4">
         <AdminDashboardTableSearch searchParams={searchParams} />
         <AdminDashboardTableFilterCheckbox
@@ -178,7 +197,7 @@ export function AdminDashboardTable({
                       agency.currentStatus as agencyUpdateStatus | undefined
                     )}
                   >
-                    {agency.currentStatus}
+                    {translateAgencyStatus(agency.currentStatus)}
                   </TableCell>
                   <TableCell>
                     <a

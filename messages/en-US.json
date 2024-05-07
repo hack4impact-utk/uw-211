@@ -1,0 +1,337 @@
+{
+  "Landing": {
+    "valid": {
+      "welcome": "Welcome, <bold>{org}</bold>!",
+      "instructions": "Your completion of this form is a valuable step towards connecting individuals with resources in the Greater Knoxville area. To learn more about our services, please visit our <link>website</link>.",
+      "button": "Get Started!"
+    },
+    "invalid": {
+      "welcome": "Oops!",
+      "instructions": "It seems the form link you have been provided is invalid. Please reach out to us via email at <email>respecialist@oconnorcenter.org</email> or by phone at <phone>(865) 523-1329</phone> to receive a valid link for your organization. We apologize for any inconvenience this may have caused."
+    }
+  },
+  "Form": {
+    "preliminaries": {
+      "title": "Preliminaries",
+      "description": "Let's get to know your agency...",
+      "general": {
+        "title": "General",
+        "name": "Legal Agency Name",
+        "aka": "Also known as",
+        "legalStatus": {
+          "title": "Legal Organization Status",
+          "options": {
+            "empty": "Please Select One",
+            "federal": "Federal",
+            "state": "State",
+            "county": "County",
+            "city": "City",
+            "nonprofit": "Non-profit",
+            "501c3": "501(c)3",
+            "faith": "Faith-based",
+            "profit": "For profit",
+            "other": "Other"
+          }
+        },
+        "director": "Director Name/Title",
+        "agencyInfo": "Brief Agency Information",
+        "phone": "Main Phone Number",
+        "fax": "Fax Number",
+        "tollFree": "Toll Free Number",
+        "tddTty": "TDD/TTY Number",
+        "email": "Email",
+        "website": "Website"
+      },
+      "operations": {
+        "title": "Operations",
+        "hours": "Hours of Operation",
+        "funding": {
+          "title": "Funding Sources",
+          "options": {
+            "federal": "Federal",
+            "state": "State",
+            "county": "County",
+            "city": "City",
+            "donations": "Donations",
+            "foundations": "Foundations/Private Org.",
+            "fees": "Fees/Dues",
+            "unitedWay": "United Way",
+            "other": "Other"
+          }
+        },
+        "location": {
+          "title": "Location Information",
+          "confidential": "Is the physical address confidential?",
+          "address": {
+            "physical": "Physical Address",
+            "mailing": "Mailing Address (Only list if different from physical.)",
+            "county": "County",
+            "city": "City",
+            "state": "State",
+            "zip": "Zip Code"
+          }
+        }
+      },
+      "additional": {
+        "title": "Additional",
+        "serviceArea": {
+          "title": "Service Area",
+          "description": "Choose the description that best reflects your service area.",
+          "townCity": "Specific Town/City",
+          "zip": "Specific Zip Code(s)",
+          "county": "Specific County/Counties",
+          "state": "Statewide",
+          "nation": "Nationwide",
+          "other": "Other"
+        },
+        "agencyUpdate": {
+          "title": "Annual Agency Update",
+          "description": "Provide a person we can contact for our annual information update.",
+          "name": "Name",
+          "contactTitle": "Title",
+          "phone": "Phone Number",
+          "email": "Email",
+          "confidential": "Would you like this information to be hidden from the website?"
+        }
+      }
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "languages": {
+        "title": "In addition to English, what languages are spoken by at lease on of your part-time staff?",
+        "options": {
+          "asl": "American Sign",
+          "spanish": "Spanish",
+          "tele": "Tele-interpreter Service",
+          "other": "Other"
+        },
+        "priorNotice": "Can any languages be provided with prior notice? (Please list.)"
+      },
+      "ada": "Is your facility accessible to people with disabilities as defined by the Americans with Disabilities Act (ADA)?"
+    },
+    "services": {
+      "title": "Services",
+      "ui": {
+        "instructions": {
+          "desktop": "Add or select a service to begin.",
+          "mobile": "Open the services list to begin."
+        },
+        "mobileList": "Services List",
+        "addService": "Add Service"
+      },
+      "name": {
+        "title": "Name",
+        "placeholder": "New Service #{number}"
+      },
+      "description": "Full Description",
+      "contact": {
+        "title": "Contact Person",
+        "description": "Only add contact person if different from Director or if contact persons differ by service."
+      },
+      "hours": "Hours",
+      "eligibility": {
+        "title": "Eligibility Requirements",
+        "description": "Who is eligible for this service? Who is the population the service is trying to serve? It is okay to restrict services to certain populations based on gender; family status, disability, age, personal situations, etc. (i.e. battered women with children, people with visual impairments, homeless men, etc.) This helps us to make appropriate referrals."
+      },
+      "applicationProcess": {
+        "title": "Application Process",
+        "description": "How would someone apply for this service?",
+        "walkIn": "Walk-in",
+        "telephone": "Telephone",
+        "appointment": "Call to Schedule an Appointment",
+        "online": "Apply Online",
+        "other": {
+          "title": "Other",
+          "description": "Please specify."
+        },
+        "referralRequired": {
+          "title": "Referral Required",
+          "description": "By whom?"
+        }
+      },
+      "fees": {
+        "title": "Fees",
+        "description": "Are individuals charged for your services? What is your fee structure?",
+        "noFees": "No Fees",
+        "straight": {
+          "title": "Straight Fee",
+          "description": "Please specify."
+        },
+        "slidingScale": "Sliding Scale Fee",
+        "medicaidTenncare": "Medicaid/TennCare",
+        "medicare": "Medicare",
+        "private": "Private Insurance"
+      },
+      "requiredDocuments": {
+        "title": "Required Documents",
+        "description": "What would someone need to bring when applying?",
+        "noDocuments": "No Documents",
+        "stateId": "State Issued ID",
+        "ssn": "Social Security Card",
+        "proofOfResidence": "Proof of Residence",
+        "proofOfIncome": "Proof of Income",
+        "birthCertificate": "Birth Certificate",
+        "medicalRecords": "Medical Records",
+        "psychRecords": "Psych Records",
+        "proofOfNeed": "Proof of Need",
+        "utilityBill": "Utility Bill",
+        "utilityCutoffNotice": "Utility Cutoff Notice",
+        "proofOfCitizenship": "Proof of Citizenship",
+        "proofOfPublicAssistance": "Proof of Public Assistance",
+        "driversLicense": "Driver's License",
+        "other": {
+          "title": "Other",
+          "description": "Please specify."
+        }
+      }
+    },
+    "opportunities": {
+      "title": "Opportunities",
+      "acceptVolunteers": {
+        "title": "Does your organization accept volunteers?",
+        "eligibility": {
+          "title": "Who is eligible to volunteer?",
+          "description": "List type of volunteer work, age, training, background checks, and other requirements for your volunteers.",
+          "coordinator": "Volunteer Coordinator",
+          "phone": "Phone Number"
+        }
+      },
+      "acceptDonations": {
+        "title": "Does your organization accept ongoing, non-monetary donations in support of programs or services?",
+        "list": {
+          "title": "Please list.",
+          "description": "Example: pet food, clothing, appliances, furniture"
+        },
+        "pickup": {
+          "title": "Do you provide pick-up service?",
+          "where": "Where?"
+        },
+        "coordinator": "Donation Coordinator",
+        "phone": "Phone Number"
+      },
+      "other": {
+        "title": "Are there other agencies or services that have been helpful that you would recommend to be included in our resource database?",
+        "contactInformation": "Please provide contact information for these agencies/services."
+      }
+    },
+    "review": {
+      "title": "Review",
+      "description": "Please review your selections and submit.",
+      "button": "Submit",
+      "additional": {
+        "title": "Additional Numbers",
+        "none": "No additional numbers listed."
+      },
+      "mailing": {
+        "title": "Mailing Address",
+        "none": "Same as physical address."
+      },
+      "no-services": "No services listed."
+    },
+    "options": {
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "Components": {
+    "additionalNumbers": {
+      "title": "Additional Numbers",
+      "button": "Add Number",
+      "label": "Label",
+      "number": "Number",
+      "remove": "Remove",
+      "warnings": {
+        "incomplete": "Must have a label and number for each additional number.",
+        "duplicate": "Cannot add duplicate labels or numbers.",
+        "validPhone": "Please enter valid phone number."
+      }
+    },
+    "hours": {
+      "add": "Add Hours",
+      "remove": "Remove",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      },
+      "warnings": {
+        "duplicate": "Cannot add duplicate hours.",
+        "invalidTime": "Invalid time range."
+      }
+    },
+    "servicesReview": {
+      "referral": "Referral",
+      "noFees": "No fees required.",
+      "noDocuments": "No documents required.",
+      "description": "Description",
+      "noContact": "Contact does not differ from agency directory or between services.",
+      "hours": "Hours of Operation"
+    },
+    "formStepper": {
+      "mobileTitle": "Navigate Form"
+    },
+    "navBar": {
+      "menu": "Menu",
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "resources": "Resources",
+      "about": "About"
+    },
+    "pdfButton": {
+      "button": "View form"
+    },
+    "adminDashboardNotifications": {
+      "error": "Error loading data",
+      "notification": "You have {number, plural, =1 {1 agency} other {# agencies}} pending approval.",
+      "tableHeader": {
+        "name": "Agency Name",
+        "date": "Date Submitted",
+        "pdf": "PDF Form"
+      },
+      "options": {
+        "approve": "Approve",
+        "deny": "Deny"
+      }
+    },
+    "adminDashboardTable": {
+      "error": "Failed to load agencies",
+      "title": "Agencies Overview",
+      "currentStatus": {
+        "completed": "Completed",
+        "needsReview": "Needs Review",
+        "expired": "Expired"
+      },
+      "search": "Search for and agency...",
+      "pagination": "Show {number, plural, =1 {1 item} other {# items}}",
+      "tableHeader": {
+        "name": "Agency Name",
+        "date": "Last Update",
+        "status": "Current Status",
+        "email": "Updater Email"
+      },
+      "filter": {
+        "status": "Status",
+        "button": "Filter"
+      }
+    }
+  },
+  "Complete": {
+    "thankYou": "Thank You!",
+    "received": "Your submission has been received.",
+    "close": "You can now safely close the page."
+  },
+  "SignIn": {
+    "quote": "United Way of Greater Knoxville is driving change in our community by uniting people, businesses, and organizations. Together, we're creating a more equitable Knoxville where we have stable housing, financial security, quality early care and education, access to food, and more. <b>Join us and answer the call.</b>",
+    "title": "Sign in",
+    "disclaimer": "By signing in, you agree to our <tos>Terms of Service</tos> and <pp>Privacy Policy</pp>.",
+    "button": "Sign in with Microsoft"
+  },
+  "Footer": {
+    "terms": "Terms and Conditions",
+    "privacy": "Privacy Policy"
+  }
+}
