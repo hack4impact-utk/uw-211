@@ -1,12 +1,14 @@
 'use client';
 
 import { TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { DashboardParams } from '@/utils/types';
 import { ArrowUp, ArrowDown } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Dispatch, SetStateAction } from 'react';
 
 type AdminDashboardTableHeadersProps = {
-  searchParams: DashboardParams;
+  sortField: string;
+  sortAscending: boolean;
+  setSortField: Dispatch<SetStateAction<string>>;
+  setSortAscending: Dispatch<SetStateAction<boolean>>;
 };
 
 const tableHeaders = [
@@ -28,12 +30,16 @@ const tableHeaders = [
   },
 ];
 
-function getSortArrow(property: string, searchParams: DashboardParams) {
-  if (searchParams.sortField !== property) {
+function getSortArrow(
+  property: string,
+  sortField: string,
+  sortAscending: boolean
+) {
+  if (sortField !== property) {
     return <div className="ml-2 h-4 w-4" />;
   }
 
-  if (searchParams.sortAscending === 'true') {
+  if (sortAscending) {
     return <ArrowUp className="ml-2 h-4 w-4" />;
   } else {
     return <ArrowDown className="ml-2 h-4 w-4" />;
@@ -41,25 +47,24 @@ function getSortArrow(property: string, searchParams: DashboardParams) {
 }
 
 export default function AdminDashboardTableHeaders({
-  searchParams,
+  sortField,
+  sortAscending,
+  setSortField,
+  setSortAscending,
 }: AdminDashboardTableHeadersProps) {
-  const router = useRouter();
-
   const handleSort = (property: string) => {
-    const urlSearchParams = new URLSearchParams(searchParams);
+    setSortField(property);
 
-    urlSearchParams.set('sortField', property);
-
-    let searchAscendingValue: boolean;
-    if (searchParams.sortField === property) {
-      searchAscendingValue = !(searchParams.sortAscending === 'true');
+    // the first time you click on a header, sort ascending
+    // otherwise, it should go true --> false --> not sorted
+    if (sortField !== property) {
+      setSortAscending(true);
+    } else if (sortAscending) {
+      setSortAscending(false);
     } else {
-      searchAscendingValue = true;
+      setSortField('');
+      setSortAscending(true); // the default sortAscending is true
     }
-
-    urlSearchParams.set('sortAscending', searchAscendingValue.toString());
-
-    router.replace('/dashboard' + '?' + urlSearchParams.toString());
   };
 
   return (
@@ -73,7 +78,7 @@ export default function AdminDashboardTableHeaders({
                 className="flex items-center"
               >
                 {header.name}
-                {getSortArrow(header.property, searchParams)}
+                {getSortArrow(header.property, sortField, sortAscending)}
               </button>
             </TableHead>
           );

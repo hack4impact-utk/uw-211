@@ -1,15 +1,18 @@
+'use client';
+
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import React, { cache } from 'react';
+import { useState } from 'react';
 import { agencyUpdateStatus } from '@/utils/constants';
-import { Agency, DashboardParams } from '@/utils/types';
-import { getAgencies } from '@/server/actions/Agencies';
+import { Agency } from '@/utils/types';
 import { AdminDashboardTableFilterCheckbox } from '@/components/AdminDashboardTable/AdminDashboardTableFilterCheckbox';
 import AdminDashboardTableSearch from '@/components/AdminDashboardTable/AdminDashboardTableSearch';
 import AdminDashboardTableHeaders from './AdminDashboardTableHeaders';
 import AdminDashboardTablePaginationControls from './AdminDashboardTablePaginationControls';
+import { DashboardSearchParams } from '@/app/dashboard/page';
 
 interface AdminDashboardTableProps {
-  params: DashboardParams;
+  searchParams: DashboardSearchParams;
+  agencies: Agency[];
 }
 
 /**
@@ -59,7 +62,7 @@ function makeAgencyCmpFn(
   };
 }
 
-function statusColor(status: agencyUpdateStatus) {
+function statusColor(status?: agencyUpdateStatus) {
   switch (status) {
     case agencyUpdateStatus.Completed:
       return 'bg-green-100';
@@ -71,37 +74,29 @@ function statusColor(status: agencyUpdateStatus) {
       return '';
   }
 }
-const cachedGetAgencies = cache(getAgencies);
 
-type CurrentStatusFilters = {
-  showCompleted: boolean;
-  showNeedsReview: boolean;
-  showExpired: boolean;
-};
-
-const getAgenciesOnPage = async (
+const getAgenciesOnPage = (
   agencies: Agency[],
-  currentStatusFilters?: CurrentStatusFilters,
+  showCompleted: boolean,
+  showNeedsReview: boolean,
+  showExpired: boolean,
   sortField?: string,
   sortAscending?: boolean
-): Promise<Agency[] | null> => {
+): Agency[] => {
   try {
-    if (currentStatusFilters) {
-      agencies = agencies.filter((agency) => {
-        switch (agency.currentStatus) {
-          case 'Completed':
-            return currentStatusFilters.showCompleted;
-          case 'Needs Review':
-            return currentStatusFilters.showNeedsReview;
-          case 'Expired':
-            return currentStatusFilters.showExpired;
-          default:
-            return true;
-        }
-      });
-    }
+    agencies = agencies.filter((agency) => {
+      switch (agency.currentStatus) {
+        case 'Completed':
+          return showCompleted;
+        case 'Needs Review':
+          return showNeedsReview;
+        case 'Expired':
+          return showExpired;
+        default:
+          return true;
+      }
+    });
 
-    // process agencies array based on search params
     if (sortField) {
       const sortFunction = makeAgencyCmpFn(sortField, sortAscending);
       agencies = agencies.sort(sortFunction);
@@ -109,97 +104,101 @@ const getAgenciesOnPage = async (
 
     return agencies;
   } catch (e) {
-    return null;
+    return [];
   }
 };
 
-export async function AdminDashboardTable({
-  params,
+export function AdminDashboardTable({
+  searchParams,
+  agencies,
 }: AdminDashboardTableProps) {
-  // extract sort and filter parameters
-  const sortAscending: boolean =
-    params.sortAscending === undefined || params.sortAscending === 'true';
-  const showCompleted =
-    params.completed === undefined || params.completed === 'true';
-  const showNeedsReview =
-    params.needsReview === undefined || params.needsReview === 'true';
-  const showExpired = params.expired === undefined || params.expired === 'true';
-  const count = params.count ? parseInt(params.count) : 10;
-  const page = params.page ? parseInt(params.page) : 1;
+  const [sortAscending, setSortAscending] = useState<boolean>(false);
+  const [sortField, setSortField] = useState<string>('');
+  const [showCompleted, setShowCompleted] = useState<boolean>(true);
+  const [showNeedsReview, setShowNeedsReview] = useState<boolean>(true);
+  const [showExpired, setShowExpired] = useState<boolean>(true);
+  const [count, setCount] = useState<number>(10);
+  const [page, setPage] = useState<number>(1);
 
-  const currentStatusFilters = {
+  // deserialize JSON date string as Date object
+  for (const agency of agencies) {
+    agency.updatedAt = new Date(agency.updatedAt as unknown as string);
+    agency.createdAt = new Date(agency.createdAt as unknown as string);
+  }
+
+  // apply filters and sort
+  const agenciesOnPage = getAgenciesOnPage(
+    agencies,
     showCompleted,
     showNeedsReview,
     showExpired,
-  };
-
-  const agencies = await cachedGetAgencies(false, params.search);
-  const agenciesOnPage = await getAgenciesOnPage(
-    agencies,
-    currentStatusFilters,
-    params.sortField,
+    sortField,
     sortAscending
   );
-
-  if (!agenciesOnPage) {
-    return <div>Failed to load agencies</div>;
-  }
 
   return (
     <div className="mx-8">
       <div className="flex py-4">
-        <AdminDashboardTableSearch searchParams={params} />
+        <AdminDashboardTableSearch searchParams={searchParams} />
         <AdminDashboardTableFilterCheckbox
-          searchParams={params}
-          initialCompleted={showCompleted}
-          initialNeedsReview={showNeedsReview}
-          initialExpired={showExpired}
+          showCompleted={showCompleted}
+          showNeedsReview={showNeedsReview}
+          showExpired={showExpired}
+          setShowCompleted={setShowCompleted}
+          setShowNeedsReview={setShowNeedsReview}
+          setShowExpired={setShowExpired}
         />
       </div>
-      <Table className="rounded-md border shadow">
-        <AdminDashboardTableHeaders searchParams={params} />
-        <TableBody>
-          {agenciesOnPage
-            .slice((page - 1) * count, page * count) // pagination
-            .map((agency, index) => (
-              <TableRow
-                key={index}
-                className={index % 2 === 1 ? 'bg-gray-100' : ''}
-              >
-                <TableCell>{agency.name}</TableCell>
-                <TableCell>
-                  {agency.updatedAt === undefined
-                    ? ''
-                    : agency.updatedAt.toLocaleDateString('en-us', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                </TableCell>
-                <TableCell
-                  className={
-                    agency.currentStatus
-                      ? statusColor(agency.currentStatus as agencyUpdateStatus)
-                      : ''
-                  }
+      {agenciesOnPage.length > 0 && (
+        <Table className="rounded-md border shadow">
+          <AdminDashboardTableHeaders
+            sortField={sortField}
+            sortAscending={sortAscending}
+            setSortField={setSortField}
+            setSortAscending={setSortAscending}
+          />
+          <TableBody>
+            {agenciesOnPage
+              .slice((page - 1) * count, page * count) // pagination
+              .map((agency, index) => (
+                <TableRow
+                  key={index}
+                  className={index % 2 === 1 ? 'bg-gray-100' : ''}
                 >
-                  {agency.currentStatus}
-                </TableCell>
-                <TableCell>
-                  <a
-                    href={`mailto:${agency.latestInfo?.updaterContactInfo.email}`}
+                  <TableCell>{agency.name}</TableCell>
+                  <TableCell>
+                    {agency.updatedAt?.toLocaleDateString('en-us', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </TableCell>
+                  <TableCell
+                    className={statusColor(
+                      agency.currentStatus as agencyUpdateStatus | undefined
+                    )}
                   >
-                    {agency.latestInfo?.updaterContactInfo.email}
-                  </a>
-                </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
+                    {agency.currentStatus}
+                  </TableCell>
+                  <TableCell>
+                    <a
+                      href={`mailto:${agency.latestInfo?.updaterContactInfo.email}`}
+                    >
+                      {agency.latestInfo?.updaterContactInfo.email}
+                    </a>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      )}
       <div className="flex justify-end p-4">
         <AdminDashboardTablePaginationControls
-          searchParams={params}
           numAgencies={agencies.length}
+          count={count}
+          page={page}
+          setCount={setCount}
+          setPage={setPage}
         />
       </div>
     </div>

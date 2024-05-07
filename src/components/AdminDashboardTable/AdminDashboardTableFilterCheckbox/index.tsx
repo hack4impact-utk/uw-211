@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -11,41 +11,24 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Filter } from 'lucide-react';
-import { DashboardParams } from '@/utils/types';
-import { useRouter } from 'next/navigation';
 
 type AdminDashboardTableFilterCheckboxProps = {
-  searchParams: DashboardParams;
-  initialCompleted: boolean;
-  initialNeedsReview: boolean;
-  initialExpired: boolean;
+  showCompleted: boolean;
+  showNeedsReview: boolean;
+  showExpired: boolean;
+  setShowCompleted: Dispatch<SetStateAction<boolean>>;
+  setShowNeedsReview: Dispatch<SetStateAction<boolean>>;
+  setShowExpired: Dispatch<SetStateAction<boolean>>;
 };
 
 export function AdminDashboardTableFilterCheckbox({
-  searchParams,
-  initialCompleted,
-  initialNeedsReview,
-  initialExpired,
+  showCompleted,
+  showNeedsReview,
+  showExpired,
+  setShowCompleted,
+  setShowNeedsReview,
+  setShowExpired,
 }: AdminDashboardTableFilterCheckboxProps) {
-  const router = useRouter();
-  const [filters, setFilters] = useState({
-    completed: initialCompleted,
-    needsReview: initialNeedsReview,
-    expired: initialExpired,
-  });
-
-  const handleFilter = (event: React.MouseEvent) => {
-    event.preventDefault();
-
-    const urlSearchParams = new URLSearchParams(searchParams);
-
-    urlSearchParams.set('completed', filters.completed ? 'true' : 'false');
-    urlSearchParams.set('needsReview', filters.needsReview ? 'true' : 'false');
-    urlSearchParams.set('expired', filters.expired ? 'true' : 'false');
-
-    router.replace('/dashboard' + '?' + urlSearchParams.toString());
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -57,42 +40,32 @@ export function AdminDashboardTableFilterCheckbox({
         <DropdownMenuLabel>Status</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
-          key={'completed'}
-          checked={filters.completed}
+          checked={showCompleted}
           onSelect={(e) => {
             e.preventDefault(); // stop dropdown from closing on click
-            setFilters((prev) => ({ ...prev, completed: !prev.completed }));
+            setShowCompleted((prev: boolean) => !prev);
           }}
         >
           Completed
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
-          key={'needsReview'}
-          checked={filters.needsReview}
+          checked={showNeedsReview}
           onSelect={(e) => {
             e.preventDefault(); // stop dropdown from closing on click
-            setFilters((prev) => ({ ...prev, needsReview: !prev.needsReview }));
+            setShowNeedsReview((prev: boolean) => !prev);
           }}
         >
           Needs Review
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
-          key={'expired'}
-          checked={filters.expired}
+          checked={showExpired}
           onSelect={(e) => {
             e.preventDefault(); // stop dropdown from closing on click
-            setFilters((prev) => ({ ...prev, expired: !prev.expired }));
+            setShowExpired((prev: boolean) => !prev);
           }}
         >
           Expired
         </DropdownMenuCheckboxItem>
-        <DropdownMenuSeparator />
-        <button
-          onClick={handleFilter}
-          className="mx-1 my-1 rounded-md bg-blue-500 px-2 py-1 font-semibold text-white  hover:bg-blue-700"
-        >
-          Filter
-        </button>
       </DropdownMenuContent>
     </DropdownMenu>
   );

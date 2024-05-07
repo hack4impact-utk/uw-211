@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { DashboardParams } from '@/utils/types';
 import {
   Select,
   SelectContent,
@@ -10,46 +9,31 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Dispatch, SetStateAction } from 'react';
 
 type AdminDashboardTablePaginationControlsProps = {
-  searchParams: DashboardParams;
   numAgencies: number;
+  count: number;
+  page: number;
+  setCount: Dispatch<SetStateAction<number>>;
+  setPage: Dispatch<SetStateAction<number>>;
 };
 
 export default function AdminDashboardTablePaginationControls({
-  searchParams,
   numAgencies,
+  count,
+  page,
+  setCount,
+  setPage,
 }: AdminDashboardTablePaginationControlsProps) {
-  const [count, setCount] = useState(
-    searchParams.count ? parseInt(searchParams.count) : 10
-  );
-  const [page, setPage] = useState(
-    searchParams.page ? parseInt(searchParams.page) : 1
-  );
-  const router = useRouter();
-
   const handleCountChange = (value: string) => {
     const count = parseInt(value);
     setCount(count);
-
-    const urlSearchParams = new URLSearchParams(searchParams);
-
-    urlSearchParams.set('count', count.toString());
-
-    router.replace('/dashboard' + '?' + urlSearchParams.toString());
   };
 
   const handleChangePage = (delta: number) => {
     const newPage = page + delta;
     setPage(newPage);
-
-    const urlSearchParams = new URLSearchParams(searchParams);
-
-    urlSearchParams.set('page', newPage.toString());
-
-    router.replace('/dashboard' + '?' + urlSearchParams.toString());
   };
 
   return (

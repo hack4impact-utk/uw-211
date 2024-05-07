@@ -1,5 +1,6 @@
 import ClientSessionProvider from '@/components/ClientSessionProvider';
 import './globals.css';
+import { Toaster } from 'sonner';
 
 export const metadata = {
   title: 'United Way 211',
@@ -33,6 +34,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="w-screen overflow-x-hidden">
         <ClientSessionProvider>{children}</ClientSessionProvider>
+        <Toaster />
       </body>
     </html>
   );

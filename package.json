@@ -34,11 +34,13 @@
     "mongoose": "7.4.5",
     "next": "13.4.19",
     "next-auth": "^4.24.6",
+    "next-themes": "^0.3.0",
     "pdf-lib": "^1.17.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.50.1",
     "react-resizable-panels": "^2.0.9",
+    "sonner": "^1.4.41",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"

@@ -7,3 +7,4 @@ export const convertToArray = (input: string) => {
     return str.split(',');
   } else return [input];
 };
+``;

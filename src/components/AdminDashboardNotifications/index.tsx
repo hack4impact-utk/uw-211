@@ -1,3 +1,4 @@
+'use client';
 import {
   Table,
   TableBody,
@@ -7,7 +8,6 @@ import {
   TableHeader,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { getAgencies } from '@/server/actions/Agencies';
 import { Agency } from '@/utils/types';
 import { AlertCircle, Newspaper, Check, X } from 'lucide-react';
 
@@ -17,19 +17,48 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import Link from 'next/link';
+import { approveAgency } from '@/server/actions/Agencies';
+import { toast } from 'sonner';
 
-export async function AdminDashboardNotifications() {
-  let agencies: Agency[] = [];
+type AdminDashboardNotificationsProps = {
+  agencies: Agency[];
+};
 
-  try {
-    agencies = await getAgencies(false, undefined); // TODO: only grab pending agencies
-  } catch (error) {
-    return <h1>Error loading data</h1>;
+export function AdminDashboardNotifications({
+  agencies,
+}: AdminDashboardNotificationsProps) {
+  // deserialize JSON date string as Date object
+  for (const agency of agencies) {
+    agency.updatedAt = new Date(agency.updatedAt as unknown as string);
+    agency.createdAt = new Date(agency.createdAt as unknown as string);
   }
+
+  const agenciesPendingApproval = agencies.filter(
+    (agency) => agency.approvalStatus === 'Pending'
+  );
+  console.log('agenciesPendingApproval', agenciesPendingApproval);
 
   if (agencies.length <= 0) {
     return <></>;
   }
+
+  const handleApprove = async (agency: Agency) => {
+    if (!agency._id || !agency.latestInfo) {
+      return;
+    }
+
+    try {
+      await approveAgency(agency._id, agency.latestInfo, 'Approved');
+      toast.success('Agency approved');
+    } catch (error) {
+      toast.error('Failed to approve agency');
+    }
+  };
+
+  const handleReject = (agency: Agency) => {
+    console.log('handleReject', agency);
+  };
 
   return (
     <div className="mx-8">
@@ -41,7 +70,7 @@ export async function AdminDashboardNotifications() {
             {agencies.length == 1 ? 'agency' : 'agencies'} pending approval.
           </AccordionTrigger>
           <AccordionContent>
-            <Table className="rounded-md border text-left shadow">
+            <Table className="mt-2 rounded-md border text-left shadow">
               <TableHeader>
                 <TableRow>
                   <TableHead>Agency Pending Approval</TableHead>
@@ -65,17 +94,27 @@ export async function AdminDashboardNotifications() {
                       })}
                     </TableCell>
                     <TableCell>
-                      <Button variant="outline">
-                        <Newspaper className="mr-2" />
-                        View form
-                      </Button>
+                      <Link href={`/api/pdf/${agency._id}`} target="_blank">
+                        <Button variant="outline">
+                          <Newspaper className="mr-2" />
+                          View form
+                        </Button>
+                      </Link>
                     </TableCell>
                     <TableCell>
-                      <Button className="mr-4" variant="outline">
+                      <Button
+                        className="mr-4"
+                        variant="outline"
+                        onClick={() => handleApprove(agency)}
+                      >
                         <Check className="mr-2" />
                         Approve
                       </Button>
-                      <Button variant="destructive">
+
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleReject(agency)}
+                      >
                         <X className="mr-2" />
                         Deny
                       </Button>

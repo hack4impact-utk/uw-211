@@ -1,13 +1,13 @@
 'use client';
 
+import { DashboardSearchParams } from '@/app/dashboard/page';
 import { Input } from '@/components/ui/input';
-import { DashboardParams } from '@/utils/types';
 import { Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 type AdminDashboardTableSearchProps = {
-  searchParams: DashboardParams;
+  searchParams: DashboardSearchParams;
 };
 
 export default function AdminDashboardTableSearch({
