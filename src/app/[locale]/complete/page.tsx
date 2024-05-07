@@ -1,5 +1,6 @@
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import { getTranslations } from 'next-intl/server';
 
 const Check = ({ className }: { className?: string }) => {
   return (
@@ -31,6 +32,8 @@ const Check = ({ className }: { className?: string }) => {
 };
 
 export default async function Complete() {
+  const t = await getTranslations('Complete');
+
   return (
     <>
       <Header className="fixed top-0" />
@@ -38,12 +41,10 @@ export default async function Complete() {
       <main className="flex h-screen w-screen flex-col items-center justify-center">
         <div className="flex flex-col items-center justify-center gap-8">
           <Check className="w-1/2 fill-[#0253AA] md:w-3/4" />
-          <h1 className="text-3xl font-bold">Thank You!</h1>
+          <h1 className="text-3xl font-bold">{t('thankYou')}</h1>
           <p className="text-center text-lg">
-            Your submission has been received. <br />
-            <span className="text-sm text-gray-500">
-              You can now safely close this page.
-            </span>
+            {t('received')} <br />
+            <span className="text-sm text-gray-500">{t('close')}</span>
           </p>
         </div>
       </main>

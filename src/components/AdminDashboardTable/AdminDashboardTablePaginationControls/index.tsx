@@ -12,6 +12,7 @@ import {
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 type AdminDashboardTablePaginationControlsProps = {
   searchParams: DashboardParams;
@@ -22,6 +23,8 @@ export default function AdminDashboardTablePaginationControls({
   searchParams,
   numAgencies,
 }: AdminDashboardTablePaginationControlsProps) {
+  const t = useTranslations('Components.adminDashboardTable');
+
   const [count, setCount] = useState(
     searchParams.count ? parseInt(searchParams.count) : 10
   );
@@ -59,9 +62,9 @@ export default function AdminDashboardTablePaginationControls({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="10">Show 10 items</SelectItem>
-          <SelectItem value="25">Show 25 items</SelectItem>
-          <SelectItem value="50">Show 50 items</SelectItem>
+          <SelectItem value="10">{t('pagination', { number: 10 })}</SelectItem>
+          <SelectItem value="25">{t('pagination', { number: 25 })}</SelectItem>
+          <SelectItem value="50">{t('pagination', { number: 50 })}</SelectItem>
         </SelectContent>
       </Select>
       <Button

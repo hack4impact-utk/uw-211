@@ -5,6 +5,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import uwLogo from '@/../public/img/UWGK_Logo.png';
 import Image from 'next/image';
+import { Chunks } from '@/i18n';
+import { useTranslations } from 'next-intl';
 
 interface WelcomePageProps {
   id?: string;
@@ -12,25 +14,31 @@ interface WelcomePageProps {
 }
 
 function WelcomePageBody({ id, agency }: WelcomePageProps) {
+  const t = useTranslations('Landing');
+
   if (agency) {
     return (
       <>
         <div>
           <h1 className="text-3xl">
-            Welcome,
-            <span className="font-bold"> {agency.name}</span>!
+            {t.rich('valid.welcome', {
+              bold: (chunks: Chunks) => (
+                <span className="font-bold">{chunks}</span>
+              ),
+              org: agency.name,
+            })}
           </h1>
           <p className="mb-2 mt-4 text-gray-700">
-            Your completion of this form is a valuable step towards connecting
-            individuals with resources in the Greater Knoxville area. To learn
-            more about our services, please visit our{' '}
-            <a
-              className="text-blue-700 hover:underline"
-              href="https://www.211.org/about-us"
-            >
-              website
-            </a>
-            .
+            {t.rich('valid.instructions', {
+              link: (chunks: Chunks) => (
+                <a
+                  className="text-blue-700 hover:underline"
+                  href="https://www.211.org/about-us"
+                >
+                  {chunks}
+                </a>
+              ),
+            })}
           </p>
         </div>
         <div className="flex justify-center">
@@ -39,7 +47,7 @@ function WelcomePageBody({ id, agency }: WelcomePageProps) {
               id="start-button"
               className="w-36 rounded-sm border-none bg-[#1e57a1] p-2 text-white  hover:bg-[#7b8fc3] sm:w-48"
             >
-              <label htmlFor="start-button">Get Started!</label>
+              <label htmlFor="start-button">{t('valid.button')}</label>
             </button>
           </Link>
         </div>
@@ -49,22 +57,23 @@ function WelcomePageBody({ id, agency }: WelcomePageProps) {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold">Oops!</h1>
+      <h1 className="text-3xl font-bold">{t('invalid.welcome')}</h1>
       <p className="mb-2 mt-4 text-gray-700">
-        It seems the form link you have been provided is invalid. Please reach
-        out to us via email at{' '}
-        <a
-          className="text-blue-700 hover:underline"
-          href="mailto: respecialist@oconnorcenter.org"
-        >
-          respecialist@oconnorcenter.org
-        </a>{' '}
-        or by phone at{' '}
-        <a className="text-blue-700 hover:underline" href="tel:8655231329">
-          (865) 523-1329
-        </a>{' '}
-        to receive a valid link for your organization. We apologize for any
-        inconvenience this may have caused.
+        {t.rich('invalid.instructions', {
+          email: (chunks: Chunks) => (
+            <a
+              className="text-blue-700 hover:underline"
+              href="mailto: respecialist@oconnorcenter.org"
+            >
+              {chunks}
+            </a>
+          ),
+          phone: (chunks: Chunks) => (
+            <a className="text-blue-700 hover:underline" href="tel:8655231329">
+              {chunks}
+            </a>
+          ),
+        })}
       </p>
     </div>
   );

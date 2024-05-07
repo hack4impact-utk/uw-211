@@ -6,6 +6,7 @@ import {
 import { UseControllerProps, useController } from 'react-hook-form';
 import { Button } from '../ui/button';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 type AdditionalNumbers = z.infer<typeof additionalNumbersSchema>;
 type FormData = z.infer<typeof FormDataSchema>;
@@ -21,6 +22,8 @@ export default function AdditionalNumbers({
     name,
     control,
   });
+
+  const t = useTranslations('Components.additionalNumbers');
 
   const [numbers, setNumbers] = useState(
     (field.value as AdditionalNumbers[]) || []
@@ -45,7 +48,7 @@ export default function AdditionalNumbers({
     if (label?.value === '' || number?.value === '') {
       control?.setError(name, {
         type: 'custom',
-        message: 'Must have a label and number for each additional number.',
+        message: t('warnings.incomplete'),
       });
       return;
     }
@@ -58,7 +61,7 @@ export default function AdditionalNumbers({
     ) {
       control?.setError(name, {
         type: 'custom',
-        message: 'Cannot add duplicate labels or numbers.',
+        message: t('warnings.duplicate'),
       });
       return;
     }
@@ -67,7 +70,7 @@ export default function AdditionalNumbers({
     if (new_number.number.length != 10 || !/^\d+$/.test(new_number.number)) {
       control?.setError(name, {
         type: 'custom',
-        message: 'Please enter valid phone number.',
+        message: t('warnings.validPhone'),
       });
       return;
     }
@@ -99,24 +102,24 @@ export default function AdditionalNumbers({
   return (
     <div className="mb-4">
       <h3 className="block text-sm font-medium leading-6 text-gray-900">
-        Additional Numbers
+        {t('title')}
       </h3>
 
       <div className="mt-2 flex flex-row gap-2">
         <input
           type="text"
           id="label"
-          placeholder="Label"
+          placeholder={t('label')}
           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:w-1/6 sm:text-sm sm:leading-6"
         />
         <input
           type="text"
           id="number"
-          placeholder="Number"
+          placeholder={t('number')}
           className="h-8 w-full rounded-sm border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:w-4/6 sm:text-sm sm:leading-6"
         />
         <Button type="button" className="h-8" onClick={addNumber}>
-          Add Number
+          {t('button')}
         </Button>
       </div>
 
@@ -136,7 +139,7 @@ export default function AdditionalNumbers({
                 className="h-7"
                 onClick={() => deleteNumber(n.id)}
               >
-                Remove
+                {t('remove')}
               </Button>
             </div>
           ))}

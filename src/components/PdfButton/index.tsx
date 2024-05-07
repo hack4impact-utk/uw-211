@@ -5,12 +5,15 @@ import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
 import { useState } from 'react';
 import Spinner from '@/components/Spinner';
+import { useTranslations } from 'next-intl';
 
 interface PdfButtonProps {
   agencyId: string | undefined;
 }
 
 const PdfButton: React.FC<PdfButtonProps> = ({ agencyId }) => {
+  const t = useTranslations('Components.pdfButton');
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const downloadPdf = async (id: string | undefined) => {
@@ -45,7 +48,7 @@ const PdfButton: React.FC<PdfButtonProps> = ({ agencyId }) => {
       ) : (
         <div className="flex items-center">
           <FileText className="mr-2" />
-          View form
+          {t('button')}
         </div>
       )}
     </Button>

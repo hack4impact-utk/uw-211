@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import Spinner from '@/components/Spinner';
+import { useTranslations } from 'next-intl';
 
 interface SignInFormProps extends HTMLAttributes<HTMLDivElement> {}
 interface IconProps extends HTMLAttributes<SVGElement> {}
@@ -37,6 +38,8 @@ export default function SignInForm({ className }: SignInFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
+  const t = useTranslations('SignIn');
+
   async function attemptAuth() {
     setIsLoading(true);
     signIn('azure-ad');
@@ -59,7 +62,7 @@ export default function SignInForm({ className }: SignInFormProps) {
           <Spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           <>
-            <Icons.microsoft className="mr-2 h-4 w-4" /> Sign in with Microsoft
+            <Icons.microsoft className="mr-2 h-4 w-4" /> {t('button')}
           </>
         )}
       </Button>
