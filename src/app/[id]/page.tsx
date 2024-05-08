@@ -74,23 +74,25 @@ export default function Form({ params }: { params: { id: string } }) {
     defaultValues: { services: [] },
   });
 
-  const [latestInfo, setlatestInfo] = useState([]);
-
-  const getlatestInfo = async () => {
-    try {
-      const res: Response = await fetch(`api/agencies/${params.id}`, {
-        cache: 'no-store',
-      });
-      const body = await res.json();
-      setlatestInfo(body.data.agency.latestInfo);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [latestInfo, setlatestInfo] = useState<AgencyInfoForm | undefined>(
+    undefined
+  );
 
   useEffect(() => {
+    const getlatestInfo = async () => {
+      try {
+        const res: Response = await fetch(`api/agencies/${params.id}`, {
+          cache: 'no-store',
+        });
+        const body = await res.json();
+        setlatestInfo(body.data.agency.latestInfo);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     getlatestInfo();
-  }, []);
+  }, [params.id]);
 
   // Auto fill form based on last submitted form.
   useEffect(() => {
@@ -228,7 +230,7 @@ export default function Form({ params }: { params: { id: string } }) {
             info?.donations !== undefined && info?.donations?.length > 0
               ? 'true'
               : 'false',
-          don_ex: info?.donations?.reduce((acc, curr) => acc + ', ' + curr),
+          don_ex: info?.donations?.reduce((acc, curr) => acc + ', ' + curr, ''),
           pickup: info?.donationPickUpLocation !== undefined ? 'true' : 'false',
           pickup_loc: 'here',
           don_coor: info?.donationCoordinatorContactInfo?.name,
@@ -236,7 +238,7 @@ export default function Form({ params }: { params: { id: string } }) {
         },
       });
     }
-  }, [latestInfo]);
+  }, [latestInfo, reset]);
 
   useBeforeUnload(isDirty);
   const { width: screenWidth } = useWindowSize();
