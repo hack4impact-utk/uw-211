@@ -419,7 +419,7 @@ export const FormDataSchema = z.object({
   // Additional
   serviceArea: serviceAreaSchema,
   annualAgencyUpdate: annualAgencyUpdateSchema,
-  updaterContactInfo: contactInfoSchema.optional(),
+  updaterContactInfo: contactInfoSchema.optional(), // Unused?
 
   // Accessibility
   languageSupport: languageSupportSchema,
