@@ -43,6 +43,7 @@ import { formSteps } from '@/utils/constants/formSteps';
 import { createAgencyInfoWithServices } from '@/server/actions/Agencies';
 import { zodFormToTs } from '@/utils/conversions';
 import { convertToArray, convertToString } from '@/utils/stringArrays';
+import { AgencyInfoForm } from '@/utils/types';
 import Hours from '@/components/Hours';
 import { useRouter } from 'next/navigation';
 import Spinner from '@/components/Spinner';
@@ -76,13 +77,178 @@ export default function Form({ params }: { params: { id: string } }) {
     setValue,
     trigger,
     watch,
+    reset,
     formState: { errors, isDirty },
   } = useForm<Inputs>({
     resolver: zodResolver(FormDataSchema),
-    defaultValues: {
-      services: [],
-    },
+    defaultValues: { services: [] },
   });
+
+  const [latestInfo, setlatestInfo] = useState<AgencyInfoForm | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    const getlatestInfo = async () => {
+      try {
+        const res: Response = await fetch(`../api/agencies/${params.id}`, {
+          cache: 'no-store',
+        });
+        const body = await res.json();
+        setlatestInfo(body.data.agency.latestInfo);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getlatestInfo();
+  }, [params.id]);
+
+  // Auto fill form based on last submitted form.
+  useEffect(() => {
+    if (latestInfo) {
+      const info = latestInfo as unknown as AgencyInfoForm;
+      reset({
+        legalName: info.legalAgencyName,
+        akas: info.alsoKnownAs?.[0],
+        legalStatus: info.legalOrganizationalStatus?.[0],
+        directorName: info.directorNameOrTitle,
+        agencyInfo: info.briefAgencyDescription,
+        contactInfo: info.contactInfo,
+        hours: info.hours?.map((day, index) => {
+          return {
+            id: index,
+            day: day.day,
+            openTime: day.openTime,
+            closeTime: day.closeTime,
+          };
+        }),
+        location: info.location,
+        fundingSources: {
+          federal: info.fundingSources?.includes('Federal'),
+          state: info.fundingSources?.includes('State'),
+          county: info.fundingSources?.includes('County'),
+          city: info.fundingSources?.includes('City'),
+          donations: info.fundingSources?.includes('Donations'),
+          foundations: info.fundingSources?.includes(
+            'Foundations/Private Org.'
+          ),
+          feesDues: info.fundingSources?.includes('Fees/Dues'),
+          unitedWay: info.fundingSources?.includes('United Way'),
+        },
+        serviceArea: info.serviceArea,
+        annualAgencyUpdate: info.updaterContactInfo,
+        languageSupport: {
+          asl: info.languages?.includes('ASL'),
+          spanish: info.languages?.includes('Spanish'),
+          teleinterpreterLanguageService: info?.languageTeleInterpreterService,
+          // TODO: other languages
+        },
+        supportedLanguagesWithoutNotice: info.languagesWithoutPriorNotice,
+        accessibilityADA: info?.accessibilityADA,
+        // services: info.services,
+        services:
+          info.services === undefined
+            ? []
+            : info.services.map((data, index) => {
+                const service: Service = {
+                  id: index,
+                  name: data.name,
+                  fullDescription: data.fullDescription,
+                  contactPersonName: data.contactPersonName,
+                  daysOpen: data.daysOpen.map((day, index) => {
+                    return {
+                      id: index,
+                      day: day.day,
+                      openTime: day.openTime,
+                      closeTime: day.closeTime,
+                    };
+                  }),
+                  eligibilityRequirements: data.eligibilityRequirements,
+                  applicationProcess: {
+                    walkIn: data.applicationProcess.includes('Walk-in'),
+                    telephone: data.applicationProcess.includes('Telephone'),
+                    appointment: data.applicationProcess.includes(
+                      'Call to Schedule Appointment'
+                    ),
+                    online: data.applicationProcess.includes('Apply Online'),
+                    // TODO: applicationProcess.other
+                    // TODO: applicationProcess.referral
+                  },
+                  feeCategory: {
+                    none: data.feeCategory.includes('No Fees'),
+                    straight: {
+                      selected: data.feeCategory.includes('Straight Fee'),
+                      content: data.feeCategory.includes('Straight Fee')
+                        ? data.feeStraightFeeAmount
+                        : '',
+                    },
+                    slidingScale: data.feeCategory.includes('Sliding Scale'),
+                    medicaid_tenncare: data.feeCategory.includes(
+                      'Insurance: Medicaid/TennCare'
+                    ),
+                    medicare: data.feeCategory.includes('Insurance: Medicare'),
+                    private: data.feeCategory.includes('Insurance: Private'),
+                  },
+                  requiredDocuments: {
+                    none: data.requiredDocuments.includes('No Documents'),
+                    stateId: data.requiredDocuments.includes('State Issued ID'),
+                    ssn: data.requiredDocuments.includes(
+                      'Social Security Card'
+                    ),
+                    proofOfResidence:
+                      data.requiredDocuments.includes('Proof of Residence'),
+                    proofOfIncome:
+                      data.requiredDocuments.includes('Proof of Income'),
+                    birthCertificate:
+                      data.requiredDocuments.includes('Birth Certificate'),
+                    medicalRecords:
+                      data.requiredDocuments.includes('Medical Records'),
+                    psychRecords:
+                      data.requiredDocuments.includes('Psych Records'),
+                    proofOfNeed:
+                      data.requiredDocuments.includes('Proof of Need'),
+                    utilityBill:
+                      data.requiredDocuments.includes('Utility Bill'),
+                    utilityCutoffNotice: data.requiredDocuments.includes(
+                      'Utility Cutoff Notice'
+                    ),
+                    proofOfCitizenship: data.requiredDocuments.includes(
+                      'Proof of Citizenship'
+                    ),
+                    proofOfPublicAssistance: data.requiredDocuments.includes(
+                      'Proof of Public Assistance'
+                    ),
+                    driversLicense:
+                      data.requiredDocuments.includes('Drivers License'),
+                    // TODO: requiredDocuments.other
+                  },
+                  isSeasonal: data.isSeasonal,
+                };
+                return service;
+              }),
+        volunteerFields: {
+          // TODO: volunteers gets set here but is not reflected on webpage
+          volunteers: info?.volunteerOpportunities ? 'true' : 'false',
+          vol_reqs: info?.volunteerOpportunitiesEligibility,
+          vol_coor: info?.volunteerCoordinatorContactInfo?.name,
+          vol_coor_tel: info?.volunteerCoordinatorContactInfo?.phoneNumber,
+        },
+        donationFields: {
+          // TODO: donation gets set here but is not reflected on webpage
+          donation:
+            info?.donations !== undefined && info?.donations?.length > 0
+              ? 'true'
+              : 'false',
+          don_ex: info?.donations?.reduce((acc, curr) => acc + ', ' + curr, ''),
+          pickup: info?.donationPickUpLocation !== undefined ? 'true' : 'false',
+          pickup_loc: 'here',
+          don_coor: info?.donationCoordinatorContactInfo?.name,
+          don_coor_tel: info?.donationCoordinatorContactInfo?.phoneNumber,
+        },
+      });
+    }
+  }, [latestInfo, reset]);
 
   useBeforeUnload(isDirty);
   const { width: screenWidth } = useWindowSize();
