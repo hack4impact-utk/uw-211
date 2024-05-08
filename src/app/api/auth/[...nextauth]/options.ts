@@ -12,4 +12,27 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/signin',
   },
+  callbacks: {
+    async signIn(verificationRequest) {
+      const userEmail = verificationRequest.user.email;
+      const allowedDomains =
+        process.env.NODE_ENV === 'production'
+          ? ['@unitedwayknox.org', '@knoxvilletn.gov']
+          : [
+              '@gmail.com',
+              '@yahoo.com',
+              '@hotmail.com',
+              '@outlook.com',
+              '@vols.utk.edu',
+            ];
+
+      for (const domain of allowedDomains) {
+        if (userEmail?.endsWith(domain)) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+  },
 };
