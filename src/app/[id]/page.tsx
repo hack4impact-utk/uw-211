@@ -88,16 +88,11 @@ export default function Form({ params }: { params: { id: string } }) {
     }
   };
 
+  // Auto fill form based on last submitted form.
   useEffect(() => {
     getlatestInfo();
-  }, []);
-
-  useEffect(() => {
     if (latestInfo) {
       const info = latestInfo as unknown as AgencyInfoForm;
-      console.log(info?.volunteerOpportunities);
-      console.log(info?.donations);
-      console.log(info?.donations !== undefined && info?.donations?.length > 0);
       reset({
         legalName: info.legalAgencyName,
         akas: info.alsoKnownAs?.[0],
