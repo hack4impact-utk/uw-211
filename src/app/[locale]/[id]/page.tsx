@@ -77,6 +77,7 @@ export default function Form({ params }: { params: { id: string } }) {
     setValue,
     trigger,
     watch,
+    reset,
     formState: { errors, isDirty },
   } = useForm<Inputs>({
     resolver: zodResolver(FormDataSchema),
@@ -90,7 +91,7 @@ export default function Form({ params }: { params: { id: string } }) {
   useEffect(() => {
     const getlatestInfo = async () => {
       try {
-        const res: Response = await fetch(`api/agencies/${params.id}`, {
+        const res: Response = await fetch(`../api/agencies/${params.id}`, {
           cache: 'no-store',
         });
         const body = await res.json();
