@@ -88,9 +88,12 @@ export default function Form({ params }: { params: { id: string } }) {
     }
   };
 
-  // Auto fill form based on last submitted form.
   useEffect(() => {
     getlatestInfo();
+  }, []);
+
+  // Auto fill form based on last submitted form.
+  useEffect(() => {
     if (latestInfo) {
       const info = latestInfo as unknown as AgencyInfoForm;
       reset({
