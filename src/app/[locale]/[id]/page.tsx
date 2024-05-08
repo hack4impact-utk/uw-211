@@ -45,6 +45,11 @@ import { zodFormToTs } from '@/utils/conversions';
 import { convertToArray, convertToString } from '@/utils/stringArrays';
 import { AgencyInfoForm } from '@/utils/types';
 import Hours from '@/components/Hours';
+import { useRouter } from 'next/navigation';
+import Spinner from '@/components/Spinner';
+import AdditionalNumbers from '@/components/AdditionalNumbers';
+import { HoursReview } from '@/components/HoursReview';
+import { useTranslations } from 'next-intl';
 
 type Inputs = z.infer<typeof FormDataSchema>;
 type Service = z.infer<typeof ServiceSchema>;
@@ -52,6 +57,8 @@ type Service = z.infer<typeof ServiceSchema>;
 const steps = formSteps;
 
 export default function Form({ params }: { params: { id: string } }) {
+  const t = useTranslations('Form');
+
   const [previousStep, setPreviousStep] = useState(-1);
   const [currentStep, setCurrentStep] = useState(0);
   const [currentSubstep, setCurrentSubstep] = useState(0);
@@ -59,13 +66,15 @@ export default function Form({ params }: { params: { id: string } }) {
   const delta = currentStep - previousStep;
   const subdelta = currentSubstep - previousSubstep;
 
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const {
     control,
     register,
     handleSubmit,
     getValues,
     setValue,
-    reset,
     trigger,
     watch,
     formState: { errors, isDirty },
@@ -243,10 +252,19 @@ export default function Form({ params }: { params: { id: string } }) {
   useBeforeUnload(isDirty);
   const { width: screenWidth } = useWindowSize();
 
-  const processForm: SubmitHandler<Inputs> = (data) => {
-    const validatedInfo = zodFormToTs(data);
-    createAgencyInfoWithServices(params.id, validatedInfo);
-    reset();
+  const processForm: SubmitHandler<Inputs> = async (data) => {
+    try {
+      setIsLoading(true);
+      const validatedInfo = zodFormToTs(data);
+      await createAgencyInfoWithServices(params.id, validatedInfo);
+      router.push('/complete');
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 5000);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   type FieldName = keyof Inputs;
@@ -259,10 +277,6 @@ export default function Form({ params }: { params: { id: string } }) {
     if (!output) return;
 
     if (currentStep < steps.length) {
-      if (currentStep + currentSubstep === steps.length + subpage_length - 1) {
-        await handleSubmit(processForm)();
-      }
-
       if (currentSubstep < subpage_length) {
         // if there are more subpages in current page
         setPreviousSubstep(currentSubstep);
@@ -308,7 +322,9 @@ export default function Form({ params }: { params: { id: string } }) {
   const add_service = () => {
     const idx = getValues('services').length;
     const new_service: Service = {
-      name: `New Service #${getValues('services').length + 1}`,
+      name: t('services.name.placeholder', {
+        number: getValues('services').length + 1,
+      }),
       id: Date.now(),
       contactPersonName: '',
       daysOpen: [],
@@ -386,7 +402,7 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="name"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Name
+          {t('services.name.title')}
         </label>
         <Input
           id="name"
@@ -405,7 +421,7 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="description"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Full Description
+          {t('services.description')}
         </label>
         <Textarea
           id="description"
@@ -424,12 +440,12 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="contact"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Contact Person
+          {t('services.contact.title')}
         </label>
         <Input
           id="contact"
           className="mb-2"
-          placeholder="Only add contact person if different from Director or if contact persons differ by service."
+          placeholder={t('services.contact.description')}
           {...register(`services.${serviceIdx}.contactPersonName`)}
         />
 
@@ -437,7 +453,7 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="hours"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Hours
+          {t('services.hours')}
         </label>
         <div className="mb-4 ml-2">
           <Hours name={`services.${serviceIdx}.daysOpen`} control={control} />
@@ -447,15 +463,12 @@ export default function Form({ params }: { params: { id: string } }) {
           htmlFor="eligibility"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Eligibility Requirements
+          {t('services.eligibility.title')}
         </label>
         <Textarea
           id="eligibility"
           className="mb-2"
-          placeholder="Who is eligible for this service? Who is the population the service is trying to serve?
-It is okay to restrict services to certain populations based on gender; family status, disability,
-age, personal situations, etc. (i.e. battered women with children, people with visual impairments,
-homeless men, etc.) This helps us to make appropriate referrals."
+          placeholder={t('services.eligibility.description')}
           {...register(`services.${serviceIdx}.eligibilityRequirements`)}
         />
         <div className="mt-2 min-h-6 ">
@@ -472,10 +485,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
           htmlFor="applicationProcess"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Application Process
+          {t('services.applicationProcess.title')}
         </label>
         <p className="text-sm leading-6 text-gray-600">
-          How would someone apply for this service?
+          {t('services.applicationProcess.description')}
         </p>
         <div id="applicationProcess" className="mb-2 ml-2 flex flex-col">
           <div className="space-x-2">
@@ -489,7 +502,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="walkIn"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Walk-in
+              {t('services.applicationProcess.walkIn')}
             </label>
           </div>
 
@@ -506,7 +519,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="telephone"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Telephone
+              {t('services.applicationProcess.telephone')}
             </label>
           </div>
 
@@ -523,7 +536,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="appointment"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Call to Schedule an Appointment
+              {t('services.applicationProcess.appointment')}
             </label>
           </div>
 
@@ -538,7 +551,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="online"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Apply Online
+              {t('services.applicationProcess.online')}
             </label>
           </div>
 
@@ -555,7 +568,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="applicationProcessOther"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Other
+              {t('services.applicationProcess.other.title')}
             </label>
             {watch(
               `services.${serviceIdx}.applicationProcess.other.selected`
@@ -563,7 +576,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
               <>
                 <Input
                   className="m-2"
-                  placeholder="Please specify."
+                  placeholder={t(
+                    'services.applicationProcess.other.description'
+                  )}
                   {...register(
                     `services.${serviceIdx}.applicationProcess.other.content`
                   )}
@@ -600,7 +615,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="referral"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Referral Required
+              {t('services.applicationProcess.referralRequired.title')}
             </label>
             {watch(
               `services.${serviceIdx}.applicationProcess.referral.required`
@@ -608,7 +623,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
               <>
                 <Input
                   className="m-2"
-                  placeholder="By whom?"
+                  placeholder={t(
+                    'services.applicationProcess.referralRequired.description'
+                  )}
                   {...register(
                     `services.${serviceIdx}.applicationProcess.referral.content`
                   )}
@@ -644,10 +661,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
           htmlFor="fees"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Fees
+          {t('services.fees.title')}
         </label>
         <p className="text-sm leading-6 text-gray-600">
-          Are individuals charged for your services? What is your fee structure?
+          {t('services.fees.description')}
         </p>
         <div id="fees" className="mb-2 ml-2 flex flex-col">
           <div className="space-x-2">
@@ -661,7 +678,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="noFees"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              No Fees
+              {t('services.fees.noFees')}
             </label>
           </div>
 
@@ -679,13 +696,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="straight"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Straight Fee
+              {t('services.fees.straight.title')}
             </label>
             {watch(`services.${serviceIdx}.feeCategory.straight.selected`) ? (
               <>
                 <Input
                   className="m-2"
-                  placeholder="Please specify."
+                  placeholder={t('services.fees.straight.description')}
                   {...register(
                     `services.${serviceIdx}.feeCategory.straight.content`
                   )}
@@ -720,7 +737,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="sliding"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Sliding Scale Fee
+              {t('services.fees.slidingScale')}
             </label>
           </div>
 
@@ -738,7 +755,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="medicaid_tenncare"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Medicaid/TennCare
+              {t('services.fees.medicaidTenncare')}
             </label>
           </div>
 
@@ -754,7 +771,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="medicare"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Medicare
+              {t('services.fees.medicare')}
             </label>
           </div>
 
@@ -770,7 +787,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="private"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Private Insurance
+              {t('services.fees.private')}
             </label>
           </div>
         </div>
@@ -788,10 +805,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
           htmlFor="requiredDocuments"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          Required Documents
+          {t('services.requiredDocuments.title')}
         </label>
         <p className="text-sm leading-6 text-gray-600">
-          What would someone need to bring when applying?
+          {t('services.requiredDocuments.description')}
         </p>
         <div id="requiredDocuments" className="mb-2 ml-2 grid grid-cols-3">
           <div className="space-x-2">
@@ -805,7 +822,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="noDocuments"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              No Documents
+              {t('services.requiredDocuments.noDocuments')}
             </label>
           </div>
 
@@ -821,7 +838,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="stateId"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              State Issued ID
+              {t('services.requiredDocuments.stateId')}
             </label>
           </div>
 
@@ -837,7 +854,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="ssn"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Social Security Card
+              {t('services.requiredDocuments.ssn')}
             </label>
           </div>
 
@@ -855,7 +872,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfResidence"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Residence
+              {t('services.requiredDocuments.proofOfResidence')}
             </label>
           </div>
 
@@ -873,7 +890,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfIncome"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Income
+              {t('services.requiredDocuments.proofOfIncome')}
             </label>
           </div>
 
@@ -891,7 +908,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="birthCertificate"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Birth Certificate
+              {t('services.requiredDocuments.birthCertificate')}
             </label>
           </div>
 
@@ -909,7 +926,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="medicalRecords"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Medical Records
+              {t('services.requiredDocuments.medicalRecords')}
             </label>
           </div>
 
@@ -927,7 +944,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="psychRecords"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Psych Records
+              {t('services.requiredDocuments.psychRecords')}
             </label>
           </div>
 
@@ -945,7 +962,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfNeed"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Need
+              {t('services.requiredDocuments.proofOfNeed')}
             </label>
           </div>
 
@@ -963,7 +980,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="utilityBill"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Utility Bill
+              {t('services.requiredDocuments.utilityBill')}
             </label>
           </div>
 
@@ -981,7 +998,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="utilityCutoffNotice"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Utility Cutoff Notice
+              {t('services.requiredDocuments.utilityCutoffNotice')}
             </label>
           </div>
 
@@ -999,7 +1016,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfCitizenship"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Citizenship
+              {t('services.requiredDocuments.proofOfCitizenship')}
             </label>
           </div>
 
@@ -1017,7 +1034,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="proofOfPublicAssistance"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Proof of Public Assistance
+              {t('services.requiredDocuments.proofOfPublicAssistance')}
             </label>
           </div>
 
@@ -1035,7 +1052,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="driversLicense"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Driver&apos;s License
+              {t('services.requiredDocuments.driversLicense')}
             </label>
           </div>
 
@@ -1053,7 +1070,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
               htmlFor="requiredDocumentsOther"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Other
+              {t('services.requiredDocuments.other.title')}
             </label>
             {watch(
               `services.${serviceIdx}.requiredDocuments.other.selected`
@@ -1061,7 +1078,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
               <>
                 <Input
                   className="m-2"
-                  placeholder="Please specify."
+                  placeholder={t(
+                    'services.requiredDocuments.other.description'
+                  )}
                   {...register(
                     `services.${serviceIdx}.requiredDocuments.other.content`
                   )}
@@ -1102,16 +1121,19 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
     let service_items = [];
 
-    if (screenWidth < 720 || services.length > 2) {
+    if (
+      (screenWidth < 720 && getValues('services').length > 1) ||
+      getValues('services').length > 2
+    ) {
       service_items = services.map((service: Service, index: number) => (
         <CarouselItem className="lg:basis-1/2" key={index}>
-          {ServicesReview(service)}
+          {<ServicesReview service={service} />}
         </CarouselItem>
       ));
     } else {
       service_items = services.map((service: Service, index: number) => (
         <div className="w-full lg:w-1/2" key={index}>
-          {ServicesReview(service)}
+          {<ServicesReview service={service} />}
         </div>
       ));
     }
@@ -1119,17 +1141,36 @@ homeless men, etc.) This helps us to make appropriate referrals."
     return service_items;
   };
 
+  const get_legal_status = () => {
+    const legal_statuses = new Map([
+      ['Federal', t('preliminaries.general.legalStatus.options.federal')],
+      ['State', t('preliminaries.general.legalStatus.options.state')],
+      ['County', t('preliminaries.general.legalStatus.options.county')],
+      ['City', t('preliminaries.general.legalStatus.options.city')],
+      ['Non-profit', t('preliminaries.general.legalStatus.options.nonprofit')],
+      ['501(c)3', t('preliminaries.general.legalStatus.options.501c3')],
+      ['Faith-based', t('preliminaries.general.legalStatus.options.faith')],
+      ['For profit', t('preliminaries.general.legalStatus.options.profit')],
+      ['Other', t('preliminaries.general.legalStatus.options.other')],
+    ]);
+
+    return legal_statuses.get(getValues('legalStatus'));
+  };
+
   const get_fundingSource = () => {
     const sources = new Map([
-      ['federal', 'Federal'],
-      ['state', 'State'],
-      ['county', 'County'],
-      ['city', 'City'],
-      ['donations', 'Donations'],
-      ['foundations', 'Foundations/Private Org.'],
-      ['feesDues', 'Fees/Dues'],
-      ['unitedWay', 'United Way'],
-      ['other', 'Other'],
+      ['federal', t('preliminaries.operations.funding.options.federal')],
+      ['state', t('preliminaries.operations.funding.options.state')],
+      ['county', t('preliminaries.operations.funding.options.county')],
+      ['city', t('preliminaries.operations.funding.options.city')],
+      ['donations', t('preliminaries.operations.funding.options.donations')],
+      [
+        'foundations',
+        t('preliminaries.operations.funding.options.foundations'),
+      ],
+      ['feesDues', t('preliminaries.operations.funding.options.fees')],
+      ['unitedWay', t('preliminaries.operations.funding.options.unitedWay')],
+      ['other', t('preliminaries.operations.funding.options.other')],
     ]);
 
     const fundingSource = getValues('fundingSources');
@@ -1144,7 +1185,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
     if (fundingSource.other?.selected) {
       other = String(fundingSource.other.content);
-      options.push('Other');
+      options.push(
+        t('services.preliminaries.operations.funding.options.other')
+      );
     }
 
     return (
@@ -1172,10 +1215,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
     return (
       <>
         <h2 className="text-base font-semibold leading-7 text-gray-900">
-          Preliminaries - {data.name}
+          {t('preliminaries.title')} - {data.name}
         </h2>
         <p className="mt-1 text-sm leading-6 text-gray-600">
-          Let&apos;s get to know your agency...
+          {t('preliminaries.description')}
         </p>
       </>
     );
@@ -1185,16 +1228,18 @@ homeless men, etc.) This helps us to make appropriate referrals."
     const language = getValues('languageSupport');
     let result = '';
 
-    if (language.asl) result += 'ASL, ';
-    if (language.spanish) result += 'Spanish, ';
+    if (language.asl) result += t('accessibility.languages.options.asl') + ', ';
+    if (language.spanish)
+      result += t('accessibility.languages.options.spanish') + ', ';
     if (language.teleinterpreterLanguageService)
-      result += 'Tele-interpreter Service, ';
+      result += t('accessibility.languages.options.tele') + ', ';
     if (language.other.selected) {
       result += convertToString(language.other.content!);
       result += ', ';
     }
 
-    return result.substring(0, result.length - 2);
+    if (result === '') return 'None';
+    else return result.substring(0, result.length - 2);
   };
 
   return (
@@ -1209,7 +1254,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
       />
 
       {/* Form */}
-      <form className="py-6" onSubmit={handleSubmit(processForm)}>
+      <form className="pt-6" onSubmit={handleSubmit(processForm)}>
         {/* Preliminaries */}
         {currentStep === 0 && (
           <motion.div
@@ -1230,9 +1275,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
-                <PreliminariesHeader
-                  name={steps[currentStep].subpages[currentSubstep].name}
-                />
+                <PreliminariesHeader name={t('preliminaries.general.title')} />
 
                 <section className="mt-10 flex w-full flex-col gap-4 lg:flex-row">
                   {/* left section */}
@@ -1244,7 +1287,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="legalName"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Legal Agency Name
+                          {t('preliminaries.general.name')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -1271,7 +1314,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="akas"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Also known as
+                          {t('preliminaries.general.aka')}
                         </label>
                         <div className="mt-2">
                           <input
@@ -1299,7 +1342,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="legalStatus"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Legal Organizational Status
+                          {t('preliminaries.general.legalStatus.title')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -1310,16 +1353,56 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             autoComplete="legalStatus"
                             className="block h-8 w-full rounded-md border-0 bg-inherit p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                           >
-                            <option value="">Please Select One</option>
-                            <option value="Federal">Federal</option>
-                            <option value="State">State</option>
-                            <option value="County">County</option>
-                            <option value="City">City</option>
-                            <option value="Non-profit">Non-profit</option>
-                            <option value="501(c)3">501(c)3</option>
-                            <option value="Faith-based">Faith-based</option>
-                            <option value="For profit">For profit</option>
-                            <option value="Other">Other</option>
+                            <option value="">
+                              {t(
+                                'preliminaries.general.legalStatus.options.empty'
+                              )}
+                            </option>
+                            <option value="Federal">
+                              {t(
+                                'preliminaries.general.legalStatus.options.federal'
+                              )}
+                            </option>
+                            <option value="State">
+                              {t(
+                                'preliminaries.general.legalStatus.options.state'
+                              )}
+                            </option>
+                            <option value="County">
+                              {t(
+                                'preliminaries.general.legalStatus.options.county'
+                              )}
+                            </option>
+                            <option value="City">
+                              {t(
+                                'preliminaries.general.legalStatus.options.city'
+                              )}
+                            </option>
+                            <option value="Non-profit">
+                              {t(
+                                'preliminaries.general.legalStatus.options.nonprofit'
+                              )}
+                            </option>
+                            <option value="501(c)3">
+                              {t(
+                                'preliminaries.general.legalStatus.options.501c3'
+                              )}
+                            </option>
+                            <option value="Faith-based">
+                              {t(
+                                'preliminaries.general.legalStatus.options.faith'
+                              )}
+                            </option>
+                            <option value="For profit">
+                              {t(
+                                'preliminaries.general.legalStatus.options.profit'
+                              )}
+                            </option>
+                            <option value="Other">
+                              {t(
+                                'preliminaries.general.legalStatus.options.other'
+                              )}
+                            </option>
                           </select>
                           <div className="mt-2 min-h-6 ">
                             {errors.legalStatus?.message && (
@@ -1337,7 +1420,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="directorName"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Director Name/Title
+                          {t('preliminaries.general.director')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -1365,7 +1448,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         htmlFor="agencyInfo"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Brief Agency Information
+                        {t('preliminaries.general.agencyInfo')}
                         <span className="ml-1 text-sm text-red-400">*</span>
                       </label>
                       <div className="mt-2">
@@ -1398,7 +1481,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="contactInfo.phoneNumber"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Main Phone Number
+                            {t('preliminaries.general.phone')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
 
@@ -1428,7 +1511,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="contactInfo.faxNumber"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Fax Number
+                            {t('preliminaries.general.fax')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
 
@@ -1460,7 +1543,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="contactInfo.tollFreeNumber"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Toll Free Number
+                            {t('preliminaries.general.tollFree')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
 
@@ -1490,7 +1573,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="contactInfo.TDDTTYNumber"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            TDD/TTY Number
+                            {t('preliminaries.general.tddTty')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
                           <div className="mt-2">
@@ -1514,11 +1597,10 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
                       </div>
 
-                      <div>
-                        <span className="bg-blue-500 text-white">
-                          TODO: Additional Numbers
-                        </span>
-                      </div>
+                      <AdditionalNumbers
+                        name="contactInfo.additionalNumbers"
+                        control={control}
+                      />
 
                       {/* contactInfo.email */}
                       <div>
@@ -1526,7 +1608,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="contactInfo.email"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Email
+                          {t('preliminaries.general.email')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
 
@@ -1556,7 +1638,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="contactInfo.website"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Website
+                          {t('preliminaries.general.website')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -1594,7 +1676,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <PreliminariesHeader
-                  name={steps[currentStep].subpages[currentSubstep].name}
+                  name={t('preliminaries.operations.title')}
                 />
 
                 <section className="mt-10 flex flex-col md:flex-row">
@@ -1603,7 +1685,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {/* Hours of Operation */}
                     <div>
                       <h3 className="block text-sm font-medium leading-6 text-gray-900">
-                        Hours of Operation
+                        {t('preliminaries.operations.hours')}
                       </h3>
                       <div className="mr-10">
                         <Hours name="hours" control={control} />
@@ -1613,7 +1695,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {/* Funding Sources */}
                     <div className="mt-8">
                       <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
-                        Funding Sources
+                        {t('preliminaries.operations.funding.title')}
                         <span className="ml-1 text-sm text-red-400">*</span>
                       </h3>
 
@@ -1632,7 +1714,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.federal"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              Federal
+                              {t(
+                                'preliminaries.operations.funding.options.federal'
+                              )}
                             </label>
                           </div>
 
@@ -1648,7 +1732,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.state"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              State
+                              {t(
+                                'preliminaries.operations.funding.options.state'
+                              )}
                             </label>
                           </div>
 
@@ -1664,7 +1750,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.county"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              County
+                              {t(
+                                'preliminaries.operations.funding.options.county'
+                              )}
                             </label>
                           </div>
 
@@ -1680,7 +1768,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.city"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              City
+                              {t(
+                                'preliminaries.operations.funding.options.city'
+                              )}
                             </label>
                           </div>
 
@@ -1696,7 +1786,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.donations"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              Donations
+                              {t(
+                                'preliminaries.operations.funding.options.donations'
+                              )}
                             </label>
                           </div>
                         </section>
@@ -1715,7 +1807,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.foundations"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              Foundations/Private Org.
+                              {t(
+                                'preliminaries.operations.funding.options.foundations'
+                              )}
                             </label>
                           </div>
 
@@ -1731,7 +1825,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.feesDues"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              Fees/Dues
+                              {t(
+                                'preliminaries.operations.funding.options.fees'
+                              )}
                             </label>
                           </div>
 
@@ -1747,7 +1843,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.unitedWay"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              United Way
+                              {t(
+                                'preliminaries.operations.funding.options.unitedWay'
+                              )}
                             </label>
                           </div>
 
@@ -1763,7 +1861,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="fundingSources.other"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                              Other
+                              {t(
+                                'preliminaries.operations.funding.options.other'
+                              )}
                             </label>
                             {watch('fundingSources.other.selected') ? (
                               <>
@@ -1803,12 +1903,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {/* Location */}
                     <div>
                       <h3 className="mb-2 block text-sm font-medium leading-6 text-gray-900">
-                        Location Information
+                        {t('preliminaries.operations.location.title')}
                       </h3>
                       {/* location.confidential */}
                       <div>
                         <h2 className="block text-sm font-medium leading-6 text-gray-900">
-                          Is the physical address confidential?
+                          {t('preliminaries.operations.location.confidential')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </h2>
                         <div className="flex flex-row gap-4 whitespace-nowrap">
@@ -1828,7 +1928,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="location.confidential1"
                               className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                             >
-                              No
+                              {t('options.no')}
                             </label>
                           </div>
                           <div>
@@ -1846,7 +1946,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="location.confidential2"
                               className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                             >
-                              Yes
+                              {t('options.yes')}
                             </label>
                           </div>
                         </div>
@@ -1865,7 +1965,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="location.physicalAddress"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Physical Address
+                          {t(
+                            'preliminaries.operations.location.address.physical'
+                          )}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -1892,8 +1994,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="location.mailingAddress"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Mailing Address (Only list if different from
-                          Physical.)
+                          {t(
+                            'preliminaries.operations.location.address.mailing'
+                          )}
                         </label>
                         <div className="mt-2">
                           <input
@@ -1919,7 +2022,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="location.county"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          County
+                          {t(
+                            'preliminaries.operations.location.address.county'
+                          )}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -1947,7 +2052,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="location.city"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            City
+                            {t(
+                              'preliminaries.operations.location.address.city'
+                            )}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
                           <div className="mt-2">
@@ -1974,7 +2081,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="location.state"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            State
+                            {t(
+                              'preliminaries.operations.location.address.state'
+                            )}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
                           <div className="mt-2">
@@ -2001,7 +2110,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="location.zipCode"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Zip Code
+                            {t('preliminaries.operations.location.address.zip')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
                           <div className="mt-2">
@@ -2039,7 +2148,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <PreliminariesHeader
-                  name={steps[currentStep].subpages[currentSubstep].name}
+                  name={t('preliminaries.additional.title')}
                 />
 
                 <section className="mt-10 flex w-full flex-col gap-4 md:flex-row">
@@ -2049,12 +2158,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     <div>
                       <div className="mb-4">
                         <h3 className="block text-sm font-medium leading-6 text-gray-900">
-                          Service Area
+                          {t('preliminaries.additional.serviceArea.title')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </h3>
                         <p className="mt-1 text-sm leading-6 text-gray-600">
-                          Choose the description that best reflects your service
-                          area.
+                          {t(
+                            'preliminaries.additional.serviceArea.description'
+                          )}
                         </p>
                       </div>
 
@@ -2065,7 +2175,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="serviceArea.townCity"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Specific Town/City
+                            {t('preliminaries.additional.serviceArea.townCity')}
                           </label>
                           <div className="mt-2">
                             <input
@@ -2084,7 +2194,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="serviceArea.zipCodes"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Specific Zip Code(s)
+                            {t('preliminaries.additional.serviceArea.zip')}
                           </label>
                           <div className="mt-2">
                             <input
@@ -2105,7 +2215,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="serviceArea.counties"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Specific County/Counties
+                            {t('preliminaries.additional.serviceArea.county')}
                           </label>
                           <div className="mt-2">
                             <input
@@ -2135,7 +2245,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 htmlFor="serviceArea.statewide"
                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                               >
-                                Statewide
+                                {t(
+                                  'preliminaries.additional.serviceArea.state'
+                                )}
                               </label>
                             </div>
 
@@ -2151,7 +2263,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 htmlFor="serviceArea.nationwide"
                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                               >
-                                Nationwide
+                                {t(
+                                  'preliminaries.additional.serviceArea.nation'
+                                )}
                               </label>
                             </div>
                           </div>
@@ -2162,7 +2276,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="serviceArea.other"
                               className="block text-sm font-medium leading-6 text-gray-900"
                             >
-                              Other
+                              {t('preliminaries.additional.serviceArea.other')}
                             </label>
                             <div className="mt-2">
                               <input
@@ -2194,11 +2308,12 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     <div>
                       <div className="mb-4">
                         <h3 className="block text-sm font-medium leading-6 text-gray-900">
-                          Annual Agency Update
+                          {t('preliminaries.additional.agencyUpdate.title')}
                         </h3>
                         <p className="mt-1 text-sm leading-6 text-gray-600">
-                          Provide a person we can contact for our annual
-                          information update.
+                          {t(
+                            'preliminaries.additional.agencyUpdate.description'
+                          )}
                         </p>
                       </div>
 
@@ -2209,7 +2324,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="annualAgencyUpdate.name"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Name
+                            {t('preliminaries.additional.agencyUpdate.name')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
                           <div className="mt-2">
@@ -2236,7 +2351,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="annualAgencyUpdate.title"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Title
+                            {t(
+                              'preliminaries.additional.agencyUpdate.contactTitle'
+                            )}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </label>
                           <div className="mt-2">
@@ -2264,7 +2381,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="annualAgencyUpdate.phoneNumber"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Phone Number
+                          {t('preliminaries.additional.agencyUpdate.phone')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -2291,7 +2408,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="annualAgencyUpdate.email"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Email
+                          {t('preliminaries.additional.agencyUpdate.email')}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </label>
                         <div className="mt-2">
@@ -2315,8 +2432,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       {/* annualAgencyUpdate.hideFromWebsite */}
                       <div className="flex flex-col gap-6 md:flex-row">
                         <h2 className="block text-sm font-medium leading-6 text-gray-900">
-                          Would you like this information to be hidden from the
-                          website?
+                          {t(
+                            'preliminaries.additional.agencyUpdate.confidential'
+                          )}
                           <span className="ml-1 text-sm text-red-400">*</span>
                         </h2>
                         <div className="flex flex-row gap-4 whitespace-nowrap">
@@ -2336,7 +2454,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="annualAgencyUpdate.hideFromWebsite1"
                               className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                             >
-                              No
+                              {t('options.no')}
                             </label>
                           </div>
                           <div>
@@ -2354,7 +2472,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="annualAgencyUpdate.hideFromWebsite2"
                               className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                             >
-                              Yes
+                              {t('options.yes')}
                             </label>
                           </div>
                         </div>
@@ -2398,15 +2516,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Accessibility
+                  {t('accessibility.title')}
                 </h2>
 
                 <section className="mt-10 flex flex-col gap-4">
                   {/* Language Support */}
                   <div>
                     <p className="block text-sm font-medium leading-6 text-gray-900">
-                      In addition to English, what languages are spoken by at
-                      least one of your part-time staff?
+                      {t('accessibility.languages.title')}
                     </p>
 
                     <div className="flex flex-col gap-8 md:flex-row">
@@ -2422,7 +2539,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="languageSupport.asl"
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          American Sign
+                          {t('accessibility.languages.options.asl')}
                         </label>
                       </div>
 
@@ -2438,7 +2555,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="languageSupport.spanish"
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          Spanish
+                          {t('accessibility.languages.options.spanish')}
                         </label>
                       </div>
 
@@ -2456,7 +2573,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="languageSupport.teleinterpreterLanguageService"
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          Tele-interpreter Service
+                          {t('accessibility.languages.options.tele')}
                         </label>
                       </div>
 
@@ -2473,7 +2590,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="languageSupport.other"
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                           >
-                            Other
+                            {t('accessibility.languages.options.other')}
                           </label>
                         </div>
                       </div>
@@ -2504,8 +2621,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       htmlFor="supportedLanguagesWithoutNotice"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Can any languages be provided with prior notice? (Please
-                      list.)
+                      {t('accessibility.languages.priorNotice')}
                     </label>
                     <div className="mt-2">
                       <textarea
@@ -2525,8 +2641,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   {/* Accessibility ADA */}
                   <div className="flex flex-col gap-6 md:flex-row">
                     <h2 className="block text-sm font-medium leading-6 text-gray-900">
-                      Is your facility accessible to people with disabilities as
-                      defined by the Americans with Disabilities Act (ADA)?
+                      {t('accessibility.ada')}
                     </h2>
                     <div className="flex flex-row gap-4 whitespace-nowrap">
                       <div>
@@ -2543,7 +2658,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="accessibilityADA1"
                           className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                         >
-                          No
+                          {t('options.no')}
                         </label>
                       </div>
                       <div>
@@ -2559,7 +2674,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           htmlFor="accessibilityADA2"
                           className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                         >
-                          Yes
+                          {t('options.yes')}
                         </label>
                       </div>
                     </div>
@@ -2591,7 +2706,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Services
+                  {t('services.title')}
                 </h2>
                 {screenWidth >= 1100 ? (
                   <ResizablePanelGroup
@@ -2648,7 +2763,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           type="button"
                         >
                           <Plus size={16} className="mr-2" />
-                          Add Service
+                          {t('services.ui.addService')}
                         </Button>
                       </div>
                     </ResizablePanel>
@@ -2657,7 +2772,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       {serviceIdx === -1 ? (
                         <div className="flex h-full items-center justify-center">
                           <p className="text-sm text-gray-600">
-                            Add or select a service to begin.
+                            {t('services.ui.instructions.desktop')}
                           </p>
                         </div>
                       ) : (
@@ -2677,13 +2792,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           className="mx-4"
                           type="button"
                         >
-                          Services List
+                          {t('services.ui.mobileList')}
                         </Button>
                       </SheetTrigger>
                       <SheetContent className="z-50">
                         <SheetHeader className="pb-2 text-3xl">
                           <SheetTitle className="text-center text-2xl">
-                            Services List
+                            {t('services.ui.mobileList')}
                           </SheetTitle>
                         </SheetHeader>
                         <div className="flex flex-col justify-center gap-2">
@@ -2694,7 +2809,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             type="button"
                           >
                             <Plus size={16} className="mr-2" />
-                            Add Service
+                            {t('services.ui.addService')}
                           </Button>
                           <Separator className="my-2" />
                           {getValues('services').map(
@@ -2736,7 +2851,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {serviceIdx === -1 ? (
                       <div className="flex h-full items-center justify-center p-5">
                         <p className="text-sm text-gray-600">
-                          Open the services list to begin.
+                          {t('services.ui.instructions.mobile')}
                         </p>
                       </div>
                     ) : (
@@ -2774,7 +2889,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <div className="mb-2 flex flex-col">
                         <div className="flex flex-col lg:flex-row lg:gap-12">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Does your organization accept volunteers?
+                            {t('opportunities.acceptVolunteers.title')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </h2>
                           {/* radio button */}
@@ -2796,7 +2911,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 htmlFor="volunteers1"
                                 className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                               >
-                                No
+                                {t('options.no')}
                               </label>
                             </div>
                             <div>
@@ -2815,7 +2930,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 htmlFor=""
                                 className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                               >
-                                Yes
+                                {t('options.yes')}
                               </label>
                             </div>
                           </div>
@@ -2839,7 +2954,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="vol_reqs"
                             className="text-base font-semibold leading-7 text-gray-900"
                           >
-                            Who is eligible to volunteer?
+                            {t(
+                              'opportunities.acceptVolunteers.eligibility.title'
+                            )}
                           </label>
                           <textarea
                             id="vol_reqs"
@@ -2848,7 +2965,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             cols={30}
                             rows={10}
                             disabled={volunteerChecked === 'false'}
-                            placeholder="List type of volunteer work, age, training, background checks, other requirements for your volunteers"
+                            placeholder={t(
+                              'opportunities.acceptVolunteers.eligibility.description'
+                            )}
                             className="mt-2 block h-36 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           ></textarea>
                           <div className="mt-2 min-h-6 ">
@@ -2866,7 +2985,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="vol_cor"
                               className="text-base font-semibold leading-7 text-gray-900"
                             >
-                              Volunteer Coordinator:
+                              {t(
+                                'opportunities.acceptVolunteers.eligibility.coordinator'
+                              )}
                             </label>
 
                             <input
@@ -2891,7 +3012,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="vol_coor_tel"
                               className="text-base font-semibold leading-7 text-gray-900"
                             >
-                              Phone #:
+                              {t(
+                                'opportunities.acceptVolunteers.eligibility.phone'
+                              )}
                             </label>
 
                             <input
@@ -2920,8 +3043,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <div className="mb-2 flex flex-col">
                         <div className="flex flex-col gap-4 lg:flex-row">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Does your organization accept ongoing, non-monetary
-                            donations in support of programs or services?
+                            {t('opportunities.acceptDonations.title')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </h2>
                           {/* radio button */}
@@ -2942,7 +3064,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 htmlFor="donation1"
                                 className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                               >
-                                No
+                                {t('options.no')}
                               </label>
                             </div>
                             <div>
@@ -2960,7 +3082,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 htmlFor="donation2"
                                 className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                               >
-                                Yes
+                                {t('options.yes')}
                               </label>
                             </div>
                           </div>
@@ -2985,13 +3107,15 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="don_ex"
                               className="text-base font-semibold leading-7 text-gray-900"
                             >
-                              Please list.
+                              {t('opportunities.acceptDonations.list.title')}
                             </label>
                             <input
                               type="text"
                               {...register('donationFields.don_ex')}
                               id="don_ex"
-                              placeholder="Example: pet food, clothing, appliances, furniture"
+                              placeholder={t(
+                                'opportunities.acceptDonations.list.description'
+                              )}
                               disabled={donationChecked === 'false'}
                               className="mt-2 block h-8 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600  sm:text-sm sm:leading-6 lg:w-2/3"
                             ></input>
@@ -3009,7 +3133,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           {/* radio button */}
                           <div className="mb-1 flex flex-col gap-4 sm:flex-row sm:gap-12">
                             <h2 className="text-base font-semibold leading-7 text-gray-900">
-                              Do you provide pick-up service?
+                              {t('opportunities.acceptDonations.pickup.title')}
                             </h2>
                             <div className="flex flex-row gap-4 whitespace-nowrap">
                               <div>
@@ -3029,7 +3153,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                   htmlFor="pickup1"
                                   className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                                 >
-                                  No
+                                  {t('options.no')}
                                 </label>
                               </div>
                               <div>
@@ -3048,7 +3172,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                   htmlFor="pickup2"
                                   className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
                                 >
-                                  Yes
+                                  {t('options.yes')}
                                 </label>
                               </div>
                             </div>
@@ -3074,7 +3198,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 htmlFor="pickup_loc"
                                 className="text-base font-semibold leading-7 text-gray-900"
                               >
-                                Where?
+                                {t(
+                                  'opportunities.acceptDonations.pickup.where'
+                                )}
                               </label>
                               <input
                                 type="text"
@@ -3100,7 +3226,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="don_coor"
                               className="text-base font-semibold leading-7 text-gray-900"
                             >
-                              Donation Coordinator:
+                              {t('opportunities.acceptDonations.coordinator')}
                             </label>
 
                             <input
@@ -3124,7 +3250,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                               htmlFor="don_coor_tel"
                               className="text-base font-semibold leading-7 text-gray-900"
                             >
-                              Phone #:
+                              {t('opportunities.acceptDonations.phone')}
                             </label>
 
                             <input
@@ -3153,9 +3279,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <div className="mb-4 flex flex-col">
                         <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
                           <h2 className="text-base font-semibold leading-7 text-gray-900">
-                            Are there other agencies or services that have been
-                            helpful that you would recommend to be included in
-                            our resource database?
+                            {t('opportunities.other.title')}
                             <span className="ml-1 text-sm text-red-400">*</span>
                           </h2>
                           {/* radio button */}
@@ -3175,7 +3299,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 defaultChecked
                               />
                               <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                No
+                                {t('options.no')}
                               </label>
                             </div>
                             <div>
@@ -3192,7 +3316,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                               />
                               <label className="ms-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                Yes
+                                {t('options.yes')}
                               </label>
                             </div>
                           </div>
@@ -3220,8 +3344,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             htmlFor="recommendations_contact"
                             className="text-base font-semibold leading-7 text-gray-900"
                           >
-                            Please provide contact information for these
-                            agencies/services.
+                            {t('opportunities.other.contactInformation')}
                           </label>
                           <textarea
                             {...register(
@@ -3231,7 +3354,6 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             cols={30}
                             rows={10}
                             disabled={recommendationChecked === 'false'}
-                            placeholder="List type of volunteer work, age, training, background checks, other requirements for your volunteers"
                             className="mt-2 block h-28 w-full resize-none rounded-lg border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-sky-600 sm:text-sm sm:leading-6"
                           ></textarea>
                           <div className="mt-2 min-h-6 ">
@@ -3276,122 +3398,121 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   {/* Header */}
                   <section>
                     <h2 className="text-base font-semibold leading-7 text-gray-900">
-                      Review
+                      {t('review.title')}
                     </h2>
                     <p className="mt-1 text-sm leading-6 text-gray-600">
-                      Please review your selections and submit.
+                      {t('review.description')}
                     </p>
                   </section>
 
                   {/* Preliminaries */}
                   <section className="flex flex-col gap-4">
                     <h2 className="text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
-                      Preliminaries
+                      {t('preliminaries.title')}
                     </h2>
 
                     {/* General */}
                     <section className="mb-2">
                       <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                        General
+                        {t('preliminaries.general.title')}
                       </h2>
                       <div className="flex w-full flex-col gap-4 md:flex-row">
                         {/* 1st Column */}
                         <div className="flex w-full flex-col gap-2 md:w-1/3">
                           {/* Legal Name */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              Legal Name:
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.name') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
-                              {getValues('legalName')}
-                            </p>
+                            <p className="w-1/2">{getValues('legalName')}</p>
                           </div>
 
                           {/* AKAs */}
-                          <div className="flex flex-col md:flex-row md:items-start">
+                          <div className="flex flex-row items-start">
                             {getValues('akas') ? (
                               <>
-                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                  Also Known As:
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t('preliminaries.general.aka') + ':'}
                                 </p>
-                                <p className="w-full md:w-1/2 ">
-                                  {getValues('akas')}
-                                </p>
+                                <p className="w-1/2">{getValues('akas')}</p>
                               </>
                             ) : (
                               <>
-                                <p className="text-md w-full leading-6 text-gray-400 md:w-1/2">
-                                  Also Known As:
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
+                                  {t('preliminaries.general.aka') + ':'}
                                 </p>
-                                <p className="w-full text-gray-400 md:w-1/2">
-                                  N/A
-                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
                               </>
                             )}
                           </div>
 
                           {/* Legal Status */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              Legal Status:
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.legalStatus.title') +
+                                ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
-                              {getValues('legalStatus')
-                                .charAt(0)
-                                .toUpperCase() +
-                                getValues('legalStatus').slice(1)}
-                            </p>
+                            <p className="w-1/2">{get_legal_status()}</p>
                           </div>
 
                           {/* Director Name */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              Director Name:
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.director') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
-                              {getValues('directorName')}
-                            </p>
+                            <p className="w-1/2">{getValues('directorName')}</p>
                           </div>
                         </div>
 
                         {/* Second Column */}
                         <div className="flex w-full flex-col gap-2 md:w-1/3">
                           {/* Main Phone Number */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              Main Phone Number:
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.phone') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
+                            <p className="w-1/2">
                               {getValues('contactInfo.phoneNumber')}
                             </p>
                           </div>
 
                           {/* Fax Number */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              Fax Number:
-                            </p>
-                            <p className="w-full md:w-1/2 ">
-                              {getValues('contactInfo.faxNumber')}
-                            </p>
+                          <div className="flex flex-row items-start">
+                            {getValues('contactInfo.faxNumber') ? (
+                              <>
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t('preliminaries.general.fax') + ':'}
+                                </p>
+                                <p className="w-1/2">
+                                  {getValues('contactInfo.faxNumber')}
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
+                                  {t('preliminaries.general.fax') + ':'}
+                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
+                              </>
+                            )}
                           </div>
 
                           {/* Toll Free Number */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              Toll Free Number:
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.tollFree') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
+                            <p className="w-1/2">
                               {getValues('contactInfo.tollFreeNumber')}
                             </p>
                           </div>
 
                           {/* TDD/TTY Number */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              TDD/TTY Number:
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.tddTty') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
+                            <p className="w-1/2">
                               {getValues('contactInfo.TDDTTYNumber')}
                             </p>
                           </div>
@@ -3400,42 +3521,69 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         {/* Third Column */}
                         <div className="flex w-full flex-col gap-2 md:w-1/3">
                           {/* Additional Numbers */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              Additional Numbers:
+                          <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                            {t('review.additional.title')}
+                          </p>
+
+                          {getValues('contactInfo.additionalNumbers') ===
+                          undefined ? (
+                            <p className="leading-6 text-gray-400">
+                              {t('review.additional.none')}
                             </p>
-                            <p className="w-full md:w-1/2 ">
-                              <span className="bg-blue-500 text-white">
-                                TODO: Additional Numbers
-                              </span>
-                            </p>
-                          </div>
+                          ) : (
+                            <div className="max-h-24 w-full overflow-y-auto">
+                              {getValues('contactInfo.additionalNumbers')?.map(
+                                (n, index) => (
+                                  <div
+                                    key={index}
+                                    className="ml-4 grid w-3/4 grid-cols-2 items-center"
+                                  >
+                                    <p className="text-base font-medium leading-7 text-gray-900">
+                                      {n.label}:
+                                    </p>
+                                    <p>{n.number}</p>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          )}
 
                           {/* Email */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              Email:
+                          <div className="flex flex-row items-start">
+                            <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                              {t('preliminaries.general.email') + ':'}
                             </p>
-                            <p className="w-full md:w-1/2 ">
+                            <p className="w-1/2">
                               {getValues('contactInfo.email')}
                             </p>
                           </div>
 
                           {/* Website */}
-                          <div className="flex flex-col md:flex-row md:items-start">
-                            <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                              Website:
-                            </p>
-                            <p className="w-full md:w-1/2 ">
-                              {getValues('contactInfo.website')}
-                            </p>
+                          <div className="flex flex-row items-start">
+                            {getValues('contactInfo.website') ? (
+                              <>
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t('preliminaries.general.website') + ':'}
+                                </p>
+                                <p className="w-1/2">
+                                  {getValues('contactInfo.website')}
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-md w-1/2 leading-6 text-gray-400">
+                                  {t('preliminaries.general.website') + ':'}
+                                </p>
+                                <p className="w-1/2 text-gray-400">N/A</p>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
 
                       {/* Brief Agency Information */}
                       <p className="mt-8 text-base font-semibold leading-7 text-gray-900">
-                        Brief Agency Information
+                        {t('preliminaries.general.agencyInfo') + ':'}
                       </p>
                       <p>{getValues('agencyInfo')}</p>
                     </section>
@@ -3445,28 +3593,24 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {/* Operations */}
                     <section className="my-2">
                       <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                        Operations
+                        {t('preliminaries.operations.title')}
                       </h2>
 
                       <div className="flex flex-col md:flex-row">
                         <div className="w-full md:w-1/2">
                           {/* Hours of Operation */}
                           <div className="mb-6">
-                            {/* TODO */}
                             <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                              Hours of Operation
+                              {t('preliminaries.operations.hours')}
                             </h3>
-                            <p>
-                              <span className="bg-blue-500 text-white">
-                                TODO: Hours of operation
-                              </span>
-                            </p>
+
+                            <HoursReview hours={getValues('hours')} />
                           </div>
 
                           {/* Funding Source */}
                           <div>
                             <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                              Funding Sources
+                              {t('preliminaries.operations.funding.title')}
                             </h3>
                             {get_fundingSource()}
                           </div>
@@ -3475,93 +3619,105 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         {/* Location Information */}
                         <div className="w-full md:w-1/2">
                           <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                            Location Information
+                            {t('preliminaries.operations.location.title')}
                           </h3>
 
                           <div className="flex w-full flex-col gap-2">
                             {/* Is the physical address confidential? */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                Is the physical address confidential?
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.confidential'
+                                )}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues(
                                   'location.confidential'
                                 ).toString() === 'true'
-                                  ? 'Yes'
-                                  : 'No'}
+                                  ? t('options.yes')
+                                  : t('options.no')}
                               </p>
                             </div>
 
                             {/* Physical Address */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                Physical Address:
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.address.physical'
+                                ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('location.physicalAddress')}
                               </p>
                             </div>
 
                             {/* Mailing Address */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              {getValues('akas') ? (
+                            <div className="flex flex-row items-start gap-4">
+                              {getValues('location.mailingAddress') ? (
                                 <>
-                                  <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                    Mailing Address:
+                                  <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                    {t('review.mailing.title') + ':'}
                                   </p>
-                                  <p className="w-full md:w-1/2 ">
+                                  <p className="w-1/2 md:w-1/3">
                                     {getValues('location.mailingAddress')}
                                   </p>
                                 </>
                               ) : (
                                 <>
-                                  <p className="text-md w-full leading-6 text-gray-400 md:w-1/2">
-                                    Mailing Address:
+                                  <p className="text-md w-1/2 leading-6 text-gray-400 md:w-2/3">
+                                    {t('review.mailing.title') + ':'}
                                   </p>
-                                  <p className="w-full text-gray-400 md:w-1/2">
-                                    Same as physical address
+                                  <p className="w-1/2 text-gray-400 md:w-1/3">
+                                    {t('review.mailing.none')}
                                   </p>
                                 </>
                               )}
                             </div>
 
                             {/* County */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                County:
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.address.county'
+                                ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('location.county')}
                               </p>
                             </div>
 
                             {/* City */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                City:
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.address.city'
+                                ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
-                                <p>{getValues('location.city')}</p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('location.city')}
                               </p>
                             </div>
 
                             {/* State */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                State:
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.address.state'
+                                ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('location.state')}
                               </p>
                             </div>
 
                             {/* Zip Code */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                Zip Code:
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.operations.location.address.zip'
+                                ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('location.zipCode')}
                               </p>
                             </div>
@@ -3575,24 +3731,26 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     {/* Additional */}
                     <section className="my-2">
                       <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                        Additional
+                        {t('preliminaries.additional.title')}
                       </h2>
 
                       <div className="flex flex-col md:flex-row">
                         {/* Service Area */}
                         <div className="md:w-1/2">
-                          <h3 className="mb-4 w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                            Service Area
+                          <h3 className="mb-4 w-1/2 text-base font-semibold leading-7 text-gray-900">
+                            {t('preliminaries.additional.serviceArea.title')}
                           </h3>
 
-                          <div className="flex flex-col gap-2">
+                          <div className="flex flex-col gap-4">
                             {/* Specific Town/City */}
                             {getValues('serviceArea.townCity') != '' && (
-                              <div className="flex flex-col md:flex-row md:items-start">
+                              <div className="flex flex-col items-start gap-2 md:flex-row md:gap-0">
                                 <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                  Specific Town/City:
+                                  {t(
+                                    'preliminaries.additional.serviceArea.townCity'
+                                  ) + ':'}
                                 </p>
-                                <p className="w-full md:w-1/2 ">
+                                <p className="w-full md:w-1/2">
                                   {getValues('serviceArea.townCity')}
                                 </p>
                               </div>
@@ -3600,9 +3758,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                             {/* Specific Zip Codes */}
                             {getValues('serviceArea.zipCodes').length != 0 && (
-                              <div className="flex flex-col md:flex-row md:items-start">
+                              <div className="flex flex-col items-start gap-2 md:flex-row md:gap-0">
                                 <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                  Specific Zip Codes:
+                                  {t(
+                                    'preliminaries.additional.serviceArea.zip'
+                                  ) + ':'}
                                 </p>
                                 <p className="w-full md:w-1/2">
                                   {convertToString(
@@ -3614,9 +3774,11 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                             {/* Specific Counties */}
                             {getValues('serviceArea.counties').length != 0 && (
-                              <div className="flex flex-col md:flex-row md:items-start">
+                              <div className="flex flex-col items-start gap-2 md:flex-row md:gap-0">
                                 <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                  Specific Counties:
+                                  {t(
+                                    'preliminaries.additional.serviceArea.county'
+                                  ) + ':'}
                                 </p>
                                 <p className="w-full md:w-1/2">
                                   {convertToString(
@@ -3628,11 +3790,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                             {/* Statewide */}
                             {getValues('serviceArea.statewide') && (
-                              <div className="flex flex-col md:flex-row md:items-start">
-                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                  Statewide:
+                              <div className="flex flex-row items-start">
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t(
+                                    'preliminaries.additional.serviceArea.state'
+                                  ) + ':'}
                                 </p>
-                                <p className="w-full md:w-1/2 ">
+                                <p className="w-1/2">
                                   {getValues('serviceArea.statewide') && 'Yes'}
                                 </p>
                               </div>
@@ -3640,11 +3804,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                             {/* Nationwide */}
                             {getValues('serviceArea.nationwide') && (
-                              <div className="flex flex-col md:flex-row md:items-start">
-                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                  Nationwide:
+                              <div className="flex flex-row items-start">
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t(
+                                    'preliminaries.additional.serviceArea.nation'
+                                  ) + ':'}
                                 </p>
-                                <p className="w-full md:w-1/2 ">
+                                <p className="w-1/2">
                                   {getValues('serviceArea.nationwide') && 'Yes'}
                                 </p>
                               </div>
@@ -3652,11 +3818,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
 
                             {/* Other */}
                             {getValues('serviceArea.other') != '' && (
-                              <div className="flex flex-col md:flex-row md:items-start">
-                                <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                  Other:
+                              <div className="flex flex-row items-start">
+                                <p className="w-1/2 text-base font-semibold leading-7 text-gray-900">
+                                  {t(
+                                    'preliminaries.additional.serviceArea.other'
+                                  ) + ':'}
                                 </p>
-                                <p className="w-full md:w-1/2 ">
+                                <p className="w-1/2">
                                   {getValues('serviceArea.other')}
                                 </p>
                               </div>
@@ -3665,66 +3833,75 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </div>
 
                         {/* Annual Agency Update */}
-                        <div className="md:w-1/2">
+                        <div className="mt-8 md:mt-0 md:w-1/2">
                           <h3 className="mb-4 text-base font-semibold leading-7 text-gray-900">
-                            Annual Agency Update
+                            {t('preliminaries.additional.agencyUpdate.title')}
                           </h3>
 
                           <div className="flex w-full flex-col gap-2">
                             {/* Name */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                Name:
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.additional.agencyUpdate.name'
+                                ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('annualAgencyUpdate.name')}
                               </p>
                             </div>
 
                             {/* Title */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                Title:
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.additional.agencyUpdate.contactTitle'
+                                ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('annualAgencyUpdate.title')}
                               </p>
                             </div>
 
                             {/* Phone Number */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                Phone Number:
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.additional.agencyUpdate.phone'
+                                ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
-                                <p>
-                                  {getValues('annualAgencyUpdate.phoneNumber')}
-                                </p>
+                              <p className="w-1/2 md:w-1/3">
+                                {getValues('annualAgencyUpdate.phoneNumber')}
                               </p>
                             </div>
 
                             {/* Email */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-start">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                Email:
+                            <div className="flex flex-row items-start gap-4">
+                              <p className="w-1/2 text-base font-semibold leading-7 text-gray-900 md:w-2/3">
+                                {t(
+                                  'preliminaries.additional.agencyUpdate.email'
+                                ) + ':'}
                               </p>
-                              <p className="w-full md:w-1/2 ">
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues('annualAgencyUpdate.email')}
                               </p>
                             </div>
 
                             {/* Would you like this information to be hidden from the website? */}
-                            <div className="flex flex-col gap-16 md:flex-row md:items-end">
-                              <p className="w-full text-base font-semibold leading-7 text-gray-900 md:w-1/2">
-                                Would you like this information to be hidden
-                                from the website?
-                              </p>
-                              <p className="w-full md:w-1/2 ">
+                            <div className="flex flex-row items-end gap-4">
+                              <div className="w-1/2 md:w-2/3">
+                                <p className="w-3/4 text-base font-semibold leading-7 text-gray-900">
+                                  {t(
+                                    'preliminaries.additional.agencyUpdate.confidential'
+                                  )}
+                                </p>
+                              </div>
+                              <p className="w-1/2 md:w-1/3">
                                 {getValues(
                                   'annualAgencyUpdate.hideFromWebsite'
                                 ).toString() === 'true'
-                                  ? 'Yes'
-                                  : 'No'}
+                                  ? t('options.yes')
+                                  : t('options.no')}
                               </p>
                             </div>
                           </div>
@@ -3738,22 +3915,20 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   {/* Accessibility */}
                   <section>
                     <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
-                      Accessibility
+                      {t('accessibility.title')}
                     </h2>
 
                     <div className="flex flex-col gap-4">
                       <div>
                         <p className="w-full text-base font-semibold leading-7 text-gray-900">
-                          In addition to English, what languages are spoken by
-                          at least one of your part-time staff?
+                          {t('accessibility.languages.title')}
                         </p>
                         <p>{get_accessibility_langs()}</p>
                       </div>
 
                       <div>
                         <p className="w-full text-base font-semibold leading-7 text-gray-900">
-                          Can any languages be provided with prior notice?
-                          (Please list.)
+                          {t('accessibility.languages.priorNotice')}
                         </p>
                         <p>
                           {getValues('supportedLanguagesWithoutNotice')
@@ -3765,16 +3940,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                         </p>
                       </div>
 
-                      <div className="flex flex-row items-center gap-4">
+                      <div className="flex flex-col md:flex-row md:items-center md:gap-4">
                         <p className="text-base font-semibold leading-7 text-gray-900">
-                          Is your facility accessible to people with
-                          disabilities as defined by the Americans with
-                          Disabilities Act (ADA)?
+                          {t('accessibility.ada')}
                         </p>
                         <p>
                           {getValues('accessibilityADA').toString() === 'true'
-                            ? 'Yes'
-                            : 'No'}
+                            ? t('options.yes')
+                            : t('options.no')}
                         </p>
                       </div>
                     </div>
@@ -3785,10 +3958,16 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   {/* Services */}
                   <section>
                     <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
-                      Services
+                      {t('services.title')}
                     </h2>
 
-                    {screenWidth < 720 || getValues('services').length > 2 ? (
+                    {getValues('services').length === 0 ? (
+                      <p className="text-md leading-6 text-gray-400">
+                        No services listed.
+                      </p>
+                    ) : (screenWidth < 720 &&
+                        getValues('services').length > 1) ||
+                      getValues('services').length > 2 ? (
                       <Carousel
                         opts={{
                           align: 'start',
@@ -3804,15 +3983,37 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           type="button"
                         />
                       </Carousel>
-                    ) : getValues('services').length == 0 ? (
-                      <p className="text-md leading-6 text-gray-400">
-                        No services listed.
-                      </p>
                     ) : (
                       <div className="flex w-full flex-col gap-4 md:flex-row">
                         {get_services()}
                       </div>
                     )}
+
+                    {/* {screenWidth < 720 && getValues('services').length > 2 ? (
+                      <Carousel
+                        opts={{
+                          align: 'start',
+                        }}
+                      >
+                        <CarouselContent>{get_services()}</CarouselContent>
+                        <CarouselNext
+                          className="right-1/3 top-full mt-8 sm:-right-12 sm:top-1/2 sm:-translate-y-1/2"
+                          type="button"
+                        />
+                        <CarouselPrevious
+                          className="left-1/3 top-full mt-8 sm:-left-12 sm:top-1/2 sm:-translate-y-1/2"
+                          type="button"
+                        />
+                      </Carousel>
+                    ) : getValues('services').length === 0 ? (
+                      <p className="text-md leading-6 text-gray-400">
+                        {t('review.no-services')}
+                      </p>
+                    ) : (
+                      <div className="flex w-full flex-col gap-4 md:flex-row">
+                        {get_services()}
+                      </div>
+                    )} */}
                   </section>
 
                   <hr />
@@ -3820,7 +4021,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                   {/* Opportunities */}
                   <section className="mt-8 flex flex-col gap-4 sm:mt-0">
                     <h2 className="text-base font-semibold leading-7 text-gray-900 underline underline-offset-2">
-                      Opportunities
+                      {t('opportunities.title')}
                     </h2>
 
                     <section className="flex flex-col gap-8">
@@ -3828,13 +4029,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <section>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
                           <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            Does your organization accept volunteers?
+                            {t('opportunities.acceptVolunteers.title')}
                           </p>
 
                           <p className="sm:w-1/2">
                             {getValues('volunteerFields.volunteers') == 'true'
-                              ? 'Yes'
-                              : 'No'}
+                              ? t('options.yes')
+                              : t('options.no')}
                           </p>
                         </div>
 
@@ -3843,7 +4044,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Who is eligible to volunteer?
+                                {t(
+                                  'opportunities.acceptVolunteers.eligibility.title'
+                                )}
                               </p>
 
                               <p className="sm:w-1/2">
@@ -3854,7 +4057,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Volunteer Coordinator
+                                {t(
+                                  'opportunities.acceptVolunteers.eligibility.coordinator'
+                                )}
                               </p>
 
                               <p className="sm:w-1/2">
@@ -3865,7 +4070,9 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Phone #
+                                {t(
+                                  'opportunities.acceptVolunteers.eligibility.phone'
+                                )}
                               </p>
 
                               <p className="sm:w-1/2">
@@ -3880,14 +4087,13 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <section>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
                           <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            Does your organization accept ongoing, non-monetary
-                            donations in support of programs or services?
+                            {t('opportunities.acceptDonations.title')}
                           </p>
 
                           <p className="sm:w-1/2">
                             {getValues('donationFields.donation') == 'true'
-                              ? 'Yes'
-                              : 'No'}
+                              ? t('options.yes')
+                              : t('options.no')}
                           </p>
                         </div>
 
@@ -3896,7 +4102,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Please list.
+                                {t('opportunities.acceptDonations.list.title')}
                               </p>
 
                               <p className="sm:w-1/2">
@@ -3907,20 +4113,24 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Do you provide pick-up service?
+                                {t(
+                                  'opportunities.acceptDonations.pickup.title'
+                                )}
                               </p>
 
                               <p className="sm:w-1/2">
                                 {getValues('donationFields.pickup') == 'true'
-                                  ? 'Yes'
-                                  : 'No'}
+                                  ? t('options.yes')
+                                  : t('options.no')}
                               </p>
                             </div>
 
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="ml-6 mr-1" />
-                                Where?
+                                {t(
+                                  'opportunities.acceptDonations.pickup.where'
+                                )}
                               </p>
 
                               <p className="ml-6 flex sm:ml-0 sm:w-1/2">
@@ -3931,7 +4141,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Donation Coordinator
+                                {t('opportunities.acceptDonations.coordinator')}
                               </p>
 
                               <p className="sm:w-1/2">
@@ -3942,7 +4152,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                             <div className="flex flex-col sm:flex-row sm:gap-16">
                               <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                                 <CornerDownRight className="mr-1" />
-                                Phone #
+                                {t('opportunities.acceptDonations.phone')}
                               </p>
                               <p className="sm:w-1/2">
                                 {getValues('donationFields.don_coor_tel')}
@@ -3956,16 +4166,14 @@ homeless men, etc.) This helps us to make appropriate referrals."
                       <section>
                         <div className="flex flex-col sm:flex-row sm:gap-16">
                           <p className="text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
-                            Are there other agencies or services that have been
-                            helpful that you would recommend to be included in
-                            our resource database?
+                            {t('opportunities.other.title')}
                           </p>
 
                           <p className="sm:w-1/2">
                             {getValues('recommendationFields.recommendation') ==
                             'true'
-                              ? 'Yes'
-                              : 'No'}
+                              ? t('options.yes')
+                              : t('options.no')}
                           </p>
                         </div>
 
@@ -3974,8 +4182,7 @@ homeless men, etc.) This helps us to make appropriate referrals."
                           <div className="flex flex-col sm:flex-row sm:gap-16">
                             <p className="flex text-base font-semibold leading-7 text-gray-900 sm:w-1/2">
                               <CornerDownRight className="mr-1" />
-                              Please provide contact information for these
-                              agencies/services.
+                              {t('opportunities.other.contactInformation')}
                             </p>
 
                             <p className="sm:w-1/2">
@@ -3989,63 +4196,74 @@ homeless men, etc.) This helps us to make appropriate referrals."
                     </section>
                   </section>
                 </div>
-                <Button type="submit">Click to Submit</Button>
               </motion.div>
             )}
           </motion.div>
         )}
-      </form>
 
-      {/* Navigation */}
-      <div className="mt-8 pt-5">
-        <div className="flex justify-between">
-          <button
-            type="button"
-            onClick={prev}
-            disabled={currentStep === 0 && currentSubstep == 0}
-            className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
+        {/* Navigation */}
+        <div className="mt-24 pt-5">
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={prev}
+              disabled={currentStep === 0 && currentSubstep == 0}
+              className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5L8.25 12l7.5-7.5"
-              />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={next}
-            disabled={
-              currentStep === steps.length - 1 &&
-              currentSubstep === steps[currentStep].subpages.length
-            }
-            className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8.25 4.5l7.5 7.5-7.5 7.5"
-              />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="h-6 w-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 19.5L8.25 12l7.5-7.5"
+                />
+              </svg>
+            </button>
+
+            {currentStep === steps.length - 1 &&
+            currentSubstep === steps[steps.length - 1].subpages.length - 1 ? (
+              <Button type="submit" className="w-36" disabled={isLoading}>
+                {isLoading ? (
+                  <Spinner className="h-4 w-4 animate-spin" />
+                ) : (
+                  <span>{t('review.button')}</span>
+                )}
+              </Button>
+            ) : (
+              <button
+                type="button"
+                onClick={next}
+                disabled={
+                  currentStep === steps.length - 1 &&
+                  currentSubstep === steps[steps.length - 1].subpages.length - 1
+                }
+                className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="h-6 w-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      </form>
       <Footer className="pb-2 pt-6" />
     </section>
   );

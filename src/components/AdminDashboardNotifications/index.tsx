@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { getAgencies } from '@/server/actions/Agencies';
 import { Agency } from '@/utils/types';
-import { AlertCircle, Newspaper, Check, X } from 'lucide-react';
+import { AlertCircle, Check, X } from 'lucide-react';
 
 import {
   Accordion,
@@ -17,14 +17,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import PdfButton from '@/components/PdfButton';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 export async function AdminDashboardNotifications() {
+  const t = await getTranslations('Components.adminDashboardNotifications');
+  const locale = await getLocale();
+
   let agencies: Agency[] = [];
 
   try {
     agencies = await getAgencies(false, undefined); // TODO: only grab pending agencies
   } catch (error) {
-    return <h1>Error loading data</h1>;
+    return <h1>{t('error')}</h1>;
   }
 
   if (agencies.length <= 0) {
@@ -36,18 +41,17 @@ export async function AdminDashboardNotifications() {
       <Accordion type="single" collapsible>
         <AccordionItem className="w-full" value="item-1">
           <AccordionTrigger>
-            <AlertCircle />
-            You have {agencies.length}{' '}
-            {agencies.length == 1 ? 'agency' : 'agencies'} pending approval.
+            <AlertCircle className="mr-2" />
+            <p>{t('notification', { number: agencies.length })}</p>
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className="mt-6">
             <Table className="rounded-md border text-left shadow">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Agency Pending Approval</TableHead>
-                  <TableHead>Date Submitted</TableHead>
-                  <TableHead>Information Form</TableHead>
-                  <TableHead>Action</TableHead>
+                  <TableHead>{t('tableHeader.name')}</TableHead>
+                  <TableHead>{t('tableHeader.date')}</TableHead>
+                  <TableHead>{t('tableHeader.pdf')}</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -58,26 +62,23 @@ export async function AdminDashboardNotifications() {
                   >
                     <TableCell>{agency.name}</TableCell>
                     <TableCell>
-                      {agency.updatedAt?.toLocaleDateString('en-us', {
+                      {agency.updatedAt?.toLocaleDateString(locale, {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric',
                       })}
                     </TableCell>
                     <TableCell>
-                      <Button variant="outline">
-                        <Newspaper className="mr-2" />
-                        View form
-                      </Button>
+                      <PdfButton agencyId={agency._id?.toString()} />
                     </TableCell>
                     <TableCell>
                       <Button className="mr-4" variant="outline">
                         <Check className="mr-2" />
-                        Approve
+                        {t('options.approve')}
                       </Button>
                       <Button variant="destructive">
                         <X className="mr-2" />
-                        Deny
+                        {t('options.deny')}
                       </Button>
                     </TableCell>
                   </TableRow>

@@ -261,7 +261,12 @@ const locationSchema = z.object({
   county: z.string().min(1, 'Required'),
   city: z.string().min(1, 'Required'),
   state: z.string().min(1, 'Required'),
-  zipCode: z.string().min(1, 'Required'),
+  zipCode: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^[0-9]{5}$/, {
+      message: 'Must be a valid zip code.',
+    }),
 });
 
 const serviceAreaSchema = z
@@ -337,7 +342,13 @@ const languageSupportSchema = z.object({
     ),
 });
 
-const contactInfoSchema = z.object({
+export const additionalNumbersSchema = z.object({
+  id: z.number(),
+  label: z.string(),
+  number: z.string(),
+});
+
+export const contactInfoSchema = z.object({
   phoneNumber: z
     .string()
     .min(1, 'Required')
@@ -346,10 +357,16 @@ const contactInfoSchema = z.object({
     }),
   faxNumber: z
     .string()
-    .min(1, 'Required')
-    .regex(/^[0-9]{10}$/, {
-      message: 'Must be a valid phone number.',
-    }),
+    .optional()
+    .refine(
+      (value) => {
+        const regex = /^[0-9]{10}$/;
+        return !value || regex.test(value);
+      },
+      {
+        message: 'Must be a valid phone number.',
+      }
+    ),
   tollFreeNumber: z
     .string()
     .min(1, 'Required')
@@ -362,7 +379,7 @@ const contactInfoSchema = z.object({
     .regex(/^[0-9]{10}$/, {
       message: 'Must be a valid phone number.',
     }),
-  additionalNumbers: z.array(z.string()).optional(),
+  additionalNumbers: z.array(additionalNumbersSchema).optional(),
   email: z
     .string()
     .min(1, 'Required')
@@ -371,9 +388,13 @@ const contactInfoSchema = z.object({
     }),
   website: z
     .string()
-    .min(1, 'Required')
-    .regex(
-      /^(https?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})+(\/[^\s]*)?$/,
+    .optional()
+    .refine(
+      (value) => {
+        const regex =
+          /^(https?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})+(\/[^\s]*)?$/;
+        return !value || regex.test(value);
+      },
       {
         message: 'Must be a valid web address.',
       }

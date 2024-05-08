@@ -96,7 +96,7 @@ const ContactInfoSchema = new mongoose.Schema<ContactInfo>({
     type: String,
   },
   additionalNumbers: {
-    type: [String],
+    type: [{ id: Number, label: String, number: String }],
   },
   email: {
     type: String,

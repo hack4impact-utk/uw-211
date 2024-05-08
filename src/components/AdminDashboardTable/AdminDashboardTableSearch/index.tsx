@@ -3,6 +3,7 @@
 import { Input } from '@/components/ui/input';
 import { DashboardParams } from '@/utils/types';
 import { Search } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -13,6 +14,8 @@ type AdminDashboardTableSearchProps = {
 export default function AdminDashboardTableSearch({
   searchParams,
 }: AdminDashboardTableSearchProps) {
+  const t = useTranslations('Components.adminDashboardTable');
+
   const [search, setSearch] = useState(searchParams.search || '');
   const router = useRouter();
 
@@ -34,7 +37,7 @@ export default function AdminDashboardTableSearch({
   return (
     <form className="flex flex-1 items-center" onSubmit={handleSearch}>
       <Input
-        placeholder="Search for an agency..."
+        placeholder={t('search')}
         className="max-w h-[2.5rem] w-1/3 rounded-r-none focus-visible:ring-transparent"
         defaultValue={search}
         onChange={(event) => setSearch(event.target.value)}
@@ -42,7 +45,7 @@ export default function AdminDashboardTableSearch({
       />
       <button
         type="submit"
-        className="h-[2.5rem] rounded-r-md border border-l-0 bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+        className="h-[2.5rem] rounded-r-md border border-l-0 bg-[#0253AA] px-4 py-2 font-bold text-white hover:bg-blue-700"
       >
         <Search />
       </button>

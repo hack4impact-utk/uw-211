@@ -13,6 +13,7 @@ import {
 import { Filter } from 'lucide-react';
 import { DashboardParams } from '@/utils/types';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 type AdminDashboardTableFilterCheckboxProps = {
   searchParams: DashboardParams;
@@ -27,6 +28,7 @@ export function AdminDashboardTableFilterCheckbox({
   initialNeedsReview,
   initialExpired,
 }: AdminDashboardTableFilterCheckboxProps) {
+  const t = useTranslations('Components.adminDashboardTable');
   const router = useRouter();
   const [filters, setFilters] = useState({
     completed: initialCompleted,
@@ -54,7 +56,7 @@ export function AdminDashboardTableFilterCheckbox({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Status</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('filter.status')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
           key={'completed'}
@@ -64,7 +66,7 @@ export function AdminDashboardTableFilterCheckbox({
             setFilters((prev) => ({ ...prev, completed: !prev.completed }));
           }}
         >
-          Completed
+          {t('currentStatus.completed')}
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           key={'needsReview'}
@@ -74,7 +76,7 @@ export function AdminDashboardTableFilterCheckbox({
             setFilters((prev) => ({ ...prev, needsReview: !prev.needsReview }));
           }}
         >
-          Needs Review
+          {t('currentStatus.needsReview')}
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           key={'expired'}
@@ -84,14 +86,14 @@ export function AdminDashboardTableFilterCheckbox({
             setFilters((prev) => ({ ...prev, expired: !prev.expired }));
           }}
         >
-          Expired
+          {t('currentStatus.expired')}
         </DropdownMenuCheckboxItem>
         <DropdownMenuSeparator />
         <button
           onClick={handleFilter}
           className="mx-1 my-1 rounded-md bg-blue-500 px-2 py-1 font-semibold text-white  hover:bg-blue-700"
         >
-          Filter
+          {t('filter.button')}
         </button>
       </DropdownMenuContent>
     </DropdownMenu>
