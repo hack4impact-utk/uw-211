@@ -155,6 +155,7 @@ function zodLanguagesToTs(data: Inputs): AgencyInfoForm['languages'] {
 
 export function zodFormToTs(data: Inputs): AgencyInfoForm {
   const agencyInfo: AgencyInfoForm = {
+    approved: false,
     legalAgencyName: data.legalName,
     alsoKnownAs: data.akas.split(' '),
     legalOrganizationalStatus: data.legalStatus.split(' '),

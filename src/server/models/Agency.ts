@@ -67,18 +67,19 @@ AgencySchema.virtual('currentStatus').get(function (this: Agency) {
     }
   }
 
-  const differenceInMilliseconds: number =
-    currentTime.getTime() - this.updatedAt.getTime();
-  const differenceInDays: number = Math.floor(
-    differenceInMilliseconds / (1000 * 3600 * 24)
-  );
-  if (differenceInDays < this.updateScheduleInDays - 14) {
-    return agencyUpdateStatus.Completed;
-  } else if (differenceInDays < this.updateScheduleInDays) {
-    return agencyUpdateStatus.NeedsReview;
-  } else if (differenceInDays >= this.updateScheduleInDays) {
-    return agencyUpdateStatus.Expired;
+  // Check latest form for approval
+  if (this.info.length !== 0) {
+    return this.info[this.info.length - 1].approved
+      ? agencyUpdateStatus.Completed
+      : agencyUpdateStatus.Expired;
   }
+
+  // If there is no info associated with an agency look at the outer status
+  if (this.approvalStatus) {
+    return this.approvalStatus;
+  }
+
+  return agencyUpdateStatus.Expired;
 });
 
 AgencySchema.virtual('daysSinceEmailSent').get(function () {

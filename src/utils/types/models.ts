@@ -39,6 +39,7 @@ export interface AgencyInfoForm {
   _id?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  approved: boolean;
   legalAgencyName: string;
   alsoKnownAs?: string[];
   legalOrganizationalStatus: (

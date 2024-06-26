@@ -3,6 +3,7 @@ export const testAgency: Agency = {
   name: 'This is another agency',
   info: [
     {
+      approved: false,
       legalAgencyName: 'This is another agency',
       alsoKnownAs: [],
       legalOrganizationalStatus: ['Non-profit'],
