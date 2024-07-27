@@ -3056,7 +3056,24 @@ export default function Form({ params }: { params: { id: string } }) {
                                 value="false"
                                 {...register('donationFields.donation')}
                                 onChange={(e) => {
+                                  // clear out donation fields if no
                                   setDonationChecked(e.target.value);
+                                  setPickupChecked('false');
+                                  setValue(
+                                    'donationFields.don_coor',
+                                    undefined
+                                  );
+                                  setValue(
+                                    'donationFields.don_coor_tel',
+                                    undefined
+                                  );
+                                  setValue('donationFields.donation', 'false');
+                                  setValue('donationFields.pickup', 'false');
+                                  setValue(
+                                    'donationFields.pickup_loc',
+                                    undefined
+                                  );
+                                  setValue('donationFields.don_ex', undefined);
                                 }}
                                 className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                                 defaultChecked
