@@ -17,7 +17,7 @@ import { CornerDownRight } from 'lucide-react';
 interface FormStepperSubpage {
   id: string;
   name: string;
-  fields: Array<string>;
+  fields: Readonly<Array<string>>;
 }
 
 interface StepItem {

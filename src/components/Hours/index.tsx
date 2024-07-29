@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { z } from 'zod';
-import { FormDataSchema, DaySchema } from '@/utils/constants/formDataSchema';
+import { DaySchema } from '@/utils/constants/formDataSchema';
 import { UseControllerProps, useController } from 'react-hook-form';
 import { ScrollArea } from '../ui/scroll-area';
 import { useTranslations } from 'next-intl';
 
 type Hours = z.infer<typeof DaySchema>;
-type FormData = z.infer<typeof FormDataSchema>;
 type Day =
   | 'Monday'
   | 'Tuesday'
@@ -18,7 +17,10 @@ type Day =
   | 'Saturday'
   | 'Sunday';
 
-export default function Hours({ name, control }: UseControllerProps<FormData>) {
+export default function Hours<TFormData extends Record<string, unknown>>({
+  name,
+  control,
+}: UseControllerProps<TFormData>) {
   const {
     field,
     fieldState: { error },

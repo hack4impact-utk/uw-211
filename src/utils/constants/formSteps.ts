@@ -75,4 +75,8 @@ export const formSteps = [
       },
     ],
   },
-];
+] as const;
+
+export type StepId = (typeof formSteps)[number]['id'];
+export type SubpageStepId =
+  (typeof formSteps)[number]['subpages'][number]['id'];

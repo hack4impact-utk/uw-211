@@ -85,7 +85,7 @@ function zodDocumentsToTs(data: Service): ServiceModel['requiredDocuments'] {
   return documents;
 }
 
-function zodServiceToTs(data: Service): ServiceModel {
+export function zodServiceToTs(data: Service): ServiceModel {
   const service: ServiceModel = {
     name: data.name,
     fullDescription: data.fullDescription,
@@ -121,7 +121,7 @@ function zodVolCoordinatorToTs(
   return contactInfo;
 }
 
-function zodFundingToTs(data: Inputs): AgencyInfoForm['fundingSources'] {
+export function zodFundingToTs(data: Inputs): AgencyInfoForm['fundingSources'] {
   const funding: AgencyInfoForm['fundingSources'] = [];
 
   if (data.fundingSources.federal) funding.push('Federal');
@@ -137,7 +137,7 @@ function zodFundingToTs(data: Inputs): AgencyInfoForm['fundingSources'] {
   return funding;
 }
 
-function zodLanguagesToTs(data: Inputs): AgencyInfoForm['languages'] {
+export function zodLanguagesToTs(data: Inputs): AgencyInfoForm['languages'] {
   const languages: AgencyInfoForm['languages'] = [];
 
   if (data.languageSupport.asl) languages.push('ASL');

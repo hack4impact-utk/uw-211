@@ -1,20 +1,16 @@
 import { z } from 'zod';
-import {
-  FormDataSchema,
-  additionalNumbersSchema,
-} from '@/utils/constants/formDataSchema';
+import { additionalNumbersSchema } from '@/utils/constants/formDataSchema';
 import { UseControllerProps, useController } from 'react-hook-form';
 import { Button } from '../ui/button';
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 type AdditionalNumbers = z.infer<typeof additionalNumbersSchema>;
-type FormData = z.infer<typeof FormDataSchema>;
+// type FormData = z.infer<typeof FormDataSchema>;
 
-export default function AdditionalNumbers({
-  name,
-  control,
-}: UseControllerProps<FormData>) {
+export default function AdditionalNumbers<
+  TFormData extends Record<string, unknown>,
+>({ name, control }: UseControllerProps<TFormData>) {
   const {
     field,
     fieldState: { error },
