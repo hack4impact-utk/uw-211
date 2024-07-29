@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 type AdditionalNumbers = z.infer<typeof additionalNumbersSchema>;
-// type FormData = z.infer<typeof FormDataSchema>;
 
 export default function AdditionalNumbers<
   TFormData extends Record<string, unknown>,
