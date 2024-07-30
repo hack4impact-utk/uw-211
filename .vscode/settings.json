@@ -10,5 +10,7 @@
     "**/.keep": true
   },
   "jest.runMode": "on-demand",
-  "cSpell.words": ["Pagesub"]
+  "i18n-ally.localesPaths": ["messages"],
+  "i18n-ally.sourceLanguage": "en-US",
+  "i18n-ally.displayLanguage": "en-US"
 }
