@@ -10,5 +10,6 @@
     "**/.keep": true
   },
   "jest.runMode": "on-demand",
-  "cSpell.words": ["Pagesub"]
+  "cSpell.words": ["Pagesub"],
+  "i18n-ally.localesPaths": ["messages"]
 }
