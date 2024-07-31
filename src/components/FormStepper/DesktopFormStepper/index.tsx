@@ -13,7 +13,7 @@ import {
 interface FormStepperSubpage {
   id: string;
   name: string;
-  fields: Array<string>;
+  fields: Readonly<Array<string>>;
 }
 interface DesktopFormStepperProps {
   currentPageIndex: number;
@@ -21,14 +21,18 @@ interface DesktopFormStepperProps {
   formSteps: Array<{
     id: string;
     name: string;
-    subpages: Array<FormStepperSubpage>;
+    subpages: Readonly<Array<FormStepperSubpage>>;
   }>;
   setCurrentStep: (step: number) => void;
   setCurrentSubstep: (step: number) => void;
 }
 
 interface StepItem {
-  step: { id: string; name: string; subpages: Array<FormStepperSubpage> };
+  step: {
+    id: string;
+    name: string;
+    subpages: Readonly<Array<FormStepperSubpage>>;
+  };
   index: number;
   currentPageIndex: number;
   currentSubpageIndex: number;
