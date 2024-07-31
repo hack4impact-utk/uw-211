@@ -1,6 +1,7 @@
 import ClientSessionProvider from '@/components/ClientSessionProvider';
 import './globals.css';
 import { NextIntlClientProvider, useMessages } from 'next-intl';
+import { WindowSizeProvider } from '@/utils/hooks/useWindowSize/WindowSizeContext';
 
 export const metadata = {
   title: 'United Way 211',
@@ -38,7 +39,9 @@ export default function RootLayout({
     <html lang={locale}>
       <body className="w-screen overflow-x-hidden">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <ClientSessionProvider>{children}</ClientSessionProvider>
+          <ClientSessionProvider>
+            <WindowSizeProvider>{children}</WindowSizeProvider>
+          </ClientSessionProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -6,30 +6,30 @@ import { useTranslations } from 'next-intl';
 interface FormStepperSubpage {
   id: string;
   name: string;
-  fields: Array<string>;
+  fields: Readonly<Array<string>>;
 }
 
 interface FormStep {
   id: string;
   name: string;
-  subpages: FormStepperSubpage[];
+  subpages: Readonly<FormStepperSubpage[]>;
 }
 
-interface FormStepperProps {
+interface FormStepperProps<TFormSteps extends Readonly<FormStep[]>> {
   currentPageIndex: number;
   currentSubpageIndex: number;
-  formSteps: FormStep[];
+  formSteps: TFormSteps;
   setCurrentStep: (step: number) => void;
   setCurrentSubstep: (step: number) => void;
 }
 
-export default function FormStepper({
+export default function FormStepper<TFormSteps extends Readonly<FormStep[]>>({
   currentPageIndex,
   currentSubpageIndex,
   formSteps,
   setCurrentStep,
   setCurrentSubstep,
-}: FormStepperProps) {
+}: FormStepperProps<TFormSteps>) {
   const { width: screenWidth } = useWindowSize();
   const t = useTranslations('Form');
   const t2 = useTranslations('Components.formStepper');
@@ -40,9 +40,12 @@ export default function FormStepper({
       name: t(step.name.toLowerCase() + '.title'),
       subpages: step.subpages.map((subpage) => ({
         ...subpage,
-        name: t(
-          `${step.name.toLowerCase()}.${subpage.name.toLowerCase()}.title`
-        ),
+        name:
+          step.subpages.length > 1
+            ? t(
+                `${step.name.toLowerCase()}.${subpage.name.toLowerCase()}.title`
+              )
+            : step.name.toLowerCase() + '.title',
       })),
     }));
   };

@@ -254,7 +254,7 @@ const RecommendationFields = z
     }
   });
 
-const locationSchema = z.object({
+export const locationSchema = z.object({
   confidential: z.coerce.boolean(),
   physicalAddress: z.string().min(1, 'Required'),
   mailingAddress: z.string(),
@@ -431,9 +431,8 @@ export const FormDataSchema = z.object({
   contactInfo: contactInfoSchema,
   // Up until here
 
-  hours: z.array(DaySchema).min(1, 'Hours of operation is required.'),
-
   // Operations
+  hours: z.array(DaySchema).min(1, 'Hours of operation is required.'),
   location: locationSchema,
   fundingSources: fundingSourcesSchema,
 
@@ -455,3 +454,5 @@ export const FormDataSchema = z.object({
   donationFields: DonationFields,
   recommendationFields: RecommendationFields,
 });
+
+export type AgencyUpdateFormData = z.infer<typeof FormDataSchema>;
