@@ -1,13 +1,11 @@
 'use client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { z } from 'zod';
-import { ServiceSchema } from '@/utils/constants/formDataSchema';
 import { HoursReview } from '../HoursReview';
 import { useTranslations } from 'next-intl';
+import { ServiceFormData } from '@/utils/types/agency-update-form';
 
-type Service = z.infer<typeof ServiceSchema>;
 interface ServicesReviewProps {
-  service: Service;
+  service: ServiceFormData;
 }
 
 export function ServicesReview({ service }: ServicesReviewProps) {
