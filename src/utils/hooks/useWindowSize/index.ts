@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
+import WindowSizeContext from './WindowSizeContext';
 
 export function useWindowSize() {
-  const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
+  const ctx = useContext(WindowSizeContext);
+
+  if (!ctx) {
+    throw new Error('useWindowSize must be used within a WindowSizeProvider');
+  }
+
+  const { windowSize, setWindowSize } = ctx;
 
   useEffect(() => {
     const handleResize = () => {
