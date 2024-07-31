@@ -78,6 +78,9 @@ export default function OpportunitiesSection({
                       {...register('volunteerFields.volunteers')}
                       onChange={(e) => {
                         setVolunteerChecked(e.target.value);
+                        setValue('volunteerFields.vol_reqs', undefined);
+                        setValue('volunteerFields.vol_coor', undefined);
+                        setValue('volunteerFields.vol_coor_tel', undefined);
                       }}
                       autoComplete="volunteers"
                       className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
@@ -322,6 +325,7 @@ export default function OpportunitiesSection({
                         {...register('donationFields.pickup')}
                         onChange={(e) => {
                           setPickupChecked(e.target.value);
+                          setValue('donationFields.pickup_loc', undefined);
                         }}
                         className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                         defaultChecked
@@ -465,6 +469,10 @@ export default function OpportunitiesSection({
                       {...register('recommendationFields.recommendation')}
                       onChange={(e) => {
                         setRecommendationChecked(e.target.value);
+                        setValue(
+                          'recommendationFields.recommendations_contact',
+                          undefined
+                        );
                       }}
                       className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
                       defaultChecked
